@@ -120,10 +120,22 @@ def inject_inline_ctas(html: str, cta_mid: str) -> str:
 # Conservative list — only unambiguous markers. T2.1 (body-text langdetect)
 # will catch the remaining ~310.
 _LANG_SLUG_MARKERS = (
-    ("en-IN", ("india", "indian", "rupee", "whatsapp")),
+    # 2026-05-23: dropped "whatsapp" — it is a product feature, not a geo signal,
+    # and misclassified genuine English posts (e.g. how-to-manage-whatsapp-settings)
+    # as India. Added high-precision India payment markers + Arabic "mena".
+    ("en-IN", ("india", "indian", "rupee", "upi", "razorpay")),
     ("es",    ("espanol", "agencia", "plataforma", "latino", "mexico")),
-    ("ar",    ("arabic", "arab", "saudi", "uae")),
+    ("ar",    ("arabic", "arab", "saudi", "uae", "mena")),
 )
+
+# Category names that are really LANGUAGE buckets, not topics. They must never
+# generate a root (English) /category/ page; their posts surface via the
+# language hubs (/es/, /in/) and their own /blog/ URLs. 2026-05-23 cliff fix.
+LANG_BUCKET_CATEGORIES = {
+    "GoHighLevel en Español",
+    "GoHighLevel en Espanol",
+    "GoHighLevel India",
+}
 
 
 def post_lang(post: dict) -> str:
@@ -1593,9 +1605,19 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
 
 
 def build_category_pages(posts: list[dict]):
+    # Root /category/ pages are ENGLISH ONLY. 2026-05-23 cliff fix: previously
+    # this bucketed ALL languages together (build_category_pages(merged)), so
+    # /category/agency-platform/ etc. listed Spanish/India/Arabic posts on an
+    # English page. Classify via post_lang() (slug-aware) so the 469 posts with
+    # no `language` field land correctly instead of defaulting to "en".
     by_cat: dict[str, list] = {}
     for p in posts:
+        if post_lang(p) != "en":
+            continue
         raw_cat = p.get("category", "")
+        # Never emit a root page for a language-bucket "category".
+        if raw_cat in LANG_BUCKET_CATEGORIES:
+            continue
         cat = raw_cat if display_cat(raw_cat) else "GoHighLevel Tutorials"
         by_cat.setdefault(cat, []).append(p)
 
@@ -2861,8 +2883,10 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
     lang_name = lang_config["native"]
     text_dir = lang_config.get("dir", "ltr")
 
-    # Filter posts for this language
-    lang_posts = [p for p in posts if p.get("language", "en") == lang_code]
+    # Filter posts for this language — post_lang() (slug-aware), not the raw
+    # field, so the 469 unlabeled posts are routed to the right hub instead of
+    # defaulting to English and getting orphaned. 2026-05-23 cliff fix.
+    lang_posts = [p for p in posts if post_lang(p) == lang_code]
     if not lang_posts:
         print(f"  Skipping {lang_name} hub — no posts")
         return
@@ -2956,11 +2980,13 @@ def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: 
     lang_code = lang_config["code"]
     text_dir = lang_config.get("dir", "ltr")
 
-    lang_posts = [p for p in posts if p.get("language", "en") == lang_code]
+    lang_posts = [p for p in posts if post_lang(p) == lang_code]
 
     by_topic = {}
     for p in lang_posts:
         cat = p.get("category", "Agency & Platform")
+        if cat in LANG_BUCKET_CATEGORIES:
+            continue
         by_topic.setdefault(cat, []).append(p)
 
     for cat_name, cat_posts in by_topic.items():
@@ -3059,7 +3085,7 @@ def main():
     print("\nBuilding homepage...")
     homepage_posts = [
         p for p in merged
-        if p.get("language", "en") == "en"
+        if post_lang(p) == "en"
     ]
     print(f"  Homepage posts (English only): {len(homepage_posts)} of {len(merged)} total")
     per_page = 18
