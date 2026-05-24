@@ -41,3 +41,12 @@
 /blog/gohighlevel-vs-herramientas-locales-agencia-latinoamerica/ /blog/gohighlevel-vs-competidores-locales-domina-espana-america-latina/ 301
 /blog/gohighlevel-vs-competidores-locales-agencias-espanolas/ /blog/gohighlevel-vs-competidores-locales-domina-espana-america-latina/ 301
 /blog/gohighlevel-vs-alternativas-locales-agencias-españolas/ /blog/gohighlevel-vs-competidores-locales-domina-espana-america-latina/ 301
+# Cross-language cliff fix 2026-05-23: language-bucket "categories" no longer
+# generate root /category/ pages. 301 the old (possibly-indexed) URLs to the
+# correct language hub so they don't 404. Posts now surface via /es/ and /in/.
+/category/gohighlevel-espanol /es/ 301
+/category/gohighlevel-espanol/ /es/ 301
+/category/gohighlevel-en-espaol /es/ 301
+/category/gohighlevel-en-espaol/ /es/ 301
+/category/gohighlevel-india /in/ 301
+/category/gohighlevel-india/ /in/ 301
