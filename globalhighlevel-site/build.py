@@ -2985,8 +2985,11 @@ def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: 
     by_topic = {}
     for p in lang_posts:
         cat = p.get("category", "Agency & Platform")
-        if cat in LANG_BUCKET_CATEGORIES:
-            continue
+        # NOTE: do NOT skip LANG_BUCKET_CATEGORIES here. Inside a language hub a
+        # bucket page (e.g. /es/category/gohighlevel-en-espaol/) is single-language,
+        # not cross-language contamination, and the hub's card badges link to it —
+        # skipping would create broken internal links (codex [P2], 2026-05-23).
+        # Bucket exclusion belongs ONLY on the English root (build_category_pages).
         by_topic.setdefault(cat, []).append(p)
 
     for cat_name, cat_posts in by_topic.items():
