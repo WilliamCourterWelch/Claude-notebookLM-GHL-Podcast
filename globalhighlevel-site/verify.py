@@ -1,0 +1,157 @@
+#!/usr/bin/env python3
+"""verify.py — phase gate for the language x topic restructure.
+
+Runs against the built public/ output and asserts three invariants. Each later
+phase of the restructure must keep these green before /seo-deploy-gate.
+
+  Check 1  English-root  : every root /category/<topic>/ page lists ONLY English posts.
+  Check 2  No orphans    : every post with a live /blog/ page appears in >=1 listing.
+  Check 3  No dead links : every internal href resolves to a generated page or a
+                           _redirects rule (minus KNOWN_DANGLING, which T6 clears).
+
+Usage:
+    cd globalhighlevel-site
+    python3 build.py        # produce public/
+    python3 verify.py       # gate it
+
+Exit 0 = clean, 1 = one or more checks failed. Reuses build.post_lang() so the
+language classification is identical to what the build uses for listings.
+"""
+import re
+import sys
+from pathlib import Path
+from urllib.parse import unquote
+
+import build  # same directory; main() is guarded so importing is side-effect-free
+
+PUBLIC = build.PUBLIC_DIR
+
+# Pre-existing dead links inherited from before the restructure (cataloged
+# 2026-05-23). T6 removes/redirects these and empties this set; until then the
+# gate ignores them so it flags only NEW regressions.
+KNOWN_DANGLING = {
+    "/blog/",                                                   # bare blog-index link, no page
+    "/blog/hub-mercadopago-gohighlevel/",                       # unpublished LATAM pillar hub
+    "/blog/hub-agencias-de-marketing/",                         # unpublished LATAM pillar hub
+    "/blog/por-que-agencias-marketing-necesitan-crm-2026-parte-1/",  # unpublished spoke
+    "/es/category/gohighlevel-espanol/",                        # categories.json slug vs slugify mismatch
+}
+
+
+def read(p: Path) -> str:
+    try:
+        return p.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return ""
+
+
+def blog_slugs(html: str) -> set[str]:
+    """All /blog/<slug>/ targets in a page, unicode-safe and percent-decoded."""
+    return {unquote(m) for m in re.findall(r'href="/blog/([^"]+?)/?"', html)}
+
+
+def internal_hrefs(html: str) -> set[str]:
+    return set(re.findall(r'href="(/[^"#?]*)"', html))
+
+
+def norm(h: str) -> str:
+    return unquote(h.split("#")[0].split("?")[0])
+
+
+def main() -> int:
+    if not PUBLIC.exists():
+        print(f"ERROR: {PUBLIC} not found — run `python3 build.py` first.")
+        return 1
+
+    posts = build.load_posts()
+    lang_by_slug = {p["slug"]: build.post_lang(p) for p in posts if p.get("slug")}
+    all_slugs = set(lang_by_slug)
+    fails: list[str] = []
+
+    # --- Check 1: root /category/ pages English-only -----------------------
+    print("=== Check 1: root /category/ pages are English-only ===")
+    contam = 0
+    for idx in sorted((PUBLIC / "category").glob("*/index.html")):
+        slug = idx.parent.name
+        links = blog_slugs(read(idx))
+        bad = sorted(s for s in links if lang_by_slug.get(s, "en") != "en")
+        contam += len(bad)
+        flag = "  <-- CONTAMINATED" if bad else ""
+        print(f"  /category/{slug}/: {len(links)} posts, {len(bad)} non-English{flag}")
+        if bad:
+            print("      e.g.", bad[:6])
+    print("  ->", "PASS" if not contam else f"FAIL ({contam} cross-language links)")
+    if contam:
+        fails.append(f"Check 1: {contam} cross-language links on root category pages")
+
+    # --- Check 2: no orphaned posts ----------------------------------------
+    print("\n=== Check 2: no orphaned posts (each live post in >=1 listing) ===")
+    listing_globs = [
+        "index.html", "page/*/index.html", "category/*/index.html",
+        "es/index.html", "es/page/*/index.html", "es/category/*/index.html",
+        "in/index.html", "in/page/*/index.html", "in/category/*/index.html",
+        "ar/index.html", "ar/page/*/index.html", "ar/category/*/index.html",
+    ]
+    listed: set[str] = set()
+    for g in listing_globs:
+        for f in PUBLIC.glob(g):
+            listed |= blog_slugs(read(f))
+    orphans = [s for s in sorted(all_slugs - listed)
+               if (PUBLIC / "blog" / s / "index.html").exists()]
+    print(f"  listed: {len(all_slugs & listed)}/{len(all_slugs)} | orphans with a live /blog/ page: {len(orphans)}")
+    for s in orphans[:10]:
+        print(f"    - {s} (lang={lang_by_slug.get(s)})")
+    print("  ->", "PASS" if not orphans else f"FAIL ({len(orphans)} orphans)")
+    if orphans:
+        fails.append(f"Check 2: {len(orphans)} orphaned posts")
+
+    # --- Check 3: no dangling internal links -------------------------------
+    print("\n=== Check 3: no dangling internal links ===")
+    pages: set[str] = set()
+    for f in PUBLIC.rglob("index.html"):
+        rel = f.parent.relative_to(PUBLIC)
+        pages.add("/" if str(rel) == "." else f"/{rel}/")
+    for f in PUBLIC.iterdir():
+        if f.is_file():
+            pages.add("/" + f.name)
+    redirects: set[str] = set()
+    rf = PUBLIC / "_redirects"
+    if rf.exists():
+        for ln in read(rf).splitlines():
+            ln = ln.strip()
+            if ln and not ln.startswith("#"):
+                src = ln.split()[0]
+                redirects |= {src, src.rstrip("/") + "/", src.rstrip("/")}
+
+    def resolves(h: str) -> bool:
+        h = norm(h)
+        return (h in pages or h in redirects
+                or h.rstrip("/") + "/" in pages
+                or h.rstrip("/") in redirects or h.rstrip("/") + "/" in redirects)
+
+    dangling: dict[str, int] = {}
+    for f in PUBLIC.rglob("*.html"):
+        for h in internal_hrefs(read(f)):
+            if not resolves(h):
+                dangling[norm(h)] = dangling.get(norm(h), 0) + 1
+    new_dangling = {h: n for h, n in dangling.items() if h not in KNOWN_DANGLING}
+    known_hit = {h: n for h, n in dangling.items() if h in KNOWN_DANGLING}
+    print(f"  NEW dangling targets: {len(new_dangling)} | known-pending (T6): {len(known_hit)}")
+    for h, n in sorted(new_dangling.items(), key=lambda x: -x[1])[:15]:
+        print(f"    {n:5d}x  {h}")
+    print("  ->", "PASS" if not new_dangling else f"FAIL ({len(new_dangling)} new dead links)")
+    if new_dangling:
+        fails.append(f"Check 3: {len(new_dangling)} new dangling internal links")
+
+    print("\n" + "=" * 52)
+    if fails:
+        print("VERIFY: FAIL")
+        for f in fails:
+            print("  -", f)
+        return 1
+    print("VERIFY: PASS — 0 contamination, 0 orphans, 0 new dead links")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
