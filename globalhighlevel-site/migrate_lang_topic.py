@@ -1,37 +1,49 @@
 #!/usr/bin/env python3
-"""migrate_lang_topic.py — backfill `language` + assign a real `topic` on every post.
+"""migrate_lang_topic.py — backfill `language` + assign a real `topic` per post.
 
-Restructure decisions:
-  D1 (additive): keep `category` untouched for back-compat; ADD a `topic` field.
-  D2 (reviewable + idempotent): PROPOSAL-first. Default run modifies NOTHING — it
-      writes migration-proposal.csv for human review. Only --apply writes fields,
-      and only where a value is missing or changed (re-running is safe).
+D1 (additive): keep `category` for back-compat; ADD `language` + `topic`.
+D2 (reviewable + idempotent):
+  - PROPOSAL (default): writes migration-proposal.csv. Modifies NOTHING.
+  - APPLY (--apply): reads the REVIEWED migration-proposal.csv and writes the
+    new_language / new_topic columns from it — so your hand-edits to the CSV are
+    what land. Idempotent: only writes a file when a value actually changes.
 
-How values are derived:
-  language: explicit post['language'] if present AND valid; else build.post_lang()
-            slug inference. If an explicit field DISAGREES with slug inference
-            (the ~123 English-tagged-but-Espanol-category posts, "whatsapp"
-            false-positives, etc.) -> flag LANG_MISMATCH for the review queue.
-  topic:    if post['category'] is one of the 8 REAL topics -> keep it (method=kept).
-            else (a language bucket / unknown) -> classify the title against the 8
-            real topics by keyword (method=classified). English/India use the
-            categories.json keyword arrays (identical to 5-blog.py's classify_post);
-            es/ar use their generators' keyword dispatch. A catch-all
-            "Agency & Platform" fallback -> flag LOW_CONFIDENCE for the review queue.
+LANGUAGE
+  new_language = explicit post['language'] (if valid) else slug inference.
+  Slug inference is computed INDEPENDENTLY via build._LANG_SLUG_MARKERS (NOT
+  build.post_lang(), which short-circuits on the explicit field). So an explicit
+  field that disagrees with the slug is a REAL signal -> flag LANG_MISMATCH.
+  We DEFAULT to the explicit field (never auto-flip es/ar, whose slugs often
+  lack markers); the `inferred_language` column shows the alternative so you can
+  accept it by editing new_language in the CSV.
+
+TOPIC
+  Classify EVERY post with WORD-BOUNDARY keyword matching (no "ach" in "Coaching",
+  no Spanish "ia" in "guia"). English/India use categories.json keywords; es/ar
+  use their generators' maps.
+  - category already a real topic -> keep it (method=kept). If the classifier
+    disagrees, flag CATEGORY_MISMATCH and show classified_topic (catches stale
+    bad categories like an invoice post filed Phone & Voice).
+  - category is a language bucket / unknown -> use the classifier (method=classified);
+    a catch-all 'Agency & Platform' fallback -> flag LOW_CONFIDENCE.
+
+CSV columns:
+  slug, old_language, inferred_language, old_category, classified_topic,
+  new_language, new_topic, method, flags, title
 
 Usage:
   cd globalhighlevel-site
   python3 migrate_lang_topic.py            # PROPOSAL -> migration-proposal.csv
-  python3 migrate_lang_topic.py --apply    # write language+topic AFTER you review
+  # ...review/edit the CSV...
+  python3 migrate_lang_topic.py --apply    # writes new_language/new_topic FROM the CSV
 
-NOTE (DRY / T7): the es/ar keyword maps below are transcribed from
-ghl-podcast-pipeline/scripts/7-spanish-blog.py and 9-arabic-blog.py. A later
-cleanup should unify all three into categories.json so there's one source.
+NOTE (DRY / T7): es/ar keyword maps are transcribed from 7-spanish-blog.py /
+9-arabic-blog.py; a later cleanup should unify all three into categories.json.
 """
 import csv
 import json
+import re
 import sys
-from pathlib import Path
 
 import build  # same dir; import-safe (main is guarded)
 
@@ -39,47 +51,69 @@ BASE = build.BASE_DIR
 VALID_LANGS = {"en", "es", "en-IN", "ar"}
 BUCKET_NAMES = {"GoHighLevel India", "GoHighLevel en Español", "GoHighLevel en Espanol"}
 CATCH_ALL = "Agency & Platform"
+CSV_PATH = BASE / "migration-proposal.csv"
 
 cats = json.loads((BASE / "categories.json").read_text())
-# 8 real topics = topics[] minus the language buckets
 REAL_TOPICS = [t for t in cats["topics"] if t["name"] not in BUCKET_NAMES]
 REAL_TOPIC_NAMES = {t["name"] for t in REAL_TOPICS}
 
-# es/ar keyword dispatch (source: 7-spanish-blog.py:603, 9-arabic-blog.py:367)
+# es/ar keyword dispatch (source: 7-spanish-blog.py:603, 9-arabic-blog.py:367).
+# "ia" is kept — word-boundary matching makes it safe (matches standalone "ia",
+# not "guia"/"agencia").
 ES_KW = [
     ("SMS & Messaging", ["whatsapp", "sms", "mensaje", "comunicación"]),
     ("Payments & Commerce", ["pago", "mercadopago", "precio", "factura", "cobrar"]),
-    ("AI & Automation", ["ai", "ia", "inteligencia", "automatización", "automatizacion", "automatizaciones", "flujos de trabajo", "flujo", "workflows", "automations", "bot"]),
+    ("AI & Automation", ["ai", "ia", "inteligencia", "automatización", "automatizacion",
+                          "automatizaciones", "flujos de trabajo", "flujo", "workflows",
+                          "automations", "bot"]),
     ("CRM & Contacts", ["crm", "contacto", "cliente", "pipeline"]),
     ("Email & Deliverability", ["email", "correo", "deliverability"]),
-    ("Agency & Platform", ["embudo", "funnel", "landing", "página", "agencia", "saas", "revend", "white label"]),
+    ("Agency & Platform", ["embudo", "funnel", "landing", "página", "agencia", "saas",
+                           "revend", "white label"]),
 ]
 AR_KW = [
     ("SMS & Messaging", ["واتساب", "whatsapp", "sms", "رسائل", "رسالة"]),
-    ("Payments & Commerce", ["دفع", "أسعار", "سعر", "تجارة", "payment", "paytabs", "stripe", "دولار", "درهم"]),
+    ("Payments & Commerce", ["دفع", "أسعار", "سعر", "تجارة", "payment", "paytabs",
+                             "stripe", "دولار", "درهم"]),
     ("AI & Automation", ["ai", "ذكاء", "أتمتة", "automation", "بوت", "متابعة"]),
     ("CRM & Contacts", ["crm", "عملاء", "عميل", "contacts", "pipeline"]),
     ("Email & Deliverability", ["email", "بريد", "إلكتروني", "deliverability"]),
     ("Analytics & Reporting", ["تحليل", "analytics", "تقرير", "reporting"]),
     ("Phone & Voice", ["هاتف", "phone", "صوت", "voice", "مكالمات"]),
-    ("Agency & Platform", ["وكالة", "وكالات", "saas", "agency", "white label", "صفحات هبوط", "landing"]),
+    ("Agency & Platform", ["وكالة", "وكالات", "saas", "agency", "white label",
+                           "صفحات هبوط", "landing"]),
 ]
 
 
+def kw_match(kw: str, text: str) -> bool:
+    """Keyword present with ASCII word boundaries — 'ach' won't match 'coaching',
+    'ia' won't match 'guia'. Arabic-script keywords are flanked by non-ASCII so
+    the boundary still resolves cleanly."""
+    return re.search(r"(?<![a-z0-9])" + re.escape(kw) + r"(?![a-z0-9])", text) is not None
+
+
+def infer_from_slug(slug: str) -> str:
+    """Independent slug inference (does NOT short-circuit on an explicit field)."""
+    s = (slug or "").lower()
+    for code, markers in build._LANG_SLUG_MARKERS:
+        if any(m in s for m in markers):
+            return code
+    return "en"
+
+
 def classify_en(title: str):
-    """English/India: match the 8 real topics' categories.json keywords (longest first)."""
     t = title.lower()
     for cat in REAL_TOPICS:
         for kw in sorted(cat["keywords"], key=len, reverse=True):
-            if kw in t:
+            if kw_match(kw, t):
                 return cat["name"], False
-    return CATCH_ALL, True  # catch-all -> low confidence
+    return CATCH_ALL, True
 
 
 def classify_kw(title: str, table):
     t = title.lower()
     for name, kws in table:
-        if any(w in t for w in kws):
+        if any(kw_match(w, t) for w in kws):
             return name, False
     return CATCH_ALL, True
 
@@ -89,97 +123,123 @@ def classify(title: str, lang: str):
         return classify_kw(title, ES_KW)
     if lang == "ar":
         return classify_kw(title, AR_KW)
-    return classify_en(title)  # en, en-IN
+    return classify_en(title)
 
 
-def main() -> int:
-    apply = "--apply" in sys.argv
-    posts = build.load_posts()
+def build_rows():
     rows = []
-    n_kept = n_reclassified = n_lang_mismatch = n_low_conf = n_lang_backfill = 0
-
-    for p in posts:
+    for p in build.load_posts():
         slug = p.get("slug")
         if not slug:
             continue
         title = p.get("title") or p.get("seoTitle") or ""
-        explicit = p.get("language")
-        inferred = build.post_lang(p)
-        new_lang = explicit if explicit in VALID_LANGS else inferred
-        lang_mismatch = bool(explicit) and explicit in VALID_LANGS and explicit != inferred
-        if not explicit:
-            n_lang_backfill += 1
-        if lang_mismatch:
-            n_lang_mismatch += 1
+        raw = p.get("language")
+        explicit = raw if raw in VALID_LANGS else None
+        inferred = infer_from_slug(slug)
+        flags = []
+        # Actionable language mismatch = the slug carries a SPECIFIC marker
+        # (es/en-IN/ar) that contradicts the field. We propose the slug's value
+        # (the safe direction: en default -> specific). We do NOT flag/flip when
+        # the slug merely infers "en" against an es/ar field — that's an English
+        # transliterated slug, and the explicit field is the trustworthy signal.
+        if explicit and inferred != "en" and inferred != explicit:
+            new_lang = inferred
+            flags.append("LANG_MISMATCH")
+        elif explicit:
+            new_lang = explicit
+        else:
+            new_lang = inferred
+            if raw and raw not in VALID_LANGS:
+                flags.append("LANG_INVALID")
 
         cat = p.get("category", "")
-        if cat in REAL_TOPIC_NAMES:
-            new_topic, low_conf, method = cat, False, "kept"
-            n_kept += 1
-        else:
-            new_topic, low_conf = classify(title, new_lang)
-            method = "classified"
-            n_reclassified += 1
-            if low_conf:
-                n_low_conf += 1
+        classified_topic, low_conf = classify(title, new_lang)
 
-        flags = []
-        if lang_mismatch:
-            flags.append("LANG_MISMATCH")
-        if low_conf:
-            flags.append("LOW_CONFIDENCE")
+        if cat in REAL_TOPIC_NAMES:
+            new_topic, method = cat, "kept"
+            # Only flag when the classifier CONFIDENTLY disagrees (not a weak
+            # catch-all) — surfaces stale bad categories (invoice -> Phone & Voice).
+            if classified_topic != cat and classified_topic != CATCH_ALL:
+                flags.append("CATEGORY_MISMATCH")
+        else:
+            new_topic, method = classified_topic, "classified"
+            if low_conf:
+                flags.append("LOW_CONFIDENCE")
+
         rows.append({
             "slug": slug,
-            "old_language": explicit or "",
+            "old_language": raw or "",
+            "inferred_language": inferred,
             "old_category": cat,
+            "classified_topic": classified_topic,
             "new_language": new_lang,
             "new_topic": new_topic,
             "method": method,
             "flags": "|".join(flags),
             "title": title[:80],
         })
+    return rows
 
-    out = BASE / "migration-proposal.csv"
-    with out.open("w", newline="", encoding="utf-8") as f:
+
+def propose() -> int:
+    rows = build_rows()
+    with CSV_PATH.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
 
-    # topic distribution
+    def count(flag):
+        return sum(1 for r in rows if flag in r["flags"].split("|"))
+
     dist = {}
     for r in rows:
         dist[r["new_topic"]] = dist.get(r["new_topic"], 0) + 1
 
-    print(f"=== migration proposal ({len(rows)} posts) ===")
-    print(f"  language: {n_lang_backfill} backfilled (no explicit field), {n_lang_mismatch} MISMATCH (review)")
-    print(f"  topic:    {n_kept} kept (already a real topic), {n_reclassified} reclassified from a bucket")
-    print(f"            {n_low_conf} LOW_CONFIDENCE (catch-all fallback -> review)")
-    print(f"  review queue total: {len({r['slug'] for r in rows if r['flags']})} posts flagged")
+    print(f"=== migration PROPOSAL ({len(rows)} posts) — nothing applied ===")
+    print(f"  language: {sum(1 for r in rows if not r['old_language'])} backfilled | "
+          f"{count('LANG_MISMATCH')} LANG_MISMATCH (review) | {count('LANG_INVALID')} invalid")
+    print(f"  topic:    {sum(1 for r in rows if r['method']=='kept')} kept | "
+          f"{sum(1 for r in rows if r['method']=='classified')} classified")
+    print(f"            {count('CATEGORY_MISMATCH')} CATEGORY_MISMATCH (stale kept cat) | "
+          f"{count('LOW_CONFIDENCE')} LOW_CONFIDENCE")
+    flagged = sum(1 for r in rows if r["flags"])
+    print(f"  review queue: {flagged} posts flagged")
     print("\n  proposed topic distribution:")
     for name, c in sorted(dist.items(), key=lambda x: -x[1]):
         print(f"    {c:4d}  {name}")
-    print(f"\n  proposal written: {out}")
-    print("  review it, then re-run with --apply to write language+topic.")
-
-    if apply:
-        print("\n  --apply: writing language+topic to posts (idempotent)...")
-        changed = 0
-        by_slug = {r["slug"]: r for r in rows}
-        for p in posts:
-            r = by_slug.get(p.get("slug"))
-            if not r:
-                continue
-            dirty = False
-            if p.get("language") != r["new_language"]:
-                p["language"] = r["new_language"]; dirty = True
-            if p.get("topic") != r["new_topic"]:
-                p["topic"] = r["new_topic"]; dirty = True
-            if dirty:
-                fp = build.POSTS_DIR / f"{p['slug']}.json"
-                fp.write_text(json.dumps(p, indent=2, ensure_ascii=True) + "\n")
-                changed += 1
-        print(f"  wrote {changed} files.")
+    print(f"\n  proposal: {CSV_PATH}")
+    print("  edit new_language/new_topic in the CSV as needed, then: python3 migrate_lang_topic.py --apply")
     return 0
+
+
+def apply_csv() -> int:
+    if not CSV_PATH.exists():
+        print("ERROR: migration-proposal.csv not found — run the proposal first.")
+        return 1
+    reviewed = {r["slug"]: r for r in csv.DictReader(CSV_PATH.open(encoding="utf-8"))}
+    changed = not_in_csv = 0
+    for p in build.load_posts():
+        slug = p.get("slug")
+        r = reviewed.get(slug)
+        if not r:
+            not_in_csv += 1
+            continue
+        dirty = False
+        if r["new_language"] and p.get("language") != r["new_language"]:
+            p["language"] = r["new_language"]; dirty = True
+        if r["new_topic"] and p.get("topic") != r["new_topic"]:
+            p["topic"] = r["new_topic"]; dirty = True
+        if dirty:
+            (build.POSTS_DIR / f"{slug}.json").write_text(
+                json.dumps(p, indent=2, ensure_ascii=False) + "\n")
+            changed += 1
+    print(f"APPLIED from migration-proposal.csv: {changed} files written"
+          + (f", {not_in_csv} posts not in CSV (skipped)" if not_in_csv else ""))
+    return 0
+
+
+def main() -> int:
+    return apply_csv() if "--apply" in sys.argv else propose()
 
 
 if __name__ == "__main__":

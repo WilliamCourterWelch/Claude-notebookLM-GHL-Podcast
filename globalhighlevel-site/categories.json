@@ -25,7 +25,12 @@
         "messenger",
         "social planner",
         "abandoned cart",
-        "automate"
+        "automate",
+        "ai studio",
+        "ai content",
+        "ai recommendation",
+        "smart categories",
+        "code editor"
       ]
     },
     {
@@ -57,7 +62,10 @@
         "whatsapp",
         "messaging",
         "text campaign",
-        "countdown timer"
+        "countdown timer",
+        "live chat",
+        "chat widget",
+        "chat attachment"
       ]
     },
     {
