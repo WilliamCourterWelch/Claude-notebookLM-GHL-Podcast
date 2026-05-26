@@ -18,7 +18,14 @@
         "variable",
         "automation",
         "trigger",
-        "ai employee"
+        "ai employee",
+        "workflow",
+        "facebook",
+        "instagram",
+        "messenger",
+        "social planner",
+        "abandoned cart",
+        "automate"
       ]
     },
     {
@@ -69,7 +76,15 @@
         "activecampaign",
         "affiliate contact",
         "quiz",
-        "notes"
+        "notes",
+        "calendar",
+        "appointment",
+        "booking",
+        "survey",
+        "opportunity",
+        "smart list",
+        "smartlist",
+        "forecasting"
       ]
     },
     {
@@ -90,7 +105,11 @@
         "tap to pay",
         "markup",
         "commerce",
-        "kyc"
+        "kyc",
+        "estimate",
+        "invoice",
+        "e-commerce",
+        "ecommerce"
       ]
     },
     {
@@ -107,7 +126,11 @@
         "time on site",
         "audit",
         "dashboard summary",
-        "export email"
+        "export email",
+        "kpi",
+        "metric",
+        "heatmap",
+        "local ranking"
       ]
     },
     {
@@ -155,7 +178,27 @@
         "course",
         "timezone",
         "app installer",
-        "client portal"
+        "client portal",
+        "seo",
+        "qr code",
+        "snapshot",
+        "sub-account",
+        "subaccount",
+        "white-label",
+        "whitelabel",
+        "branded",
+        "mobile app",
+        "marketplace",
+        "business profile",
+        "wordpress",
+        "internal chat",
+        "media picker",
+        "custom values",
+        "landing",
+        "funnel",
+        "certificate",
+        "webinar",
+        "badge"
       ]
     },
     {

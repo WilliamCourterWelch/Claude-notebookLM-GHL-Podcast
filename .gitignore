@@ -36,3 +36,4 @@ token-gsc.json
 token.json
 venv/
 .gstack/
+globalhighlevel-site/migration-proposal.csv
