@@ -37,3 +37,4 @@ token.json
 venv/
 .gstack/
 globalhighlevel-site/migration-proposal.csv
+.gbrain-source
