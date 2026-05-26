@@ -217,6 +217,17 @@ def apply_csv() -> int:
         print("ERROR: migration-proposal.csv not found — run the proposal first.")
         return 1
     reviewed = {r["slug"]: r for r in csv.DictReader(CSV_PATH.open(encoding="utf-8"))}
+    # Validate hand-editable fields before writing ANYTHING (codex P2): a CSV typo
+    # in new_language orphans the post (excluded from every hub); a bad new_topic
+    # makes a junk category page. Fail loud, write nothing, let the user fix + re-run.
+    bad = [(s, r["new_language"], r["new_topic"]) for s, r in reviewed.items()
+           if r["new_language"] not in VALID_LANGS or r["new_topic"] not in REAL_TOPIC_NAMES]
+    if bad:
+        print(f"ABORT: {len(bad)} CSV row(s) have an invalid new_language or new_topic — nothing written.")
+        print(f"  valid languages: {sorted(VALID_LANGS)}")
+        for s, lang, topic in bad[:20]:
+            print(f"   {s}: language={lang!r} topic={topic!r}")
+        return 1
     changed = not_in_csv = 0
     for p in build.load_posts():
         slug = p.get("slug")
