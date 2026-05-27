@@ -2902,7 +2902,11 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
     chips_html = f'<a href="{prefix}/" class="chip chip-active">All ({len(lang_posts)})</a>'
     for c in CATEGORIES:
         count = topic_counts.get(c["name"], 0)
-        if count > 0:
+        # Only link categories that ACTUALLY get a page. build_language_topic_pages
+        # skips any category with < min_posts (2) in this language, so linking a
+        # single-post topic here is a guaranteed 404 (T5 / codex P2). The post still
+        # surfaces in the hub's "All" list, so it's not orphaned.
+        if count >= 2:
             chips_html += f' <a href="{prefix}/category/{c["slug"]}/" class="chip">{c["name"]} ({count})</a>'
 
     total_pages = max(1, -(-len(lang_posts) // per_page))
@@ -2917,8 +2921,16 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
             desc = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 130)
             date_str = fmt_date(p.get("publishedAt", p.get("uploadedAt", "")))
             rtime = read_time(p.get("html_content", desc))
-            cat_label = display_cat(p.get("category", ""))
-            cat_html = f'<a href="{prefix}/category/{slugify(cat_label)}/" class="card-cat">{cat_label}</a>' if cat_label else ""
+            cat_raw = p.get("category", "")
+            cat_label = display_cat(cat_raw)
+            if not cat_label:
+                cat_html = ""
+            elif topic_counts.get(cat_raw, 0) >= 2:
+                cat_html = f'<a href="{prefix}/category/{slugify(cat_label)}/" class="card-cat">{cat_label}</a>'
+            else:
+                # Single-post topic in this language has no category page (min_posts=2);
+                # fall back to the language hub so the badge isn't a 404 (T5 / codex P2).
+                cat_html = f'<a href="{prefix}/" class="card-cat">{cat_label}</a>'
             cards_html += f"""
 <article class="card">
   {cat_html}
