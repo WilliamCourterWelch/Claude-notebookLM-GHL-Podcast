@@ -1217,7 +1217,7 @@ def build_authority_page(post: dict, all_posts: list = None):
   <div class="auth-header-inner">
     <a href="/">GlobalHighLevel</a>
     <nav>
-      <a href="/blog/">Blog</a>
+      <a href="/es/">Blog</a>
       <a href="{hub_url_for_label}">La serie</a>
     </nav>
   </div>
@@ -1470,7 +1470,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         return f"""
 <article class="card">
   {cat_html}
-  <h2 class="card-title"><a href="/blog/{slug}/">{title}</a></h2>
+  <h2 class="card-title"><a href="{post_url(p)}">{title}</a></h2>
   <p class="card-excerpt">{desc}</p>
   <div class="card-meta">
     <span>{date_str}</span>
@@ -1517,7 +1517,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
             stack_html += f"""
 <div class="hp-stack-item">
   {sp_cat_html}
-  <div class="hp-stack-title"><a href="/blog/{sp_slug}/">{sp_title}</a></div>
+  <div class="hp-stack-title"><a href="{post_url(sp)}">{sp_title}</a></div>
   <div class="hp-stack-meta">{sp_date}</div>
 </div>"""
 
@@ -1534,7 +1534,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
             trending_html += f"""
 <div class="trending-item">
   <span class="trending-num">{i:02d}</span>
-  <div class="trending-title"><a href="/blog/{tp_slug}/">{tp_title}</a></div>
+  <div class="trending-title"><a href="{post_url(tp)}">{tp_title}</a></div>
 </div>"""
 
         # Topics sidebar
@@ -1557,7 +1557,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
   <div class="hp-featured fade-1">
     <div class="hp-lead">
       {lead_cat_html}
-      <h2 class="hp-lead-title"><a href="/blog/{lead_slug}/">{lead_title}</a></h2>
+      <h2 class="hp-lead-title"><a href="{post_url(lead)}">{lead_title}</a></h2>
       <p class="hp-lead-desc">{lead_desc}</p>
       <div class="hp-lead-meta">{lead_date} &middot; {lead_rtime}</div>
     </div>
@@ -1655,7 +1655,7 @@ def build_category_pages(posts: list[dict]):
             cards_html += f"""
 <article class="card">
   {cat_html}
-  <h2 class="card-title"><a href="/blog/{slug}/">{title}</a></h2>
+  <h2 class="card-title"><a href="{post_url(p)}">{title}</a></h2>
   <p class="card-excerpt">{desc}</p>
   <div class="card-meta">
     <span>{date_str}</span>
@@ -2952,7 +2952,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
             cards_html += f"""
 <article class="card">
   {cat_html}
-  <h2 class="card-title"><a href="/blog/{slug}/">{title}</a></h2>
+  <h2 class="card-title"><a href="{post_url(p)}">{title}</a></h2>
   <p class="card-excerpt">{desc}</p>
   <div class="card-meta"><span>{date_str}</span>{"<span class='meta-sep'>&middot;</span><span>" + rtime + "</span>" if date_str else ""}</div>
 </article>"""
@@ -3040,7 +3040,7 @@ def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: 
             rtime = read_time(p.get("html_content", desc))
             cards_html += f"""
 <article class="card">
-  <h2 class="card-title"><a href="/blog/{slug}/">{title}</a></h2>
+  <h2 class="card-title"><a href="{post_url(p)}">{title}</a></h2>
   <p class="card-excerpt">{desc}</p>
   <div class="card-meta"><span>{date_str}</span>{"<span class='meta-sep'>&middot;</span><span>" + rtime + "</span>" if date_str else ""}</div>
 </article>"""

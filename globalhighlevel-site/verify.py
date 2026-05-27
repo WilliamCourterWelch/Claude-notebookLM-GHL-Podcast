@@ -29,16 +29,14 @@ import build  # same directory; main() is guarded so importing is side-effect-fr
 
 PUBLIC = build.PUBLIC_DIR
 
-# Pre-existing dead links inherited from before the restructure (cataloged
-# 2026-05-23). T6 removes/redirects these and empties this set; until then the
-# gate ignores them so it flags only NEW regressions.
-KNOWN_DANGLING = {
-    "/blog/",                                                   # bare blog-index link, no page
-    "/blog/hub-mercadopago-gohighlevel/",                       # unpublished LATAM pillar hub
-    "/blog/hub-agencias-de-marketing/",                         # unpublished LATAM pillar hub
-    "/blog/por-que-agencias-marketing-necesitan-crm-2026-parte-1/",  # unpublished spoke
-    "/es/category/gohighlevel-espanol/",                        # categories.json slug vs slugify mismatch
-}
+# T6 (2026-05-27): all pre-existing dead links cleared, so this allowlist is now
+# empty — the gate flags EVERY dangling internal link with no exceptions.
+#   - the bucket-category link (/es/category/gohighlevel-espanol/) vanished when T3
+#     removed language buckets from the topic axis;
+#   - the 3 LATAM hub/spoke links + the bare /blog/ nav link were resolved by routing
+#     listing cards through post_url() (so they point at the real /es/para/ URLs) and
+#     pointing the Spanish hub nav at /es/.
+KNOWN_DANGLING: set[str] = set()
 
 
 def read(p: Path) -> str:
