@@ -2,6 +2,42 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.0] - 2026-05-27
+### Added
+- **`topic` as the real category axis, separate from language (language × topic restructure).**
+  Every post now carries a `topic` field (one of 8 canonical topics) independent of its
+  `language`. `build.py` organizes the site by `topic` (via a new `post_topic()` helper with
+  a `category` fallback), so the two axes are no longer tangled. 373 posts that were trapped
+  under language-bucket "categories" (`GoHighLevel en Español` / `GoHighLevel India`) now
+  surface under their real topic.
+- **`verify.py` phase-gate harness.** Re-runnable audit with 4 checks: Check 0 (a post's
+  `language` field must not contradict its slug markers — catches a bad migration write that
+  the other checks, which trust the field, cannot), Check 1 (root `/category/` English-only),
+  Check 2 (no orphaned posts), Check 3 (no dangling internal links, allowlist now empty).
+- **`migrate_lang_topic.py` reviewable migration tool.** Proposal-first (writes a CSV for
+  human review), idempotent `--apply` that reads the reviewed CSV, fail-loud validation
+  (rejects bad language/topic, aborts on duplicate slugs), and a writer that preserves each
+  file's existing encoding + newline so a 2-field change is a 2-line diff, not a reformat.
+
+### Changed
+- **945 posts re-tagged** with a clean `language` + `topic` (4 India posts corrected `en`→`en-IN`,
+  469 posts backfilled `language`). `category` kept for back-compat. Migration was AI-classified
+  with the uncertain calls reviewed by hand.
+- **Daily generators (5-blog, 6-india, 7-spanish, 9-arabic) stamp `topic` + `language`** on every
+  new post, so the nightly pipeline no longer re-creates the language/topic tangle.
+- **`categories.json` is topics-only** — the 2 language buckets are removed; old bucket category
+  URLs 301-redirect to the `/es/` and `/in/` hubs. The 8 topic-page URLs are unchanged.
+- **Language-hub category links respect a `min_posts` fallback** — the hub no longer links a
+  per-language category page that isn't generated (single-post topics fall back to the `/lang/` hub).
+
+### Fixed
+- **`5-blog.py` classifier crash.** It iterated the `{topics, languages}` config dict by its
+  string keys and raised `TypeError`, so English/podcast posts classified to the fallback. Now
+  reads `categories.json["topics"]` and returns one of the 8 canonical topics.
+- **Listing cards now link to each post's real URL** via `post_url()` instead of a hardcoded
+  `/blog/{slug}/`. The LATAM pillar/spoke posts (rendered at `/es/para/...`) no longer 404 from
+  category and hub listings. All known dead links cleared.
+
 ## [0.0.0.1] - 2026-05-23
 ### Fixed
 - **Cross-language internal linking (GSC cliff fix).** English root `/category/` pages

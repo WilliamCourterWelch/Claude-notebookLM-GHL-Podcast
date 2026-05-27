@@ -262,17 +262,25 @@ Return a JSON object with these exact keys:
 
 # ── Category Classification ───────────────────────────────────────────────────
 def classify_post(title: str) -> str:
-    """Classify a post into a category by keyword matching against the title."""
+    """Classify a post into one of the canonical topics by keyword-matching the title.
+
+    Reads categories.json topics[]. The file is {"topics": [...], "languages": [...]},
+    so we must index ["topics"] — iterating the dict directly yields its string keys
+    and raises (the bug this replaces). Tolerates a bare list for older copies.
+    Language buckets are never returned; falls back to 'Agency & Platform'.
+    """
     if not CATEGORIES_FILE.exists():
-        return "GoHighLevel Tutorials"
-    categories = json.loads(CATEGORIES_FILE.read_text())
+        return "Agency & Platform"
+    data = json.loads(CATEGORIES_FILE.read_text())
+    topics = data.get("topics", []) if isinstance(data, dict) else data
+    buckets = {"GoHighLevel India", "GoHighLevel en Español", "GoHighLevel en Espanol"}
+    topics = [t for t in topics if t.get("name") not in buckets]
     title_lower = title.lower()
-    for cat in categories:
-        sorted_kw = sorted(cat["keywords"], key=len, reverse=True)
-        for kw in sorted_kw:
+    for cat in topics:
+        for kw in sorted(cat.get("keywords", []), key=len, reverse=True):
             if kw in title_lower:
                 return cat["name"]
-    return categories[-1]["name"] if categories else "GoHighLevel Tutorials"
+    return "Agency & Platform"
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -328,7 +336,8 @@ def create_blog_post(article: dict) -> dict:
         "title":        title,
         "description":  post_data["meta_description"],
         "html_content": post_data["html_content"],
-        "category":     classify_post(title),
+        "topic":        classify_post(title),   # T4: real subject axis build.py reads
+        "category":     classify_post(title),   # back-compat (== topic; no language buckets)
         "language":     actual_lang,
         "articleId":    str(article.get("id", "")),
         "transistorEpisodeId": article.get("transistorEmbedHash", ""),

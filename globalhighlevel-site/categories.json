@@ -18,7 +18,19 @@
         "variable",
         "automation",
         "trigger",
-        "ai employee"
+        "ai employee",
+        "workflow",
+        "facebook",
+        "instagram",
+        "messenger",
+        "social planner",
+        "abandoned cart",
+        "automate",
+        "ai studio",
+        "ai content",
+        "ai recommendation",
+        "smart categories",
+        "code editor"
       ]
     },
     {
@@ -50,7 +62,10 @@
         "whatsapp",
         "messaging",
         "text campaign",
-        "countdown timer"
+        "countdown timer",
+        "live chat",
+        "chat widget",
+        "chat attachment"
       ]
     },
     {
@@ -69,7 +84,15 @@
         "activecampaign",
         "affiliate contact",
         "quiz",
-        "notes"
+        "notes",
+        "calendar",
+        "appointment",
+        "booking",
+        "survey",
+        "opportunity",
+        "smart list",
+        "smartlist",
+        "forecasting"
       ]
     },
     {
@@ -90,7 +113,11 @@
         "tap to pay",
         "markup",
         "commerce",
-        "kyc"
+        "kyc",
+        "estimate",
+        "invoice",
+        "e-commerce",
+        "ecommerce"
       ]
     },
     {
@@ -107,7 +134,11 @@
         "time on site",
         "audit",
         "dashboard summary",
-        "export email"
+        "export email",
+        "kpi",
+        "metric",
+        "heatmap",
+        "local ranking"
       ]
     },
     {
@@ -155,46 +186,27 @@
         "course",
         "timezone",
         "app installer",
-        "client portal"
-      ]
-    },
-    {
-      "name": "GoHighLevel India",
-      "slug": "gohighlevel-india",
-      "description": "GoHighLevel guides for Indian agencies — WhatsApp automation, Razorpay payments, and rupee pricing.",
-      "keywords": [
-        "india",
-        "indian",
-        "whatsapp",
-        "razorpay",
-        "upi",
-        "rupee",
-        "zoho",
-        "mumbai",
-        "bangalore",
-        "delhi",
-        "hyderabad",
-        "pune",
-        "chennai",
-        "dpdp",
-        "gst"
-      ]
-    },
-    {
-      "name": "GoHighLevel en Español",
-      "slug": "gohighlevel-espanol",
-      "description": "Guías de GoHighLevel en español para agencias y negocios en Latinoamérica y España.",
-      "keywords": [
-        "español",
-        "spanish",
-        "latino",
-        "latinoamérica",
-        "méxico",
-        "colombia",
-        "argentina",
-        "españa",
-        "agencia",
-        "mercadotecnia"
+        "client portal",
+        "seo",
+        "qr code",
+        "snapshot",
+        "sub-account",
+        "subaccount",
+        "white-label",
+        "whitelabel",
+        "branded",
+        "mobile app",
+        "marketplace",
+        "business profile",
+        "wordpress",
+        "internal chat",
+        "media picker",
+        "custom values",
+        "landing",
+        "funnel",
+        "certificate",
+        "webinar",
+        "badge"
       ]
     }
   ],
