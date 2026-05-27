@@ -4,6 +4,9 @@
 Runs against the built public/ output and asserts three invariants. Each later
 phase of the restructure must keep these green before /seo-deploy-gate.
 
+  Check 0  Lang vs slug  : a post's `language` field must not contradict a specific
+                           slug marker (catches a migration that wrote the wrong
+                           language; the other checks trust the field and can't).
   Check 1  English-root  : every root /category/<topic>/ page lists ONLY English posts.
   Check 2  No orphans    : every post with a live /blog/ page appears in >=1 listing.
   Check 3  No dead links : every internal href resolves to a generated page or a
@@ -67,6 +70,37 @@ def main() -> int:
     lang_by_slug = {p["slug"]: build.post_lang(p) for p in posts if p.get("slug")}
     all_slugs = set(lang_by_slug)
     fails: list[str] = []
+
+    # --- Check 0: language field must not contradict a specific slug marker -
+    # Every other check resolves language via build.post_lang(), which just
+    # echoes the explicit `language` field. So those checks CANNOT detect a
+    # migration that wrote the WRONG language — they'd validate the bad field
+    # against itself. This check is the independent cross-reference: if a slug
+    # carries a SPECIFIC marker (es / en-IN / ar) but the resolved language
+    # disagrees, that's a mislabel. Pre-migration this flags the known India
+    # posts the T2 migration is built to fix; post-apply it must be 0, and it
+    # will FAIL on any NEW bad write (e.g. a Spanish post stamped `en`).
+    print("=== Check 0: language field agrees with slug markers ===")
+
+    def infer_lang_from_slug(slug: str) -> str:
+        s = (slug or "").lower()
+        for code, markers in build._LANG_SLUG_MARKERS:
+            if any(m in s for m in markers):
+                return code
+        return "en"
+
+    contradictions = []
+    for slug, resolved in sorted(lang_by_slug.items()):
+        marker = infer_lang_from_slug(slug)
+        if marker != "en" and marker != resolved:
+            contradictions.append((slug, resolved, marker))
+    print(f"  slug-marked posts whose language field disagrees: {len(contradictions)}"
+          " (pre-migration: these are the T2 targets; post-apply must be 0)")
+    for slug, resolved, marker in contradictions[:10]:
+        print(f"    - {slug}: language={resolved!r} but slug marker says {marker!r}")
+    print("  ->", "PASS" if not contradictions else f"FAIL ({len(contradictions)} mislabeled)")
+    if contradictions:
+        fails.append(f"Check 0: {len(contradictions)} posts whose language field contradicts their slug marker")
 
     # --- Check 1: root /category/ pages English-only -----------------------
     print("=== Check 1: root /category/ pages are English-only ===")
@@ -149,7 +183,7 @@ def main() -> int:
         for f in fails:
             print("  -", f)
         return 1
-    print("VERIFY: PASS — 0 contamination, 0 orphans, 0 new dead links")
+    print("VERIFY: PASS — 0 lang/slug mismatches, 0 contamination, 0 orphans, 0 new dead links")
     return 0
 
 

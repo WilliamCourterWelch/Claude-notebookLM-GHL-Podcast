@@ -43,13 +43,18 @@ NOTE (DRY / T7): es/ar keyword maps are transcribed from 7-spanish-blog.py /
 import csv
 import json
 import re
+import shutil
 import sys
+from collections import Counter
+from datetime import datetime
 
 import build  # same dir; import-safe (main is guarded)
 
 BASE = build.BASE_DIR
 VALID_LANGS = {"en", "es", "en-IN", "ar"}
-BUCKET_NAMES = {"GoHighLevel India", "GoHighLevel en Español", "GoHighLevel en Espanol"}
+# Reuse build's set so the bucket list can't drift across modules (if build.py
+# renames/adds a bucket, this follows automatically instead of going stale).
+BUCKET_NAMES = build.LANG_BUCKET_CATEGORIES
 CATCH_ALL = "Agency & Platform"
 CSV_PATH = BASE / "migration-proposal.csv"
 
@@ -132,7 +137,7 @@ def build_rows():
         slug = p.get("slug")
         if not slug:
             continue
-        title = p.get("title") or p.get("seoTitle") or ""
+        title = str(p.get("title") or p.get("seoTitle") or "")  # coerce: a non-str title must not crash the whole run
         raw = p.get("language")
         explicit = raw if raw in VALID_LANGS else None
         inferred = infer_from_slug(slug)
@@ -183,6 +188,15 @@ def build_rows():
 
 def propose() -> int:
     rows = build_rows()
+    if not rows:
+        print("No posts found (need slug + html_content) — nothing to propose.")
+        return 1
+    # Never silently destroy a reviewed CSV. If one exists, back it up first so a
+    # re-run can't erase hand-edits (the CSV is the human review/decision record).
+    if CSV_PATH.exists():
+        bak = CSV_PATH.with_name(f"{CSV_PATH.stem}.{datetime.now():%Y%m%d-%H%M%S}.bak.csv")
+        shutil.copy2(CSV_PATH, bak)
+        print(f"  (existing proposal backed up -> {bak.name})")
     with CSV_PATH.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
@@ -212,11 +226,39 @@ def propose() -> int:
     return 0
 
 
+def _write_post(slug: str, p: dict) -> None:
+    """Write the post back PRESERVING its existing serialization convention so a
+    2-field change shows a 2-line diff, not a whole-file reformat (the corpus is
+    mixed: ~662 files \\u-escape non-ASCII, ~283 store it literally; none have a
+    trailing newline). Match this file's escape style + trailing newline so the
+    git diff stays a faithful, reviewable audit trail of what actually changed."""
+    path = build.POSTS_DIR / f"{slug}.json"
+    try:
+        orig = path.read_text(encoding="utf-8")
+    except Exception:
+        orig = ""
+    ensure_ascii = "\\u" in orig          # keep this file's existing escape style
+    trailing = "\n" if orig.endswith("\n") else ""
+    path.write_text(json.dumps(p, indent=2, ensure_ascii=ensure_ascii) + trailing,
+                    encoding="utf-8")
+
+
 def apply_csv() -> int:
     if not CSV_PATH.exists():
         print("ERROR: migration-proposal.csv not found — run the proposal first.")
         return 1
-    reviewed = {r["slug"]: r for r in csv.DictReader(CSV_PATH.open(encoding="utf-8"))}
+    # utf-8-sig tolerates a BOM a spreadsheet may add (else the first column key
+    # becomes '﻿slug' and every lookup misses).
+    raw_rows = list(csv.DictReader(CSV_PATH.open(encoding="utf-8-sig")))
+    # A hand-edit that duplicates a slug row would silently win-last (the dict
+    # comprehension keeps the last). Catch it BEFORE collapsing — fail loud.
+    dup = {s: c for s, c in Counter(r["slug"] for r in raw_rows).items() if c > 1}
+    if dup:
+        print(f"ABORT: {len(dup)} duplicate slug(s) in the CSV (a hand-edit duplicated a row) — nothing written.")
+        for s, c in list(dup.items())[:20]:
+            print(f"   {s} appears {c}x")
+        return 1
+    reviewed = {r["slug"]: r for r in raw_rows}
     # Validate hand-editable fields before writing ANYTHING (codex P2): a CSV typo
     # in new_language orphans the post (excluded from every hub); a bad new_topic
     # makes a junk category page. Fail loud, write nothing, let the user fix + re-run.
@@ -228,12 +270,15 @@ def apply_csv() -> int:
         for s, lang, topic in bad[:20]:
             print(f"   {s}: language={lang!r} topic={topic!r}")
         return 1
-    changed = not_in_csv = 0
-    for p in build.load_posts():
+    posts = build.load_posts()
+    post_slugs = {p.get("slug") for p in posts}
+    changed = 0
+    skipped: list[str] = []
+    for p in posts:
         slug = p.get("slug")
         r = reviewed.get(slug)
         if not r:
-            not_in_csv += 1
+            skipped.append(slug)   # post on disk but no CSV row -> left unmigrated
             continue
         dirty = False
         if r["new_language"] and p.get("language") != r["new_language"]:
@@ -241,11 +286,21 @@ def apply_csv() -> int:
         if r["new_topic"] and p.get("topic") != r["new_topic"]:
             p["topic"] = r["new_topic"]; dirty = True
         if dirty:
-            (build.POSTS_DIR / f"{slug}.json").write_text(
-                json.dumps(p, indent=2, ensure_ascii=False) + "\n")
+            _write_post(slug, p)
             changed += 1
-    print(f"APPLIED from migration-proposal.csv: {changed} files written"
-          + (f", {not_in_csv} posts not in CSV (skipped)" if not_in_csv else ""))
+    # Stale = CSV rows whose slug matches no current post (post renamed/deleted or
+    # a typo'd hand-edit). These no-op silently otherwise; surface them loudly so a
+    # half-applied / mismatched CSV is caught, not shipped.
+    stale = sorted(s for s in reviewed if s not in post_slugs)
+    print(f"APPLIED from migration-proposal.csv: {changed} files written")
+    if skipped:
+        print(f"  WARNING: {len(skipped)} post(s) on disk had NO CSV row (left unmigrated):")
+        for s in sorted(skipped)[:20]:
+            print(f"   - {s}")
+    if stale:
+        print(f"  WARNING: {len(stale)} CSV row(s) matched no post on disk (stale/typo'd slug):")
+        for s in stale[:20]:
+            print(f"   - {s}")
     return 0
 
 
