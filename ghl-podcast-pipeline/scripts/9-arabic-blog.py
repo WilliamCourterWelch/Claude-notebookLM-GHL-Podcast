@@ -452,7 +452,8 @@ def save_post(topic: str, blog_data: dict, final_html: str) -> str:
         "slug": slug,
         "description": meta_desc,
         "html_content": final_html,
-        "category": classify_post(topic),
+        "topic": classify_post(topic),     # T4: real subject axis build.py reads (canonical 8)
+        "category": classify_post(topic),  # back-compat (== topic; no language buckets)
         "tags": ["gohighlevel", "عربي", "الشرق الأوسط", "وكالة", "crm"],
         "language": actual_lang,
         "publishedAt": datetime.now().isoformat(),

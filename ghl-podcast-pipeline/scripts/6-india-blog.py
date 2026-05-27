@@ -423,7 +423,8 @@ def publish(topic: str, html_content: str, meta_description: str, slug: str) -> 
         "title":        topic,
         "description":  meta_description,
         "html_content": html_content,
-        "category":     category,
+        "topic":        category,   # T4: real subject axis build.py reads (canonical 8)
+        "category":     category,   # back-compat (== topic; India bucket dropped)
         "language":     actual_lang,
         "publishedAt":  datetime.now().isoformat(),
     }
