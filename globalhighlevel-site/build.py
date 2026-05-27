@@ -157,19 +157,36 @@ def post_lang(post: dict) -> str:
     return "en"
 
 
+def post_topic(post: dict) -> str:
+    """Return the post's TOPIC (subject axis), independent of language.
+
+    Strangler-fig (T3): reads post['topic'] (backfilled by the T2 migration). For
+    any post not yet migrated it falls back to a non-bucket `category`, then to the
+    catch-all. Language buckets ('GoHighLevel India' / 'en Español') are NOT topics,
+    so they never leak in through the fallback — they resolve to the catch-all.
+    """
+    topic = post.get("topic")
+    if topic:
+        return topic
+    cat = post.get("category", "")
+    if cat and cat not in LANG_BUCKET_CATEGORIES:
+        return cat
+    return "Agency & Platform"
+
+
 def get_related(post: dict, all_posts: list, n: int = 3) -> list:
-    """Return n related posts — same language, same category first, then most recent.
+    """Return n related posts — same language, same topic first, then most recent.
 
     Language filter (added 2026-05-07) prevents the cross-language related-cards
     bug where English pages pulled Spanish / India / Arabic posts as 'Keep Reading'
     candidates. See post_lang() for slug-pattern inference logic.
     """
     slug = post.get("slug", "")
-    cat  = post.get("category", "")
+    topic = post_topic(post)
     target_lang = post_lang(post)
     same_lang = [p for p in all_posts if post_lang(p) == target_lang]
-    same = [p for p in same_lang if p.get("slug") != slug and p.get("category") == cat]
-    other = [p for p in same_lang if p.get("slug") != slug and p.get("category") != cat]
+    same = [p for p in same_lang if p.get("slug") != slug and post_topic(p) == topic]
+    other = [p for p in same_lang if p.get("slug") != slug and post_topic(p) != topic]
     return (same + other)[:n]
 
 
@@ -192,7 +209,7 @@ def _build_link_index(all_posts: list, target_lang=None) -> list[tuple[str, str,
             continue
         title = p.get("title", p.get("seoTitle", ""))
         slug = p.get("slug", "")
-        cat = p.get("category", "")
+        cat = post_topic(p)
         if not title or not slug:
             continue
         # Extract 2-4 word phrases from title as linkable keywords
@@ -223,7 +240,7 @@ def inject_internal_links(html: str, post: dict, all_posts: list, max_links: int
         return html
 
     slug = post.get("slug", "")
-    cat = post.get("category", "")
+    cat = post_topic(post)
     target_lang = post_lang(post)
     link_index = _build_link_index(all_posts, target_lang=target_lang)
 
@@ -1234,7 +1251,7 @@ def build_post_page(post: dict, all_posts: list = None):
     slug        = post["slug"]
     title       = post.get("title", post.get("seoTitle", ""))
     description = post.get("description", post.get("seoDescription", post.get("meta_description", "")))
-    category    = display_cat(post.get("category", "")) or "GoHighLevel Tutorials"
+    category    = display_cat(post_topic(post)) or "GoHighLevel Tutorials"
     cat_slug    = slugify(category)
     date_str    = fmt_date(post.get("publishedAt", post.get("uploadedAt", "")))
     html_content = post.get("html_content", "")
@@ -1330,7 +1347,7 @@ def build_post_page(post: dict, all_posts: list = None):
             for r in related:
                 r_slug  = r.get("slug", "")
                 r_title = r.get("title", r.get("seoTitle", ""))
-                r_cat   = display_cat(r.get("category", "")) or "GoHighLevel"
+                r_cat   = display_cat(post_topic(r)) or "GoHighLevel"
                 r_url   = post_url(r)
                 cards += f"""
 <a href="{r_url}" class="related-card">
@@ -1444,7 +1461,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         slug     = p.get("slug", "")
         title    = p.get("title", p.get("seoTitle", "Untitled"))
         desc     = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 130)
-        cat      = display_cat(p.get("category", ""))
+        cat      = display_cat(post_topic(p))
         date_str = fmt_date(p.get("publishedAt", p.get("uploadedAt", "")))
         ep_id    = p.get("transistorEpisodeId", "")
         rtime    = read_time(p.get("html_content", desc))
@@ -1485,7 +1502,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         lead_slug = lead.get("slug", "")
         lead_title = lead.get("title", lead.get("seoTitle", ""))
         lead_desc = truncate(lead.get("description", lead.get("seoDescription", lead.get("meta_description", ""))), 200)
-        lead_cat = display_cat(lead.get("category", ""))
+        lead_cat = display_cat(post_topic(lead))
         lead_date = fmt_date(lead.get("publishedAt", lead.get("uploadedAt", "")))
         lead_rtime = read_time(lead.get("html_content", lead_desc))
         lead_cat_html = f'<a href="/category/{slugify(lead_cat)}/" class="hp-lead-cat" style="text-decoration:none;display:inline-block">{lead_cat}</a>' if lead_cat else ""
@@ -1494,7 +1511,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         for sp in stack_posts:
             sp_slug = sp.get("slug", "")
             sp_title = sp.get("title", sp.get("seoTitle", ""))
-            sp_cat = display_cat(sp.get("category", ""))
+            sp_cat = display_cat(post_topic(sp))
             sp_date = fmt_date(sp.get("publishedAt", sp.get("uploadedAt", "")))
             sp_cat_html = f'<a href="/category/{slugify(sp_cat)}/" class="hp-stack-cat" style="text-decoration:none;display:inline-block">{sp_cat}</a>' if sp_cat else ""
             stack_html += f"""
@@ -1523,7 +1540,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         # Topics sidebar
         topics_html = ""
         for c in CATEGORIES:
-            c_count = len([p for p in posts if slugify(p.get("category", "")) == c["slug"]])
+            c_count = len([p for p in posts if slugify(post_topic(p)) == c["slug"]])
             topics_html += f"""
 <a href="/category/{c['slug']}/" class="sidebar-cat-link">
   <span>{c['name']}</span>
@@ -1614,11 +1631,12 @@ def build_category_pages(posts: list[dict]):
     for p in posts:
         if post_lang(p) != "en":
             continue
-        raw_cat = p.get("category", "")
-        # Never emit a root page for a language-bucket "category".
-        if raw_cat in LANG_BUCKET_CATEGORIES:
-            continue
-        cat = raw_cat if display_cat(raw_cat) else "GoHighLevel Tutorials"
+        # Bucket on TOPIC (T3), not the back-compat `category`. post_topic() never
+        # returns a language bucket, so the old bucket-skip is no longer needed: the
+        # 123 English posts formerly mis-filed under "en Español" now surface here
+        # under their real topic.
+        topic = post_topic(p)
+        cat = topic if display_cat(topic) else "GoHighLevel Tutorials"
         by_cat.setdefault(cat, []).append(p)
 
     for cat, cat_posts in by_cat.items():
@@ -2893,10 +2911,10 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
 
     lang_posts.sort(key=lambda x: x.get("publishedAt", x.get("uploadedAt", "")), reverse=True)
 
-    # Build topic filter chips
+    # Build topic filter chips (keyed on TOPIC, T3 — not back-compat category)
     topic_counts = {}
     for p in lang_posts:
-        cat = p.get("category", "Agency & Platform")
+        cat = post_topic(p)
         topic_counts[cat] = topic_counts.get(cat, 0) + 1
 
     chips_html = f'<a href="{prefix}/" class="chip chip-active">All ({len(lang_posts)})</a>'
@@ -2921,7 +2939,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
             desc = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 130)
             date_str = fmt_date(p.get("publishedAt", p.get("uploadedAt", "")))
             rtime = read_time(p.get("html_content", desc))
-            cat_raw = p.get("category", "")
+            cat_raw = post_topic(p)
             cat_label = display_cat(cat_raw)
             if not cat_label:
                 cat_html = ""
@@ -2996,12 +3014,11 @@ def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: 
 
     by_topic = {}
     for p in lang_posts:
-        cat = p.get("category", "Agency & Platform")
-        # NOTE: do NOT skip LANG_BUCKET_CATEGORIES here. Inside a language hub a
-        # bucket page (e.g. /es/category/gohighlevel-en-espaol/) is single-language,
-        # not cross-language contamination, and the hub's card badges link to it —
-        # skipping would create broken internal links (codex [P2], 2026-05-23).
-        # Bucket exclusion belongs ONLY on the English root (build_category_pages).
+        # T3: key on TOPIC, not the back-compat `category`. post_topic() never
+        # returns a language bucket, so the old "GoHighLevel en Español" bucket
+        # pages are no longer generated — those URLs 301 to the /es/ /in/ hubs
+        # (cliff-fix redirects). Topic pages here use the real 8 topics only.
+        cat = post_topic(p)
         by_topic.setdefault(cat, []).append(p)
 
     for cat_name, cat_posts in by_topic.items():
