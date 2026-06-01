@@ -377,16 +377,16 @@
     }
   },
   "gohighlevel-pricing-plans-2026-complete-guide": {
-    "action": "hreflang_added",
-    "flagged_at": "2026-04-17T08:43:50.007928",
-    "attempt": 1,
+    "action": "expand_content",
+    "flagged_at": "2026-06-01T00:00:00.000000",
+    "attempt": 2,
     "metrics_at_flag": {
-      "impressions": 0,
+      "impressions": 60,
       "ctr": 0,
-      "position": 0
+      "position": 74.8
     },
     "changes": {
-      "note": "hreflang translations field added. Let Google process cross-language signals before any meta rewrites."
+      "note": "Manual content upgrade 1540->2647 words: ChatGPT-citation recipe (price-answer lead, what-GHL-replaces table, promo-code section, India pricing, 11 GSC-derived FAQ + schema). Buyer-intent money page. Logged to SEO Changelog Sheet row 35."
     }
   },
   "gohighlevel-precios-planes-2026-guia-completa": {
