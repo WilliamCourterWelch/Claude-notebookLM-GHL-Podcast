@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.2] - 2026-06-03
+### Added
+- **New Spanish pillar: "GoHighLevel en Latinoamérica — guía honesta de pagos para agencias"** (`/blog/gohighlevel-latam-pagos-agencias/`, `topic: Payments & Commerce`, `language: es`). Buyer-intent hub for LATAM marketing agencies: MercadoPago Flow B across 7 countries (AR/BR/CL/CO/MX/PE/UY); the SaaS Mode (Flow A) constraint (only Stripe/NMI/Authorize.net/Square, card-only checkout); Stripe Atlas workaround by country; honest "where GoHighLevel does NOT work" framing; country comparison table; FAQ; `dofollow` source citations + 30-day affiliate CTA marked `rel="sponsored"`. Grounded in the existing MercadoPago research vault; Codex drift-gated + native-Spanish third-voice reviewed + claim-ledgered. Surfaces under the Payments topic and the /es Español hub. (Earlier mistakenly published to the GHL blog CMS — wrong system; this repo is the canonical publish path.)
+
 ## [0.1.0.1] - 2026-06-01
 ### Changed
 - **Upgraded the GoHighLevel pricing page (`/blog/gohighlevel-pricing-plans-2026-complete-guide/`) from 1,540 to ~2,650 words.** Rebuilt to the buyer-intent "ChatGPT-citation" recipe that the trial page already wins with: a one-line price answer up top (Starter $97 / Unlimited $297 / SaaS Pro $497, annual ~17% off), a "what GoHighLevel replaces" comparison table, a promo-code/discount section (links the canonical `/blog/gohighlevel-free-trial-30-days-extended/` — no duplicate page), an India-pricing answer, and 11 FAQ entries built from real GSC pricing queries plus FAQPage schema. Targets the pricing query cluster (~150 impressions/quarter, previously ranking page 7-9 with zero clicks). A codex fact-check pass fixed a usage-cost contradiction and trimmed unverifiable claims. Deploy gate: logged to the SEO Changelog Sheet (row 35) and `seo-cooldown.json`.
