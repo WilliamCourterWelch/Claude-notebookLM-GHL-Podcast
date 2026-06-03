@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.3] - 2026-06-03
+### Fixed
+- LATAM hub: affiliate CTA now points to the Spanish funnel landing /es/trial (was linking directly to the English gohighlevel.com bootcamp). Matches the es-post pattern.
+
 ## [0.1.0.2] - 2026-06-03
 ### Added
 - **New Spanish pillar: "GoHighLevel en Latinoamérica — guía honesta de pagos para agencias"** (`/blog/gohighlevel-latam-pagos-agencias/`, `topic: Payments & Commerce`, `language: es`). Buyer-intent hub for LATAM marketing agencies: MercadoPago Flow B across 7 countries (AR/BR/CL/CO/MX/PE/UY); the SaaS Mode (Flow A) constraint (only Stripe/NMI/Authorize.net/Square, card-only checkout); Stripe Atlas workaround by country; honest "where GoHighLevel does NOT work" framing; country comparison table; FAQ; `dofollow` source citations + 30-day affiliate CTA marked `rel="sponsored"`. Grounded in the existing MercadoPago research vault; Codex drift-gated + native-Spanish third-voice reviewed + claim-ledgered. Surfaces under the Payments topic and the /es Español hub. (Earlier mistakenly published to the GHL blog CMS — wrong system; this repo is the canonical publish path.)
