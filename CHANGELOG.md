@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.4] - 2026-06-03
+### Removed
+- **Heavy prune: 931 zero-affiliate-click posts deleted (98.4% of the catalog).** Of 946 posts, only 15 produced any affiliate-link click in the last 90 days (GA4 `ghl_click` / `cta_click` / `affiliate_click` / `extendly_click`). Removed the 931 that produced zero — all 30-90 days old, the 35-posts/night firehose output that Google treats as scaled-content abuse. Kept the 14 click-earners + the LATAM pillar (`gohighlevel-latam-pagos-agencias`); structural/attribution pages (`/`, `/trial/`, `/start/`, language hubs) untouched. Sitemap shrinks 946 → 15 quality URLs. Mechanism: delete JSON → 404 (Google-canonical scaled-content removal). Per-page audit in `prune-plan/KILL.txt` + SEO Changelog Sheet rows 36-966. Fully reversible via `git revert`. Traffic context: Bing index (Bing+Yahoo+DuckDuckGo) drives ~2.7× Google; AI referrals (ChatGPT/Perplexity/Claude) ≈ Google — affiliate-click criterion already counts all of them.
+
 ## [0.1.0.3] - 2026-06-03
 ### Fixed
 - LATAM hub: affiliate CTA now points to the Spanish funnel landing /es/trial (was linking directly to the English gohighlevel.com bootcamp). Matches the es-post pattern.
