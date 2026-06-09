@@ -42,6 +42,18 @@ ACCENT_DARK  = "#d97706"
 # Module-level categories — loaded in main()
 CATEGORIES = []   # topic categories (list of dicts)
 LANGUAGES  = []   # language definitions (list of dicts)
+# EN category slugs that actually have a built page after the 2026-06-03 prune.
+# Gates nav/footer category links so they never point at an emptied (404) category.
+LIVE_CATEGORY_SLUGS = set()
+# Language codes that actually have a built hub (build_language_hub skips empty
+# langs). Gates the language picker so it never links a 404 hub (e.g. /ar/).
+LIVE_LANG_CODES = set()
+# Relative paths of every category/language page that actually gets built. Gates
+# hreflang alternates so they never point at an unbuilt (404) page post-prune.
+BUILT_PAGE_PATHS = set()
+# Slugs of blog posts that survived the prune. Gates post hreflang translation
+# maps so they don't advertise pruned sibling-language posts (404) to Google.
+LIVE_POST_SLUGS = set()
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -805,13 +817,22 @@ def _clarity_snippet() -> str:
 
 
 def _build_hreflang_tags(page_path: str = "") -> str:
-    """Build hreflang link tags for a page. page_path is relative (e.g., '/category/ai-automation/')."""
+    """Build hreflang link tags for a page. page_path is relative (e.g., '/category/ai-automation/').
+
+    Only emits an alternate for a language whose version of this page was actually
+    built (tracked in BUILT_PAGE_PATHS). Post-prune many language/category pages
+    don't exist; advertising them via hreflang pointed Google at 404s.
+    """
     tags = []
     for lang in LANGUAGES:
         prefix = lang.get("prefix", "")
-        href = f'{SITE_URL}{prefix}{page_path}' if page_path else f'{SITE_URL}{prefix}/'
-        tags.append(f'<link rel="alternate" hreflang="{lang["code"]}" href="{href}">')
-    tags.append(f'<link rel="alternate" hreflang="x-default" href="{SITE_URL}{page_path or "/"}">')
+        rel = f'{prefix}{page_path}' if page_path else f'{prefix}/'
+        if rel not in BUILT_PAGE_PATHS:
+            continue
+        tags.append(f'<link rel="alternate" hreflang="{lang["code"]}" href="{SITE_URL}{rel}">')
+    default_rel = page_path or "/"
+    if default_rel in BUILT_PAGE_PATHS:
+        tags.append(f'<link rel="alternate" hreflang="x-default" href="{SITE_URL}{default_rel}">')
     return "\n".join(tags)
 
 
@@ -826,10 +847,12 @@ def _build_post_hreflang_tags(translations: dict) -> str:
         return ""
     tags = []
     for code, slug in translations.items():
-        if not slug:
-            continue
+        if not slug or slug not in LIVE_POST_SLUGS:
+            continue  # sibling-language post was pruned; don't advertise a 404
         tags.append(f'<link rel="alternate" hreflang="{code}" href="{SITE_URL}/blog/{slug}/">')
-    default_slug = translations.get("en") or next(iter(translations.values()), "")
+    default_slug = translations.get("en") if translations.get("en") in LIVE_POST_SLUGS else ""
+    if not default_slug:
+        default_slug = next((s for s in translations.values() if s in LIVE_POST_SLUGS), "")
     if default_slug:
         tags.append(f'<link rel="alternate" hreflang="x-default" href="{SITE_URL}/blog/{default_slug}/">')
     return "\n".join(tags)
@@ -851,11 +874,15 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
     # Nav dropdown links (topics only — no languages mixed in)
     dropdown_links = ""
     for c in cats:
+        if c["slug"] not in LIVE_CATEGORY_SLUGS:
+            continue
         dropdown_links += f'    <a href="/category/{c["slug"]}/">{c["name"]}</a>\n'
 
     # Language picker dropdown
     lang_links = ""
     for l in LANGUAGES:
+        if l["code"] not in LIVE_LANG_CODES:
+            continue  # skip languages with no built hub (e.g. /ar/ post-prune)
         active = ' style="color:var(--amber);font-weight:700"' if l["code"] == lang else ""
         href = l["prefix"] + "/" if l["prefix"] else "/"
         lang_links += f'    <a href="{href}"{active}>{l["native"]}</a>\n'
@@ -863,19 +890,21 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
     # Mobile language row
     mobile_lang_links = ""
     for l in LANGUAGES:
-        if l["code"] == lang:
+        if l["code"] == lang or l["code"] not in LIVE_LANG_CODES:
             continue
         href = l["prefix"] + "/" if l["prefix"] else "/"
         mobile_lang_links += f'<a href="{href}" style="display:inline-block;margin-right:16px;font-size:.9rem">{l["native"]}</a>'
 
     # Footer category links (top 4)
     footer_cat_links = ""
-    for c in cats[:4]:
+    for c in [c for c in cats if c["slug"] in LIVE_CATEGORY_SLUGS][:4]:
         footer_cat_links += f'        <a href="/category/{c["slug"]}/">{c["name"]}</a>\n'
 
     # Footer language links
     footer_lang_links = ""
     for l in LANGUAGES:
+        if l["code"] not in LIVE_LANG_CODES:
+            continue  # skip languages with no built hub (e.g. /ar/ post-prune)
         href = l["prefix"] + "/" if l["prefix"] else "/"
         footer_lang_links += f'        <a href="{href}">{l["native"]}</a>\n'
 
@@ -1253,6 +1282,12 @@ def build_post_page(post: dict, all_posts: list = None):
     description = post.get("description", post.get("seoDescription", post.get("meta_description", "")))
     category    = display_cat(post_topic(post)) or "GoHighLevel Tutorials"
     cat_slug    = slugify(category)
+    # Only link the category if its page was actually built. Post-prune some topics
+    # are empty (404); a non-English post whose topic has no built EN category page
+    # (e.g. a lone Spanish AI-Automation post) shows the label as plain text instead.
+    _cat_built  = cat_slug in LIVE_CATEGORY_SLUGS
+    cat_bc      = f'<a href="/category/{cat_slug}/">{category}</a>' if _cat_built else f'<span>{category}</span>'
+    cat_eyebrow = f'<a href="/category/{cat_slug}/" style="color:var(--amber);text-decoration:none">{category}</a>' if _cat_built else f'<span style="color:var(--amber)">{category}</span>'
     date_str    = fmt_date(post.get("publishedAt", post.get("uploadedAt", "")))
     html_content = post.get("html_content", "")
     episode_id  = post.get("transistorEpisodeId", "")
@@ -1411,9 +1446,9 @@ def build_post_page(post: dict, all_posts: list = None):
 <div id="reading-progress"></div>
 <div class="post-container">
   <div class="post-breadcrumb fade-1">
-    <a href="/">Home</a><span class="bc-sep">&rsaquo;</span><a href="/category/{cat_slug}/">{category}</a><span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
+    <a href="/">Home</a><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
   </div>
-  <div class="post-eyebrow fade-1"><a href="/category/{cat_slug}/" style="color:var(--amber);text-decoration:none">{category}</a></div>
+  <div class="post-eyebrow fade-1">{cat_eyebrow}</div>
   <h1 class="post-title fade-2">{title}</h1>
   <div class="post-byline fade-3">
     <span>By William Welch</span>
@@ -1540,6 +1575,8 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         # Topics sidebar
         topics_html = ""
         for c in CATEGORIES:
+            if c["slug"] not in LIVE_CATEGORY_SLUGS:
+                continue  # skip emptied categories — their page 404s post-prune
             c_count = len([p for p in posts if slugify(post_topic(p)) == c["slug"]])
             topics_html += f"""
 <a href="/category/{c['slug']}/" class="sidebar-cat-link">
@@ -1697,14 +1734,21 @@ def build_sitemap(posts: list[dict]):
     # - /coupon/ 301 redirects to /blog/gohighlevel-free-trial-30-days-extended/ (discount-consolidation 2026-04-21)
     urls.append(f"  <url><loc>{SITE_URL}/services/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>")
     urls.append(f"  <url><loc>{SITE_URL}/about/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>")
+    # Only list pages that were actually built. The 2026-06-03 prune emptied many
+    # categories/languages; build_sitemap runs after the category and language
+    # page builders, so the index.html on disk is ground truth for these entries
+    # — never advertise a 404 to Google.
     for c in CATEGORIES:
-        urls.append(f'  <url><loc>{SITE_URL}/category/{c["slug"]}/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>')
+        if (PUBLIC_DIR / "category" / c["slug"] / "index.html").exists():
+            urls.append(f'  <url><loc>{SITE_URL}/category/{c["slug"]}/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>')
     # Language hubs + language-specific topic pages
     for lang in LANGUAGES:
-        if lang["prefix"]:
-            urls.append(f'  <url><loc>{SITE_URL}{lang["prefix"]}/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>')
+        prefix = lang["prefix"]
+        if prefix and (PUBLIC_DIR / prefix.lstrip("/") / "index.html").exists():
+            urls.append(f'  <url><loc>{SITE_URL}{prefix}/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>')
             for c in CATEGORIES:
-                urls.append(f'  <url><loc>{SITE_URL}{lang["prefix"]}/category/{c["slug"]}/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>')
+                if (PUBLIC_DIR / prefix.lstrip("/") / "category" / c["slug"] / "index.html").exists():
+                    urls.append(f'  <url><loc>{SITE_URL}{prefix}/category/{c["slug"]}/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>')
     for p in posts:
         date = p.get("publishedAt", p.get("uploadedAt", ""))[:10]
         urls.append(f'  <url><loc>{SITE_URL}{post_url(p)}</loc><lastmod>{date}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>')
@@ -3087,7 +3131,7 @@ def main():
     if REDIRECTS_SRC.exists():
         shutil.copy(REDIRECTS_SRC, PUBLIC_DIR / "_redirects")
 
-    global CATEGORIES, LANGUAGES
+    global CATEGORIES, LANGUAGES, LIVE_CATEGORY_SLUGS, LIVE_LANG_CODES, BUILT_PAGE_PATHS, LIVE_POST_SLUGS
     CATEGORIES, LANGUAGES = load_categories()
 
     posts     = load_posts()
@@ -3098,6 +3142,43 @@ def main():
     print(f"  Episodes in published.json: {len(published)}")
     print(f"  Categories: {len(CATEGORIES)}")
     print(f"  Merged: {len(merged)}\n")
+
+    # Which English categories still have posts (mirrors build_category_pages
+    # bucketing). base_html links category pages while pages are mid-build, so it
+    # can't disk-check — it reads this precomputed set instead. Recomputed every
+    # build, so it self-heals as the pipeline adds posts back.
+    LIVE_CATEGORY_SLUGS = set()
+    for _p in merged:
+        if post_lang(_p) != "en":
+            continue
+        _topic = post_topic(_p)
+        _cat = _topic if display_cat(_topic) else "GoHighLevel Tutorials"
+        LIVE_CATEGORY_SLUGS.add(slugify(_cat))
+    # Languages with at least one post get a built hub (mirrors build_language_hub's
+    # `if not lang_posts: return`). English ("en") is always present.
+    LIVE_LANG_CODES = {post_lang(_p) for _p in merged} | {"en"}
+    # Slugs of surviving blog posts; gates post hreflang maps (see _build_post_hreflang_tags).
+    LIVE_POST_SLUGS = {_p.get("slug") for _p in merged if _p.get("slug")}
+
+    # Relative paths of every category/language page that will actually be built,
+    # so _build_hreflang_tags() never advertises an unbuilt (404) alternate to
+    # Google. Mirrors build_category_pages (EN), build_language_hub (>=1 post),
+    # and build_language_topic_pages (>=2 posts per language-topic).
+    BUILT_PAGE_PATHS = {"/", "/services/", "/about/"}
+    BUILT_PAGE_PATHS |= {f"/category/{_s}/" for _s in LIVE_CATEGORY_SLUGS}
+    for _lang in LANGUAGES:
+        _prefix = _lang["prefix"]
+        if not _prefix or _lang["code"] not in LIVE_LANG_CODES:
+            continue  # English root handled above; skip languages with no built hub
+        BUILT_PAGE_PATHS.add(f"{_prefix}/")
+        _counts = {}
+        for _p in merged:
+            if post_lang(_p) == _lang["code"]:
+                _t = post_topic(_p)
+                _counts[_t] = _counts.get(_t, 0) + 1
+        for _t, _n in _counts.items():
+            if _n >= 2:
+                BUILT_PAGE_PATHS.add(f"{_prefix}/category/{slugify(_t)}/")
 
     # Individual post pages — authority template for series content, blog template for rest
     print("Building post pages...")
