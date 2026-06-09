@@ -1820,7 +1820,7 @@ LOCALIZED_LANDING_LANGS = [
         "prefix": "/es",
         "dir": "ltr",
         "title": "Prueba GoHighLevel Gratis 30 Días — Empieza con $0",
-        "desc": "Comienza tu prueba gratis de 30 días de GoHighLevel. Solo se requiere una tarjeta para verificación (un cargo temporal de ~$1, sin cargo de suscripción). Acceso completo a todas las funciones. Cancela cuando quieras.",
+        "desc": "Comienza tu prueba gratis de 30 días de GoHighLevel. Solo se requiere una tarjeta para verificación (una retención temporal de ~$1 que tu banco libera, sin cargo de suscripción). Acceso completo a todas las funciones. Cancela cuando quieras.",
         "h1": "Prueba GoHighLevel Gratis por 30 Días",
         "subh": "$0 por 30 días — solo una verificación de tarjeta de ~$1. Acceso completo. Cancela cuando quieras.",
         "cta": "Empezar mi prueba gratis",
@@ -1864,7 +1864,7 @@ LOCALIZED_LANDING_LANGS = [
         "prefix": "/ar",
         "dir": "rtl",
         "title": "نسخة تجريبية مجانية من GoHighLevel لمدة 30 يوم",
-        "desc": "ابدأ تجربتك المجانية لمدة 30 يوم من GoHighLevel. مطلوبة بطاقة للتحقق فقط (رسم مؤقت ~$1، بدون رسوم اشتراك). وصول كامل لجميع الميزات. ألغِ في أي وقت.",
+        "desc": "ابدأ تجربتك المجانية لمدة 30 يوم من GoHighLevel. مطلوبة بطاقة للتحقق فقط (حجز مؤقت بقيمة ~$1 يحرره البنك، بدون رسوم اشتراك). وصول كامل لجميع الميزات. ألغِ في أي وقت.",
         "h1": "ابدأ تجربتك المجانية من GoHighLevel لمدة 30 يوم",
         "subh": "$0 لمدة 30 يوم — فقط تحقق من البطاقة بقيمة ~$1. وصول كامل. ألغِ في أي وقت.",
         "cta": "ابدأ تجربتي المجانية",
@@ -1976,7 +1976,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
             {
                 "@type": "Question",
                 "name": "Do I need a credit card for the GoHighLevel free trial?",
-                "acceptedAnswer": {"@type": "Answer", "text": "No. The 30-day GoHighLevel free trial does not require a credit card. You can cancel anytime during the trial with no charge."}
+                "acceptedAnswer": {"@type": "Answer", "text": "Yes, a card is required to start the trial: a ~$1 verification hold your bank releases, not a subscription charge. You pay nothing for 30 days and can cancel anytime."}
             },
             {
                 "@type": "Question",
@@ -2069,7 +2069,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
       </tr></thead>
       <tbody>
         <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Trial length</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">14 days</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">30 days</td></tr>
-        <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Credit card required</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Yes (most)</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">No</td></tr>
+        <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Credit card to start</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Yes (charged)</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">~$1 hold only</td></tr>
         <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Full feature access</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Limited/restricted</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">100% unrestricted</td></tr>
         <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Time to build & test</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Rushed</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">Real-world validation</td></tr>
         <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Cost if you cancel</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Risk of charges</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">$0 guaranteed</td></tr>
@@ -2158,7 +2158,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
 
     <div style="margin-bottom:24px">
       <h3 style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px">Do I need a credit card for the GoHighLevel free trial?</h3>
-      <p style="font-size:.95rem;color:var(--text2);line-height:1.7">No. The 30-day GoHighLevel free trial does not require a credit card. You can cancel anytime during the trial with no charge.</p>
+      <p style="font-size:.95rem;color:var(--text2);line-height:1.7">Yes, a card is required to start the trial: a ~$1 verification hold your bank releases, not a subscription charge. You pay nothing for 30 days and can cancel anytime.</p>
     </div>
 
     <div style="margin-bottom:24px">
