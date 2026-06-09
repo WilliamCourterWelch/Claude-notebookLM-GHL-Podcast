@@ -1347,7 +1347,7 @@ def build_post_page(post: dict, all_posts: list = None):
     cta3 = f"""
 <div class="cta-end">
   <h3>Ready to try this?</h3>
-  <p>30 days free, no credit card required. Set up everything in this guide inside your trial.</p>
+  <p>$0 for 30 days — just a ~$1 card-verification hold (no subscription charge). Set up everything in this guide inside your trial.</p>
   <a href="{AFFILIATE}&utm_campaign={slug}" class="btn-amber" target="_blank" rel="nofollow noopener">Start Free 30-Day Trial</a>
   <div class="fine">Cancel anytime &mdash; $0 for the first 30 days</div>
 </div>"""
@@ -1819,10 +1819,10 @@ LOCALIZED_LANDING_LANGS = [
         "code": "es",
         "prefix": "/es",
         "dir": "ltr",
-        "title": "Prueba GoHighLevel Gratis 30 Días — Sin Tarjeta de Crédito",
-        "desc": "Comienza tu prueba gratis de 30 días de GoHighLevel. Sin tarjeta de crédito. Acceso completo a todas las funciones. Cancela cuando quieras.",
+        "title": "Prueba GoHighLevel Gratis 30 Días — Empieza con $0",
+        "desc": "Comienza tu prueba gratis de 30 días de GoHighLevel. Solo se requiere una tarjeta para verificación (una retención temporal de ~$1 que tu banco libera, sin cargo de suscripción). Acceso completo a todas las funciones. Cancela cuando quieras.",
         "h1": "Prueba GoHighLevel Gratis por 30 Días",
-        "subh": "Sin tarjeta de crédito. Acceso completo. Cancela cuando quieras.",
+        "subh": "$0 por 30 días — solo una verificación de tarjeta de ~$1. Acceso completo. Cancela cuando quieras.",
         "cta": "Empezar mi prueba gratis",
         "value_props": [
             ("CRM todo-en-uno", "Reemplaza 10+ herramientas: CRM, embudos, email, SMS, WhatsApp, calendarios, pagos."),
@@ -1831,7 +1831,7 @@ LOCALIZED_LANDING_LANGS = [
         ],
         "faq_h": "Preguntas frecuentes",
         "faq": [
-            ("¿Necesito tarjeta de crédito?", "No. La prueba de 30 días no requiere tarjeta. Solo te registras con tu email."),
+            ("¿Necesito tarjeta de crédito?", "Sí. Para activar la prueba de 30 días se requiere una tarjeta — es una verificación de ~$1 que tu banco libera, no un cargo de suscripción. No pagas nada durante los 30 días y cancelas cuando quieras."),
             ("¿Cuánto cuesta después de la prueba?", "Desde $97 USD al mes. Puedes cancelar en cualquier momento durante los 30 días sin cargo."),
             ("¿Qué pasa si cancelo?", "Tu cuenta se cierra sin cargo. Mantienes lo que construiste pero no puedes acceder después de la cancelación."),
         ],
@@ -1841,10 +1841,10 @@ LOCALIZED_LANDING_LANGS = [
         "code": "in",
         "prefix": "/in",
         "dir": "ltr",
-        "title": "GoHighLevel Free Trial India — 30 Days, No Credit Card",
-        "desc": "Start your 30-day GoHighLevel free trial in India. No credit card required. Full access to all features, $97/mo (~₹8,000) after trial. Cancel anytime.",
+        "title": "GoHighLevel Free Trial India — 30 Days, $0 to Start",
+        "desc": "Start your 30-day GoHighLevel free trial in India. A card is required to verify (a temporary ~$1 hold, no subscription charge; 3DS/OTP for Indian cards). Full access to all features, $97/mo (~₹8,000) after trial. Cancel anytime.",
         "h1": "Start Your 30-Day GoHighLevel Free Trial",
-        "subh": "No credit card. Full access. Built for Indian agencies with Razorpay, WhatsApp, and UPI integration.",
+        "subh": "$0 for 30 days — just a ~$1 card-verification hold. Full access. Built for Indian agencies with Razorpay, WhatsApp, and UPI integration.",
         "cta": "Start my free trial",
         "value_props": [
             ("All-in-one CRM for Indian agencies", "Replace 10+ tools. CRM, funnels, email, WhatsApp, UPI-ready payments."),
@@ -1853,7 +1853,7 @@ LOCALIZED_LANDING_LANGS = [
         ],
         "faq_h": "Frequently asked questions",
         "faq": [
-            ("Do I need a credit card?", "No. The 30-day trial doesn't require a credit card. Sign up with email only."),
+            ("Do I need a credit card?", "Yes. Activating the 30-day trial requires a card — it's a ~$1 verification hold your bank releases, not a subscription charge. You pay nothing for 30 days and can cancel anytime. (Indian cards use 3DS/OTP.)"),
             ("What does it cost after the trial?", "Starts at $97 USD/month (~₹8,000/month). Agency plan ~₹24,700/month. Cancel anytime during the 30-day trial with no charge."),
             ("Does it work with Razorpay and WhatsApp Business API?", "Yes. GoHighLevel supports Razorpay, PayU, and WhatsApp Business API natively — no third-party integration headaches."),
         ],
@@ -1864,9 +1864,9 @@ LOCALIZED_LANDING_LANGS = [
         "prefix": "/ar",
         "dir": "rtl",
         "title": "نسخة تجريبية مجانية من GoHighLevel لمدة 30 يوم",
-        "desc": "ابدأ تجربتك المجانية لمدة 30 يوم من GoHighLevel. لا توجد بطاقة ائتمان. وصول كامل لجميع الميزات. ألغِ في أي وقت.",
+        "desc": "ابدأ تجربتك المجانية لمدة 30 يوم من GoHighLevel. مطلوبة بطاقة للتحقق فقط (حجز مؤقت بقيمة ~$1 يحرره البنك، بدون رسوم اشتراك). وصول كامل لجميع الميزات. ألغِ في أي وقت.",
         "h1": "ابدأ تجربتك المجانية من GoHighLevel لمدة 30 يوم",
-        "subh": "لا توجد بطاقة ائتمان. وصول كامل. ألغِ في أي وقت.",
+        "subh": "$0 لمدة 30 يوم — فقط تحقق من البطاقة بقيمة ~$1. وصول كامل. ألغِ في أي وقت.",
         "cta": "ابدأ تجربتي المجانية",
         "value_props": [
             ("نظام CRM شامل", "استبدل أكثر من 10 أدوات: CRM، قنوات، بريد إلكتروني، واتساب، تقويمات، مدفوعات."),
@@ -1875,7 +1875,7 @@ LOCALIZED_LANDING_LANGS = [
         ],
         "faq_h": "أسئلة شائعة",
         "faq": [
-            ("هل أحتاج بطاقة ائتمان؟", "لا. التجربة لمدة 30 يوم لا تتطلب بطاقة. سجل بالبريد الإلكتروني فقط."),
+            ("هل أحتاج بطاقة ائتمان؟", "نعم. لتفعيل التجربة لمدة 30 يوم مطلوبة بطاقة — وهو تحقق بقيمة ~$1 يحرره بنكك، وليس رسوم اشتراك. لا تدفع شيئاً خلال الـ 30 يوم وتلغي في أي وقت."),
             ("كم التكلفة بعد التجربة؟", "تبدأ من 97 دولار شهرياً (~356 درهم إماراتي، ~364 ريال سعودي). ألغِ خلال الـ30 يوم بدون رسوم."),
             ("ماذا لو ألغيت؟", "يغلق حسابك بدون رسوم. تحتفظ بما بنيته لكن لن تتمكن من الوصول بعد الإلغاء."),
         ],
@@ -1961,8 +1961,8 @@ def _build_affiliate_landing(slug: str, campaign: str):
     separate URLs allow GA4 to attribute traffic source via page_path.
     """
     canonical = f"{SITE_URL}/{slug}/"
-    title = "GoHighLevel Free Trial 2026: 30 Days No Credit Card Required"
-    description = "Start your 30-day GoHighLevel free trial — no credit card required. Full access to every feature, $0 to start, cancel anytime. Zero risk, real results."
+    title = "GoHighLevel Free Trial 2026: 30 Days, $0 to Start"
+    description = "Start your 30-day GoHighLevel free trial — $0 to start (just a ~$1 card-verification hold, no subscription charge). Full access to every feature, cancel anytime. Zero risk, real results."
 
     faq_schema = json.dumps({
         "@context": "https://schema.org",
@@ -1976,7 +1976,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
             {
                 "@type": "Question",
                 "name": "Do I need a credit card for the GoHighLevel free trial?",
-                "acceptedAnswer": {"@type": "Answer", "text": "No. The 30-day GoHighLevel free trial does not require a credit card. You can cancel anytime during the trial with no charge."}
+                "acceptedAnswer": {"@type": "Answer", "text": "Yes, a card is required to start the trial: a ~$1 verification hold your bank releases, not a subscription charge. You pay nothing for 30 days and can cancel anytime."}
             },
             {
                 "@type": "Question",
@@ -2043,18 +2043,18 @@ def _build_affiliate_landing(slug: str, campaign: str):
 
   <div class="fade-1" style="text-align:center;margin-bottom:48px">
     <p style="font-size:.82rem;color:var(--text3);margin-bottom:24px">Already know you want in? <a href="{AFFILIATE}&utm_campaign={campaign}-skip" target="_blank" rel="nofollow noopener" style="color:var(--amber)">Go straight to GoHighLevel &rarr;</a></p>
-    <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--amber);margin-bottom:16px">Extended 30-Day Offer · No Credit Card</p>
-    <h1 style="font-family:var(--sans);font-size:clamp(2rem,4vw,3.2rem);font-weight:800;line-height:1.15;color:var(--text);letter-spacing:-.5px;margin-bottom:20px">30 Days to Test GoHighLevel. No Credit Card. No BS.</h1>
+    <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--amber);margin-bottom:16px">Extended 30-Day Offer · $0 to Start</p>
+    <h1 style="font-family:var(--sans);font-size:clamp(2rem,4vw,3.2rem);font-weight:800;line-height:1.15;color:var(--text);letter-spacing:-.5px;margin-bottom:20px">30 Days to Test GoHighLevel. $0 to Start. No BS.</h1>
     <p style="font-size:1.15rem;color:var(--text2);line-height:1.7;max-width:580px;margin:0 auto 28px">Most trials give you 14 days and hope you figure it out. We give you 30—enough time to actually build, test, and decide if GHL scales your business.</p>
     <a href="{AFFILIATE}&utm_campaign={campaign}-hero" class="btn-amber" style="font-size:1rem;padding:14px 36px" target="_blank" rel="nofollow noopener">Start Your 30-Day Free Trial &rarr;</a>
-    <p style="font-size:.8rem;color:var(--text3);margin-top:12px">$0 for 30 days &middot; No credit card &middot; Cancel anytime</p>
+    <p style="font-size:.8rem;color:var(--text3);margin-top:12px">$0 for 30 days &middot; ~$1 card-verification hold &middot; Cancel anytime</p>
   </div>
 
   <div style="border-top:1px solid var(--border);padding-top:48px;margin-bottom:48px" class="fade-2">
     <h2 style="font-family:var(--sans);font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:24px">Why Get a 30-Day GHL Free Trial Instead of 14?</h2>
 <p style="font-size:1.05rem;color:var(--text2);line-height:1.75;margin-bottom:20px">Fourteen days is a speed bump, not a runway. Agencies and home service owners we work with need 30 days minimum to build a working funnel, run a test campaign, and see real data. The extra 16 days isn't padding—it's the difference between 'maybe' and 'proven ROI.'</p>
     <p style="font-size:1.05rem;color:var(--text2);line-height:1.75;margin-bottom:20px">You won't hit a paywall mid-build. Full access to CRM, funnel builder, email, SMS, workflow automation, sub-accounts (if you're scaling a team), and landing pages. No restrictions. No 'upgrade to see this.' Trial on your chosen plan level.</p>
-    <p style="font-size:1.05rem;color:var(--text2);line-height:1.75;margin-bottom:20px">No credit card upfront. No surprise charges on day 15. Cancel anytime before 30 days pass and pay nothing. If you stay, it's $97/mo (Starter) or $297/mo (Agency). That's it. Many agencies and service businesses have already proven it works; now you test it risk-free.</p>
+    <p style="font-size:1.05rem;color:var(--text2);line-height:1.75;margin-bottom:20px">No subscription charge upfront — just a ~$1 card-verification hold your bank releases. No surprise charges on day 15. Cancel anytime before 30 days pass and pay nothing. If you stay, it's $97/mo (Starter) or $297/mo (Agency). That's it. Many agencies and service businesses have already proven it works; now you test it risk-free.</p>
   </div>
 
 
@@ -2069,7 +2069,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
       </tr></thead>
       <tbody>
         <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Trial length</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">14 days</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">30 days</td></tr>
-        <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Credit card required</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Yes (most)</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">No</td></tr>
+        <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Credit card to start</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Yes (charged)</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">~$1 hold only</td></tr>
         <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Full feature access</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Limited/restricted</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">100% unrestricted</td></tr>
         <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Time to build & test</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Rushed</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">Real-world validation</td></tr>
         <tr><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Cost if you cancel</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text2)">Risk of charges</td><td style="padding:12px 16px;border-top:1px solid var(--border);color:var(--text);font-weight:600">$0 guaranteed</td></tr>
@@ -2090,7 +2090,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
   <div style="border-top:1px solid var(--border);padding-top:48px;margin-bottom:48px">
     <h2 style="font-family:var(--sans);font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:24px">What Happens When You Start the Free Trial</h2>
     <div style="display:grid;grid-template-columns:1fr;gap:16px">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px"><div style="font-size:.85rem;font-weight:700;color:var(--amber);margin-bottom:6px">Step 1: Click to start</div><p style="font-size:.88rem;color:var(--text2);line-height:1.65;margin:0">No form. No credit card. One click and you're in. Choose your plan level—you get full features on all of them during the trial.</p></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px"><div style="font-size:.85rem;font-weight:700;color:var(--amber);margin-bottom:6px">Step 1: Click to start</div><p style="font-size:.88rem;color:var(--text2);line-height:1.65;margin:0">One click to start. You verify a card (a ~$1 hold, not a subscription charge) and choose your plan level—full features on all of them during the trial.</p></div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px"><div style="font-size:.85rem;font-weight:700;color:var(--amber);margin-bottom:6px">Step 2: Set up in ~20 min</div><p style="font-size:.88rem;color:var(--text2);line-height:1.65;margin:0">Connect your domain, import contacts if you have them, and pick a template. GHL's funnel builder is drag-and-drop. You'll have a live landing page or lead form before your coffee gets cold.</p></div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px"><div style="font-size:.85rem;font-weight:700;color:var(--amber);margin-bottom:6px">Step 3: Build, test, decide</div><p style="font-size:.88rem;color:var(--text2);line-height:1.65;margin:0">Spend days 2–25 running a real campaign. Drive traffic. Capture leads. Watch the automations work. By day 28, you'll have actual numbers to decide on.</p></div>
     </div>
@@ -2158,7 +2158,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
 
     <div style="margin-bottom:24px">
       <h3 style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px">Do I need a credit card for the GoHighLevel free trial?</h3>
-      <p style="font-size:.95rem;color:var(--text2);line-height:1.7">No. The 30-day GoHighLevel free trial does not require a credit card. You can cancel anytime during the trial with no charge.</p>
+      <p style="font-size:.95rem;color:var(--text2);line-height:1.7">Yes, a card is required to start the trial: a ~$1 verification hold your bank releases, not a subscription charge. You pay nothing for 30 days and can cancel anytime.</p>
     </div>
 
     <div style="margin-bottom:24px">
@@ -2269,7 +2269,7 @@ def build_coupon_page():
             {
                 "@type": "Question",
                 "name": "What is the best GoHighLevel deal right now?",
-                "acceptedAnswer": {"@type": "Answer", "text": "The best deal is the extended 30-day free trial — double the standard 14 days. Full access to every feature, no credit card required, cancel anytime. This is better than any coupon code because you pay $0 for a full month."}
+                "acceptedAnswer": {"@type": "Answer", "text": "The best deal is the extended 30-day free trial — double the standard 14 days. Full access to every feature, cancel anytime, and you pay $0 for a full month (a card is required to start, just a ~$1 verification hold, not a subscription charge). This is better than any coupon code."}
             }
         ]
     })
@@ -2284,7 +2284,7 @@ def build_coupon_page():
     <p style="font-size:1.15rem;color:var(--text2);line-height:1.7;max-width:580px;margin:0 auto 12px">There's no GoHighLevel coupon code or promo code. But there's something better:</p>
     <p style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:28px">30 days free instead of 14 &mdash; no code needed.</p>
     <a href="{AFFILIATE}&utm_campaign=coupon-page-hero" class="btn-amber" style="font-size:1rem;padding:14px 36px" target="_blank" rel="nofollow noopener">Start Your 30-Day Free Trial &rarr;</a>
-    <p style="font-size:.8rem;color:var(--text3);margin-top:12px">No credit card required &middot; No coupon code needed &middot; Cancel anytime</p>
+    <p style="font-size:.8rem;color:var(--text3);margin-top:12px">$0 for 30 days &middot; No coupon code needed &middot; Cancel anytime</p>
   </div>
 
   <div style="border-top:1px solid var(--border);padding-top:48px;margin-bottom:48px" class="fade-2">
@@ -2376,7 +2376,7 @@ def build_coupon_page():
 
     <div style="margin-bottom:24px">
       <h3 style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px">What is the best GoHighLevel deal right now?</h3>
-      <p style="font-size:.95rem;color:var(--text2);line-height:1.7">The best deal is the extended 30-day free trial — double the standard 14 days. Full access to every feature, no credit card required, cancel anytime. This is better than any coupon code because you pay <strong style="color:var(--text)">$0 for a full month</strong>.</p>
+      <p style="font-size:.95rem;color:var(--text2);line-height:1.7">The best deal is the extended 30-day free trial — double the standard 14 days. Full access to every feature, cancel anytime, and you pay <strong style="color:var(--text)">$0 for a full month</strong> (a card is required to start — just a ~$1 verification hold, not a subscription charge). Better than any coupon code.</p>
     </div>
   </div>
 
@@ -2773,7 +2773,7 @@ def build_about_page(total_posts: int = 0):
 
   <div class="cta-end" style="margin-top:48px">
     <h3>Try GoHighLevel Free</h3>
-    <p>30 days free — double the standard 14-day trial. No credit card required.</p>
+    <p>30 days free — double the standard 14-day trial. $0 to start (just a ~$1 card-verification hold).</p>
     <a href="{AFFILIATE}&utm_campaign=about" class="btn-amber" target="_blank" rel="nofollow noopener">Start Free 30-Day Trial</a>
   </div>
 </article>
