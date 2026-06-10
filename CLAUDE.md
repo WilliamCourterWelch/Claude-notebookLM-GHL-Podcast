@@ -4,7 +4,7 @@
 - **VPS:** IONOS at 74.208.190.10, SSH user `root`, key `~/.ssh/ionos_ghl`, scripts at `/opt/ghl-pipeline/`
 - **Site:** globalhighlevel.com on Cloudflare Pages, static build via `build.py`
 - **Repo:** RecoveryBiometrics/Claude-notebookLM-GHL-Podcast
-- **Posts:** Sync both `posts/` and `globalhighlevel-site/posts/`
+- **Posts:** Canonical post store is `globalhighlevel-site/posts/` — generators (`5-blog.py`, `6-india-blog.py`, `7-spanish-blog.py`, `9-arabic-blog.py`) write there, `build.py` reads there, Cloudflare builds from `globalhighlevel-site/`. The old repo-root `posts/` dir was removed 2026-06-10 (vestigial pre-restructure duplicate, read by nothing; its scheduler "sync" was dead code pointing at a nonexistent nested path). Do NOT recreate a repo-root `posts/`.
 
 ## Pipeline Cycle (25 hours, VPS systemd)
 ```
