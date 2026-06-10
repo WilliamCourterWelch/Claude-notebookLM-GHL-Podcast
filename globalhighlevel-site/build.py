@@ -33,6 +33,14 @@ SITE_URL     = os.getenv("SITE_URL", "https://globalhighlevel.com")
 SITE_NAME    = os.getenv("SITE_NAME", "Global High Level")
 SITE_TAGLINE = os.getenv("SITE_TAGLINE", "GoHighLevel Tutorials, Guides & Strategies for Agencies Worldwide")
 AFFILIATE    = os.getenv("GHL_AFFILIATE_LINK", "https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=website")
+# Spanish funnel lands on the localized bootcamp (same fp_ref / FirstPromoter
+# attribution, Spanish landing page). fp_ref tracks by param, not by slug, so
+# attribution is unchanged — only the language of the destination changes.
+AFFILIATE_ES = AFFILIATE.replace("/highlevel-bootcamp?", "/highlevel-bootcamp-es?")
+
+def affiliate_for(lang: str) -> str:
+    """Language-aware affiliate base URL. Spanish -> -es bootcamp; others -> default."""
+    return AFFILIATE_ES if lang == "es" else AFFILIATE
 
 GA_ID        = "G-HYT0YKNGX2"
 CLARITY_ID   = "wkeq0t21ww"
@@ -866,6 +874,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         LANG_META_VIOLATIONS.append(msg)
     og_img = og_image or os.getenv("OG_IMAGE_URL", "")
     cats = CATEGORIES
+    aff = affiliate_for(lang)
 
     # Determine current language for language picker
     current_lang = next((l for l in LANGUAGES if l["code"] == lang), None)
@@ -969,7 +978,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         <div class="nav-dropdown-menu">
 {lang_links}        </div>
       </div>
-      <a href="{AFFILIATE}" class="nav-cta" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
+      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
     </div>
     <input type="checkbox" id="mobile-toggle">
     <label for="mobile-toggle" class="hamburger" aria-label="Menu">
@@ -984,7 +993,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         <span style="font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Language</span><br>
         {mobile_lang_links}
       </div>
-      <a href="{AFFILIATE}" class="nav-cta" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
+      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
     </div>
   </div>
 </nav>
@@ -1007,7 +1016,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         <h4>Resources</h4>
         <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
         <a href="https://help.gohighlevel.com" target="_blank" rel="noopener">GHL Help Center</a>
-        <a href="{AFFILIATE}" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
+        <a href="{aff}" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1290,6 +1299,7 @@ def build_post_page(post: dict, all_posts: list = None):
     cat_eyebrow = f'<a href="/category/{cat_slug}/" style="color:var(--amber);text-decoration:none">{category}</a>' if _cat_built else f'<span style="color:var(--amber)">{category}</span>'
     date_str    = fmt_date(post.get("publishedAt", post.get("uploadedAt", "")))
     html_content = post.get("html_content", "")
+    aff         = affiliate_for(post.get("language", "en"))
     episode_id  = post.get("transistorEpisodeId", "")
     rtime       = read_time(html_content)
     canonical   = f"{SITE_URL}{post_url(post)}"
@@ -1348,7 +1358,7 @@ def build_post_page(post: dict, all_posts: list = None):
 <div class="cta-end">
   <h3>Ready to try this?</h3>
   <p>$0 for 30 days — just a ~$1 card-verification hold (no subscription charge). Set up everything in this guide inside your trial.</p>
-  <a href="{AFFILIATE}&utm_campaign={slug}" class="btn-amber" target="_blank" rel="nofollow noopener">Start Free 30-Day Trial</a>
+  <a href="{aff}&utm_campaign={slug}" class="btn-amber" target="_blank" rel="nofollow noopener">Start Free 30-Day Trial</a>
   <div class="fine">Cancel anytime &mdash; $0 for the first 30 days</div>
 </div>"""
 
@@ -1892,7 +1902,7 @@ def _build_localized_affiliate_landing(lang_cfg: dict, slug: str, campaign: str)
     prefix = lang_cfg["prefix"]
     direction = lang_cfg["dir"]
     canonical = f"{SITE_URL}{prefix}/{slug}/"
-    affiliate_url = f"{AFFILIATE}&utm_campaign={lang}-{campaign}"
+    affiliate_url = f"{affiliate_for(lang)}&utm_campaign={lang}-{campaign}"
 
     value_props_html = "\n".join(
         f'  <div class="vp-item">\n    <strong>{name}</strong>\n    <p>{desc}</p>\n  </div>'
