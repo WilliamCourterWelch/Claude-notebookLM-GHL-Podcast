@@ -68,6 +68,19 @@ DEFAULT_TOPICS = [
 ARABIC_FACT_RULES = """
 MENA-SPECIFIC GHL FACT CHECK RULES:
 
+NEVER FABRICATE (HARD RULE — applies to the whole post):
+- NO invented people, named companies, or client names (no "an agency called Digital Momentum", no named person)
+- NO invented case studies, testimonials, or first-person success stories presented as real
+- NO invented numbers: revenue, savings, client counts, ROI %, "reduced X by N%", "closed N clients", "paid for itself in N weeks"
+- NO "trusted by X agencies" / social-proof counts
+- ALLOWED: clearly-marked hypothetical examples ("Imagine a typical 5-person agency - illustrative example, not a real client")
+- ALLOWED: public data with a cited source (official GHL pricing, a competitor's published pricing page)
+- If a specific number has no cited source, rewrite the sentence to remove it. If a named person/company has no approval, strip the name.
+
+PAYMENT-INTEGRATION ACCURACY (HARD RULE):
+- GoHighLevel's NATIVE payment processors are: Stripe, PayPal, NMI, Authorize.net, Square, plus MercadoPago (LATAM) and Razorpay (India, per sub-account via the App Marketplace).
+- Local gateways like PayU, CashFree, Conekta, Transbank, PayTabs, Tap are NOT native GHL integrations - they require a custom integration. NEVER present them as built-in GHL payment features; if you mention one, say it connects via a custom integration, not natively.
+
 COMMUNICATION:
 - WhatsApp is THE primary business communication tool across all MENA markets
 - WhatsApp Business API is the correct GHL feature to highlight

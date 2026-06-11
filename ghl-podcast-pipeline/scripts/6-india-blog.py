@@ -63,13 +63,26 @@ DEFAULT_TOPICS = [
 INDIA_FACT_RULES = """
 INDIA-SPECIFIC GHL FACT CHECK RULES:
 
+NEVER FABRICATE (HARD RULE — applies to the whole post):
+- NO invented people, named companies, or client names (no "an agency called Digital Momentum", no named person)
+- NO invented case studies, testimonials, or first-person success stories presented as real
+- NO invented numbers: revenue, savings, client counts, ROI %, "reduced X by N%", "closed N clients", "paid for itself in N weeks"
+- NO "trusted by X agencies" / social-proof counts
+- ALLOWED: clearly-marked hypothetical examples ("Imagine a typical 5-person agency - illustrative example, not a real client")
+- ALLOWED: public data with a cited source (official GHL pricing, a competitor's published pricing page)
+- If a specific number has no cited source, rewrite the sentence to remove it. If a named person/company has no approval, strip the name.
+
+PAYMENT-INTEGRATION ACCURACY (HARD RULE):
+- GoHighLevel's NATIVE payment processors are: Stripe, PayPal, NMI, Authorize.net, Square, plus MercadoPago (LATAM) and Razorpay (India, per sub-account via the App Marketplace).
+- Local gateways like PayU, CashFree, Conekta, Transbank, PayTabs, Tap are NOT native GHL integrations - they require a custom integration. NEVER present them as built-in GHL payment features; if you mention one, say it connects via a custom integration, not natively.
+
 COMMUNICATION:
 - India uses WhatsApp, NOT SMS for business communication
 - WhatsApp Business API is the correct GHL feature to highlight
 - Cold outreach = WhatsApp first, then call — never SMS blast
 
 PAYMENTS:
-- Indians use Razorpay, PayU, or UPI — NOT Stripe primarily
+- Indians use Razorpay and UPI. GoHighLevel has a NATIVE Razorpay integration (per sub-account, from the App Marketplace). PayU is NOT a native GHL integration — do not present it as a built-in payment option; if mentioned, say it needs a custom integration.
 - Always mention UPI as a payment option
 - Pricing must be in ₹ rupees (not just dollars)
 
