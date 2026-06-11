@@ -3,7 +3,7 @@ build.py — Static site generator for globalhighlevel.com
 
 Reads:
   - posts/*.json         (blog post HTML + metadata, saved by 5-blog.py)
-  - ../ghl-podcast-pipeline/data/published.json  (episode metadata)
+  - data/published.json  (podcast episode metadata; relocated from the retired pipeline)
 
 Generates:
   - public/index.html                      homepage
@@ -26,7 +26,7 @@ from lang_check import validate_meta
 BASE_DIR       = Path(__file__).parent
 POSTS_DIR      = BASE_DIR / "posts"
 PUBLIC_DIR     = BASE_DIR / "public"
-PUBLISHED_JSON = BASE_DIR / ".." / "ghl-podcast-pipeline" / "data" / "published.json"
+PUBLISHED_JSON = BASE_DIR / "data" / "published.json"
 CATEGORIES_JSON = BASE_DIR / "categories.json"
 
 SITE_URL     = os.getenv("SITE_URL", "https://globalhighlevel.com")

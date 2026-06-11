@@ -68,7 +68,7 @@
 - AI crawlers (GPTBot, ClaudeBot, Google-Extended, PerplexityBot, anthropic-ai) ARE allowed
 - Reason: keep attribution clean — these URLs must NOT compete in SERPs with our organic blog pages, otherwise podcast-click data is polluted with organic-search clicks
 
-**Locked for 8 weeks** via `locked_until` in `ghl-podcast-pipeline/data/seo-cooldown.json` — the SEO optimizer skips these paths entirely.
+**Locked for 8 weeks** (historical: was enforced via `locked_until` in the retired pipeline's `seo-cooldown.json`; the SEO optimizer that read it is gone as of 2026-06-11, so this lock is no longer auto-enforced — keep the paths out of SERP competition manually).
 
 **Parallel SEO-indexable pages exist** for trial + pricing (these rank for organic money keywords):
 - `/trial/` ↔ `/blog/gohighlevel-free-trial-30-days-extended/`

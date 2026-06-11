@@ -1,5 +1,7 @@
 # Podcast Pipeline — GlobalHighLevel.com
 
+> ⚠️ **RETIRED (2026-06-11): the 25-hour content-generation pipeline is dead and was deleted from the repo.** The product that scraped GHL docs → NotebookLM → Transistor → auto-generated blogs (the `ghl-podcast-pipeline/` directory, VPS systemd service, blog generators 1-9, the scheduler) is gone and will not run again. Only the **static site** (`globalhighlevel-site/`, built by `build.py`, deployed via Cloudflare Pages) remains. The podcast-episode catalog the site renders (`published.json`, 158 episodes) was relocated to `globalhighlevel-site/data/published.json`. The sections below describing the live pipeline are historical — do NOT try to run, scp, or re-create it.
+
 ## Architecture
 - **VPS:** IONOS at 74.208.190.10, SSH user `root`, key `~/.ssh/ionos_ghl`, scripts at `/opt/ghl-pipeline/`
 - **Site:** globalhighlevel.com on Cloudflare Pages, static build via `build.py`
