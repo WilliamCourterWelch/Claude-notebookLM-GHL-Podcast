@@ -7,7 +7,7 @@ Zero tolerance for made-up facts. Mobile-first. Billion-dollar standard.
 
 Run:
   cd globalhighlevel-site
-  ../ghl-podcast-pipeline/venv/bin/python3 design-homepage.py
+  python3 design-homepage.py
 """
 
 import anthropic
@@ -18,7 +18,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).parent
-load_dotenv(BASE_DIR / ".." / "ghl-podcast-pipeline" / ".env")
+load_dotenv(BASE_DIR / ".env")
 
 OUTPUT   = BASE_DIR / "homepage_hero.html"
 LOG_FILE = BASE_DIR / "design-log.txt"
