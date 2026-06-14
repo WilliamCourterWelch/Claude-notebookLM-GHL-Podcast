@@ -1864,7 +1864,7 @@ LOCALIZED_LANDING_LANGS = [
         "faq": [
             ("Do I need a credit card?", "Yes. Activating the 30-day trial requires a card — it's a ~$1 verification hold your bank releases, not a subscription charge. You pay nothing for 30 days and can cancel anytime. (Indian cards use 3DS/OTP.)"),
             ("What does it cost after the trial?", "Starts at $97 USD/month (~₹8,000/month). Agency plan ~₹24,700/month. Cancel anytime during the 30-day trial with no charge."),
-            ("Does it work with Razorpay and WhatsApp Business API?", "Yes. GoHighLevel supports Razorpay, PayU, and WhatsApp Business API natively — no third-party integration headaches."),
+            ("Does it work with Razorpay and WhatsApp Business API?", "Yes. GoHighLevel supports Razorpay and WhatsApp Business API natively — no third-party integration headaches."),
         ],
         "footer_cta": "Start your 30-day trial",
     },
