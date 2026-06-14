@@ -361,3 +361,6 @@
 /blog/workflows-gohighlevel-mercadopago-whatsapp-automaticamente/ /blog/gohighlevel-latam-pagos-agencias/ 301
 /es/mercadopago-gohighlevel /blog/gohighlevel-latam-pagos-agencias/ 301
 /es/mercadopago-gohighlevel/ /blog/gohighlevel-latam-pagos-agencias/ 301
+# /12-month-plan/ deleted 2026-06-14 (stale dead-pipeline operating plan exposing internals) -> home
+/12-month-plan / 301
+/12-month-plan/ / 301
