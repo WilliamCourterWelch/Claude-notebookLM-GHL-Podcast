@@ -145,7 +145,6 @@ _LANG_SLUG_MARKERS = (
     # as India. Added high-precision India payment markers + Arabic "mena".
     ("en-IN", ("india", "indian", "rupee", "upi", "razorpay")),
     ("es",    ("espanol", "agencia", "plataforma", "latino", "mexico")),
-    ("ar",    ("arabic", "arab", "saudi", "uae", "mena")),
 )
 
 # Category names that are really LANGUAGE buckets, not topics. They must never
@@ -1869,28 +1868,6 @@ LOCALIZED_LANDING_LANGS = [
         ],
         "footer_cta": "Start your 30-day trial",
     },
-    {
-        "code": "ar",
-        "prefix": "/ar",
-        "dir": "rtl",
-        "title": "نسخة تجريبية مجانية من GoHighLevel لمدة 30 يوم",
-        "desc": "ابدأ تجربتك المجانية لمدة 30 يوم من GoHighLevel. مطلوبة بطاقة للتحقق فقط (حجز مؤقت بقيمة ~$1 يحرره البنك، بدون رسوم اشتراك). وصول كامل لجميع الميزات. ألغِ في أي وقت.",
-        "h1": "ابدأ تجربتك المجانية من GoHighLevel لمدة 30 يوم",
-        "subh": "$0 لمدة 30 يوم — فقط تحقق من البطاقة بقيمة ~$1. وصول كامل. ألغِ في أي وقت.",
-        "cta": "ابدأ تجربتي المجانية",
-        "value_props": [
-            ("نظام CRM شامل", "استبدل أكثر من 10 أدوات: CRM، قنوات، بريد إلكتروني، واتساب، تقويمات، مدفوعات."),
-            ("تكامل واتساب للأعمال", "القناة الحقيقية في الشرق الأوسط. أتمتة المتابعات بدون التنقل بين التطبيقات."),
-            ("$97 دولار شهرياً", "بعد 30 يوم. ألغِ في أي وقت بدون التزام."),
-        ],
-        "faq_h": "أسئلة شائعة",
-        "faq": [
-            ("هل أحتاج بطاقة ائتمان؟", "نعم. لتفعيل التجربة لمدة 30 يوم مطلوبة بطاقة — وهو تحقق بقيمة ~$1 يحرره بنكك، وليس رسوم اشتراك. لا تدفع شيئاً خلال الـ 30 يوم وتلغي في أي وقت."),
-            ("كم التكلفة بعد التجربة؟", "تبدأ من 97 دولار شهرياً (~356 درهم إماراتي، ~364 ريال سعودي). ألغِ خلال الـ30 يوم بدون رسوم."),
-            ("ماذا لو ألغيت؟", "يغلق حسابك بدون رسوم. تحتفظ بما بنيته لكن لن تتمكن من الوصول بعد الإلغاء."),
-        ],
-        "footer_cta": "ابدأ تجربتك لمدة 30 يوم الآن",
-    },
 ]
 
 
@@ -2797,7 +2774,7 @@ def build_12_month_plan_page():
     """Build /12-month-plan/ public commitment document (PR/FAQ format)."""
     canonical = f"{SITE_URL}/12-month-plan/"
     title = "REI Amplifi 12-Month Operating Plan: Trades Pipeline, Ice Machines, Multi-Tenant Content Platform"
-    description = "REI Amplifi's public 12-month operating plan. Trades pipeline in 4 languages, owner-operated ice machine infrastructure at bass fishing ramps, and the multi-tenant content platform behind it all."
+    description = "REI Amplifi's public 12-month operating plan. Trades pipeline in 3 languages, owner-operated ice machine infrastructure at bass fishing ramps, and the multi-tenant content platform behind it all."
 
     h2 = "font-family:var(--sans);font-size:1.6rem;font-weight:800;color:var(--text);margin-bottom:20px;margin-top:48px"
     h3 = "font-family:var(--sans);font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:10px;margin-top:28px"
@@ -2823,9 +2800,9 @@ def build_12_month_plan_page():
   <h3 style="{h3}">What it produces</h3>
   <p style="{p}">Three content streams feed the site:</p>
   <ul style="{p};padding-left:22px">
-    <li>A <strong style="{strong_style}">trades pipeline</strong> shipping 9-part Peter Attia style long-form series covering 10 Tier 1 service verticals (plumbers, HVAC, electricians, roofers, general contractors, med spas, dentists, real estate agents, chiropractors, insurance agents) across four languages (Spanish, Arabic, Indian English, English). Spanish and Arabic ranked fastest because non-English categories in this space have thin competition.</li>
+    <li>A <strong style="{strong_style}">trades pipeline</strong> shipping 9-part Peter Attia style long-form series covering 10 Tier 1 service verticals (plumbers, HVAC, electricians, roofers, general contractors, med spas, dentists, real estate agents, chiropractors, insurance agents) across three languages (Spanish, Indian English, English). Spanish ranked fastest because non-English categories in this space have thin competition.</li>
     <li>A <strong style="{strong_style}">podcast</strong> producing 20 episodes per day, distributed via Transistor.fm to Spotify, Apple Podcasts, and Amazon Music. Per-episode UTM tracking added in April 2026 began attributing podcast-driven clicks to revenue for the first time.</li>
-    <li>Derivative blog posts from both streams, published in all four languages.</li>
+    <li>Derivative blog posts from both streams, published in all three languages.</li>
   </ul>
 
   <h3 style="{h3}">How it converts visitors to revenue</h3>
@@ -2906,7 +2883,7 @@ def build_12_month_plan_page():
   <p style="{p}">Stopped taking sales calls for done-for-you GHL setup. Stopped producing podcast episode topics derived exclusively from help documentation (shifted toward vertical and trade-focused topics). Stopped proposing licensing deals for proprietary data. Stopped hand-coding infrastructure that the multi-tenant platform now handles. Stopped fabricating client counts, outcomes, or credentials in any published content.</p>
 
   <h3 style="{h3}">What is the biggest risk to the plan?</h3>
-  <p style="{p}">Affiliate platform commission structures outside REI Amplifi's direct control. GoHighLevel could change the FirstPromoter affiliate terms. Extendly could modify its lifetime commission structure. Amazon Associates could reduce category rates. The hedge is diversification: no single affiliate source is designed to exceed 35 percent of recurring revenue. The second biggest risk is Google algorithm changes affecting trades pipeline rankings. The hedge is ranking in four languages rather than one, and producing long-form content that passes E-E-A-T scrutiny.</p>
+  <p style="{p}">Affiliate platform commission structures outside REI Amplifi's direct control. GoHighLevel could change the FirstPromoter affiliate terms. Extendly could modify its lifetime commission structure. Amazon Associates could reduce category rates. The hedge is diversification: no single affiliate source is designed to exceed 35 percent of recurring revenue. The second biggest risk is Google algorithm changes affecting trades pipeline rankings. The hedge is ranking in three languages rather than one, and producing long-form content that passes E-E-A-T scrutiny.</p>
 
   <h3 style="{h3}">What happened to the plan's emphasis on the podcast?</h3>
   <p style="{p}">The podcast entered April 2026 at 100 downloads per day, growing. It remains a primary audience surface in April 2027, now integrated with per-episode UTM tracking so click-through from listen to landing page to affiliate signup is measurable for the first time. The podcast continued at 20 episodes per day throughout the year. Topic selection shifted toward vertical and trade content as the trades pipeline came online, leveraging the same research layer.</p>
@@ -3039,7 +3016,6 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
             "en": "Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide. Step-by-step help.",
             "es": "Tutoriales y guías gratuitas de GoHighLevel en español. Aprende a configurar, automatizar y escalar tu agencia paso a paso.",
             "en-IN": "Free GoHighLevel tutorials and guides for Indian agencies. UPI payments, WhatsApp automation, and agency growth — step by step.",
-            "ar": "دروس ومرشدون مجانية لـ GoHighLevel باللغة العربية. تعلم كيفية إعداد وأتمتة وتوسيع وكالتك خطوة بخطوة.",
         }
         hub_desc = hub_descriptions.get(lang_code, f"Free GoHighLevel tutorials and guides in {lang_name}.")
         canonical = f"{SITE_URL}{prefix}/" if page == 1 else f"{SITE_URL}{prefix}/page/{page}/"
