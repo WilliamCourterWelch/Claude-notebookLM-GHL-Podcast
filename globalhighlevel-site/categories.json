@@ -228,12 +228,6 @@
       "native": "India",
       "prefix": "/in",
       "dir": "ltr"
-    },
-    {
-      "code": "ar",
-      "native": "العربية",
-      "prefix": "/ar",
-      "dir": "rtl"
     }
   ]
 }
