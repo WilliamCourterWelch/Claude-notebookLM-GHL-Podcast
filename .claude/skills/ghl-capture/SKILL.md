@@ -128,7 +128,10 @@ pre-existing leak `ghl-payment-integrations-es.png` — resolve it as the first
 real test by wiring it into a relevant post or deleting it.)
 
 ### Step 8 — Ship + watch
-- Commit (raws + manifest in `captures/` are the committed audit trail).
+- Commit (raws + manifest in `captures/` are the committed audit trail). The
+  manifest records the live sandbox URL as provenance; this is **repo-internal**
+  — `build.py` copies only `images/`, never `captures/`, so provenance URLs never
+  reach the live site. Keep `captures/` out of any published build.
 - Ship the pilot page via **`/ship`** (never hand-rolled).
 - Record the pilot page's GSC index status as the watch baseline; set a 4-week
   reminder. Hold bulk application until the indexing signal is read.

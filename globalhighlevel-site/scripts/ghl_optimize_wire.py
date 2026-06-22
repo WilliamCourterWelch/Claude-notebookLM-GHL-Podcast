@@ -21,6 +21,7 @@ Never publishes the site — /ship owns deploy.
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import sys
 from pathlib import Path
@@ -41,6 +42,11 @@ def _find_manifest_for_image(site_path: str):
 
 
 def cmd_optimize(args) -> int:
+    try:
+        lib.safe_component(args.slug, "slug")
+        lib.safe_component(args.lang, "lang")
+    except ValueError as exc:
+        sys.exit(f"refuse: {exc}")
     manifest = lib.load_manifest(args.slug, args.lang)
     imgs = manifest.get("images", [])
     if not imgs:
@@ -52,9 +58,10 @@ def cmd_optimize(args) -> int:
 
     out_dir = lib.IMAGES / args.lang
     out_dir.mkdir(parents=True, exist_ok=True)
-    done = 0
+    done = unattested = errors = 0
     for e in imgs:
         if not e.get("attested"):
+            unattested += 1
             print(f"  SKIP {e['name']}: not attested (honesty gate)")
             continue
         if e.get("published"):
@@ -62,40 +69,60 @@ def cmd_optimize(args) -> int:
             continue
         raw = lib.SITE / e["raw"]
         if not raw.exists():
-            print(f"  SKIP {e['name']}: raw missing {raw}")
+            errors += 1
+            print(f"  ERROR {e['name']}: raw missing {raw}")
             continue
         n = lib.next_index(args.slug, args.lang)
         out = out_dir / f"{args.slug}-{n}.png"
-        with Image.open(raw) as im:
-            im = im.convert("RGB") if im.mode in ("P", "RGBA") else im
-            if im.width > args.max_width:
-                ratio = args.max_width / im.width
-                im = im.resize((args.max_width, round(im.height * ratio)), Image.LANCZOS)
-            im.save(out, "PNG", optimize=True)
+        try:
+            lib.assert_under(out, out_dir)
+            with Image.open(raw) as im:
+                if im.mode not in ("RGB", "L"):
+                    im = im.convert("RGB")
+                if im.width > args.max_width:
+                    ratio = args.max_width / im.width
+                    im = im.resize((args.max_width, round(im.height * ratio)), Image.LANCZOS)
+                im.save(out, "PNG", optimize=True)
+        except Exception as exc:  # one bad raw must not abort the batch
+            errors += 1
+            print(f"  ERROR {e['name']}: {exc}")
+            continue
         e["published"] = "/images/" + out.relative_to(lib.IMAGES).as_posix()
         e["published_at"] = lib.utc_now()
+        lib.save_manifest(args.slug, args.lang, manifest)  # persist after each
         done += 1
         print(f"  optimized {raw.name} -> {e['published']}")
-    lib.save_manifest(args.slug, args.lang, manifest)
-    print(f"\n{done} image(s) optimized. Manifest updated.")
-    return 0
+    print(f"\n{done} optimized, {unattested} unattested-skipped, {errors} error(s).")
+    return 1 if errors else 0
 
 
 def cmd_wire(args) -> int:
+    if not args.image.startswith("/images/") or ".." in args.image:
+        sys.exit("refuse: --image must be a canonical /images/<lang>/<file> path")
+    try:
+        lib.safe_component(args.post, "post slug")
+    except ValueError as exc:
+        sys.exit(f"refuse: {exc}")
     slug, lang, entry = _find_manifest_for_image(args.image)
     if entry is None:
         sys.exit(f"refuse: {args.image} has no manifest entry. optimize it first "
                  "(only attested, optimized captures may be wired).")
     if not entry.get("attested"):
         sys.exit(f"refuse: {args.image} is not attested:true (honesty gate).")
-    img_file = lib.IMAGES / args.image.split("/images/", 1)[1]
+    img_file = lib.IMAGES / args.image[len("/images/"):]
+    try:
+        lib.assert_under(img_file, lib.IMAGES)
+    except ValueError as exc:
+        sys.exit(f"refuse: {exc}")
     if not img_file.exists():
         sys.exit(f"refuse: image file missing on disk: {img_file}")
 
     data = lib.load_post(args.post)
     html_content = data.get("html_content", "")
     fragment = lib.figure_html(args.image, args.alt, args.caption)
-    if args.image in html_content:
+    # compare the ESCAPED src (figure_html escapes it) so a '&' in the path
+    # can't silently defeat the idempotency guard
+    if args.image in html_content or html.escape(args.image, quote=True) in html_content:
         sys.exit(f"refuse: {args.image} already referenced in {args.post}")
     try:
         data["html_content"] = lib.insert_after_marker(html_content, args.after, fragment)
@@ -114,8 +141,10 @@ def cmd_wire(args) -> int:
 
 def cmd_orphan_check(args) -> int:
     res = lib.orphan_check()
+    bad_posts = res.get("unreadable_posts", [])
     if args.json:
-        print(json.dumps({"orphans": res["orphans"], "broken": res["broken"]}, indent=2))
+        print(json.dumps({"orphans": res["orphans"], "broken": res["broken"],
+                          "unreadable_posts": bad_posts}, indent=2))
     else:
         if res["orphans"]:
             print("ORPHANS (published image referenced by zero posts):")
@@ -125,9 +154,13 @@ def cmd_orphan_check(args) -> int:
             print("BROKEN (post references a missing image file):")
             for b in res["broken"]:
                 print(f"  {b}  (refs: {', '.join(res['referenced'][b])})")
-        if not res["orphans"] and not res["broken"]:
-            print("OK: no orphans, no broken references.")
-    return 1 if (res["orphans"] or res["broken"]) else 0
+        if bad_posts:
+            print("UNREADABLE POSTS (corrupt JSON — gate is fail-closed, fix these):")
+            for p in bad_posts:
+                print(f"  {p}")
+        if not res["orphans"] and not res["broken"] and not bad_posts:
+            print("OK: no orphans, no broken references, all posts readable.")
+    return 1 if (res["orphans"] or res["broken"] or bad_posts) else 0
 
 
 def main() -> int:

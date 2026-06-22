@@ -32,25 +32,22 @@ import ghl_capture_lib as lib
 
 
 def _browse_bin() -> str:
-    root = Path(__file__).resolve()
-    candidates = [
-        Path.home() / ".claude/skills/gstack/browse/dist/browse",
-    ]
-    # repo-local gstack (team mode) if present
-    for p in root.parents:
-        c = p / ".claude/skills/gstack/browse/dist/browse"
-        if c.exists():
-            candidates.insert(0, c)
-            break
-    for c in candidates:
-        if c.exists() and os.access(c, os.X_OK):
-            return str(c)
-    sys.exit("browse binary not found. Run gstack setup, or connect the GStack Browser "
-             "(/connect-chrome) so the daemon is up.")
+    # Only the trusted global install — never a repo-local binary (a poisoned
+    # checkout shipping its own .claude/skills/gstack/browse would otherwise run
+    # arbitrary code, flagged by review).
+    c = Path.home() / ".claude/skills/gstack/browse/dist/browse"
+    if c.exists() and os.access(c, os.X_OK):
+        return str(c)
+    sys.exit("browse binary not found at ~/.claude/skills/gstack/browse/dist/browse. "
+             "Run gstack setup, or connect the GStack Browser (/connect-chrome).")
 
 
-def _browse(bin_: str, *args: str) -> str:
-    res = subprocess.run([bin_, *args], capture_output=True, text=True)
+def _browse(bin_: str, *args: str, timeout: float = 60.0) -> str:
+    try:
+        res = subprocess.run([bin_, *args], capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(f"browse {args[0] if args else ''} timed out after {timeout}s "
+                           "(is the GStack Browser still connected?)")
     if res.returncode != 0:
         raise RuntimeError(f"browse {' '.join(args)} failed: {res.stderr.strip()}")
     return res.stdout.strip()
@@ -60,6 +57,13 @@ def cmd_capture(args) -> int:
     plan = json.loads(Path(args.plan).read_text(encoding="utf-8"))
     if not isinstance(plan, list) or not plan:
         sys.exit("plan must be a non-empty JSON array")
+    try:
+        lib.safe_component(args.slug, "slug")
+        lib.safe_component(args.lang, "lang")
+        for entry in plan:
+            lib.safe_component(entry["name"], "plan name")
+    except (ValueError, KeyError, TypeError) as exc:
+        sys.exit(f"refuse: {exc}")
     bin_ = _browse_bin()
     cap_dir = lib.CAPTURES / args.lang
     cap_dir.mkdir(parents=True, exist_ok=True)
@@ -71,6 +75,7 @@ def cmd_capture(args) -> int:
         name = entry["name"]
         target = entry["url_or_app_area"]
         out = cap_dir / f"{name}.png"
+        lib.assert_under(out, cap_dir)  # defense in depth after name validation
         if target.startswith("http"):
             _browse(bin_, "goto", target)
             try:
@@ -85,13 +90,18 @@ def cmd_capture(args) -> int:
         # GHL is a heavy SPA: wait for it to render before shooting, or we
         # capture the loading spinner. Poll readyState then settle, capped.
         deadline = time.time() + args.settle
+        ready = False
         while time.time() < deadline:
             try:
                 if _browse(bin_, "js", "document.readyState").strip().strip('"') == "complete":
+                    ready = True
                     break
             except RuntimeError:
                 pass
             time.sleep(0.5)
+        if not ready:
+            print(f"  WARNING [{name}]: page never reached readyState=complete in "
+                  f"{args.settle}s — the screenshot may be a spinner. Read the PNG before attesting.")
         time.sleep(args.settle_after)  # let SPA paint past the spinner
         _browse(bin_, "screenshot", str(out))
         e = lib.manifest_entry(manifest, name) or {"name": name}

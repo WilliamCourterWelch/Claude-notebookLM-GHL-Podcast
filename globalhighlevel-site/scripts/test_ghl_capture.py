@@ -9,9 +9,11 @@ from __future__ import annotations
 import json
 import sys
 import tempfile
+import types
 from pathlib import Path
 
 import ghl_capture_lib as lib
+import ghl_optimize_wire as ow
 
 FAILED = []
 
@@ -108,8 +110,91 @@ def test_save_post_roundtrip(root):
     check("trailing newline", raw.endswith("\n"))
 
 
+def test_safe_component(root):
+    print("test_safe_component")
+    for bad in ["../evil", "/etc/passwd", "a/b", "..", "", "x;rm", "foo bar"]:
+        try:
+            lib.safe_component(bad, "x"); check(f"rejects {bad!r}", False)
+        except ValueError:
+            check(f"rejects {bad!r}", True)
+    for ok in ["foo", "ghl-integraciones-pagos-es", "es-mx", "a.b_c-1"]:
+        check(f"accepts {ok!r}", lib.safe_component(ok, "x") == ok)
+
+
+def _make_raw(lang, name):
+    from PIL import Image
+    (lib.CAPTURES / lang).mkdir(parents=True, exist_ok=True)
+    p = lib.CAPTURES / lang / f"{name}.png"
+    Image.new("RGB", (40, 30), (10, 20, 30)).save(p)
+    return f"captures/{lang}/{name}.png"
+
+
+def test_optimize_attested_gate(root):
+    print("test_optimize_attested_gate")
+    raw = _make_raw("es-mx", "r")
+    m = {"slug": "s", "lang": "es-mx",
+         "images": [{"name": "r", "raw": raw, "attested": False, "published": None}]}
+    lib.save_manifest("s", "es-mx", m)
+    args = types.SimpleNamespace(slug="s", lang="es-mx", max_width=1200)
+    ow.cmd_optimize(args)
+    check("unattested NOT published", lib.load_manifest("s", "es-mx")["images"][0]["published"] is None)
+    m2 = lib.load_manifest("s", "es-mx"); m2["images"][0]["attested"] = True
+    lib.save_manifest("s", "es-mx", m2)
+    ow.cmd_optimize(args)
+    pub = lib.load_manifest("s", "es-mx")["images"][0]["published"]
+    check("attested gets published", bool(pub) and (lib.IMAGES / pub.split('/images/')[1]).exists())
+
+
+def test_wire_attested_gate(root):
+    print("test_wire_attested_gate")
+    raw = _make_raw("es-mx", "w")
+    (lib.IMAGES / "es-mx").mkdir(parents=True, exist_ok=True)
+    from PIL import Image
+    Image.new("RGB", (10, 10)).save(lib.IMAGES / "es-mx" / "s-1.png")
+    m = {"slug": "s", "lang": "es-mx", "images": [{"name": "w", "raw": raw,
+         "attested": False, "published": "/images/es-mx/s-1.png"}]}
+    lib.save_manifest("s", "es-mx", m)
+    write_post("s", "<h2>x</h2><p>body</p>")
+    a = types.SimpleNamespace(post="s", image="/images/es-mx/s-1.png", alt="a",
+                              caption="c", after="</p>")
+    try:
+        ow.cmd_wire(a); check("refuses un-attested wire", False)
+    except SystemExit:
+        check("refuses un-attested wire", True)
+    m2 = lib.load_manifest("s", "es-mx"); m2["images"][0]["attested"] = True
+    lib.save_manifest("s", "es-mx", m2)
+    ow.cmd_wire(a)
+    check("attested wire lands", "/images/es-mx/s-1.png" in lib.load_post("s")["html_content"])
+    # path traversal in --image is refused
+    bad = types.SimpleNamespace(post="s", image="/images/../../etc/x.png", alt="a",
+                                caption="c", after="</p>")
+    try:
+        ow.cmd_wire(bad); check("refuses traversal --image", False)
+    except SystemExit:
+        check("refuses traversal --image", True)
+
+
+def test_orphan_check_failclosed(root):
+    print("test_orphan_check_failclosed")
+    (lib.POSTS / "broken.json").write_text("{ not json", encoding="utf-8")
+    res = lib.orphan_check()
+    check("corrupt post surfaced", "broken.json" in res.get("unreadable_posts", []))
+
+
+def test_pii_checklist_in_skill(root):
+    print("test_pii_checklist_in_skill")
+    skill = Path(__file__).resolve().parents[2] / ".claude/skills/ghl-capture/SKILL.md"
+    if not skill.exists():
+        check("SKILL.md present", False); return
+    text = skill.read_text(encoding="utf-8")
+    for item in lib.PII_CHECKLIST:
+        check(f"checklist in skill: {item[:24]}...", item in text)
+
+
 def main():
-    for t in (test_next_index, test_orphan_check, test_figure_and_wire, test_save_post_roundtrip):
+    for t in (test_next_index, test_orphan_check, test_figure_and_wire, test_save_post_roundtrip,
+              test_safe_component, test_optimize_attested_gate, test_wire_attested_gate,
+              test_orphan_check_failclosed, test_pii_checklist_in_skill):
         with_temp_site(t)
     print()
     if FAILED:

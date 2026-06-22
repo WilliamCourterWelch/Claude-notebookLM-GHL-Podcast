@@ -14,7 +14,9 @@ from __future__ import annotations
 import glob
 import html
 import json
+import os
 import re
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -44,6 +46,46 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+# ---------------------------------------------------------- path safety
+
+_SAFE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+
+
+def safe_component(value: str, what: str) -> str:
+    """Reject any path component that could escape its directory. Plan `name`,
+    `slug`, and `lang` all become filesystem paths; an unvalidated `../` or
+    absolute value writes screenshots/manifests outside the tree (all three
+    reviewers flagged this as the merge blocker). Returns the value or raises."""
+    if not isinstance(value, str) or not _SAFE.match(value) or ".." in value:
+        raise ValueError(
+            f"unsafe {what}: {value!r} (allowed: letters/digits/._- , no '..', no '/')"
+        )
+    return value
+
+
+def assert_under(path: Path, base: Path) -> Path:
+    """Resolve `path` and confirm it stays inside `base`. Defense in depth even
+    after component validation. Raises ValueError on escape."""
+    rp, rb = path.resolve(), base.resolve()
+    if rp != rb and rb not in rp.parents:
+        raise ValueError(f"path escapes {rb}: {rp}")
+    return path
+
+
+def _atomic_write(path: Path, text: str) -> None:
+    """Write via temp file + os.replace so a crash never leaves a truncated
+    post/manifest (reviewers flagged non-atomic JSON writes)."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=str(path.parent), suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(text)
+        os.replace(tmp, path)
+    finally:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+
+
 # ---------------------------------------------------------------- posts / json
 
 def post_path(slug: str) -> Path:
@@ -57,17 +99,30 @@ def load_post(slug: str) -> dict:
 def save_post(slug: str, data: dict) -> None:
     """Write a post back matching repo convention: indent=2, ensure_ascii=False,
     trailing newline. Targeted html_content edits keep the diff small."""
-    post_path(slug).write_text(
-        json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
+    _atomic_write(post_path(slug), json.dumps(data, ensure_ascii=False, indent=2) + "\n")
 
 
 def iter_posts():
+    """Yield (path, data) for every readable post. Unreadable posts are NOT
+    silently skipped here — callers that gate on completeness must consult
+    unreadable_posts() too, or the gate is fail-open."""
     for p in sorted(POSTS.glob("*.json")):
         try:
             yield p, json.loads(p.read_text(encoding="utf-8"))
         except (json.JSONDecodeError, OSError):
             continue
+
+
+def unreadable_posts() -> list[str]:
+    """Posts that exist but fail to parse — a corrupt post hides its image
+    references, so orphan_check must report these rather than report OK."""
+    bad = []
+    for p in sorted(POSTS.glob("*.json")):
+        try:
+            json.loads(p.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            bad.append(p.name)
+    return bad
 
 
 # ------------------------------------------------------------------- images
@@ -90,7 +145,8 @@ def published_images() -> list[str]:
     out = []
     for ext in IMAGE_EXTS:
         for f in IMAGES.rglob(f"*{ext}"):
-            out.append("/images/" + f.relative_to(IMAGES).as_posix())
+            if f.is_file() and not f.is_symlink():
+                out.append("/images/" + f.relative_to(IMAGES).as_posix())
     return sorted(out)
 
 
@@ -108,6 +164,7 @@ def orphan_check() -> dict:
         "orphans": sorted(published - referenced),
         "broken": sorted(referenced - published),
         "referenced": refs,
+        "unreadable_posts": unreadable_posts(),  # fail-closed: surface corrupt posts
     }
 
 
@@ -138,9 +195,8 @@ def load_manifest(slug: str, lang: str) -> dict:
 
 
 def save_manifest(slug: str, lang: str, manifest: dict) -> None:
-    p = manifest_path(slug, lang)
-    p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    _atomic_write(manifest_path(slug, lang),
+                  json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
 
 
 def manifest_entry(manifest: dict, name: str) -> dict | None:
