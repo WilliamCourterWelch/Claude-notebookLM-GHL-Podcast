@@ -25,6 +25,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import ghl_capture_lib as lib
@@ -81,6 +82,17 @@ def cmd_capture(args) -> int:
             live_url = f"app-area:{target}"
             print(f"  [{name}] navigate to '{target}' in the browser, then press Enter…")
             input()
+        # GHL is a heavy SPA: wait for it to render before shooting, or we
+        # capture the loading spinner. Poll readyState then settle, capped.
+        deadline = time.time() + args.settle
+        while time.time() < deadline:
+            try:
+                if _browse(bin_, "js", "document.readyState").strip().strip('"') == "complete":
+                    break
+            except RuntimeError:
+                pass
+            time.sleep(0.5)
+        time.sleep(args.settle_after)  # let SPA paint past the spinner
         _browse(bin_, "screenshot", str(out))
         e = lib.manifest_entry(manifest, name) or {"name": name}
         e.update({
@@ -107,6 +119,22 @@ def cmd_attest(args) -> int:
     imgs = manifest.get("images", [])
     if not imgs:
         sys.exit("no captured images in manifest — run `capture` first")
+
+    # Non-interactive path: record a sign-off decision already made by the human
+    # (e.g. via a UI prompt). The decision MUST originate from the human, not the
+    # script — this just persists it. Honesty stays human-attested.
+    if args.name:
+        e = lib.manifest_entry(manifest, args.name)
+        if e is None:
+            sys.exit(f"no captured image named {args.name!r} in manifest")
+        clean = args.decision == "yes"
+        e["attested"] = clean
+        e["attested_at"] = lib.utc_now()
+        e["attested_by"] = args.by
+        lib.save_manifest(args.slug, args.lang, manifest)
+        print(f"recorded {args.name}: attested={clean} (by {args.by})")
+        return 0
+
     print("PII / data-leak checklist — confirm EACH capture shows NONE of these:")
     for item in lib.PII_CHECKLIST:
         print(f"  - {item}")
@@ -136,10 +164,18 @@ def main() -> int:
     c.add_argument("--plan", required=True)
     c.add_argument("--slug", required=True)
     c.add_argument("--lang", required=True)
+    c.add_argument("--settle", type=float, default=8.0,
+                   help="max seconds to wait for document.readyState=complete")
+    c.add_argument("--settle-after", type=float, default=3.0,
+                   help="extra seconds after ready for the SPA to paint past the spinner")
     c.set_defaults(func=cmd_capture)
     a = sub.add_parser("attest")
     a.add_argument("--slug", required=True)
     a.add_argument("--lang", required=True)
+    a.add_argument("--name", help="non-interactive: record a decision for one image")
+    a.add_argument("--decision", choices=["yes", "no"], default="yes",
+                   help="with --name: yes=attested clean, no=rejected")
+    a.add_argument("--by", default="owner", help="who attested (recorded in manifest)")
     a.set_defaults(func=cmd_attest)
     args = ap.parse_args()
     return args.func(args)

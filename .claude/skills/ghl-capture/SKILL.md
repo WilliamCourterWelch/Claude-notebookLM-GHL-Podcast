@@ -83,15 +83,20 @@ cd globalhighlevel-site
 python3 scripts/ghl_capture.py capture --plan /tmp/plan.json --slug <slug> --lang <lang>
 ```
 Writes raws to `captures/<lang>/` and a manifest with machine-captured `url` +
-`captured_at`. Does NOT log in, does NOT detect PII.
+`captured_at`. Does NOT log in, does NOT detect PII. **GHL is a heavy SPA** — the
+script waits for `document.readyState=complete` then a paint delay before shooting
+(`--settle` / `--settle-after`, defaults 8s/3s) so it captures the screen, not the
+loading spinner. **Always Read the captured PNG before attesting** — a too-short
+settle yields a spinner, and only your eyes catch it.
 
 ### Step 4 — Attest (Bill, at the keyboard)
-```bash
-python3 scripts/ghl_capture.py attest --slug <slug> --lang <lang>
-```
-Walks each image against the PII checklist; Bill answers y/N per image; truthful
-captions confirmed. Sets `attested` + `attested_at`. Unattested images are
-refused downstream.
+Interactive: `python3 scripts/ghl_capture.py attest --slug <slug> --lang <lang>`
+(walks each image against the PII checklist; y/N per image).
+Non-interactive (when the decision was made elsewhere, e.g. a UI sign-off):
+`python3 scripts/ghl_capture.py attest --slug <slug> --lang <lang> --name <img> --decision yes|no --by <who>`.
+Either way sets `attested` + `attested_at` (+ `attested_by`). The decision MUST
+originate from the human; the script only records it. Unattested images are
+refused by optimize/wire.
 
 ### Step 5 — Optimize (delegated, Pillow)
 ```bash
