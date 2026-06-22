@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.23] - 2026-06-22
+### Changed
+- **Upgraded the LATAM payments page into a proper hub, in place.** `/blog/gohighlevel-latam-pagos-agencias/` went from 907 words (placeholder "Global High Level" author) to ~1,830 words with: the real **William Welch** byline, a **country-comparison table** (Stripe-for-SaaS vs MercadoPago-for-Flujo-B per country), an honest Flujo A / Flujo B framing, the real Mercado Pago Spanish-UI screenshot, a sourced citations list, FAQ, and hub-and-spoke internal links down to the Mexico spoke + Opiniones + precios + qué-es. Done as an in-place upgrade (no new URL, no 301) so it absorbs the topic without cannibalization and keeps existing inbound links valid. Content assembled from the codex-vetted LATAM hub draft in the research vault. Logged to SEO Changelog Tracker.
+
 ## [0.1.0.22] - 2026-06-22
 ### Fixed
 - **Broken internal link on the Mexico spoke.** The "Parte de la guía" link pointed at `/blog/gohighlevel-latam-guia-pagos-agencias/` (a planned hub slug that isn't built) → 404. Repointed to the existing `/blog/gohighlevel-latam-pagos-agencias/`. Caught by the internal-linking eval.
