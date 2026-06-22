@@ -118,7 +118,7 @@ def md_to_html(md, affiliate):
 BIO = ('<section class="author-bio"><h2>Sobre el autor</h2>'
        '<p><strong>William Welch</strong> es consultor de GoHighLevel y fundador de Amplifi '
        'Technologies, una agencia digital enfocada en automatización de marketing con GoHighLevel '
-       'para clientes en Latinoamérica.</p>'
+       '. No opero agencias dentro de LATAM y soy afiliado de HighLevel.</p>'
        '<p>Esta guía se basa en investigación documentada: 38 fuentes verificadas, 8 revisiones '
        'independientes con Codex/GPT-5 y capturas reales de la interfaz en español de mayo de 2026. '
        'Si detectas algún dato que necesite actualización, escríbeme a '

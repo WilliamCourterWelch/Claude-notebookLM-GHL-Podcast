@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.26] - 2026-06-22
+### Fixed
+- **4 post-review quality fixes** (caught by a `/codex` review of the prior unreviewed ships): (1) un-escaped the LATAM hub's "Guías por país" spoke links — they were rendering as literal `&lt;a href&gt;` text instead of clickable links; (2) converted leaked Markdown pipe-tables + a code fence in the Mexico spoke into real `<table>`/`<code>` HTML; (3) replaced a forbidden `gohighlevel.com/pricing` link (no `fp_ref`) with the internal precios page; (4) removed a "clientes en Latinoamérica" bio overclaim on Mexico/Opiniones to match the honest "does not operate in LATAM" framing used on the hub. Also: codified a citation-exception to the affiliate-link rule (doc/forum/blog citations are exempt from `fp_ref`) and fixed the assembler's bio template. Re-reviewed via `/codex` (PASS, no findings).
+
 ## [0.1.0.25] - 2026-06-22
 ### Added
 - **FAQPage JSON-LD schema, site-wide and automatic.** `build.py` now auto-generates `FAQPage` structured data from any post's "Preguntas frecuentes"/FAQ section (handles both `<h3>` and bold-paragraph question formats; scopes to the FAQ section so non-FAQ headings aren't captured; skips if a post already embeds its own FAQ schema, to avoid duplicates). This is the structured data that makes FAQs eligible for search rich-results and that LLMs (ChatGPT/Perplexity) cite — the pages had visible FAQs but zero schema before. Now live on Opiniones (4 Q), Mexico (5), the LATAM hub (6), qué-es (5), and precios (9).
