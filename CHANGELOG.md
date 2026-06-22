@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.22] - 2026-06-22
+### Fixed
+- **Broken internal link on the Mexico spoke.** The "Parte de la guía" link pointed at `/blog/gohighlevel-latam-guia-pagos-agencias/` (a planned hub slug that isn't built) → 404. Repointed to the existing `/blog/gohighlevel-latam-pagos-agencias/`. Caught by the internal-linking eval.
+
 ## [0.1.0.21] - 2026-06-22
 ### Added
 - **New Spanish review pillar: `/blog/gohighlevel-opiniones-es-confiable-vale-la-pena/` — "GoHighLevel Opiniones 2026: ¿Es Confiable y Vale la Pena? Reseña Honesta."** Honest-review angle targeting the validated trust/comparison PAA cluster (¿es confiable? / ¿vale la pena? / alternativas), which GSC confirmed no existing page ranks for (no cannibalization). ~1,600 words with genuine material cons (learning curve, module depth, A2P/SMS setup friction, English UI corners, per-country payment gaps), a "para quién NO vale la pena" section, first-hand observations from configuring MercadoPago in a sandbox, three translated quotes from real LATAM agency owners (linked to GoHighLevel's ideas forum), and honest "when I'd choose the competitor instead" comparisons (HubSpot/Clientify/Kartra). Real byline (William Welch), prominent affiliate disclosure (top + at CTA), reuses the Spanish payments-UI screenshot. Hub-and-spoke: internal-links to qué-es, precios, pagos, and the Mexico spoke. Passed cross-model review (Codex) on the blocking items; residual citation-strictness flags judged beyond a consumer-review-page standard. Logged to SEO Changelog Tracker.
