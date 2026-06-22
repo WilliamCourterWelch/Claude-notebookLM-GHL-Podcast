@@ -2,6 +2,11 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.25] - 2026-06-22
+### Added
+- **FAQPage JSON-LD schema, site-wide and automatic.** `build.py` now auto-generates `FAQPage` structured data from any post's "Preguntas frecuentes"/FAQ section (handles both `<h3>` and bold-paragraph question formats; scopes to the FAQ section so non-FAQ headings aren't captured; skips if a post already embeds its own FAQ schema, to avoid duplicates). This is the structured data that makes FAQs eligible for search rich-results and that LLMs (ChatGPT/Perplexity) cite — the pages had visible FAQs but zero schema before. Now live on Opiniones (4 Q), Mexico (5), the LATAM hub (6), qué-es (5), and precios (9).
+- **Pricing-PAA FAQs on the precios page.** Added the top pricing People-Also-Ask questions as explicit Q&As — ¿Cuánto cuesta GoHighLevel al mes? / ¿GoHighLevel tiene prueba gratis? / ¿Cuál es el plan más barato? — grounded in the page's own plan data ($97/$297/$497 + 30-day trial). Replaced the stale embedded FAQ schema so the regenerated FAQPage includes them. (The qué-es page's FAQs were already PAA-aligned — they just gained schema.)
+
 ## [0.1.0.24] - 2026-06-22
 ### Fixed
 - **Redirect-rescue of high-impression deleted qué-es pages.** Four deleted pages that still had GSC impressions (`guia-completa-…-que-es-ghl-esencial-agencia` ~411 impr, `…que-es-como-usar` ~312, `que-es-gohighlevel-guia-completa-agencias-2026` ~174, `…ghl-plataforma-automatizacion…` ~71) were hard 404s — now 301 to the live qué-es canonical, recovering their ranking value instead of dropping it.

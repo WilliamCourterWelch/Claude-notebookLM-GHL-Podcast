@@ -1278,10 +1278,37 @@ def build_authority_page(post: dict, all_posts: list = None):
 </footer>
 
 <script type="application/ld+json">{json.dumps(schema, ensure_ascii=False)}</script>
+{faq_schema(html_content)}
 </body>
 </html>"""
 
     write(PUBLIC_DIR / post_output_rel(post) / "index.html", html)
+
+
+def faq_schema(html_content: str) -> str:
+    """Build FAQPage JSON-LD from the post's 'Preguntas frecuentes'/FAQ section only.
+    Scopes to the FAQ <h2> so non-FAQ <h3> headings elsewhere aren't captured."""
+    if not html_content or "FAQPage" in html_content:
+        return ""  # content already embeds FAQ schema — do not add a duplicate
+    m = re.search(r'<h2[^>]*>\s*(?:Preguntas\s+frecuentes|Frequently Asked Questions|FAQ)[^<]*</h2>(.*?)(?:<h2[^>]*>|<section class="author-bio"|$)',
+                  html_content, re.S | re.I)
+    if not m:
+        return ""
+    sec = m.group(1)
+    pairs = re.findall(r'<h3>(.*?)</h3>(.*?)(?=<h3>|$)', sec, re.S)
+    pairs += re.findall(r'<p><strong>([^<]*[?¿][^<]*)</strong>(.*?)</p>', sec, re.S)  # bold-paragraph FAQs (hub)
+    entities = []
+    for q, a in pairs:
+        qt = re.sub(r'<[^>]+>', '', q).strip()
+        at = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', a)).strip()
+        if ('?' in qt or '¿' in qt) and at:
+            entities.append({"@type": "Question", "name": qt,
+                             "acceptedAnswer": {"@type": "Answer", "text": at}})
+    if not entities:
+        return ""
+    return ('<script type="application/ld+json">'
+            + json.dumps({"@context": "https://schema.org", "@type": "FAQPage",
+                          "mainEntity": entities}, ensure_ascii=False) + '</script>')
 
 
 def build_post_page(post: dict, all_posts: list = None):
@@ -1433,6 +1460,7 @@ def build_post_page(post: dict, all_posts: list = None):
         "mainEntityOfPage": {"@type": "WebPage", "@id": canonical},
         "url": canonical
     })
+    faq_ld = faq_schema(html_content)
 
     # ── Progress bar JS ────────────────────────────────────────────────────────
     progress_js = """
@@ -1474,6 +1502,7 @@ def build_post_page(post: dict, all_posts: list = None):
   {related_html}
 </div>
 <script type="application/ld+json">{article_schema}</script>
+{faq_ld}
 {progress_js}"""
 
     post_lang = post.get("language", "en")
