@@ -2,6 +2,13 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.27] - 2026-06-22
+### Added
+- **First real product screenshot on the LATAM agencies hub.** `/blog/gohighlevel-latam-pagos-agencias/` now shows a genuine capture of GoHighLevel's **Integraciones de pagos** screen (Spanish interface, native providers like Stripe/PayPal/Authorize.net) right where the page explains the Flujo B payment stack — first-hand visual proof instead of a text-only claim. This is the first page taken to the real-screenshot EEAT bar the site needs to climb out of the April-2026 quality demotion. Also removed a stale duplicate image (`ghl-payment-integrations-es.png`) that was sitting unused.
+
+### For contributors
+- New **`/ghl-capture`** tooling (`globalhighlevel-site/scripts/ghl_capture*.py` + `.claude/skills/ghl-capture/`): captures real GHL sandbox screenshots through the GStack Browser, records a provenance manifest with **human PII attestation** (never auto-claimed), Pillow-optimizes, wires `<figure>` markup into a post's `html_content`, and gates on a per-language orphan check. Designed via `/office-hours` (Codex cold-read + 2-round adversarial spec review) and hardened against path-traversal and fail-open gates per a 3-model `/review`. 9 test groups, all green.
+
 ## [0.1.0.26] - 2026-06-22
 ### Fixed
 - **4 post-review quality fixes** (caught by a `/codex` review of the prior unreviewed ships): (1) un-escaped the LATAM hub's "Guías por país" spoke links — they were rendering as literal `&lt;a href&gt;` text instead of clickable links; (2) converted leaked Markdown pipe-tables + a code fence in the Mexico spoke into real `<table>`/`<code>` HTML; (3) replaced a forbidden `gohighlevel.com/pricing` link (no `fp_ref`) with the internal precios page; (4) removed a "clientes en Latinoamérica" bio overclaim on Mexico/Opiniones to match the honest "does not operate in LATAM" framing used on the hub. Also: codified a citation-exception to the affiliate-link rule (doc/forum/blog citations are exempt from `fp_ref`) and fixed the assembler's bio template. Re-reviewed via `/codex` (PASS, no findings).
