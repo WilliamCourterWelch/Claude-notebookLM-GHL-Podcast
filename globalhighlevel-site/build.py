@@ -2975,6 +2975,10 @@ def main():
     REDIRECTS_SRC = BASE_DIR / "_redirects"
     if REDIRECTS_SRC.exists():
         shutil.copy(REDIRECTS_SRC, PUBLIC_DIR / "_redirects")
+    # Static images (tracked in source images/; public/ is gitignored + cleaned each build)
+    IMAGES_SRC = BASE_DIR / "images"
+    if IMAGES_SRC.exists():
+        shutil.copytree(IMAGES_SRC, PUBLIC_DIR / "images")
 
     global CATEGORIES, LANGUAGES, LIVE_CATEGORY_SLUGS, LIVE_LANG_CODES, BUILT_PAGE_PATHS, LIVE_POST_SLUGS
     CATEGORIES, LANGUAGES = load_categories()
