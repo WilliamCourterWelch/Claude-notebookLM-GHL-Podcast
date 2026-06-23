@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Interlinking Spec (Caleb method)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--green-soft:rgba(52,211,153,.13);--red:#fb7185;--red-soft:rgba(251,113,133,.13);--blue:#7c9cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.5;padding-bottom:70px}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 28px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-size:clamp(1.9rem,4vw,2.7rem);font-weight:800;letter-spacing:-1px;line-height:1.08;margin:12px 0}
+  h2{font-size:1.3rem;font-weight:800}
+  p{color:var(--text2)}.lead{font-size:1.04rem;color:var(--text);max-width:880px}
+  code{background:var(--surface2);color:var(--amber);padding:1px 6px;border-radius:5px;font-size:.84em;font-family:ui-monospace,monospace}
+  header{padding:48px 0 24px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  section{padding:34px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-size:.78rem;color:var(--amber);font-weight:700;letter-spacing:1px}
+
+  .rule{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:15px 0;border-bottom:1px solid var(--line)}
+  .rule:last-child{border-bottom:0}
+  .rule .b{width:30px;height:30px;border-radius:8px;background:var(--amber);color:#07080a;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .rule h3{font-size:1.02rem;font-weight:700;margin-bottom:3px}
+  .rule p{font-size:.93rem}
+
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+  .pane{border-radius:13px;padding:18px;border:1px solid var(--line);background:var(--surface)}
+  .pane.before{border-color:rgba(251,113,133,.4)}.pane.after{border-color:rgba(52,211,153,.4)}
+  .pane .lab{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+  .before .lab{color:var(--red)}.after .lab{color:var(--green)}
+  ul.clean{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:7px}
+  ul.clean li{padding-left:20px;position:relative;color:var(--text2);font-size:.92rem}
+  ul.clean li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%}
+  .before li::before{background:var(--red)}.after li::before{background:var(--green)}
+
+  .changes .chg{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:15px 18px;margin-top:12px}
+  .changes .file{font-family:ui-monospace,monospace;font-size:.84rem;color:var(--blue);font-weight:600;margin-bottom:7px}
+  .changes .act{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:8px}
+  .a-edit{background:var(--amber-soft);color:var(--amber)}.a-rm{background:var(--red-soft);color:var(--red)}.a-add{background:var(--green-soft);color:var(--green)}
+  .changes ul.clean li::before{background:var(--amber)}
+
+  .cta{background:linear-gradient(180deg,var(--amber-soft),transparent);border:1px solid rgba(245,158,11,.4);border-radius:12px;padding:18px;margin-top:20px;font-size:.96rem}
+  .cta b{color:var(--text)}.cta code{font-size:.8em}
+  .foot{color:var(--muted);font-size:12px;margin-top:20px}
+  @media(max-width:820px){.ba{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Interlinking Spec · Caleb Ulku method · executable</div>
+  <h1>The corrected linking rules for the build.</h1>
+  <p class="lead">Replaces the earlier "funnel everything to the trial blog" approach. Per Caleb: isolated silos, no cross-silo links, rank pages out of the nav, and conversion through the external affiliate CTA.</p>
+</div></header>
+
+<!-- RULES -->
+<section><div class="wrap">
+  <div class="sec-num">01 — THE 6 BUILD RULES</div>
+  <h2>How every page links</h2>
+  <div style="margin-top:8px">
+    <div class="rule"><div class="b">1</div><div><h3>Nav = no rank pages</h3><p>The menu holds only <b style="color:var(--text)">Home, About, Language switch, and the trial CTA button</b>. No topic/money pages in the nav — nav links pass ~0 authority and burn the "first link" slot.</p></div></div>
+    <div class="rule"><div class="b">2</div><div><h3>Homepage = apex, links by body</h3><p>The homepage links <b style="color:var(--text)">down to each topic pillar through body content</b> (not the menu). It's the only page that spans topics — apex → pillars.</p></div></div>
+    <div class="rule"><div class="b">3</div><div><h3>Trial blog = standalone silo</h3><p>The free-trial blog gets <b style="color:var(--text)">one internal link, from the homepage.</b> No other silo links sideways into it. It still ranks for "gohighlevel free trial" on its own.</p></div></div>
+    <div class="rule"><div class="b">4</div><div><h3>CTA button → GHL (external)</h3><p>Every page's "Start 30-day trial" button is an <b style="color:var(--text)">external affiliate link to gohighlevel.com</b> (<code>fp_ref</code> + UTM, <code>nofollow noopener</code>). External = silo-safe + one hop to the money.</p></div></div>
+    <div class="rule"><div class="b">5</div><div><h3>Inside a silo: topic ↔ variations + link circle</h3><p>Topic pillar links to all its variations; each variation links back up; variations form a <b style="color:var(--text)">circle</b> (V1→V2→V3→V1). All body links.</p></div></div>
+    <div class="rule"><div class="b">6</div><div><h3>Never cross-link silos</h3><p>A pricing-silo page never links to a payments-silo page. Spanish is its own microsite — joined to English <b style="color:var(--text)">only by the language switch + hreflang</b>.</p></div></div>
+  </div>
+</div></section>
+
+<!-- TRIAL BLOG BEFORE/AFTER -->
+<section><div class="wrap">
+  <div class="sec-num">02 — THE MONEY PAGE, REWIRED</div>
+  <h2>Free-trial blog: from cross-linked to standalone</h2>
+  <div class="ba">
+    <div class="pane before"><div class="lab">✕ Now (wrong per Caleb)</div>
+      <ul class="clean">
+        <li><b style="color:var(--text)">11 inbound links</b> — 8 from different silos (pricing, phone, SMS, payments, CRM, sites) cross-linking sideways into it</li>
+        <li>Links out to /category, /services, and 3 other-silo blog posts</li>
+        <li>Visitor path: blog post → internal trial-blog link → then out to GHL (two hops)</li>
+      </ul></div>
+    <div class="pane after"><div class="lab">✓ After (Caleb-correct)</div>
+      <ul class="clean">
+        <li><b style="color:var(--text)">1 inbound link</b> — from the homepage (apex → pillar) only</li>
+        <li>No cross-silo links in or out; the category/services links removed</li>
+        <li>Visitor path: any page → CTA button → <b style="color:var(--text)">GHL direct</b> (one hop = better conversion)</li>
+      </ul></div>
+  </div>
+</div></section>
+
+<!-- CONCRETE CHANGES -->
+<section><div class="wrap">
+  <div class="sec-num">03 — WHAT CHANGES IN THE BUILD</div>
+  <h2>Concrete edits</h2>
+  <div class="changes">
+    <div class="chg"><div class="file">build.py — homepage block <span class="act a-edit">EDIT</span></div>
+      <ul class="clean"><li>Body links to each topic pillar (Pricing, Payments, Phone, SMS, CRM, Sites) + one link to the free-trial blog. The trial CTA button → GHL affiliate.</li></ul></div>
+    <div class="chg"><div class="file">build.py — every blog post template <span class="act a-edit">EDIT</span></div>
+      <ul class="clean"><li>Replace the internal "start trial" links with the <b style="color:var(--text)">external GHL CTA button</b>. Remove cross-silo links; keep only same-silo links (to the pillar / sibling variations).</li></ul></div>
+    <div class="chg"><div class="file">build.py — nav/footer <span class="act a-rm">REMOVE</span></div>
+      <ul class="clean"><li>Drop topic/money pages and <code>/category/agency-platform/</code> from the nav. Nav = Home · About · Español/English · [Start trial →].</li></ul></div>
+    <div class="chg"><div class="file">_redirects <span class="act a-add">ADD</span></div>
+      <ul class="clean"><li>301 the thin category pages to their topic pillar (same as before). Category leaves nav + sitemap.</li></ul></div>
+    <div class="chg"><div class="file">/es/ silo <span class="act a-edit">MIRROR</span></div>
+      <ul class="clean"><li>Same rules inside the Spanish microsite: /es/ apex → ES pillars (opiniones, precios, qué-es, pagos); CTA → GHL; no links into the English silos.</li></ul></div>
+  </div>
+  <div class="cta">💰 <b>The conversion engine:</b> one button, on every page, every language —
+    <code>gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12</code> + UTM, <code>target=_blank rel="nofollow noopener"</code>. That's what makes money. The internal links just build topical authority within each silo; they don't carry the sale.</div>
+  <p class="foot">Source: Caleb Ulku "AI SEO Mastery Pro" (smb-knowledge-base, lessons 02 + 12). This supersedes the interlinking section of the homepage spec. Existing <code>es-pricing-silo-caleb-linking</code> branch on the GHL repo to fold in.</p>
+</div></section>
+</body>
+</html>
