@@ -1,0 +1,191 @@
+{
+  "overview": [
+    {
+      "keyword": "ai receptionist for small business",
+      "volume_ads": 1000,
+      "volume_clickstream": 1726,
+      "difficulty": 13,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "all in one business software",
+      "volume_ads": 90,
+      "volume_clickstream": 52,
+      "difficulty": 10,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "best crm for contractors",
+      "volume_ads": 110,
+      "volume_clickstream": 0,
+      "difficulty": 36,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "crm for small business",
+      "volume_ads": 4400,
+      "volume_clickstream": 1516,
+      "difficulty": 41,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "missed call text back",
+      "volume_ads": 390,
+      "volume_clickstream": 889,
+      "difficulty": 0,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "software for service business",
+      "volume_ads": 90,
+      "volume_clickstream": 52,
+      "difficulty": 15,
+      "intent": "commercial",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "hubspot crm for small business",
+      "volume": 8100,
+      "difficulty": 42
+    },
+    {
+      "keyword": "crm software for a small business",
+      "volume": 5400,
+      "difficulty": 36
+    },
+    {
+      "keyword": "crm system for small business",
+      "volume": 5400,
+      "difficulty": 60
+    },
+    {
+      "keyword": "crm software for small business",
+      "volume": 5400,
+      "difficulty": 41
+    },
+    {
+      "keyword": "crm systems for small business",
+      "volume": 5400,
+      "difficulty": 60
+    },
+    {
+      "keyword": "crm for small business",
+      "volume": 4400,
+      "difficulty": 41
+    },
+    {
+      "keyword": "crm tool for small business",
+      "volume": 4400,
+      "difficulty": 37
+    },
+    {
+      "keyword": "crm for a small business",
+      "volume": 4400,
+      "difficulty": 41
+    },
+    {
+      "keyword": "crm programs for small business",
+      "volume": 4400,
+      "difficulty": 60
+    },
+    {
+      "keyword": "crm tools for small business",
+      "volume": 4400,
+      "difficulty": 39
+    },
+    {
+      "keyword": "crm packages for small business",
+      "volume": 4400,
+      "difficulty": 41
+    },
+    {
+      "keyword": "crm program for small business",
+      "volume": 4400,
+      "difficulty": 60
+    },
+    {
+      "keyword": "recommended crm for small business",
+      "volume": 2900,
+      "difficulty": 36
+    },
+    {
+      "keyword": "best crm programs for small business",
+      "volume": 2900,
+      "difficulty": 36
+    },
+    {
+      "keyword": "good crm for small business",
+      "volume": 2900,
+      "difficulty": 36
+    },
+    {
+      "keyword": "best crm for a small business",
+      "volume": 2900,
+      "difficulty": 24
+    },
+    {
+      "keyword": "best crm software for a small business",
+      "volume": 2900,
+      "difficulty": 41
+    },
+    {
+      "keyword": "best crm solution for small business",
+      "volume": 2900,
+      "difficulty": 26
+    },
+    {
+      "keyword": "best crm tools for small business",
+      "volume": 2900,
+      "difficulty": 36
+    },
+    {
+      "keyword": "best crm for small business",
+      "volume": 2900,
+      "difficulty": 36
+    },
+    {
+      "keyword": "good crm software for small business",
+      "volume": 2900,
+      "difficulty": 35
+    },
+    {
+      "keyword": "best crm tool for small business",
+      "volume": 2900,
+      "difficulty": 38
+    },
+    {
+      "keyword": "best crm system for small business",
+      "volume": 2900,
+      "difficulty": 41
+    },
+    {
+      "keyword": "crm for small business free",
+      "volume": 1600,
+      "difficulty": 40
+    },
+    {
+      "keyword": "free crm for small business",
+      "volume": 1600,
+      "difficulty": 37
+    }
+  ],
+  "serp": {},
+  "cost": 0.106,
+  "area": "service-hub",
+  "seeds": [
+    "crm for small business",
+    "gohighlevel for small business",
+    "ai receptionist for small business",
+    "missed call text back",
+    "best crm for contractors",
+    "all in one business software",
+    "software for service business"
+  ]
+}
