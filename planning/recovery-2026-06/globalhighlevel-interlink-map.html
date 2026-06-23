@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Interlinking Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--green-soft:rgba(52,211,153,.13);--red:#fb7185;--red-soft:rgba(251,113,133,.13);--blue:#7c9cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:15.5px;line-height:1.5;padding-bottom:70px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 30px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-size:clamp(1.9rem,4vw,2.8rem);font-weight:800;letter-spacing:-1px;line-height:1.08;margin:12px 0}
+  h2{font-size:1.35rem;font-weight:800;letter-spacing:-.3px}
+  p{color:var(--text2)}.lead{font-size:1.06rem;color:var(--text);max-width:840px}
+  header{padding:50px 0 26px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  section{padding:38px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-size:.78rem;color:var(--amber);font-weight:700;letter-spacing:1px}
+
+  /* hub graph */
+  .graph{margin-top:26px}
+  .hubs{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+  .hub{background:linear-gradient(180deg,var(--amber-soft),transparent);border:1.5px solid var(--amber);border-radius:14px;padding:16px 26px;text-align:center;min-width:200px}
+  .hub .t{font-weight:800;font-size:1.1rem}.hub .s{color:var(--text2);font-size:.82rem;margin-top:2px}
+  .down{text-align:center;color:var(--amber);font-size:24px;letter-spacing:10px;margin:10px 0 6px}
+  .nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+  .node{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;position:relative}
+  .node .nm{font-weight:700;font-size:.95rem}
+  .node .url{font-family:ui-monospace,monospace;font-size:.72rem;color:var(--muted);margin-top:2px}
+  .node .row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+  .badge{font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:20px}
+  .b-good{background:var(--green-soft);color:var(--green)}
+  .b-mid{background:var(--amber-soft);color:var(--amber)}
+  .b-low{background:var(--red-soft);color:var(--red)}
+  .tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+  .t-new{background:var(--green-soft);color:var(--green);border:1px dashed var(--green)}
+  .t-boost{background:var(--amber-soft);color:var(--amber)}
+  .node.es{border-color:rgba(124,156,255,.4)}
+  .leak{background:var(--red-soft);border:1px solid rgba(251,113,133,.4);border-radius:12px;padding:14px 18px;margin-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .leak .strike{text-decoration:line-through;color:var(--muted)}
+
+  .fixes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+  .fix{border-radius:13px;padding:18px;border:1px solid var(--line);background:var(--surface)}
+  .fix.add{border-color:rgba(52,211,153,.4)}.fix.rm{border-color:rgba(251,113,133,.4)}.fix.boost{border-color:rgba(245,158,11,.4)}
+  .fix h3{font-size:1rem;margin-bottom:6px}.fix p{font-size:.9rem}
+  .fix .lab{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+  .add .lab{color:var(--green)}.rm .lab{color:var(--red)}.boost .lab{color:var(--amber)}
+
+  table{width:100%;border-collapse:collapse;margin-top:18px;font-size:.9rem}
+  th{text-align:left;padding:9px 12px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--line)}
+  td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--text2)}
+  td .mini{font-size:.78rem;padding:1px 8px;border-radius:20px;font-weight:700}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:.85rem;color:var(--text2)}
+  .legend span{display:flex;align-items:center;gap:7px}.dot{width:11px;height:11px;border-radius:50%}
+  .foot{color:var(--muted);font-size:12px;margin-top:20px}
+  @media(max-width:820px){.nodes,.fixes{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Interlinking Map · built from the live crawl of all 24 URLs</div>
+  <h1>How the pages link — and the 3 fixes.</h1>
+  <p class="lead">Numbers are real contextual inlinks (links inside content, excluding nav/footer boilerplate) from crawling all 24 live pages. Green = well-linked, amber = thin, red = nearly orphaned. The homepage is the hub; arrows show what links where.</p>
+</div></header>
+
+<!-- THE GRAPH -->
+<section><div class="wrap">
+  <div class="sec-num">01 — THE LINK GRAPH</div>
+  <h2>Homepage → money pages</h2>
+  <div class="graph">
+    <div class="hubs">
+      <div class="hub"><div class="t">🏠 Homepage /</div><div class="s">EN · top landing page (155/90d) · the hub</div></div>
+      <div class="hub" style="border-color:var(--blue);background:linear-gradient(180deg,rgba(124,156,255,.12),transparent)"><div class="t">🏠 /es/</div><div class="s">Spanish landing · the #1 SEO lane</div></div>
+    </div>
+    <div class="down">↓ &nbsp; ↓ &nbsp; ↓</div>
+    <div class="nodes">
+      <div class="node"><div class="nm">GHL Pricing (EN)</div><div class="url">/blog/...pricing-plans-2026</div><div class="row"><span class="badge b-good">13 in</span><span class="tag" style="color:var(--green)">well-linked</span></div></div>
+      <div class="node"><div class="nm">Free-trial blog (EN)</div><div class="url">/blog/...free-trial-30-days</div><div class="row"><span class="badge b-good">11 in</span><span class="tag" style="color:var(--green)">well-linked</span></div></div>
+      <div class="node"><div class="nm">Launch a website (EN)</div><div class="url">/blog/...launch-a-website</div><div class="row"><span class="badge b-good">10 in</span><span class="tag" style="color:var(--green)">well-linked</span></div></div>
+      <div class="node es"><div class="nm">Precios (ES) 💰</div><div class="url">/blog/...precios-planes-2026</div><div class="row"><span class="badge b-mid">8 in</span><span class="tag t-new">+ homepage now</span></div></div>
+      <div class="node es"><div class="nm">Opiniones (ES) 💰</div><div class="url">/blog/...opiniones-confiable</div><div class="row"><span class="badge b-mid">6 in</span><span class="tag t-new">+ homepage now</span></div></div>
+      <div class="node es"><div class="nm">LATAM pagos (ES)</div><div class="url">/blog/...latam-pagos-agencias</div><div class="row"><span class="badge b-mid">6 in</span><span class="tag t-boost">cluster</span></div></div>
+      <div class="node es"><div class="nm">Qué es GoHighLevel (ES)</div><div class="url">/blog/que-es-gohighlevel...</div><div class="row"><span class="badge b-mid">5 in</span><span class="tag t-boost">cluster</span></div></div>
+      <div class="node"><div class="nm">Leverage AI pricing (EN)</div><div class="url">/blog/leverage-ai-pricing...</div><div class="row"><span class="badge b-low">2 in</span><span class="tag t-boost">boost</span></div></div>
+      <div class="node"><div class="nm">Payment providers (EN)</div><div class="url">/blog/master-payment-providers</div><div class="row"><span class="badge b-low">1 in</span><span class="tag t-boost">boost</span></div></div>
+    </div>
+    <div class="leak">
+      <div><span class="tag" style="background:var(--red-soft);color:var(--red)">LEAK</span> &nbsp;<b class="strike">/category/agency-platform/</b> — pulls a nav/footer link from <b style="color:var(--text)">23 of 24 pages</b>, but it's a thin page we're consolidating.</div>
+      <div style="color:var(--red);font-weight:700">→ removing from nav</div>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--green)"></span>Well-linked (8+ inlinks)</span>
+      <span><span class="dot" style="background:var(--amber)"></span>Thin (3-7)</span>
+      <span><span class="dot" style="background:var(--red)"></span>Nearly orphaned (1-2)</span>
+      <span><span class="dot" style="background:var(--blue)"></span>Spanish lane</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- THE 3 FIXES -->
+<section><div class="wrap">
+  <div class="sec-num">02 — THE 3 FIXES</div>
+  <h2>What changes in the link graph</h2>
+  <div class="fixes">
+    <div class="fix add"><div class="lab">+ Add</div><h3>Homepage → Spanish money pages</h3><p>The homepage linked to <b style="color:var(--text)">zero</b> Spanish money pages (only the /es/ hub). Now it links straight to <b style="color:var(--text)">Opiniones + Precios</b> — your highest-authority page feeding your #1 lane. <span style="color:var(--green)">Already wired in the prototype.</span></p></div>
+    <div class="fix rm"><div class="lab">− Remove</div><h3>The category leak</h3><p>Every page (23/24) sends a nav/footer link to the thin <code style="color:var(--amber)">/category/agency-platform/</code>. Dropping it from the nav stops bleeding equity into a page we're consolidating away.</p></div>
+    <div class="fix boost"><div class="lab">↑ Boost</div><h3>The nearly-orphaned money pages</h3><p><b style="color:var(--text)">Payment providers (1 inlink)</b> and <b style="color:var(--text)">Leverage-AI-pricing (2)</b> are barely reachable. Cross-link them from related guides + the homepage hub so they're not stranded.</p></div>
+  </div>
+</div></section>
+
+<!-- DATA TABLE -->
+<section><div class="wrap">
+  <div class="sec-num">03 — THE CALIBRATED DATA</div>
+  <h2>Contextual inlinks, every money page</h2>
+  <table><thead><tr><th>Page</th><th>Lane</th><th>Contextual inlinks</th><th>Status</th></tr></thead><tbody>
+    <tr><td>GHL Pricing (EN)</td><td>English</td><td>13</td><td><span class="mini b-good">healthy</span></td></tr>
+    <tr><td>Free-trial blog (EN)</td><td>English</td><td>11</td><td><span class="mini b-good">healthy</span></td></tr>
+    <tr><td>Launch a website (EN)</td><td>English</td><td>10</td><td><span class="mini b-good">healthy</span></td></tr>
+    <tr><td>Precios (ES)</td><td>Spanish 💰</td><td>8 → +homepage</td><td><span class="mini b-mid">improving</span></td></tr>
+    <tr><td>Opiniones (ES)</td><td>Spanish 💰</td><td>6 → +homepage</td><td><span class="mini b-mid">improving</span></td></tr>
+    <tr><td>LATAM pagos (ES)</td><td>Spanish</td><td>6</td><td><span class="mini b-mid">thin</span></td></tr>
+    <tr><td>Qué es GoHighLevel (ES)</td><td>Spanish</td><td>5</td><td><span class="mini b-mid">thin</span></td></tr>
+    <tr><td>Leverage AI pricing (EN)</td><td>English</td><td>2 → boost</td><td><span class="mini b-low">orphaned</span></td></tr>
+    <tr><td>Payment providers (EN)</td><td>English</td><td>1 → boost</td><td><span class="mini b-low">orphaned</span></td></tr>
+  </tbody></table>
+  <p class="foot">Source: live crawl of all 24 sitemap URLs (interlink_audit.py). "Contextual" = links inside page content, excluding the nav/footer links that appear on every page. The 3 fixes are baked into the homepage spec; the homepage→Opiniones+Precios link is already live in the clickable prototype.</p>
+</div></section>
+</body>
+</html>
