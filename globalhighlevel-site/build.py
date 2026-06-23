@@ -13,10 +13,12 @@ Generates:
   - public/404.html                        404 page
 """
 
+import hashlib
 import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -53,6 +55,38 @@ LANGUAGES  = []   # language definitions (list of dicts)
 # EN category slugs that actually have a built page after the 2026-06-03 prune.
 # Gates nav/footer category links so they never point at an emptied (404) category.
 LIVE_CATEGORY_SLUGS = set()
+# P0.3 (2026-06-22): site-wide cap on identical crawlable anchor->URL pairs. Even
+# title-only related anchors + injected body links can repeat the same anchor text at
+# the same URL across many posts, the manipulative-anchor signal Google demotes. Keyed
+# on (anchor_text_lower, url); injected/hub links beyond ANCHOR_URL_CAP are dropped so
+# the footprint stays varied. Cleared at the start of each build().
+ANCHOR_URL_CAP = 3
+# P1.1: a category gets a built hub page only with >= this many posts (mirrors the
+# language-topic-page rule). audit_links.py mirrors this value (card_count < 2).
+MIN_HUB_POSTS = 2
+_ANCHOR_URL_COUNTS: dict = {}
+
+
+def _cat_link_html(cat: str, css_class: str, extra_style: str = "") -> str:
+    """Category label: a real link only when its hub is built (LIVE_CATEGORY_SLUGS),
+    else plain text. Centralizes the P1.1 gating shared by every card type so the
+    rule lives in one place (was duplicated 4x)."""
+    if not cat:
+        return ""
+    style = f' style="{extra_style}"' if extra_style else ""
+    cs = slugify(cat)
+    if cs in LIVE_CATEGORY_SLUGS:
+        return f'<a href="/category/{cs}/" class="{css_class}"{style}>{cat}</a>'
+    return f'<span class="{css_class}"{style}>{cat}</span>'
+
+def _anchor_under_cap(anchor: str, url: str) -> bool:
+    """True if (anchor,url) is still under the site-wide cap; registers the use on True."""
+    key = (" ".join(anchor.lower().split()), url)
+    if _ANCHOR_URL_COUNTS.get(key, 0) >= ANCHOR_URL_CAP:
+        return False
+    _ANCHOR_URL_COUNTS[key] = _ANCHOR_URL_COUNTS.get(key, 0) + 1
+    return True
+
 # Language codes that actually have a built hub (build_language_hub skips empty
 # langs). Gates the language picker so it never links a 404 hub (e.g. /ar/).
 LIVE_LANG_CODES = set()
@@ -193,6 +227,30 @@ def post_topic(post: dict) -> str:
     return "Agency & Platform"
 
 
+def _hub_link_block(category: str, cat_slug: str, slug: str) -> str:
+    """P1.2 (2026-06-22): one editorial in-body link UP to the category hub, with a
+    VARIED anchor (Caleb: vary anchor text, never repeat) chosen deterministically per
+    post slug and capped site-wide (P0.3). Returns '' when every variant is over cap so
+    we never emit a uniform repeated hub anchor (Codex: that would be a fresh anchor cliff)."""
+    cat_l = category.lower()
+    url = f"/category/{cat_slug}/"
+    variants = [
+        f"more {cat_l} tutorials for GoHighLevel",
+        f"our {cat_l} guides",
+        f"the full {cat_l} guide library",
+        f"all {cat_l} how-tos",
+    ]
+    pick = variants[int(hashlib.md5(slug.encode()).hexdigest(), 16) % len(variants)]
+    if not _anchor_under_cap(pick, url):
+        for v in variants:
+            if _anchor_under_cap(v, url):
+                pick = v
+                break
+        else:
+            return ""
+    return f'\n<p class="hub-link">Keep learning: <a href="{url}">{pick}</a>.</p>'
+
+
 def get_related(post: dict, all_posts: list, n: int = 3) -> list:
     """Return n related posts — same language, same topic first, then most recent.
 
@@ -235,13 +293,14 @@ def _build_link_index(all_posts: list, target_lang=None) -> list[tuple[str, str,
         words = re.sub(r"[^a-z0-9\s]", " ", title.lower()).split()
         meaningful = [w for w in words if w not in stop and len(w) > 2]
         phrases = []
-        # Single important words (4+ chars)
-        for w in meaningful:
-            if len(w) >= 5:
-                phrases.append(w)
-        # Bigrams from meaningful words
+        # P0.2 (2026-06-22): MULTI-WORD anchors only. Single-word phrases (any word
+        # >=5 chars) were the bare-brand ("gohighlevel") AND generic single-token
+        # ("pricing", "payments", "razorpay") anchor source. Caleb non-local: describe
+        # the destination, never a bare word or brand name. Bigrams + trigrams only.
         for i in range(len(meaningful) - 1):
             phrases.append(f"{meaningful[i]} {meaningful[i+1]}")
+        for i in range(len(meaningful) - 2):
+            phrases.append(f"{meaningful[i]} {meaningful[i+1]} {meaningful[i+2]}")
         index.append((slug, title, cat, phrases, post_url(p)))
     return index
 
@@ -317,6 +376,8 @@ def inject_internal_links(html: str, post: dict, all_posts: list, max_links: int
                 if before.count('<') > before.count('>'):
                     continue
                 original_text = part[idx:idx + len(best_match)]
+                if not _anchor_under_cap(original_text, c_url):
+                    continue  # P0.3: this exact anchor->URL pair already hit the site-wide cap
                 link = f'<a href="{c_url}">{original_text}</a>'
                 parts[i] = part[:idx] + link + part[idx + len(best_match):]
                 linked_slugs.add(c_slug)
@@ -709,10 +770,13 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .related-posts{{margin:48px 0 0}}
 .related-label{{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:18px}}
 .related-grid{{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}}
-.related-card{{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-decoration:none;display:block;transition:border-color .2s}}
-.related-card:hover{{border-color:var(--amber);text-decoration:none}}
-.related-card .r-tag{{font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}}
-.related-card .r-title{{font-size:.85rem;font-weight:600;color:#e5e7eb;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
+.related-card{{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;display:block;transition:border-color .2s}}
+.related-card:hover{{border-color:var(--amber)}}
+.related-card .r-tag{{display:block;font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}}
+.related-card .r-title{{display:-webkit-box;font-size:.85rem;font-weight:600;color:#e5e7eb;line-height:1.4;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-decoration:none}}
+.related-card:hover .r-title{{color:#fff;text-decoration:none}}
+.hub-link{{margin:36px 0 0;padding-top:20px;border-top:1px solid var(--border);font-size:.95rem;color:var(--text2)}}
+.hub-link a{{color:var(--amber);font-weight:600}}
 
 /* Pagination */
 .pagination{{display:flex;gap:8px;justify-content:center;margin-top:48px;flex-wrap:wrap}}
@@ -1336,6 +1400,9 @@ def build_post_page(post: dict, all_posts: list = None):
     # ── Internal links: cross-link to related posts for SEO ──────────────────
     if all_posts:
         html_content = inject_internal_links(html_content, post, all_posts)
+    # P1.2: editorial in-body link up to the category hub (only when the hub is built).
+    if _cat_built:
+        html_content += _hub_link_block(category, cat_slug, slug)
 
     # ── Podcast section ───────────────────────────────────────────────────────
     if episode_id:
@@ -1420,11 +1487,16 @@ def build_post_page(post: dict, all_posts: list = None):
                 r_title = r.get("title", r.get("seoTitle", ""))
                 r_cat   = display_cat(post_topic(r)) or "GoHighLevel"
                 r_url   = post_url(r)
+                # P0.1 (2026-06-22): anchor = TITLE ONLY. Previously the whole card
+                # was one <a> wrapping the category tag + title, so the crawlable anchor
+                # was "{category} {title}" repeated across every same-topic post — the
+                # 8x identical mega-anchor that is the April-cliff fingerprint. The tag
+                # is now non-link text; the title is the only crawlable link.
                 cards += f"""
-<a href="{r_url}" class="related-card">
-  <div class="r-tag">{r_cat}</div>
-  <div class="r-title">{r_title}</div>
-</a>"""
+<div class="related-card">
+  <span class="r-tag">{r_cat}</span>
+  <a href="{r_url}" class="r-title">{r_title}</a>
+</div>"""
             related_html = f"""
 <div class="related-posts">
   <div class="related-label">Keep Reading</div>
@@ -1538,7 +1610,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         date_str = fmt_date(p.get("publishedAt", p.get("uploadedAt", "")))
         ep_id    = p.get("transistorEpisodeId", "")
         rtime    = read_time(p.get("html_content", desc))
-        cat_html = f'<a href="/category/{slugify(cat)}/" class="card-cat">{cat}</a>' if cat else ""
+        cat_html = _cat_link_html(cat, "card-cat")
         podcast  = '<span class="podcast-badge">Podcast</span>' if ep_id else ""
         return f"""
 <article class="card">
@@ -1578,7 +1650,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         lead_cat = display_cat(post_topic(lead))
         lead_date = fmt_date(lead.get("publishedAt", lead.get("uploadedAt", "")))
         lead_rtime = read_time(lead.get("html_content", lead_desc))
-        lead_cat_html = f'<a href="/category/{slugify(lead_cat)}/" class="hp-lead-cat" style="text-decoration:none;display:inline-block">{lead_cat}</a>' if lead_cat else ""
+        lead_cat_html = _cat_link_html(lead_cat, "hp-lead-cat", "text-decoration:none;display:inline-block")
 
         stack_html = ""
         for sp in stack_posts:
@@ -1586,7 +1658,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
             sp_title = sp.get("title", sp.get("seoTitle", ""))
             sp_cat = display_cat(post_topic(sp))
             sp_date = fmt_date(sp.get("publishedAt", sp.get("uploadedAt", "")))
-            sp_cat_html = f'<a href="/category/{slugify(sp_cat)}/" class="hp-stack-cat" style="text-decoration:none;display:inline-block">{sp_cat}</a>' if sp_cat else ""
+            sp_cat_html = _cat_link_html(sp_cat, "hp-stack-cat", "text-decoration:none;display:inline-block")
             stack_html += f"""
 <div class="hp-stack-item">
   {sp_cat_html}
@@ -1716,6 +1788,8 @@ def build_category_pages(posts: list[dict]):
 
     for cat, cat_posts in by_cat.items():
         cat_slug = slugify(cat)
+        if len(cat_posts) < MIN_HUB_POSTS:
+            continue  # P1.1: don't build thin 1-post hubs (2026-06-22)
         cards_html = ""
         for p in cat_posts:
             slug     = p.get("slug", "")
@@ -1725,7 +1799,7 @@ def build_category_pages(posts: list[dict]):
             ep_id    = p.get("transistorEpisodeId", "")
             rtime    = read_time(p.get("html_content", desc))
             cat_label = display_cat(cat)
-            cat_html  = f'<a href="/category/{slugify(cat_label)}/" class="card-cat">{cat_label}</a>' if cat_label else ""
+            cat_html  = _cat_link_html(cat_label, "card-cat")
             podcast   = '<span class="podcast-badge">Podcast</span>' if ep_id else ""
             cards_html += f"""
 <article class="card">
@@ -3025,13 +3099,19 @@ def main():
     # bucketing). base_html links category pages while pages are mid-build, so it
     # can't disk-check — it reads this precomputed set instead. Recomputed every
     # build, so it self-heals as the pipeline adds posts back.
-    LIVE_CATEGORY_SLUGS = set()
+    # P1.1 (2026-06-22): min_posts=2 for English hubs (mirrors language topic pages
+    # + build_category_pages). A 1-post category renders as an empty-void "junk" page
+    # and is a thin doorway under the quality demotion, so it is NOT built. Its post
+    # falls back to a plain-text breadcrumb (build_post_page _cat_built keys off this set).
+    _en_cat_counts = {}
     for _p in merged:
         if post_lang(_p) != "en":
             continue
         _topic = post_topic(_p)
         _cat = _topic if display_cat(_topic) else "GoHighLevel Tutorials"
-        LIVE_CATEGORY_SLUGS.add(slugify(_cat))
+        _en_cat_counts[slugify(_cat)] = _en_cat_counts.get(slugify(_cat), 0) + 1
+    LIVE_CATEGORY_SLUGS = {_s for _s, _n in _en_cat_counts.items() if _n >= MIN_HUB_POSTS}
+    _ANCHOR_URL_COUNTS.clear()  # P0.3: fresh anchor-cap ledger per build
     # Languages with at least one post get a built hub (mirrors build_language_hub's
     # `if not lang_posts: return`). English ("en") is always present.
     LIVE_LANG_CODES = {post_lang(_p) for _p in merged} | {"en"}
@@ -3137,6 +3217,22 @@ def main():
     print(f"\n✅ Build complete — {len(merged)} posts, {total_pages} index pages\n")
 
     _assert_tracking_tags_on_every_page()
+    _assert_link_hygiene()
+
+
+def _assert_link_hygiene():
+    """Fail the build if the link-hygiene gate (scripts/audit_links.py) finds a
+    violation: anchor cliff, single-word/bare-brand anchor, thin hub, or internal 404.
+    Blocking — Cloudflare runs build.py, so a non-zero exit here stops the deploy.
+    Same structural-guarantee pattern as _assert_tracking_tags_on_every_page."""
+    audit = BASE_DIR / "scripts" / "audit_links.py"
+    if not audit.exists():
+        return
+    sys.stdout.flush()  # keep build + subprocess output in order in CI/Cloudflare logs
+    result = subprocess.run([sys.executable, str(audit), str(PUBLIC_DIR)])
+    if result.returncode != 0:
+        print("\n❌ Link-hygiene gate failed (scripts/audit_links.py) — build aborted.")
+        sys.exit(1)
 
 
 def _assert_tracking_tags_on_every_page():

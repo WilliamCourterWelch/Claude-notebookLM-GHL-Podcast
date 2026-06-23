@@ -2,6 +2,16 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.1.0.28] - 2026-06-22
+### Fixed
+- **Killed the internal-anchor spam pattern that matches the April quality-demotion fingerprint.** The "Keep Reading" related cards wrapped the category tag and the post title in one link, so Google saw the same ~60-character anchor ("Agency & Platform GoHighLevel Pricing 2026...") repeated 8x sitewide pointing at the money pages. Related cards now link the title only (category is plain text), the in-article link injector emits multi-word descriptive anchors only (no bare "GoHighLevel"/"pricing"/"payments" single-word anchors), and a sitewide cap stops any one anchor->URL pair from repeating more than 3x.
+
+### Changed
+- **Stopped building thin 1-post category pages.** Category hubs now require 2+ posts (the rule the language hubs already used), so a single-post "category" no longer renders as a near-empty page with one card and a wall of blank space. Those posts fall back to a plain-text breadcrumb; nav, footer, sidebar, and cards drop the now-dead links automatically. Each post also gains one editorial in-body link up to its category hub (varied anchor, capped).
+
+### For contributors
+- New **`scripts/audit_links.py`** link-hygiene gate, wired into `build.py` as a blocking build step (Cloudflare runs build.py, so a violation aborts the deploy). It fails the build on anchor cliffs, single-word/bare-brand editorial anchors, thin hubs, and internal 404s, and reports per-post editorial inbound counts (near-orphan curation signal). The HTML parser uses an element stack so unbalanced post markup can't desync it (fail-closed, not fail-open). Stdlib tests: `scripts/test_audit_links.py` + `scripts/test_build_links.py` (`python3 scripts/test_*.py`). Anchor/hub changes went through `/plan-eng-review` + Codex outside voice + a 3-pass `/review` (caught the dead-wired gate and a fail-open parser before merge).
+
 ## [0.1.0.27] - 2026-06-22
 ### Added
 - **First real product screenshot on the LATAM agencies hub.** `/blog/gohighlevel-latam-pagos-agencias/` now shows a genuine capture of GoHighLevel's **Integraciones de pagos** screen (Spanish interface, native providers like Stripe/PayPal/Authorize.net) right where the page explains the Flujo B payment stack — first-hand visual proof instead of a text-only claim. This is the first page taken to the real-screenshot EEAT bar the site needs to climb out of the April-2026 quality demotion. Also removed a stale duplicate image (`ghl-payment-integrations-es.png`) that was sitting unused.
