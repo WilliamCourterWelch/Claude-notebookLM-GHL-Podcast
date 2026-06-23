@@ -1,0 +1,115 @@
+{
+  "total_keywords": 25,
+  "total_volume": 1110,
+  "rows": [
+    {
+      "keyword": "white label crm",
+      "volume": 260
+    },
+    {
+      "keyword": "crm white label",
+      "volume": 260
+    },
+    {
+      "keyword": "white label crm system",
+      "volume": 260
+    },
+    {
+      "keyword": "white label crm platform",
+      "volume": 40
+    },
+    {
+      "keyword": "white label crm software",
+      "volume": 40
+    },
+    {
+      "keyword": "white label crm for agencies",
+      "volume": 30
+    },
+    {
+      "keyword": "white label crm reseller",
+      "volume": 20
+    },
+    {
+      "keyword": "best white label crm",
+      "volume": 20
+    },
+    {
+      "keyword": "crm white label reseller",
+      "volume": 20
+    },
+    {
+      "keyword": "crm white label saas",
+      "volume": 10
+    },
+    {
+      "keyword": "agile crm white label",
+      "volume": 10
+    },
+    {
+      "keyword": "white label crm the affiliate platform",
+      "volume": 10
+    },
+    {
+      "keyword": "crm white label brasil",
+      "volume": 10
+    },
+    {
+      "keyword": "white label crm wordpress",
+      "volume": 10
+    },
+    {
+      "keyword": "white label crm open source",
+      "volume": 10
+    },
+    {
+      "keyword": "white label real estate crm",
+      "volume": 10
+    },
+    {
+      "keyword": "white-label crm meaning",
+      "volume": 10
+    },
+    {
+      "keyword": "whatsapp crm white label",
+      "volume": 10
+    },
+    {
+      "keyword": "white label crm providers",
+      "volume": 10
+    },
+    {
+      "keyword": "white label crm meaning",
+      "volume": 10
+    },
+    {
+      "keyword": "white label crm solutions",
+      "volume": 10
+    },
+    {
+      "keyword": "white label zoho crm",
+      "volume": 10
+    },
+    {
+      "keyword": "crm whatsapp white label",
+      "volume": 10
+    },
+    {
+      "keyword": "white label crm app",
+      "volume": 10
+    },
+    {
+      "keyword": "zoho crm white label",
+      "volume": 10
+    }
+  ],
+  "seeds": [
+    "white label crm"
+  ],
+  "coverage": {
+    "limit": 100,
+    "max_pages": 2,
+    "note": "up to 200 suggestions/seed"
+  },
+  "cost": 0.0147
+}

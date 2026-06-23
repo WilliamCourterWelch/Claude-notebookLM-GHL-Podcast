@@ -1,0 +1,130 @@
+{
+  "overview": [
+    {
+      "keyword": "gohighlevel que es",
+      "volume_ads": 40,
+      "volume_clickstream": 77,
+      "difficulty": null,
+      "intent": "informational",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "gohighlevel que es",
+      "volume": 40,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel que es y para que sirve",
+      "volume": 10,
+      "difficulty": null
+    }
+  ],
+  "serp": {
+    "gohighlevel opiniones": {
+      "top_domains": [
+        "es.trustpilot.com",
+        "www.reddit.com",
+        "www.capterra.mx",
+        "appcritic.es",
+        "www.reddit.com",
+        "clientify.com",
+        "alextorre.com",
+        "www.breakcold.com"
+      ],
+      "paa": [
+        "\u00bfQu\u00e9 es GoHighLevel y para qu\u00e9 sirve?",
+        "\u00bfQui\u00e9n est\u00e1 detr\u00e1s de GoHighLevel?",
+        "\u00bfCu\u00e1nto cobra GoHighLevel?",
+        "\u00bfHighLevel Agency es confiable?"
+      ],
+      "related": [
+        "GoHighLevel que es",
+        "GoHighLevel como funciona",
+        "Gohighlevel precio",
+        "GoHighLevel CRM",
+        "Gohighlevel app",
+        "GoHighLevel Espa\u00f1ol",
+        "GoHighLevel WhatsApp",
+        "GoHighLevel Que es y para que sirve",
+        "GoHighLevel que es",
+        "GoHighLevel como funciona"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "gohighlevel precios": {
+      "top_domains": [
+        "www.gohighlevel.com",
+        "gohighlevel-precios.com",
+        "efectonewton.com",
+        "www.youtube.com",
+        "appcritic.es",
+        "help.gohighlevel.com",
+        "milybarahona.com",
+        "www.youtube.com"
+      ],
+      "paa": [
+        "\u00bfCu\u00e1nto cobra GoHighLevel?",
+        "\u00bfGoHighLevel es gratuito o de pago?",
+        "\u00bfQu\u00e9 es GoHighLevel y para qu\u00e9 sirve?",
+        "\u00bfPlataformas similares a GoHighLevel?"
+      ],
+      "related": [
+        "GoHighLevel Espa\u00f1ol",
+        "GoHighLevel curso",
+        "GoHighLevel para que sirve",
+        "GoHighLevel como funciona",
+        "Precios ghl",
+        "Gohighlevel affiliate",
+        "Planes de GoHighLevel",
+        "GoHighLevel CRM",
+        "GoHighLevel Espa\u00f1ol",
+        "GoHighLevel curso"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "gohighlevel que es": {
+      "top_domains": [
+        "www.reddit.com",
+        "efectonewton.com",
+        "appcritic.es",
+        "flownexion.com",
+        "gohighlevel.com.mx",
+        "alextorre.com",
+        "www.youtube.com",
+        "www.gohighlevel.com"
+      ],
+      "paa": [
+        "\u00bfCu\u00e1nto cobra GoHighLevel?",
+        "\u00bfQu\u00e9 tan bueno es GoHighLevel?",
+        "\u00bfQu\u00e9 es gohai level?",
+        "\u00bfGoHighLevel significado?"
+      ],
+      "related": [
+        "GoHighLevel Que es y para que sirve",
+        "GoHighLevel como funciona",
+        "GoHighLevel Espa\u00f1ol",
+        "Gohighlevel precio",
+        "GoHighLevel curso",
+        "GoHighLevel CRM",
+        "GoHighLevel vs HubSpot",
+        "GoHighLevel tutorial",
+        "GoHighLevel Que es y para que sirve",
+        "GoHighLevel como funciona"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    }
+  },
+  "cost": 0.0608,
+  "area": "es-p0-serp",
+  "seeds": [
+    "gohighlevel opiniones",
+    "gohighlevel precios",
+    "gohighlevel que es",
+    "gohighlevel rese\u00f1a"
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "domains": {
+    "globalhighlevel.com": {
+      "total_count": 17,
+      "raw_fetched": 17,
+      "fetched": 17,
+      "rows": [
+        {
+          "keyword": "go high level pricing",
+          "volume": 5400,
+          "position": 81,
+          "url": "/blog/gohighlevel-pricing-plans-2026-complete-guide/"
+        },
+        {
+          "keyword": "go highlevel.com",
+          "volume": 720,
+          "position": 64,
+          "url": "/"
+        },
+        {
+          "keyword": "ghl pricing",
+          "volume": 590,
+          "position": 79,
+          "url": "/blog/gohighlevel-pricing-plans-2026-complete-guide/"
+        },
+        {
+          "keyword": "go high level cost",
+          "volume": 320,
+          "position": 88,
+          "url": "/blog/gohighlevel-pricing-plans-2026-complete-guide/"
+        },
+        {
+          "keyword": "what is a high level summary",
+          "volume": 320,
+          "position": 95,
+          "url": "/blog/how-to-use-contact-summary-agent-gohighlevel-view-insights/"
+        },
+        {
+          "keyword": "what is a high-level summary",
+          "volume": 320,
+          "position": 91,
+          "url": "/blog/how-to-use-contact-summary-agent-gohighlevel-view-insights/"
+        },
+        {
+          "keyword": "go high level trial",
+          "volume": 90,
+          "position": 78,
+          "url": "/trial/"
+        },
+        {
+          "keyword": "go high level academy",
+          "volume": 70,
+          "position": 79,
+          "url": "/"
+        },
+        {
+          "keyword": "gohighlevel contacts",
+          "volume": 70,
+          "position": 61,
+          "url": "/category/crm-contacts/"
+        },
+        {
+          "keyword": "ghl go high level",
+          "volume": 50,
+          "position": 74,
+          "url": "/"
+        },
+        {
+          "keyword": "go high level blog",
+          "volume": 40,
+          "position": 63,
+          "url": "/"
+        },
+        {
+          "keyword": "gohighlevel custom values",
+          "volume": 30,
+          "position": 51,
+          "url": "/blog/custom-values-gohighlevel-personalize-calendars-india/"
+        },
+        {
+          "keyword": "gohighlevel.com pricing",
+          "volume": 30,
+          "position": 88,
+          "url": "/blog/gohighlevel-pricing-plans-2026-complete-guide/"
+        },
+        {
+          "keyword": "high level report",
+          "volume": 30,
+          "position": 54,
+          "url": "/category/analytics-reporting/"
+        },
+        {
+          "keyword": "high-level report",
+          "volume": 30,
+          "position": 53,
+          "url": "/category/analytics-reporting/"
+        },
+        {
+          "keyword": "gohighlevel workflow templates",
+          "volume": 20,
+          "position": 39,
+          "url": "/blog/how-to-use-template-library-gohighlevel-save-time-workflows/"
+        },
+        {
+          "keyword": "go high level workflow templates",
+          "volume": 10,
+          "position": 37,
+          "url": "/blog/how-to-use-template-library-gohighlevel-save-time-workflows/"
+        }
+      ],
+      "pages": [
+        {
+          "path": "/blog/gohighlevel-pricing-plans-2026-complete-guide/",
+          "volume": 6340,
+          "keyword_count": 4,
+          "top_keywords": [
+            {
+              "keyword": "go high level pricing",
+              "volume": 5400,
+              "position": 81
+            },
+            {
+              "keyword": "ghl pricing",
+              "volume": 590,
+              "position": 79
+            },
+            {
+              "keyword": "go high level cost",
+              "volume": 320,
+              "position": 88
+            },
+            {
+              "keyword": "gohighlevel.com pricing",
+              "volume": 30,
+              "position": 88
+            }
+          ]
+        },
+        {
+          "path": "/",
+          "volume": 880,
+          "keyword_count": 4,
+          "top_keywords": [
+            {
+              "keyword": "go highlevel.com",
+              "volume": 720,
+              "position": 64
+            },
+            {
+              "keyword": "go high level academy",
+              "volume": 70,
+              "position": 79
+            },
+            {
+              "keyword": "ghl go high level",
+              "volume": 50,
+              "position": 74
+            },
+            {
+              "keyword": "go high level blog",
+              "volume": 40,
+              "position": 63
+            }
+          ]
+        },
+        {
+          "path": "/blog/how-to-use-contact-summary-agent-gohighlevel-view-insights/",
+          "volume": 640,
+          "keyword_count": 2,
+          "top_keywords": [
+            {
+              "keyword": "what is a high level summary",
+              "volume": 320,
+              "position": 95
+            },
+            {
+              "keyword": "what is a high-level summary",
+              "volume": 320,
+              "position": 91
+            }
+          ]
+        },
+        {
+          "path": "/trial/",
+          "volume": 90,
+          "keyword_count": 1,
+          "top_keywords": [
+            {
+              "keyword": "go high level trial",
+              "volume": 90,
+              "position": 78
+            }
+          ]
+        },
+        {
+          "path": "/category/crm-contacts/",
+          "volume": 70,
+          "keyword_count": 1,
+          "top_keywords": [
+            {
+              "keyword": "gohighlevel contacts",
+              "volume": 70,
+              "position": 61
+            }
+          ]
+        },
+        {
+          "path": "/category/analytics-reporting/",
+          "volume": 60,
+          "keyword_count": 2,
+          "top_keywords": [
+            {
+              "keyword": "high level report",
+              "volume": 30,
+              "position": 54
+            },
+            {
+              "keyword": "high-level report",
+              "volume": 30,
+              "position": 53
+            }
+          ]
+        },
+        {
+          "path": "/blog/custom-values-gohighlevel-personalize-calendars-india/",
+          "volume": 30,
+          "keyword_count": 1,
+          "top_keywords": [
+            {
+              "keyword": "gohighlevel custom values",
+              "volume": 30,
+              "position": 51
+            }
+          ]
+        },
+        {
+          "path": "/blog/how-to-use-template-library-gohighlevel-save-time-workflows/",
+          "volume": 30,
+          "keyword_count": 2,
+          "top_keywords": [
+            {
+              "keyword": "gohighlevel workflow templates",
+              "volume": 20,
+              "position": 39
+            },
+            {
+              "keyword": "go high level workflow templates",
+              "volume": 10,
+              "position": 37
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "cost": 0.0117
+}

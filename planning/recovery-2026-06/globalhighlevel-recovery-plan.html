@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Recovery & Redesign Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07080a; --surface:#111520; --surface2:#171c2a; --line:#222a3d;
+    --amber:#f59e0b; --amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff; --text2:#9aa6c4; --muted:#5b688a;
+    --green:#34d399; --red:#f87171;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;
+    font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;padding:0 0 80px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+  .eyebrow{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);font-weight:700;margin-bottom:10px}
+  h1{font-size:clamp(2.1rem,4vw,3.3rem);font-weight:800;line-height:1.08;letter-spacing:-1px;margin-bottom:14px}
+  h2{font-size:1.7rem;font-weight:800;letter-spacing:-.4px;margin-bottom:6px}
+  h3{font-size:1.05rem;font-weight:700;margin-bottom:6px}
+  p{color:var(--text2)}
+  .lead{font-size:1.15rem;color:var(--text);max-width:760px}
+  /* header */
+  header{padding:64px 0 40px;border-bottom:1px solid var(--line);background:
+    radial-gradient(900px 360px at 80% -10%, rgba(245,158,11,.10), transparent 60%)}
+  .kicker-row{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:13px;margin-top:18px}
+  .dot{width:4px;height:4px;border-radius:50%;background:var(--muted)}
+  section{padding:52px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-size:13px;color:var(--amber);font-weight:700;letter-spacing:1px}
+  /* cards / grid */
+  .grid{display:grid;gap:18px;margin-top:26px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .card.amber{border-color:rgba(245,158,11,.4);background:linear-gradient(180deg,var(--amber-soft),transparent)}
+  .stat{font-size:2.4rem;font-weight:800;letter-spacing:-1px;line-height:1}
+  .stat.sm{font-size:1.6rem}
+  .stat-label{color:var(--text2);font-size:.95rem;margin-top:6px}
+  .big-num{color:var(--amber)}
+  /* bars */
+  .bars{margin-top:24px;display:flex;flex-direction:column;gap:14px}
+  .bar-row{display:grid;grid-template-columns:170px 1fr 64px;align-items:center;gap:14px}
+  .bar-label{font-size:.92rem;color:var(--text);font-weight:500}
+  .bar-track{height:26px;background:var(--surface2);border-radius:6px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;
+    padding-right:8px;font-size:12px;font-weight:700;color:#07080a}
+  .bar-val{font-size:.92rem;color:var(--text2);text-align:right;font-variant-numeric:tabular-nums}
+  /* mini timeline chart */
+  .chart{display:flex;align-items:flex-end;gap:3px;height:150px;margin-top:22px;
+    padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+  .col{flex:1;background:linear-gradient(180deg,#2a3346,#1b2233);border-radius:2px 2px 0 0;min-height:2px}
+  .col.cliff{background:linear-gradient(180deg,var(--amber),#b4730a)}
+  .chart-caption{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:8px}
+  /* store / billboards */
+  .model{display:grid;grid-template-columns:1fr;gap:14px;margin-top:24px}
+  .billboards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .bb{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:14px;text-align:center;font-size:.86rem;color:var(--text2)}
+  .bb b{color:var(--text);display:block;font-size:.82rem}
+  .store{background:linear-gradient(180deg,var(--amber-soft),transparent);border:1px solid rgba(245,158,11,.45);
+    border-radius:14px;padding:22px;text-align:center}
+  .arrows{text-align:center;color:var(--amber);font-size:22px;letter-spacing:8px;margin:2px 0}
+  /* decision table */
+  table{width:100%;border-collapse:collapse;margin-top:22px;font-size:.94rem}
+  th{text-align:left;padding:12px 14px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--line)}
+  td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--text2)}
+  td b{color:var(--text)}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .t-keep{background:rgba(52,211,153,.15);color:var(--green)}
+  .t-fold{background:var(--amber-soft);color:var(--amber)}
+  .t-fix{background:rgba(248,113,113,.15);color:var(--red)}
+  .t-leave{background:rgba(154,166,196,.15);color:var(--text2)}
+  /* steps */
+  .step{display:flex;gap:18px;padding:20px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:0}
+  .step-n{flex:0 0 44px;height:44px;border-radius:12px;background:var(--amber);color:#07080a;
+    font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
+  /* wireframe */
+  .wire{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:24px}
+  .wire-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--surface2)}
+  .wire-logo{font-weight:800}.wire-logo span{color:var(--amber)}
+  .wire-cta{background:var(--amber);color:#07080a;font-weight:700;font-size:.8rem;padding:7px 14px;border-radius:8px}
+  .wire-block{padding:26px 24px;border-bottom:1px solid var(--line)}
+  .wire-block:last-child{border-bottom:0}
+  .wire-tag{font-size:11px;color:var(--amber);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+  .wire-h{font-size:1.5rem;font-weight:800;margin:8px 0;letter-spacing:-.5px}
+  .skl{height:9px;background:var(--surface2);border-radius:5px;margin:7px 0}
+  .hubgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+  .hubcard{background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:12px;font-size:.8rem}
+  .hubcard b{color:var(--text);font-size:.82rem}
+  .callout{background:var(--surface);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:16px 20px;margin-top:22px}
+  .check{color:var(--green);font-weight:700}
+  .x{color:var(--red);font-weight:700}
+  ul.clean{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:9px}
+  ul.clean li{padding-left:22px;position:relative;color:var(--text2)}
+  ul.clean li::before{content:"";position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:var(--amber)}
+  .foot{padding-top:34px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Recovery &amp; Redesign Plan</div>
+    <h1>GlobalHighLevel: rebuild around the<br>channels that still work.</h1>
+    <p class="lead">The site lost Google in April. But Google was never the big faucet. This plan turns the homepage into a trial-closing machine for the audience you actually have, stops the traffic you're leaking, and keeps the pages that bring strangers in.</p>
+    <div class="kicker-row">
+      <span>Prepared for Bill</span><span class="dot"></span>
+      <span>June 23, 2026</span><span class="dot"></span>
+      <span>Built on live GSC + GA4 data</span>
+    </div>
+  </div>
+</header>
+
+<!-- 1. DIAGNOSIS -->
+<section><div class="wrap">
+  <div class="sec-num">01 — WHAT HAPPENED</div>
+  <h2>The April 24 cliff</h2>
+  <p class="lead" style="font-size:1.05rem">Search impressions climbed steadily into April, then fell off a cliff overnight and never came back.</p>
+  <div class="chart" aria-hidden="true">
+    <div class="col" style="height:18%"></div><div class="col" style="height:22%"></div>
+    <div class="col" style="height:28%"></div><div class="col" style="height:35%"></div>
+    <div class="col" style="height:44%"></div><div class="col" style="height:52%"></div>
+    <div class="col" style="height:61%"></div><div class="col" style="height:70%"></div>
+    <div class="col" style="height:78%"></div><div class="col" style="height:88%"></div>
+    <div class="col" style="height:100%"></div><div class="col cliff" style="height:6%"></div>
+    <div class="col cliff" style="height:4%"></div><div class="col cliff" style="height:5%"></div>
+    <div class="col cliff" style="height:3%"></div><div class="col cliff" style="height:4%"></div>
+    <div class="col cliff" style="height:3%"></div><div class="col cliff" style="height:2%"></div>
+  </div>
+  <div class="chart-caption"><span>Jan 2026</span><span>← climbing&nbsp;&nbsp;|&nbsp;&nbsp;Apr 24: −97% overnight →</span><span>Jun 2026</span></div>
+
+  <div class="grid g3" style="margin-top:28px">
+    <div class="card"><div class="stat big-num">−97%</div><div class="stat-label">Search visibility, dropped in a single day (1,569 → 43 impressions)</div></div>
+    <div class="card"><div class="stat big-num">~4</div><div class="stat-label">Total Google clicks in the last 28 days, whole site</div></div>
+    <div class="card"><div class="stat big-num">Apr 23</div><div class="stat-label">Last time Google crawled your flagship pricing page. It's now "crawled, not indexed."</div></div>
+  </div>
+  <div class="callout"><b style="color:var(--text)">Why it happened:</b> Not a broken setting or a penalty. The homepage is technically perfect and still indexed. Google read the mass-produced content (≈946 auto-generated posts) and quietly stopped indexing it. That's the thin-content signal. The cleanup already happened — the site is now 15 posts, 26 URLs — but recovery from a quality hit takes weeks-to-months, and isn't guaranteed.</div>
+</div></section>
+
+<!-- 2. CHANNELS -->
+<section><div class="wrap">
+  <div class="sec-num">02 — THE REFRAME</div>
+  <h2>Google is your smallest channel</h2>
+  <p class="lead" style="font-size:1.05rem">Real traffic, last 90 days. The faucet that broke is the smallest one. The big ones are fine.</p>
+  <div class="bars">
+    <div class="bar-row"><div class="bar-label">Direct &nbsp;<span style="color:var(--muted);font-weight:400">(podcast / brand)</span></div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--amber)">703</div></div><div class="bar-val">#1</div></div>
+    <div class="bar-row"><div class="bar-label">Bing + Yahoo + DuckDuckGo</div><div class="bar-track"><div class="bar-fill" style="width:51%;background:#7c89b0">~360</div></div><div class="bar-val">not&nbsp;demoted</div></div>
+    <div class="bar-row"><div class="bar-label">AI assistants</div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#5566aa">~118</div></div><div class="bar-val">growing</div></div>
+    <div class="bar-row"><div class="bar-label">Google search</div><div class="bar-track"><div class="bar-fill" style="width:17%;background:#3a4straight;background:#444f73">122</div></div><div class="bar-val">demoted</div></div>
+  </div>
+  <div class="grid g3" style="margin-top:30px">
+    <div class="card"><h3>Direct rules</h3><p>Your #1 audience lands on the homepage looking for you. A trial-focused homepage converts exactly them — independent of Google.</p></div>
+    <div class="card"><h3>Bing didn't blink</h3><p>Bing, Yahoo and DuckDuckGo (all Bing-powered) kept ranking you. ~360 sessions Google can't touch.</p></div>
+    <div class="card"><h3>AI is real now</h3><p>ChatGPT, Perplexity, Claude and Copilot send ~118 sessions. They cite genuinely useful, well-structured pages.</p></div>
+  </div>
+</div></section>
+
+<!-- 3. MENTAL MODEL -->
+<section><div class="wrap">
+  <div class="sec-num">03 — THE MODEL</div>
+  <h2>Store &amp; billboards</h2>
+  <p class="lead" style="font-size:1.05rem">"Give the homepage all the power" is right for closing the sale — and wrong for getting found. Here's why both are true.</p>
+  <div class="model">
+    <div class="billboards">
+      <div class="bb"><b>Spam-calls guide</b>"reduce spam calls ghl"</div>
+      <div class="bb"><b>Pricing guide</b>"gohighlevel pricing"</div>
+      <div class="bb"><b>Spanish / LATAM</b>"que es gohighlevel"</div>
+      <div class="bb"><b>India / UPI</b>"razorpay ghl india"</div>
+    </div>
+    <div class="arrows">↓ &nbsp; ↓ &nbsp; ↓ &nbsp; ↓</div>
+    <div class="store">
+      <div class="wire-tag">The store</div>
+      <div style="font-size:1.5rem;font-weight:800;margin-top:6px">Homepage → 30-day free trial</div>
+      <p style="margin-top:6px">All conversion power. All internal-link power. Every CTA points here.</p>
+    </div>
+  </div>
+  <div class="callout">Each working page is a <b style="color:var(--text)">billboard on a different highway</b> — it catches someone who has never heard of you and points them to the store. Redirect them all into the homepage and you don't move their power here; you brick up 15 doors and leave one, on the only highway nobody searches: your brand name. <b style="color:var(--text)">Keep the billboards. Make the store powerful.</b></div>
+</div></section>
+
+<!-- 4. URL DECISIONS -->
+<section><div class="wrap">
+  <div class="sec-num">04 — EVERY PAGE, DECIDED</div>
+  <h2>What happens to each URL</h2>
+  <table>
+    <thead><tr><th>Pages</th><th>Move</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>Homepage</b></td><td><span class="tag t-keep">REBUILD</span></td><td>Trial pitch + guide hub. The store.</td></tr>
+      <tr><td><b>15 working posts</b><br>pricing, free-trial, spam-calls, payments, india, spanish…</td><td><span class="tag t-keep">KEEP &amp; STRENGTHEN</span></td><td>They rank and pull traffic for specific questions. Homepage links to them; it does not eat them.</td></tr>
+      <tr><td><b>/about/</b></td><td><span class="tag t-keep">STRENGTHEN</span></td><td>Real author + credentials. Trust pages help quality recovery.</td></tr>
+      <tr><td><b>/es/ and /in/ hubs</b></td><td><span class="tag t-keep">KEEP</span></td><td>Spanish keyword difficulty is 0–15 vs 49–64 in the US. Your growth lane.</td></tr>
+      <tr><td><b>5 category pages</b> + es category</td><td><span class="tag t-fold">FOLD → HOMEPAGE</span></td><td>Near-empty list pages, ~0 traffic. Dead weight dragging quality. 301 into the homepage's hub.</td></tr>
+      <tr><td><b>AI-topic cluster (404ing)</b><br>ai-content, desktop-app, mcp-server, agent-studio…</td><td><span class="tag t-fix">FIX THE BLEED</span></td><td>Pruned with no redirect → dead pages eating ~120 Bing/AI sessions. 301 to best survivor; revive the top 2–3.</td></tr>
+      <tr><td><b>/trial/ · /coupon/ · /start/</b></td><td><span class="tag t-leave">LEAVE ALONE</span></td><td>Attribution pages, blocked from Google on purpose. Reuse their <i>copy</i> on the homepage; never redirect the pages.</td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+<!-- 5. HOMEPAGE WIREFRAME -->
+<section><div class="wrap">
+  <div class="sec-num">05 — THE NEW HOMEPAGE</div>
+  <h2>Trial pitch on top, guide hub below</h2>
+  <p class="lead" style="font-size:1.05rem">One page doing two jobs: close the trial for your Direct audience, organize the guides (absorbing the dead category pages).</p>
+  <div class="wire">
+    <div class="wire-nav">
+      <div class="wire-logo">Global<span>HighLevel</span></div>
+      <div style="display:flex;gap:14px;align-items:center;color:var(--text2);font-size:.8rem">Guides &nbsp; Español ▾ <span class="wire-cta">Start 30 Days Free</span></div>
+    </div>
+    <div class="wire-block" style="background:radial-gradient(600px 200px at 75% 0,rgba(245,158,11,.10),transparent 60%)">
+      <div class="wire-tag">Hero — the pitch</div>
+      <div class="wire-h">GoHighLevel, 30 days free. Double the standard 14.</div>
+      <div class="skl" style="width:70%"></div><div class="skl" style="width:55%"></div>
+      <div style="margin-top:14px"><span class="wire-cta" style="font-size:.9rem;padding:10px 18px">Start my 30-day trial →</span> <span style="color:var(--muted);font-size:.8rem;margin-left:10px">No credit card hype — honest setup help included</span></div>
+    </div>
+    <div class="wire-block">
+      <div class="wire-tag">Teach before the sell</div>
+      <div class="wire-h" style="font-size:1.1rem">Why 30 days &nbsp;·&nbsp; Who it's for &nbsp;·&nbsp; Who should NOT buy &nbsp;·&nbsp; Proof</div>
+      <div class="skl" style="width:88%"></div><div class="skl" style="width:80%"></div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:8px">Copy adapted from your existing /trial/ + free-trial blog — written for the direct visitor.</p>
+    </div>
+    <div class="wire-block">
+      <div class="wire-tag">Guide hub — absorbs the 5 category pages</div>
+      <div class="hubgrid">
+        <div class="hubcard"><b>Agency &amp; Platform</b><br>launch a site, sub-accounts…</div>
+        <div class="hubcard"><b>Payments</b><br>providers, LATAM, UPI…</div>
+        <div class="hubcard"><b>Phone &amp; Voice</b><br>spam calls, IVR…</div>
+        <div class="hubcard"><b>SMS &amp; Messaging</b><br>A2P, WhatsApp…</div>
+        <div class="hubcard"><b>CRM &amp; Contacts</b><br>sync, automation…</div>
+        <div class="hubcard" style="background:var(--amber-soft);border-color:rgba(245,158,11,.4)"><b style="color:var(--amber)">Español →</b><br>the LATAM lane</div>
+      </div>
+    </div>
+    <div class="wire-block" style="text-align:center">
+      <div class="wire-tag">Close</div>
+      <div class="wire-h" style="font-size:1.15rem">Ready? Start your 30 days free.</div>
+      <span class="wire-cta" style="font-size:.9rem;padding:10px 20px">Start now →</span>
+    </div>
+  </div>
+  <p style="font-size:.85rem;color:var(--muted);margin-top:14px">A Spanish twin of this page (<b style="color:var(--text2)">/es/</b>) mirrors it for your best-converting audience — real Spanish, hreflang-linked.</p>
+</div></section>
+
+<!-- 6. SEQUENCE -->
+<section><div class="wrap">
+  <div class="sec-num">06 — THE BUILD ORDER</div>
+  <h2>How we ship it</h2>
+  <div style="margin-top:20px">
+    <div class="step"><div class="step-n">1</div><div><h3>English homepage</h3><p>Trial pitch + guide hub. Converts your #1 channel. Built via the gstack design skill, mining your existing trial copy.</p></div></div>
+    <div class="step"><div class="step-n">2</div><div><h3>Stop the 404 bleed</h3><p>301 the pruned AI-cluster URLs so Bing + ChatGPT visitors stop hitting dead pages. Recovers ~120 sessions/90 days. Small job.</p></div></div>
+    <div class="step"><div class="step-n">3</div><div><h3>Fold in the dead weight</h3><p>301 the 5 empty category pages into the homepage hub. Concentrates quality + links on the store.</p></div></div>
+    <div class="step"><div class="step-n">4</div><div><h3>Spanish homepage</h3><p>The /es/ twin. Your lowest-difficulty, highest-CTR audience.</p></div></div>
+    <div class="step"><div class="step-n">5</div><div><h3>Strengthen + revive</h3><p>Beef up /about/ for trust; revive the best 2–3 AI-topic pages as real content for the AI/Bing channels.</p></div></div>
+  </div>
+  <div class="callout" style="margin-top:30px">
+    <p><span class="check">✓ Pays off regardless of Google:</span> homepage conversion, Bing/AI recovery, the 404 fix.</p>
+    <p style="margin-top:8px"><span class="x">✗ Honest caveat:</span> Google search recovery is a slower, uncertain bet — weeks to months, only if quality genuinely clears the bar.</p>
+  </div>
+  <p class="foot">Built on live Search Console + Google Analytics 4 data for globalhighlevel.com · all numbers verifiable.</p>
+</div></section>
+
+</body>
+</html>

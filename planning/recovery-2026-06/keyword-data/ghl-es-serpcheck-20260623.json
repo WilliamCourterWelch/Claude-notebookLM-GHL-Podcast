@@ -1,0 +1,219 @@
+{
+  "overview": [
+    {
+      "keyword": "go high level",
+      "volume_ads": 9900,
+      "volume_clickstream": 30933,
+      "difficulty": 9,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel",
+      "volume_ads": 9900,
+      "volume_clickstream": 27298,
+      "difficulty": 5,
+      "intent": "navigational",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "gohighlevel",
+      "volume": 9900,
+      "difficulty": 5
+    },
+    {
+      "keyword": "go high level",
+      "volume": 9900,
+      "difficulty": 9
+    },
+    {
+      "keyword": "gohighlevel login",
+      "volume": 1000,
+      "difficulty": 49
+    },
+    {
+      "keyword": "go high level login",
+      "volume": 1000,
+      "difficulty": 33
+    },
+    {
+      "keyword": "gohighlevel pricing",
+      "volume": 210,
+      "difficulty": 12
+    },
+    {
+      "keyword": "go high level pricing",
+      "volume": 210,
+      "difficulty": 0
+    },
+    {
+      "keyword": "go high level prices",
+      "volume": 210,
+      "difficulty": 0
+    },
+    {
+      "keyword": "gohighlevel crm",
+      "volume": 170,
+      "difficulty": 21
+    },
+    {
+      "keyword": "app gohighlevel",
+      "volume": 170,
+      "difficulty": 23
+    },
+    {
+      "keyword": "go high level crm",
+      "volume": 170,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel app",
+      "volume": 70,
+      "difficulty": 23
+    },
+    {
+      "keyword": "gohighlevel api",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "crm gohighlevel",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level api",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level espa\u00f1ol",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level app",
+      "volume": 70,
+      "difficulty": 23
+    },
+    {
+      "keyword": "crm go high level",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel logo",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "que es go high level",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level logo",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level precios",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level que es",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel que es",
+      "volume": 40,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel whatsapp",
+      "volume": 40,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level whatsapp",
+      "volume": 40,
+      "difficulty": null
+    }
+  ],
+  "serp": {
+    "gohighlevel": {
+      "top_domains": [
+        "www.gohighlevel.com",
+        "efectonewton.com",
+        "kersagency.es",
+        "www.youtube.com",
+        "flownexion.com",
+        "es.trustpilot.com",
+        "www.reddit.com",
+        "appcritic.es"
+      ],
+      "paa": [
+        "\u00bfPara qu\u00e9 sirve GoHighLevel?",
+        "\u00bfCu\u00e1nto cuesta GoHighLevel?",
+        "\u00bfGo Hi Level Qu\u00e9 es?",
+        "\u00bfC\u00f3mo usar GoHighLevel?"
+      ],
+      "related": [
+        "Gohighlevel precio",
+        "GoHighLevel Espa\u00f1ol",
+        "GoHighLevel como funciona",
+        "GoHighLevel Que es y para que sirve",
+        "GoHighLevel CRM",
+        "Gohighlevel app",
+        "GoHighLevel curso",
+        "Gohighlevel dashboard",
+        "Gohighlevel precio",
+        "GoHighLevel como funciona"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "go high level": {
+      "top_domains": [
+        "www.gohighlevel.com",
+        "kersagency.es",
+        "www.facebook.com",
+        "www.reddit.com",
+        "ghlenespanol.com",
+        "www.trustpilot.com",
+        "www.trustpilot.com",
+        "www.youtube.com"
+      ],
+      "paa": [
+        "What is GoHighLevel used for?",
+        "How much is GHL per month?",
+        "Is GoHighLevel a CRM software?",
+        "Can I use GoHighLevel for free?"
+      ],
+      "related": [
+        "Go High Level Espa\u00f1ol",
+        "Go high level costo",
+        "Go High Level que es y para que sirve",
+        "Planes go high level",
+        "Curso de Go High Level",
+        "Go high level logo",
+        "Go high level app login",
+        "Go high level reddit",
+        "Go High Level Espa\u00f1ol",
+        "Go high level costo"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    }
+  },
+  "cost": 0.0552,
+  "area": "es-serp-check",
+  "seeds": [
+    "gohighlevel",
+    "go high level"
+  ]
+}

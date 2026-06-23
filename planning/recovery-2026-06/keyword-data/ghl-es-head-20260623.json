@@ -1,0 +1,181 @@
+{
+  "overview": [
+    {
+      "keyword": "crm para negocios",
+      "volume_ads": 10,
+      "volume_clickstream": null,
+      "difficulty": null,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "crm para pequenas empresas",
+      "volume_ads": 10,
+      "volume_clickstream": null,
+      "difficulty": null,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "go high level",
+      "volume_ads": 9900,
+      "volume_clickstream": 30933,
+      "difficulty": 9,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel",
+      "volume_ads": 9900,
+      "volume_clickstream": 27298,
+      "difficulty": 5,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "mejor crm",
+      "volume_ads": 170,
+      "volume_clickstream": 0,
+      "difficulty": 13,
+      "intent": "commercial",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "gohighlevel",
+      "volume": 9900,
+      "difficulty": 5
+    },
+    {
+      "keyword": "go high level",
+      "volume": 9900,
+      "difficulty": 9
+    },
+    {
+      "keyword": "gohighlevel login",
+      "volume": 1000,
+      "difficulty": 49
+    },
+    {
+      "keyword": "go high level login",
+      "volume": 1000,
+      "difficulty": 33
+    },
+    {
+      "keyword": "gohighlevel pricing",
+      "volume": 210,
+      "difficulty": 12
+    },
+    {
+      "keyword": "go high level pricing",
+      "volume": 210,
+      "difficulty": 0
+    },
+    {
+      "keyword": "go high level prices",
+      "volume": 210,
+      "difficulty": 0
+    },
+    {
+      "keyword": "gohighlevel crm",
+      "volume": 170,
+      "difficulty": 21
+    },
+    {
+      "keyword": "app gohighlevel",
+      "volume": 170,
+      "difficulty": 23
+    },
+    {
+      "keyword": "go high level crm",
+      "volume": 170,
+      "difficulty": null
+    },
+    {
+      "keyword": "mejor crm",
+      "volume": 170,
+      "difficulty": 13
+    },
+    {
+      "keyword": "gohighlevel app",
+      "volume": 70,
+      "difficulty": 23
+    },
+    {
+      "keyword": "gohighlevel api",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "crm gohighlevel",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level api",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level espa\u00f1ol",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level app",
+      "volume": 70,
+      "difficulty": 23
+    },
+    {
+      "keyword": "crm go high level",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel logo",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "que es go high level",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level logo",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level precios",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "go high level que es",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel que es",
+      "volume": 40,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel whatsapp",
+      "volume": 40,
+      "difficulty": null
+    }
+  ],
+  "serp": {},
+  "cost": 0.0836,
+  "area": "es-head",
+  "seeds": [
+    "gohighlevel",
+    "go high level",
+    "crm para pequenas empresas",
+    "crm para negocios",
+    "mejor crm"
+  ]
+}

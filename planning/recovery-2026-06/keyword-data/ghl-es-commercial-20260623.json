@@ -1,0 +1,102 @@
+{
+  "overview": [
+    {
+      "keyword": "gohighlevel que es",
+      "volume_ads": 40,
+      "volume_clickstream": 77,
+      "difficulty": null,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "recepcionista virtual",
+      "volume_ads": 40,
+      "volume_clickstream": 80,
+      "difficulty": 50,
+      "intent": "navigational",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "crm para agencias de viajes",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel que es",
+      "volume": 40,
+      "difficulty": null
+    },
+    {
+      "keyword": "recepcionista virtual",
+      "volume": 40,
+      "difficulty": 50
+    },
+    {
+      "keyword": "crm para agencias de marketing",
+      "volume": 20,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel que es y para que sirve",
+      "volume": 10,
+      "difficulty": null
+    },
+    {
+      "keyword": "recepcionista virtual trabajo",
+      "volume": 10,
+      "difficulty": null
+    },
+    {
+      "keyword": "recepcionista virtual mexico",
+      "volume": 10,
+      "difficulty": null
+    },
+    {
+      "keyword": "crm para agencias de turismo",
+      "volume": 10,
+      "difficulty": null
+    },
+    {
+      "keyword": "recepcionista virtual gratis",
+      "volume": 0,
+      "difficulty": null
+    },
+    {
+      "keyword": "recepcionista virtual m\u00e9xico",
+      "volume": null,
+      "difficulty": null
+    },
+    {
+      "keyword": "trabajo de recepcionista virtual",
+      "volume": null,
+      "difficulty": null
+    },
+    {
+      "keyword": "software crm para agencias de viajes",
+      "volume": 0,
+      "difficulty": null
+    },
+    {
+      "keyword": "crm para agencias de seguros",
+      "volume": null,
+      "difficulty": null
+    },
+    {
+      "keyword": "crm para agencias de publicidad",
+      "volume": null,
+      "difficulty": null
+    }
+  ],
+  "serp": {},
+  "cost": 0.0716,
+  "area": "es-commercial",
+  "seeds": [
+    "gohighlevel opiniones",
+    "gohighlevel precios",
+    "gohighlevel que es",
+    "recepcionista virtual",
+    "crm para agencias"
+  ]
+}

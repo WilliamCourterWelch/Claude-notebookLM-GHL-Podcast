@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Content Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--green-soft:rgba(52,211,153,.12);--blue:#7c9cff;--red:#fb7185}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:16px;line-height:1.55;padding-bottom:70px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 30px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-1px;line-height:1.07;margin:12px 0}
+  h2{font-size:1.35rem;font-weight:800;letter-spacing:-.3px}
+  p{color:var(--text2)}.lead{font-size:1.1rem;color:var(--text);max-width:780px}
+  header{padding:56px 0 30px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  .hl{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px}
+  .hlcard{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px 20px;flex:1;min-width:180px}
+  .hlcard .big{font-size:1.8rem;font-weight:800;letter-spacing:-.5px}
+  .hlcard .big.am{color:var(--amber)} .hlcard .big.gr{color:var(--green)}
+  .hlcard .lbl{font-size:.85rem;color:var(--text2);margin-top:3px}
+
+  .band{padding:34px 0 10px;border-bottom:1px solid var(--line)}
+  .band-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .pnum{font-size:.8rem;font-weight:800;letter-spacing:1px;padding:4px 11px;border-radius:7px;color:#07080a}
+  .p0{background:var(--green)} .p1{background:var(--amber)} .p2{background:var(--blue)} .p3{background:#6b7793}
+  .band-sub{color:var(--muted);font-size:.92rem}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:22px 0 6px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:18px 20px;display:flex;flex-direction:column;gap:8px}
+  .card.lead-card{border-color:rgba(245,158,11,.45);background:linear-gradient(120deg,var(--amber-soft),transparent 65%)}
+  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .card h3{font-size:1.06rem;font-weight:700}
+  .card .url{font-size:.78rem;color:var(--muted);font-family:ui-monospace,monospace;margin-top:2px}
+  .tag{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap}
+  .t-new{background:var(--amber-soft);color:var(--amber)}
+  .t-keep{background:var(--green-soft);color:var(--green)}
+  .t-revive{background:rgba(124,156,255,.15);color:var(--blue)}
+  .t-fix{background:rgba(251,113,133,.15);color:var(--red)}
+  .t-fold{background:rgba(107,119,147,.2);color:#aab6d4}
+  .kw{font-size:.86rem;color:var(--text2)}
+  .kw b{color:var(--text)}
+  .vol{display:inline-block;font-size:.78rem;color:var(--amber);font-weight:700;margin-left:4px}
+  .ch{font-size:.78rem;color:var(--muted)}
+  .ch b{color:var(--text2)}
+
+  .verdict{background:var(--surface);border-left:3px solid var(--amber);border-radius:0 12px 12px 0;padding:18px 22px;margin:30px 0 0}
+  .foot{color:var(--muted);font-size:12px;margin-top:24px}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Content Plan · built on the boiled keyword map</div>
+  <h1>What to build, in what order.</h1>
+  <p class="lead">Twelve moves across four priority bands. Spanish leads because the data says so; English money pages defend what already ranks; AI/Voice chases your growing channels; structure cleans up the rest.</p>
+  <div class="hl">
+    <div class="hlcard"><div class="big am">~32k/mo</div><div class="lbl">Spanish “gohighlevel” across MX·ES·CO·AR, KD 5–9</div></div>
+    <div class="hlcard"><div class="big gr">5,400/mo</div><div class="lbl">“go high level pricing” — you already rank #1-ish</div></div>
+    <div class="hlcard"><div class="big" style="color:var(--blue)">18k</div><div class="lbl">AI-receptionist cluster (English only)</div></div>
+    <div class="hlcard"><div class="big" style="color:var(--text)">~4/mo</div><div class="lbl">Google clicks today — the hole we're climbing out of</div></div>
+  </div>
+</div></header>
+
+<!-- P0 SPANISH -->
+<section class="band"><div class="wrap">
+  <div class="band-head"><span class="pnum p0">P0 · DO FIRST</span><h2>Spanish foundation</h2><span class="band-sub">the #1 lane · ~46k/mo cluster · KD 5–9 · /es/ already exists</span></div>
+  <div class="cards">
+    <div class="card lead-card"><div class="top"><div><h3>Spanish trial homepage</h3><div class="url">/es/</div></div><span class="tag t-new">NEW</span></div>
+      <div class="kw"><b>gohighlevel español</b>, prueba gratis 30 días<span class="vol">9,900 head</span></div>
+      <div class="ch">Channel: <b>all</b> · the Spanish hub + conversion page. Mirrors the English homepage.</div></div>
+    <div class="card lead-card"><div class="top"><div><h3>“GoHighLevel Opiniones” pillar</h3><div class="url">/es/…/opiniones</div></div><span class="tag t-revive">RESUME</span></div>
+      <div class="kw"><b>gohighlevel opiniones / reseña / ¿es confiable?</b></div>
+      <div class="ch">Your paused pillar (research Step 0–0.5 done). The decide-to-buy slice = affiliate money.</div></div>
+    <div class="card"><div class="top"><div><h3>GoHighLevel Precios (ES)</h3><div class="url">/blog/gohighlevel-precios-planes-2026…</div></div><span class="tag t-keep">SURVIVOR · strengthen</span></div>
+      <div class="kw"><b>gohighlevel precios / cuánto cuesta</b></div>
+      <div class="ch">You already have this page. Keep it fresh, link it from /es/.</div></div>
+    <div class="card"><div class="top"><div><h3>¿Qué es GoHighLevel? (explainer)</h3><div class="url">/es/…/que-es</div></div><span class="tag t-new">NEW</span></div>
+      <div class="kw"><b>qué es gohighlevel, cómo funciona, cómo usar</b></div>
+      <div class="ch">Catches researchers before they sign up direct. Funnels to the trial.</div></div>
+  </div>
+</div></section>
+
+<!-- P1 ENGLISH MONEY -->
+<section class="band"><div class="wrap">
+  <div class="band-head"><span class="pnum p1">P1 · DEFEND + CONVERT</span><h2>English money pages</h2><span class="band-sub">protect what already ranks, convert the Direct audience</span></div>
+  <div class="cards">
+    <div class="card"><div class="top"><div><h3>English trial homepage</h3><div class="url">/</div></div><span class="tag t-new">REBUILD · draft done</span></div>
+      <div class="kw"><b>gohighlevel 30 day free trial</b></div>
+      <div class="ch">Channel: <b>Direct (703/90d)</b>. Service-business angle. The draft you've seen.</div></div>
+    <div class="card"><div class="top"><div><h3>GoHighLevel Pricing 2026</h3><div class="url">/blog/gohighlevel-pricing-plans-2026…</div></div><span class="tag t-keep">SURVIVOR · #1 asset</span></div>
+      <div class="kw"><b>go high level pricing</b><span class="vol">5,400</span></div>
+      <div class="ch">Your single biggest organic asset. Defend it, keep prices current.</div></div>
+    <div class="card"><div class="top"><div><h3>“Is GoHighLevel Worth It?” review</h3><div class="url">/blog/gohighlevel-review…</div></div><span class="tag t-new">NEW pillar</span></div>
+      <div class="kw"><b>gohighlevel review</b><span class="vol">1,000</span> · alternative <span class="vol">390</span> · what is <span class="vol">1,300</span></div>
+      <div class="ch">Buyer-research intent. Honest review = trust + affiliate clicks.</div></div>
+    <div class="card"><div class="top"><div><h3>Defend your own brand</h3><div class="url">/ (title/H1)</div></div><span class="tag t-fix">QUICK WIN</span></div>
+      <div class="kw"><b>globalhighlevel</b> — you're not even #1 for your own name yet</div>
+      <div class="ch">Should be automatic. Lock it down in the homepage rebuild.</div></div>
+  </div>
+</div></section>
+
+<!-- P2 AI -->
+<section class="band"><div class="wrap">
+  <div class="band-head"><span class="pnum p2">P2 · GROWING CHANNELS</span><h2>AI / Voice (English)</h2><span class="band-sub">what your Bing + ChatGPT traffic rewards</span></div>
+  <div class="cards">
+    <div class="card"><div class="top"><div><h3>AI Employee / AI Receptionist pillar</h3><div class="url">/blog/gohighlevel-ai-employee…</div></div><span class="tag t-new">FINISH DRAFT</span></div>
+      <div class="kw"><b>ai receptionist</b><span class="vol">5,400</span> · for small business <span class="vol">1,000</span> · dental, etc.</div>
+      <div class="ch">Draft exists (5-item checklist left). Service-business + AI. GHL's hottest product.</div></div>
+    <div class="card"><div class="top"><div><h3>Revive the AI-cluster 404s</h3><div class="url">/blog/…ai-agents, mcp-server, agent-studio</div></div><span class="tag t-fix">FIX BLEED + REVIVE</span></div>
+      <div class="kw">Pruned with no redirect → dead pages eating <b>~120 sessions/90d</b></div>
+      <div class="ch">301 the rest, revive the best 2–3 for the AI/Bing channels.</div></div>
+  </div>
+</div></section>
+
+<!-- P3 STRUCTURE -->
+<section class="band"><div class="wrap">
+  <div class="band-head"><span class="pnum p3">P3 · CLEANUP + WEDGES</span><h2>Structure &amp; easy wins</h2><span class="band-sub">concentrate quality, funnel the long tail</span></div>
+  <div class="cards">
+    <div class="card"><div class="top"><div><h3>Fold 5 category pages → homepage hub</h3><div class="url">/category/* → /</div></div><span class="tag t-fold">CONSOLIDATE</span></div>
+      <div class="kw">Thin, ~0 traffic. 301 into the homepage's guide hub.</div>
+      <div class="ch">Removes thin-page drag, concentrates links on the store.</div></div>
+    <div class="card"><div class="top"><div><h3>Strengthen /about/</h3><div class="url">/about/</div></div><span class="tag t-keep">STRENGTHEN</span></div>
+      <div class="kw">Real author, credentials, the honest mission.</div>
+      <div class="ch">Trust/EEAT pages genuinely help quality recovery.</div></div>
+    <div class="card"><div class="top"><div><h3>Service use-case wedges</h3><div class="url">/blog/missed-call-text-back…</div></div><span class="tag t-new">EASY · KD 0</span></div>
+      <div class="kw"><b>missed call text back</b><span class="vol">390</span> + follow-up, reviews, booking</div>
+      <div class="ch">Small but easy. Billboards that funnel cold searchers to the trial.</div></div>
+    <div class="card"><div class="top"><div><h3>Keep agency content</h3><div class="url">existing agency posts</div></div><span class="tag t-fold">SECONDARY</span></div>
+      <div class="kw">White-label space is small (~1,110/mo) — don't lead with it.</div>
+      <div class="ch">Serve your existing podcast audience, don't expand here.</div></div>
+  </div>
+
+  <div class="verdict">
+    <b style="color:var(--text)">Sequence:</b> P0 Spanish homepage + opiniones pillar (biggest lane) → P1 English homepage + review pillar (defend + convert) → P2 AI pillar + 404 fixes (growing channels) → P3 consolidation + wedges. Each band ships and pays off on its own.
+  </div>
+  <p class="foot">Built on DataForSEO Labs + SERP via seo-ops-agent · ~$1.10 total spend · LATAM lane boiled across MX·ES·CO·AR. Caveat: Spanish head term is navigational (official site wins that click) — the money is the research cluster (opiniones/precios/qué es) + intercepting with the trial. Recovery is weeks-to-months and not guaranteed; the Direct + Bing + AI conversion wins are immediate.</p>
+</div></section>
+</body>
+</html>

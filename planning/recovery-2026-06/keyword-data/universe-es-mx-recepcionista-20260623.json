@@ -1,0 +1,32 @@
+{
+  "total_keywords": 4,
+  "total_volume": 70,
+  "rows": [
+    {
+      "keyword": "recepcionista virtual",
+      "volume": 40
+    },
+    {
+      "keyword": "recepcionista virtual trabajo",
+      "volume": 10
+    },
+    {
+      "keyword": "recepcionista virtual mexico",
+      "volume": 10
+    },
+    {
+      "keyword": "recepcionista ai",
+      "volume": 10
+    }
+  ],
+  "seeds": [
+    "recepcionista virtual",
+    "recepcionista ai"
+  ],
+  "coverage": {
+    "limit": 100,
+    "max_pages": 2,
+    "note": "up to 200 suggestions/seed"
+  },
+  "cost": 0.0207
+}

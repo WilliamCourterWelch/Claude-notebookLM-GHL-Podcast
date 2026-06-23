@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Keyword Opportunity Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07080a; --surface:#111520; --surface2:#171c2a; --line:#222a3d;
+    --amber:#f59e0b; --amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff; --text2:#9aa6c4; --muted:#5b688a;
+    --green:#34d399; --green-soft:rgba(52,211,153,.13); --red:#fb7185; --blue:#7c9cff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:17px;line-height:1.6;padding-bottom:70px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 30px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-1px;line-height:1.07;margin:12px 0}
+  h2{font-size:1.5rem;font-weight:800;letter-spacing:-.4px}
+  p{color:var(--text2)} .lead{font-size:1.12rem;color:var(--text);max-width:760px}
+  header{padding:58px 0 30px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 80% -20%,rgba(245,158,11,.10),transparent 60%)}
+  section{padding:46px 0;border-bottom:1px solid var(--line)}
+
+  /* quadrant chart */
+  .chart-shell{margin-top:30px;display:grid;grid-template-columns:34px 1fr;gap:10px}
+  .y-axis{writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;color:var(--muted);font-size:12px;letter-spacing:1px;text-transform:uppercase}
+  .chart{position:relative;height:540px;background:
+      linear-gradient(90deg,var(--green-soft),transparent 55%),
+      var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .qline{position:absolute;background:var(--line)}
+  .qline.v{left:50%;top:0;bottom:0;width:1px}
+  .qline.h{top:50%;left:0;right:0;height:1px}
+  .qlabel{position:absolute;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .ql-tl{top:12px;left:14px;color:var(--green)} .ql-tr{top:12px;right:14px}
+  .ql-bl{bottom:12px;left:14px} .ql-br{bottom:12px;right:14px}
+  .bubble{position:absolute;transform:translate(-50%,50%);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-size:11px;font-weight:700;color:#07080a;line-height:1.1;padding:6px;
+    box-shadow:0 6px 20px -6px rgba(0,0,0,.6);cursor:default}
+  .b-amber{background:radial-gradient(circle at 35% 30%,#ffd479,var(--amber))}
+  .b-green{background:radial-gradient(circle at 35% 30%,#86efc2,var(--green))}
+  .b-blue{background:radial-gradient(circle at 35% 30%,#aebeff,var(--blue));color:#0a1030}
+  .b-red{background:radial-gradient(circle at 35% 30%,#ffb0bc,var(--red));color:#3a0a13}
+  .b-gray{background:radial-gradient(circle at 35% 30%,#9fb0d0,#5b688a);color:#0a0f1a}
+  .x-axis{text-align:center;color:var(--muted);font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-top:8px;margin-left:44px}
+  .legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:18px;font-size:.85rem;color:var(--text2)}
+  .legend span{display:flex;align-items:center;gap:7px}
+  .dot{width:11px;height:11px;border-radius:50%}
+
+  /* tiers */
+  .tiers{display:flex;flex-direction:column;gap:14px;margin-top:28px}
+  .tier{display:grid;grid-template-columns:50px 1fr;gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .tier.win{border-color:rgba(52,211,153,.4);background:linear-gradient(100deg,var(--green-soft),transparent 60%)}
+  .tier .rank{font-size:1.6rem;font-weight:800;color:var(--amber)}
+  .tier.win .rank{color:var(--green)}
+  .tier h3{font-size:1.15rem;font-weight:700;margin-bottom:3px}
+  .tier .kw{color:var(--text2);font-size:.96rem}
+  .tier .kw b{color:var(--text)}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:6px}
+  .p-easy{background:var(--green-soft);color:var(--green)} .p-hard{background:rgba(251,113,133,.15);color:var(--red)}
+  .p-mid{background:var(--amber-soft);color:var(--amber)}
+
+  .verdict{background:linear-gradient(180deg,var(--amber-soft),transparent);border:1px solid rgba(245,158,11,.4);border-radius:16px;padding:28px;margin-top:30px}
+  .verdict ol{margin:14px 0 0 20px} .verdict li{color:var(--text2);margin-bottom:10px} .verdict li b{color:var(--text)}
+  .foot{color:var(--muted);font-size:12.5px;margin-top:26px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Keyword Opportunity Map · boiled, not sampled</div>
+  <h1>Where the winnable demand actually is.</h1>
+  <p class="lead">Pulled the full universe + what the whole GoHighLevel space already ranks for. Plotted by volume vs difficulty. The top-left corner is the goal: lots of searches, easy to rank. One thing sits there alone.</p>
+</div></header>
+
+<section><div class="wrap">
+  <div class="eyebrow">The landscape</div>
+  <h2>Volume × difficulty</h2>
+  <div class="chart-shell">
+    <div class="y-axis">Search volume →</div>
+    <div class="chart">
+      <div class="qline v"></div><div class="qline h"></div>
+      <div class="qlabel ql-tl">★ Win zone — high vol, easy</div>
+      <div class="qlabel ql-tr">High vol, hard</div>
+      <div class="qlabel ql-bl">Low vol, easy</div>
+      <div class="qlabel ql-br">Low vol, hard</div>
+
+      <!-- left% = difficulty/65 ; bottom% = volume(log) -->
+      <!-- Spanish gohighlevel: 9,900 vol, KD 5-9 -->
+      <div class="bubble b-amber" style="left:11%;bottom:60%;width:118px;height:118px;font-size:12px">Spanish<br>“gohighlevel”<br>9,900 · KD 5–9</div>
+      <!-- EN pricing (already ranking): 5,400 -->
+      <div class="bubble b-green" style="left:36%;bottom:50%;width:92px;height:92px">GHL pricing<br>5,400 · you rank</div>
+      <!-- AI receptionist / voice AI: ~5,400 head, 18k cluster -->
+      <div class="bubble b-blue" style="left:55%;bottom:52%;width:96px;height:96px">AI receptionist<br>18k cluster<br>KD ~35</div>
+      <!-- small business CRM: huge vol, hard -->
+      <div class="bubble b-red" style="left:84%;bottom:78%;width:104px;height:104px">Small-biz CRM<br>192k · KD 50+</div>
+      <!-- US brand gohighlevel: 165k, their brand -->
+      <div class="bubble b-gray" style="left:90%;bottom:90%;width:80px;height:80px;font-size:10px">US “gohighlevel”<br>165k · their brand</div>
+      <!-- gohighlevel review EN: 1,000 -->
+      <div class="bubble b-green" style="left:24%;bottom:30%;width:66px;height:66px;font-size:10px">GHL reviews<br>1,000</div>
+      <!-- missed call text back: 390, KD0 -->
+      <div class="bubble b-green" style="left:6%;bottom:20%;width:58px;height:58px;font-size:10px">missed-call<br>text-back<br>390</div>
+      <!-- agency white label: 260, small -->
+      <div class="bubble b-gray" style="left:14%;bottom:13%;width:50px;height:50px;font-size:10px">agency<br>white-label<br>1,110</div>
+    </div>
+  </div>
+  <div class="x-axis">Easy to rank&nbsp;&nbsp;←&nbsp;&nbsp;Difficulty&nbsp;&nbsp;→&nbsp;&nbsp;Hard</div>
+  <div class="legend">
+    <span><span class="dot" style="background:var(--green)"></span>Winnable now</span>
+    <span><span class="dot" style="background:var(--amber)"></span>Best opportunity</span>
+    <span><span class="dot" style="background:var(--blue)"></span>Growing (AI / Bing channels)</span>
+    <span><span class="dot" style="background:var(--red)"></span>Big but brutal</span>
+    <span><span class="dot" style="background:var(--muted)"></span>Skip / not winnable</span>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">Ranked opportunities</div>
+  <h2>Where to actually fight</h2>
+  <div class="tiers">
+    <div class="tier win"><div class="rank">1</div><div>
+      <h3>Spanish / LATAM <span class="pill p-easy">KD 5–9</span></h3>
+      <p class="kw"><b>“gohighlevel” / “go high level” — 9,900/mo each in Mexico, difficulty 5–9.</b> The single best term in the whole sweep. US version of the same word is 165k but KD 49–64 and owned by GoHighLevel. In Spanish it's wide open, and you already have /es/. This is bigger than the entire English service-vs-agency debate.</p>
+    </div></div>
+    <div class="tier"><div class="rank">2</div><div>
+      <h3>GoHighLevel buyer terms (English) <span class="pill p-mid">you have a foothold</span></h3>
+      <p class="kw">Pricing <b>5,400</b> (you already rank #1-ish), reviews <b>1,000</b>, “what is gohighlevel” <b>1,300</b>, “gohighlevel crm” <b>3,600</b>, “alternative” 390, “starter plan” 1,000. Pure buyer intent = affiliate money. Defend pricing, add the review + comparison pages.</p>
+    </div></div>
+    <div class="tier"><div class="rank">3</div><div>
+      <h3>AI receptionist / Voice AI <span class="pill p-mid">growing</span></h3>
+      <p class="kw">“ai receptionist” 5,400, “for small business” 1,000, dental/vertical variants, and GoHighLevel ranks for the conversational-AI space at <b>550k</b>. Service-business intent, matches GHL's hottest product, and it's the exact content your <b>Bing + ChatGPT</b> channels reward. You already have a draft pillar for this.</p>
+    </div></div>
+    <div class="tier"><div class="rank">4</div><div>
+      <h3>Small-business CRM <span class="pill p-hard">KD 50+</span></h3>
+      <p class="kw">Enormous — <b>192k/mo</b> across “crm for small business” variants. But HubSpot and Zoho own it. Only deep long-tail / vertical angles are realistically winnable. High ceiling, slow climb.</p>
+    </div></div>
+    <div class="tier"><div class="rank">5</div><div>
+      <h3>Niche easy wedges <span class="pill p-easy">KD 0</span></h3>
+      <p class="kw">“missed call text back” 1,140 total, “white label crm” 1,110. Easy to rank but small. Good <i>supporting</i> posts that funnel to the trial — not pillars. <b>Agency/white-label is small volume</b>, which is the data answer to your question: the searchable demand is service-side, not agency-side.</p>
+    </div></div>
+  </div>
+
+  <div class="verdict">
+    <div class="eyebrow">The call</div>
+    <h2 style="margin-top:6px">Service-led, Spanish-first.</h2>
+    <ol>
+      <li><b>Spanish is the headline opportunity</b> — a /es/ trial homepage + the “gohighlevel” Spanish cluster (KD 5–9, ~10k/mo) is the highest-ROI move on the board. Bigger than anything in English.</li>
+      <li><b>English = service-business, on two anchors:</b> the GoHighLevel buyer terms you already rank for (pricing, reviews, alternatives) + the AI-receptionist / Voice-AI cluster that your Bing &amp; AI channels reward.</li>
+      <li><b>Agency stays secondary</b> — keep it for your podcast audience, but the volume proves it shouldn't lead.</li>
+    </ol>
+  </div>
+  <p class="foot">Source: DataForSEO Labs + SERP via your seo-ops-agent tooling · ~$0.80 total spend · directional (broad-seed universe + ranked-domain pulls). The keyword-universe tool has a Spanish-language bug I can fix so we can boil the LATAM lane just as wide.</p>
+</div></section>
+</body>
+</html>

@@ -1,0 +1,191 @@
+{
+  "overview": [
+    {
+      "keyword": "best crm for agencies",
+      "volume_ads": 90,
+      "volume_clickstream": 0,
+      "difficulty": 12,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "go high level reseller",
+      "volume_ads": 30,
+      "volume_clickstream": 0,
+      "difficulty": 8,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel agency",
+      "volume_ads": 210,
+      "volume_clickstream": 313,
+      "difficulty": 36,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel saas mode",
+      "volume_ads": 50,
+      "volume_clickstream": 104,
+      "difficulty": 0,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel snapshots",
+      "volume_ads": 210,
+      "volume_clickstream": 889,
+      "difficulty": 7,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "white label crm",
+      "volume_ads": 260,
+      "volume_clickstream": 261,
+      "difficulty": 9,
+      "intent": "commercial",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "white label crm",
+      "volume": 260,
+      "difficulty": 9
+    },
+    {
+      "keyword": "crm white label",
+      "volume": 260,
+      "difficulty": 9
+    },
+    {
+      "keyword": "white label crm system",
+      "volume": 260,
+      "difficulty": 9
+    },
+    {
+      "keyword": "gohighlevel agency",
+      "volume": 210,
+      "difficulty": 36
+    },
+    {
+      "keyword": "gohighlevel snapshots",
+      "volume": 210,
+      "difficulty": 7
+    },
+    {
+      "keyword": "best crm for marketing agencies",
+      "volume": 110,
+      "difficulty": 19
+    },
+    {
+      "keyword": "best crm for agencies",
+      "volume": 90,
+      "difficulty": 12
+    },
+    {
+      "keyword": "best crm for staffing agencies",
+      "volume": 70,
+      "difficulty": 12
+    },
+    {
+      "keyword": "gohighlevel snapshots for sale",
+      "volume": 50,
+      "difficulty": 0
+    },
+    {
+      "keyword": "gohighlevel saas mode",
+      "volume": 50,
+      "difficulty": 0
+    },
+    {
+      "keyword": "gohighlevel-saas-mode",
+      "volume": 50,
+      "difficulty": 0
+    },
+    {
+      "keyword": "gohighlevel agency pro plan",
+      "volume": 40,
+      "difficulty": null
+    },
+    {
+      "keyword": "white label crm platform",
+      "volume": 40,
+      "difficulty": 8
+    },
+    {
+      "keyword": "white label crm software",
+      "volume": 40,
+      "difficulty": 4
+    },
+    {
+      "keyword": "gohighlevel agency login",
+      "volume": 30,
+      "difficulty": 21
+    },
+    {
+      "keyword": "white label crm for agencies",
+      "volume": 30,
+      "difficulty": 0
+    },
+    {
+      "keyword": "best crm for recruitment agencies",
+      "volume": 30,
+      "difficulty": 16
+    },
+    {
+      "keyword": "best crm for recruiting agencies",
+      "volume": 30,
+      "difficulty": 34
+    },
+    {
+      "keyword": "best crm for advertising agencies",
+      "volume": 30,
+      "difficulty": 7
+    },
+    {
+      "keyword": "go high level reseller",
+      "volume": 30,
+      "difficulty": 8
+    },
+    {
+      "keyword": "gohighlevel agency pro",
+      "volume": 20,
+      "difficulty": 12
+    },
+    {
+      "keyword": "gohighlevel agency pricing",
+      "volume": 20,
+      "difficulty": 9
+    },
+    {
+      "keyword": "white label crm reseller",
+      "volume": 20,
+      "difficulty": 4
+    },
+    {
+      "keyword": "best white label crm",
+      "volume": 20,
+      "difficulty": null
+    },
+    {
+      "keyword": "crm white label reseller",
+      "volume": 20,
+      "difficulty": 17
+    }
+  ],
+  "serp": {},
+  "cost": 0.0979,
+  "area": "agency",
+  "seeds": [
+    "gohighlevel agency",
+    "white label crm",
+    "gohighlevel snapshots",
+    "gohighlevel saas mode",
+    "best crm for agencies",
+    "go high level reseller",
+    "gohighlevel for marketing agency"
+  ]
+}
