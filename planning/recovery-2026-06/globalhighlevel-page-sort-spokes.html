@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Page Sort + Spoke Build-List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--green-soft:rgba(52,211,153,.13);--blue:#7c9cff;--blue-soft:rgba(124,156,255,.12);--red:#fb7185}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.5;padding-bottom:70px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-size:clamp(1.9rem,4vw,2.7rem);font-weight:800;letter-spacing:-1px;line-height:1.08;margin:12px 0}
+  h2{font-size:1.3rem;font-weight:800}
+  p{color:var(--text2)}.lead{font-size:1.04rem;color:var(--text);max-width:880px}
+  code{background:var(--surface2);color:var(--amber);padding:1px 6px;border-radius:5px;font-size:.84em;font-family:ui-monospace,monospace}
+  header{padding:46px 0 24px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  section{padding:34px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-size:.78rem;color:var(--amber);font-weight:700;letter-spacing:1px}
+  .callout{background:var(--surface);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:16px 20px;margin-top:18px}
+  .callout b{color:var(--text)}
+  table{width:100%;border-collapse:collapse;margin-top:16px;font-size:.9rem}
+  th{text-align:left;padding:9px 11px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--line)}
+  td{padding:9px 11px;border-bottom:1px solid var(--line);color:var(--text2);vertical-align:top}
+  td b{color:var(--text)}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+  .p-topic{background:var(--amber-soft);color:var(--amber)}
+  .p-comm{background:var(--green-soft);color:var(--green)}
+  .p-es{background:var(--blue-soft);color:var(--blue)}
+  .p-in{background:rgba(154,166,196,.15);color:var(--text2)}
+  .hubs{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+  .hub{border-radius:14px;padding:18px;border:1.5px solid var(--line)}
+  .hub.svc{border-color:rgba(52,211,153,.4)}.hub.ag{border-color:var(--line)}
+  .hub h3{font-size:1.05rem;font-weight:800}.hub .flag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .svc .flag{color:var(--green)}.ag .flag{color:var(--text2)}
+  .sp{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 11px;background:var(--surface);border:1px solid var(--line);border-radius:9px;margin-top:8px}
+  .sp .nm{font-size:.9rem;color:var(--text)}
+  .sp .meta{display:flex;gap:6px;white-space:nowrap;align-items:center}
+  .vol{font-size:.8rem;font-weight:700;color:var(--text2)}
+  .kd{font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:20px}
+  .kd-easy{background:var(--green-soft);color:var(--green)}.kd-mid{background:var(--amber-soft);color:var(--amber)}.kd-hard{background:rgba(251,113,133,.15);color:var(--red)}
+  .pr{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:20px;background:var(--surface2);color:var(--muted)}
+  .pr.p0{background:var(--amber);color:#07080a}
+  .foot{color:var(--muted);font-size:12px;margin-top:18px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Page sort + spoke build-list · from SERP data</div>
+  <h1>The honest result: your how-tos aren't agency or service.</h1>
+  <p class="lead">I pulled the live SERP for each existing how-to page. Every one returns the same competitors — GoHighLevel's own docs (help.gohighlevel.com, ideas.gohighlevel.com), YouTube, Reddit. These are <b style="color:var(--text)">feature tasks any GHL user does</b>, not agency-vs-business content.</p>
+</div></header>
+
+<section><div class="wrap">
+  <div class="sec-num">01 — WHAT THE SERP SHOWED</div>
+  <h2>The existing pages are topic content, not audience content</h2>
+  <div class="callout">Example SERPs (page-1 competitors): <code>stop spam calls</code> → GHL docs + Reddit + Kixie. <code>payment providers</code> → GHL docs + ghlelite + unisonpayment. <code>build website</code> → GHL docs + YouTube. <b>None split agency vs business owner.</b> So forcing these into an "agency hub" or "service hub" would be fake. They sort by <b>topic</b> (Caleb's original silo model), not audience.</div>
+  <p class="lead" style="font-size:1rem;margin-top:16px">So the structure is: <b style="color:var(--text)">topic silos</b> hold the existing feature how-tos; the <b style="color:var(--text)">audience hubs</b> (service / agency) are populated by NEW spokes whose keyword <i>is</i> audience-specific (ai-receptionist = service; white-label = agency). The homepage "Which are you?" routes people to the right mix.</p>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-num">02 — THE 17 EXISTING PAGES, SORTED</div>
+  <h2>By data, not by guessing</h2>
+  <table><thead><tr><th>Page</th><th>Goes to</th><th>Basis</th></tr></thead><tbody>
+    <tr><td><b>gohighlevel-pricing-plans-2026</b></td><td><span class="pill p-comm">Commercial</span></td><td>Ranks "go high level pricing" 5,400 — buyer intent</td></tr>
+    <tr><td><b>gohighlevel-free-trial-30-days</b></td><td><span class="pill p-comm">Commercial (money)</span></td><td>37 affiliate clicks — standalone trial silo</td></tr>
+    <tr><td>leverage-ai-pricing-updates</td><td><span class="pill p-comm">Commercial</span></td><td>Pricing-adjacent</td></tr>
+    <tr><td>master-payment-providers</td><td><span class="pill p-topic">Topic: Payments</span></td><td>SERP = GHL docs (feature task, neutral)</td></tr>
+    <tr><td>how-to-reduce-spam-calls-ivr</td><td><span class="pill p-topic">Topic: Phone</span></td><td>SERP = GHL docs + Kixie (neutral)</td></tr>
+    <tr><td>unsolicited-sms-compliance</td><td><span class="pill p-topic">Topic: SMS</span></td><td>SERP = GHL docs (A2P, neutral)</td></tr>
+    <tr><td>automate-google-contacts-sync</td><td><span class="pill p-topic">Topic: CRM</span></td><td>SERP = GHL docs + Integrately (neutral)</td></tr>
+    <tr><td>how-to-launch-a-website</td><td><span class="pill p-topic">Topic: Sites</span></td><td>SERP = GHL docs + YouTube (neutral)</td></tr>
+    <tr><td>uberall-listings-local-seo</td><td><span class="pill p-topic">Topic: Local/Sites</span></td><td>SERP = GHL docs (neutral)</td></tr>
+    <tr><td>opiniones · precios · que-es · latam-pagos · primera-automatizacion</td><td><span class="pill p-es">Spanish silo</span></td><td>Language (the #1 lane)</td></tr>
+    <tr><td>whatsapp-india · razorpay-upi-india</td><td><span class="pill p-in">India silo</span></td><td>Language/market</td></tr>
+  </tbody></table>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-num">03 — THE NEW-SPOKE BUILD-LIST</div>
+  <h2>Where the audience IS clear (and the volume is)</h2>
+  <div class="hubs">
+    <div class="hub svc"><div class="flag">★ Service hub — build first</div><h3>Service / business owner</h3>
+      <div class="sp"><span class="nm">ai receptionist for small business</span><span class="meta"><span class="vol">1,000</span><span class="kd kd-mid">KD 13</span><span class="pr p0">P0</span></span></div>
+      <div class="sp"><span class="nm">missed call text back</span><span class="meta"><span class="vol">390</span><span class="kd kd-easy">KD 0</span><span class="pr p0">P0</span></span></div>
+      <div class="sp"><span class="nm">all in one business software</span><span class="meta"><span class="vol">90</span><span class="kd kd-easy">KD 10</span><span class="pr">P1</span></span></div>
+      <div class="sp"><span class="nm">software for service business</span><span class="meta"><span class="vol">90</span><span class="kd kd-mid">KD 15</span><span class="pr">P1</span></span></div>
+      <div class="sp"><span class="nm">gohighlevel for real estate / contractors / salons</span><span class="meta"><span class="vol">~50 ea</span><span class="kd kd-easy">KD 0</span><span class="pr">P2</span></span></div>
+    </div>
+    <div class="hub ag"><div class="flag">Agency hub — secondary</div><h3>Agency</h3>
+      <div class="sp"><span class="nm">white label crm</span><span class="meta"><span class="vol">260</span><span class="kd kd-easy">KD 9</span><span class="pr p0">P0</span></span></div>
+      <div class="sp"><span class="nm">best crm for agencies</span><span class="meta"><span class="vol">90</span><span class="kd kd-mid">KD 12</span><span class="pr">P1</span></span></div>
+      <div class="sp"><span class="nm">gohighlevel reseller</span><span class="meta"><span class="vol">30</span><span class="kd kd-easy">KD 8</span><span class="pr">P1</span></span></div>
+      <div class="sp"><span class="nm">crm for marketing agency</span><span class="meta"><span class="vol">390</span><span class="kd kd-mid">KD 23</span><span class="pr">P2</span></span></div>
+    </div>
+  </div>
+  <div class="callout">Each spoke is written with <b>Caleb's content-planner method</b>: Google the keyword → model the top 3-5 ranking pages (word count, H2/H3 headers, the "People Also Ask" questions, related searches) → write to beat them. Then link it up to its hub + into the hub's link circle.</div>
+  <p class="foot">Source: DataForSEO Labs + SERP (page-intent + agency-hub + service-hub pulls, 2026-06-23). Existing-page SERPs all returned GHL docs as page-1, confirming feature-task neutrality. Structure per Caleb Ulku (isolated silos).</p>
+</div></section>
+</body>
+</html>
