@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Homepage Build Spec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--green-soft:rgba(52,211,153,.12);--red:#fb7185;--blue:#7c9cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:15.5px;line-height:1.55;padding-bottom:70px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 30px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-size:clamp(1.9rem,4vw,2.8rem);font-weight:800;letter-spacing:-1px;line-height:1.08;margin:12px 0}
+  h2{font-size:1.35rem;font-weight:800;letter-spacing:-.3px}
+  p{color:var(--text2)}.lead{font-size:1.08rem;color:var(--text);max-width:820px}
+  code{background:var(--surface2);color:var(--amber);padding:1px 6px;border-radius:5px;font-size:.84em;font-family:ui-monospace,monospace}
+  header{padding:50px 0 26px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  section{padding:34px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-size:.78rem;color:var(--amber);font-weight:700;letter-spacing:1px}
+  .change{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:14px}
+  .change .file{font-family:ui-monospace,monospace;font-size:.86rem;color:var(--blue);font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .change .act{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+  .a-edit{background:var(--amber-soft);color:var(--amber)}.a-add{background:var(--green-soft);color:var(--green)}.a-del{background:rgba(251,113,133,.15);color:var(--red)}
+  ul.clean{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:7px}
+  ul.clean li{padding-left:20px;position:relative;color:var(--text2);font-size:.95rem}
+  ul.clean li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--amber)}
+  table{width:100%;border-collapse:collapse;margin-top:14px;font-size:.9rem}
+  th{text-align:left;padding:9px 12px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--line)}
+  td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--text2);vertical-align:top}
+  td code{font-size:.82em}
+  .ac{display:grid;grid-template-columns:24px 1fr;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:.95rem;color:var(--text2)}
+  .ac:last-child{border-bottom:0}.ac .ck{color:var(--green);font-weight:800}
+  .callout{background:var(--surface);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:14px 18px;margin-top:16px}
+  .oos{color:var(--muted);font-size:.92rem}
+  .foot{color:var(--muted);font-size:12px;margin-top:20px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Build Spec · homepage slice · executable</div>
+  <h1>Exactly what gets edited, and how we know it's done.</h1>
+  <p class="lead">Grounded in the autoplan code review (real file:line). Goal: ship the English trial homepage + Spanish /es/ landing, fix the interlinks, consolidate the thin category, without breaking the build.</p>
+</div></header>
+
+<!-- FILE CHANGES -->
+<section><div class="wrap">
+  <div class="sec-num">01 — FILE CHANGES</div>
+  <h2>Five edits, one deletion</h2>
+
+  <div class="change"><div class="file">globalhighlevel-site/build.py <span class="act a-edit">EDIT</span> <span style="color:var(--muted);font-weight:400">~line 1697–1766 (inline homepage)</span></div>
+    <ul class="clean">
+      <li>Replace the <code>.hp-hero</code> + homepage body with the trial design: hero pitch → "why 30 not 14" → who-it's-for/who-skips → proof → guide hub.</li>
+      <li><code>&lt;title&gt;</code> = "GoHighLevel Free Trial: Get 30 Days (Not 14)"; <code>&lt;h1&gt;</code> carries "gohighlevel 30 day free trial".</li>
+      <li>Add body links to <code>/blog/gohighlevel-opiniones-…/</code>, <code>/blog/gohighlevel-precios-…/</code>, and the under-linked <code>master-payment-providers</code> + <code>leverage-ai-pricing</code> posts.</li>
+      <li>All GHL links keep the <code>AFFILIATE</code> constant + UTM, <code>target=_blank rel="nofollow noopener"</code>.</li>
+    </ul></div>
+
+  <div class="change"><div class="file">globalhighlevel-site/build.py <span class="act a-add">ADD</span> <span style="color:var(--muted);font-weight:400">build_es_landing(), branch at build_language_hub ~2890</span></div>
+    <ul class="clean">
+      <li>New Spanish trial landing for <code>lang=="es"</code> only (mirror of EN, real Spanish copy answering the PAA). <code>/in/</code> and <code>/ar/</code> stay on the existing hub — untouched.</li>
+      <li>Spanish <code>&lt;title&gt;</code>/description (REQUIRED — the build's Spanish-meta guard at line 3209 fails the deploy otherwise).</li>
+      <li>Render via <code>base_html(lang="es", hreflang_path=…)</code> so hreflang + tracking tags are correct (don't hand-roll).</li>
+    </ul></div>
+
+  <div class="change"><div class="file">globalhighlevel-site/build.py <span class="act a-edit">EDIT</span> <span style="color:var(--muted);font-weight:400">LIVE_CATEGORY_SLUGS</span></div>
+    <ul class="clean">
+      <li>Drop <code>agency-platform</code> from <code>LIVE_CATEGORY_SLUGS</code> — this removes it from nav/footer cleanly (base_html gates the nav on this list).</li>
+      <li>Remove any remaining body/hub link to it (the link-checker is filesystem-only and fails the build if even one link is left).</li>
+    </ul></div>
+
+  <div class="change"><div class="file">globalhighlevel-site/_redirects <span class="act a-add">ADD</span></div>
+    <ul class="clean">
+      <li>301 the thin category pages to their closest real topic page — <b style="color:var(--text)">NOT</b> to <code>/</code> (redirecting to root reads as a soft-404 to Google).</li>
+    </ul>
+    <table><thead><tr><th>From</th><th>301 →</th></tr></thead><tbody>
+      <tr><td><code>/category/payments-commerce/</code></td><td><code>/blog/master-payment-providers-…/</code></td></tr>
+      <tr><td><code>/category/phone-voice/</code></td><td><code>/blog/how-to-reduce-spam-calls-…ivr/</code></td></tr>
+      <tr><td><code>/category/sms-messaging/</code></td><td><code>/blog/unsolicited-sms-…compliance-risk/</code></td></tr>
+      <tr><td><code>/category/crm-contacts/</code></td><td><code>/blog/automate-google-contacts-…/</code></td></tr>
+      <tr><td><code>/category/agency-platform/</code></td><td><code>/</code> (brand/agency intent → homepage)</td></tr>
+    </tbody></table></div>
+
+  <div class="change"><div class="file">globalhighlevel-site/design-homepage.py + homepage_hero.html <span class="act a-del">DELETE</span></div>
+    <ul class="clean"><li>Dead code — nothing reads <code>homepage_hero.html</code>; the file doesn't even exist on disk. Deleting removes the "edited the wrong file" trap.</li></ul></div>
+</div></section>
+
+<!-- CANNIBALIZATION -->
+<section><div class="wrap">
+  <div class="sec-num">02 — CANNIBALIZATION DECISION</div>
+  <h2>Homepage vs the trial blog: split the intent</h2>
+  <table><thead><tr><th>Page</th><th>Targets</th><th>Job</th></tr></thead><tbody>
+    <tr><td><code>/</code> homepage</td><td>brand + "gohighlevel 30 day free trial"</td><td>Fast brand/trial entry; links to the blog as "full setup guide"</td></tr>
+    <tr><td><code>/blog/…free-trial-30-days-extended/</code></td><td>"how to get the extended trial", eligibility, steps</td><td>The detailed guide; links back to the trial CTA</td></tr>
+  </tbody></table>
+  <div class="callout">No canonical tag needed — different intent, different format. They cross-link instead of competing.</div>
+</div></section>
+
+<!-- ACCEPTANCE -->
+<section><div class="wrap">
+  <div class="sec-num">03 — ACCEPTANCE CRITERIA (done = all true)</div>
+  <h2>How we know it's right</h2>
+  <div style="margin-top:12px">
+    <div class="ac"><span class="ck">✓</span><span><code>python3 build.py</code> exits 0 — passes the Spanish-meta, tracking-tag, and link-hygiene (internal-404) guards.</span></div>
+    <div class="ac"><span class="ck">✓</span><span><code>public/index.html</code> = the new homepage; every GHL link has <code>fp_ref</code> + UTM + <code>nofollow noopener</code>; no <code>href="#"</code>; links to opiniones + precios resolve.</span></div>
+    <div class="ac"><span class="ck">✓</span><span><code>public/es/index.html</code> = Spanish trial landing, Spanish meta, hreflang paired with <code>/</code>.</span></div>
+    <div class="ac"><span class="ck">✓</span><span><code>/in/</code> and <code>/ar/</code> hubs render unchanged.</span></div>
+    <div class="ac"><span class="ck">✓</span><span>No internal link to <code>/category/agency-platform/</code> anywhere in the built output.</span></div>
+    <div class="ac"><span class="ck">✓</span><span><code>_redirects</code> new lines target built pages; no chains or loops.</span></div>
+    <div class="ac"><span class="ck">✓</span><span>seo-deploy-gate honored: changed URLs logged to the SEO Changelog Sheet + <code>seo-cooldown.json</code> before push.</span></div>
+    <div class="ac"><span class="ck">✓</span><span>Built pages visually match the approved drafts (open <code>public/index.html</code> + <code>public/es/index.html</code>).</span></div>
+  </div>
+</div></section>
+
+<!-- OUT OF SCOPE -->
+<section><div class="wrap">
+  <div class="sec-num">04 — NOT IN THIS SLICE</div>
+  <h2>Deferred (on purpose)</h2>
+  <p class="oos">Spanish opiniones/precios cluster expansion · the AI-receptionist pillar · podcast growth · paid-acquisition test · the live money-page design reviews. These are real next steps, but this slice ships the two homepages + the interlink/consolidation fixes only. One shippable thing at a time.</p>
+  <p class="foot">Spec grounded in /autoplan dual-voice review (Codex + Claude), file:line verified against globalhighlevel-site/build.py. Next: build to this spec, then /review → /qa → seo-deploy-gate → /ship.</p>
+</div></section>
+</body>
+</html>
