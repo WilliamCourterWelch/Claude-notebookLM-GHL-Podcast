@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Hub &amp; Spoke Interlinking Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--green-soft:rgba(52,211,153,.13);--blue:#7c9cff;--blue-soft:rgba(124,156,255,.12)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.5;padding-bottom:70px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-size:clamp(1.9rem,4vw,2.7rem);font-weight:800;letter-spacing:-1px;line-height:1.08;margin:12px 0}
+  h2{font-size:1.3rem;font-weight:800;letter-spacing:-.3px}
+  p{color:var(--text2)}.lead{font-size:1.04rem;color:var(--text);max-width:880px}
+  header{padding:48px 0 24px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  section{padding:34px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-size:.78rem;color:var(--amber);font-weight:700;letter-spacing:1px}
+  a{color:var(--amber)}
+
+  /* rules */
+  .rules{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px}
+  .rule{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:14px}
+  .rule .n{font-size:.75rem;font-weight:700;color:var(--amber);letter-spacing:.5px}
+  .rule p{font-size:.84rem;margin-top:5px}
+
+  /* parent */
+  .parent{margin-top:8px;display:flex;justify-content:center}
+  .pbox{background:linear-gradient(180deg,var(--amber-soft),transparent);border:1.5px solid var(--amber);border-radius:14px;padding:14px 30px;text-align:center}
+  .pbox .t{font-weight:800;font-size:1.05rem}.pbox .s{color:var(--text2);font-size:.8rem;margin-top:2px}
+  .down{text-align:center;color:var(--amber);font-size:20px;margin:8px 0}
+
+  /* silo board */
+  .board{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:6px}
+  .silo{border-radius:16px;padding:18px;border:1.5px dashed var(--line)}
+  .silo.en{border-color:rgba(52,211,153,.4)}
+  .silo.es{border-color:rgba(124,156,255,.45)}
+  .silo .flag{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+  .en .flag{color:var(--green)}.es .flag{color:var(--blue)}
+  .silo h3{font-size:1rem;margin-bottom:10px}
+  .silo .micro{font-size:.78rem;color:var(--muted);margin-bottom:12px}
+
+  .cluster{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:10px}
+  .hub{font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:8px}
+  .hub .pill{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:1px 7px;border-radius:20px;background:var(--amber-soft);color:var(--amber)}
+  .spokes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .spoke{font-size:.8rem;background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:var(--text2)}
+  .spoke::before{content:"└ ";color:var(--muted)}
+
+  .pillar{background:linear-gradient(180deg,var(--amber-soft),transparent);border:1.5px solid var(--amber);border-radius:12px;padding:14px 16px;margin-top:6px}
+  .pillar .t{font-weight:800}.pillar .s{font-size:.82rem;color:var(--text2);margin-top:3px}
+  .conv{text-align:center;color:var(--amber);font-weight:700;font-size:.82rem;margin:10px 0}
+
+  .switch{margin-top:18px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.9rem;color:var(--text2)}
+  .switch b{color:var(--text)}
+
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:.85rem;color:var(--text2)}
+  .legend span{display:flex;align-items:center;gap:7px}
+  .ln{width:22px;height:0;border-top:2px solid var(--amber)}
+  .ln.up{border-top-style:solid;border-color:var(--green)}.ln.cross{border-top-style:dashed;border-color:var(--amber)}
+  .foot{color:var(--muted);font-size:12px;margin-top:20px}
+  @media(max-width:840px){.rules{grid-template-columns:1fr 1fr}.board{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Hub &amp; Spoke Interlinking · per Caleb (RicketyRoo) + Search Engine Journal</div>
+  <h1>How the pages link — parent, hub, spoke.</h1>
+  <p class="lead">Built to the documented hub-and-spoke / parent-child model, applied to your real pages. The homepage is the parent. Each topic is a hub with its spokes. Everything funnels to the commercial pillar (the free-trial blog — your #1 earner). English and Spanish are separate microsites.</p>
+</div></header>
+
+<!-- THE DOCUMENTED RULES -->
+<section><div class="wrap">
+  <div class="sec-num">01 — THE RULES (pulled, not guessed)</div>
+  <h2>Five mechanics from the docs</h2>
+  <div class="rules">
+    <div class="rule"><div class="n">1 · UP</div><p>Every <b style="color:var(--text)">spoke links back to its hub</b> with a keyword-rich anchor.</p></div>
+    <div class="rule"><div class="n">2 · DOWN</div><p><b style="color:var(--text)">Hub links down</b> to each of its spokes.</p></div>
+    <div class="rule"><div class="n">3 · SIBLINGS</div><p>Spoke→spoke <b style="color:var(--text)">only when relevant</b> — never link everything to everything.</p></div>
+    <div class="rule"><div class="n">4 · SILO</div><p>Each cluster is <b style="color:var(--text)">its own microsite</b>. Keep it topically clean.</p></div>
+    <div class="rule"><div class="n">5 · COMMERCIAL</div><p>Cross-silo links are fine <b style="color:var(--text)">to the money page</b>, with a transactional anchor.</p></div>
+  </div>
+</div></section>
+
+<!-- THE MAP -->
+<section><div class="wrap">
+  <div class="sec-num">02 — YOUR SITE, MAPPED</div>
+  <h2>Parent → hubs → spokes → the pillar</h2>
+
+  <div class="parent">
+    <div class="pbox"><div class="t">🏠 Homepage /  (the parent)</div><div class="s">brand + "gohighlevel 30 day free trial" · links down to every hub + the language switch</div></div>
+  </div>
+  <div class="down">↓ links down to each hub</div>
+
+  <div class="board">
+    <!-- ENGLISH SILO -->
+    <div class="silo en">
+      <div class="flag">🇺🇸 English microsite</div>
+      <div class="micro">topic hubs + their spokes — all funnel to the trial blog</div>
+
+      <div class="cluster"><div class="hub">💲 Pricing <span class="pill">hub</span></div>
+        <div class="spokes"><span class="spoke">leverage-ai-pricing</span><span class="spoke">how to pay less</span></div></div>
+      <div class="cluster"><div class="hub">💳 Payments <span class="pill">hub</span></div>
+        <div class="spokes"><span class="spoke">payment-providers</span><span class="spoke">ACH / NMI setup</span></div></div>
+      <div class="cluster"><div class="hub">📞 Phone &amp; Voice <span class="pill">hub</span></div>
+        <div class="spokes"><span class="spoke">reduce spam calls (IVR)</span></div></div>
+      <div class="cluster"><div class="hub">💬 SMS &amp; Messaging <span class="pill">hub</span></div>
+        <div class="spokes"><span class="spoke">unsolicited-sms compliance</span></div></div>
+      <div class="cluster"><div class="hub">⚙️ CRM &amp; Sites <span class="pill">hub</span></div>
+        <div class="spokes"><span class="spoke">google-contacts sync</span><span class="spoke">launch a website</span><span class="spoke">uberall local SEO</span></div></div>
+
+      <div class="conv">every spoke links UP to its hub  ·  and ACROSS to ↓</div>
+      <div class="pillar"><div class="t">★ COMMERCIAL PILLAR — Free-trial blog</div><div class="s">/blog/gohighlevel-free-trial-30-days-extended/ · 37 affiliate clicks/90d · anchor: "start the 30-day free trial"</div></div>
+    </div>
+
+    <!-- SPANISH SILO -->
+    <div class="silo es">
+      <div class="flag">🇪🇸 Spanish microsite (the growth bet)</div>
+      <div class="micro">its own hub + spokes — does NOT link into the English silo</div>
+
+      <div class="cluster"><div class="hub">🏠 /es/ landing <span class="pill">silo hub</span></div>
+        <div class="spokes"><span class="spoke">links down to all ES spokes</span></div></div>
+      <div class="cluster"><div class="hub">⭐ Opiniones <span class="pill">hub</span></div>
+        <div class="spokes"><span class="spoke">¿es confiable?</span><span class="spoke">vs alternativas</span></div></div>
+      <div class="cluster"><div class="hub">💲 Precios <span class="pill">hub</span></div>
+        <div class="spokes"><span class="spoke">¿cuánto cuesta?</span><span class="spoke">planes 2026</span></div></div>
+      <div class="cluster"><div class="hub">❓ Qué es GHL <span class="pill">hub</span></div>
+        <div class="spokes"><span class="spoke">para qué sirve</span></div></div>
+      <div class="cluster"><div class="hub">💳 Pagos LATAM <span class="pill">hub</span></div>
+        <div class="spokes"><span class="spoke">MercadoPago</span><span class="spoke">automatización</span></div></div>
+
+      <div class="conv">ES spokes link UP to /es/ + ACROSS to ↓</div>
+      <div class="pillar" style="border-color:var(--blue);background:linear-gradient(180deg,var(--blue-soft),transparent)"><div class="t" style="color:var(--blue)">COMMERCIAL PILLAR — /es/ trial</div><div class="s">la prueba gratis de 30 días · anchor: "empezar la prueba de 30 días"</div></div>
+    </div>
+  </div>
+
+  <div class="switch">🔗 <b>The only link between the two microsites</b> = the language switch ("Español / English" + hreflang). No English page links to a Spanish page's content, and vice-versa.</div>
+
+  <div class="legend">
+    <span><span class="ln up"></span>spoke → hub (up, keyword anchor)</span>
+    <span><span class="ln"></span>hub → spoke (down)</span>
+    <span><span class="ln cross"></span>spoke → commercial pillar (transactional anchor)</span>
+  </div>
+</div></section>
+
+<!-- WHY -->
+<section><div class="wrap">
+  <div class="sec-num">03 — WHY THIS SHAPE</div>
+  <h2>It matches the money + the docs</h2>
+  <p class="lead" style="font-size:1rem">The free-trial blog is your real earner (37 affiliate clicks/90d), so it's the commercial pillar every spoke points to with a transactional anchor — exactly what the SEJ rule says to do. Topic hubs build authority for their head terms; spokes feed the hubs. Keeping English and Spanish as separate microsites stops the language-mixing problem you caught, and matches the "each cluster is its own microsite" rule.</p>
+  <p class="foot">Sources: Caleb / RicketyRoo "Hub and Spoke Content Models", Search Engine Journal "How Should We Internally Link Hub &amp; Spoke Content". Page roles assigned from your 15 live posts + the GA4 affiliate-click data. The homepage spec already funnels to the trial blog; this map defines the link rules for the rest of the build.</p>
+</div></section>
+</body>
+</html>
