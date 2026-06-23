@@ -129,6 +129,13 @@
   @media(prefers-reduced-motion:reduce){
     *{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
   }
+
+  @media(max-width:560px){
+    nav .wrap{gap:10px}
+    .navlinks{gap:12px}
+    .navlinks a[href^="#"]{display:none}   /* drop in-page anchors on mobile to stop nav overflow */
+    .navlinks .btn{padding:9px 13px;font-size:.82rem}
+  }
 </style>
 </head>
 <body>
