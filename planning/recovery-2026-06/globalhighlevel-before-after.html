@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Before / After</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);--text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--red:#fb7185}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.5;padding-bottom:70px}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 28px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-size:clamp(1.9rem,4vw,2.7rem);font-weight:800;letter-spacing:-1px;line-height:1.08;margin:12px 0}
+  h2{font-size:1.3rem;font-weight:800}
+  p{color:var(--text2)}.lead{font-size:1.04rem;color:var(--text);max-width:860px}
+  header{padding:46px 0 22px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  section{padding:34px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-size:.78rem;color:var(--amber);font-weight:700;letter-spacing:1px}
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+  .pane{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .pane .bar{padding:11px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:.92rem}
+  .tag{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+  .t-before{background:rgba(251,113,133,.15);color:var(--red)}
+  .t-after{background:rgba(52,211,153,.15);color:var(--green)}
+  .scroll{height:560px;overflow-y:auto;background:#07080a}
+  .scroll img{width:100%;display:block}
+  .scroll iframe{width:100%;height:1400px;border:0;display:block;background:#07080a}
+  .notes{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .note{font-size:.92rem;color:var(--text2)}
+  .note b{color:var(--text)}
+  .note.b{border-left:3px solid var(--red);padding-left:14px}
+  .note.a{border-left:3px solid var(--green);padding-left:14px}
+  .keep{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
+  .keep .bar{padding:11px 16px;border-bottom:1px solid var(--line);font-weight:700;display:flex;justify-content:space-between;align-items:center}
+  .keep .scroll{height:420px}
+  .foot{color:var(--muted);font-size:12px;margin-top:18px}
+  @media(max-width:880px){.ba,.notes{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Before / After · current live site vs the new design</div>
+  <h1>What it looks like now, and what we're shipping.</h1>
+  <p class="lead">Left = the live globalhighlevel.com today (scroll inside each). Right = the new design (live, clickable). The money page stays as-is because it earns.</p>
+</div></header>
+
+<!-- HOMEPAGE -->
+<section><div class="wrap">
+  <div class="sec-num">01 — HOMEPAGE  (/)</div>
+  <h2>From blog-archive to trial landing</h2>
+  <div class="ba">
+    <div class="pane"><div class="bar"><span>BEFORE — live now</span><span class="tag t-before">link soup</span></div>
+      <div class="scroll"><img src="live-home.png" alt="current homepage"></div></div>
+    <div class="pane"><div class="bar"><span>AFTER — new design (clickable)</span><span class="tag t-after">trial landing</span></div>
+      <div class="scroll"><iframe src="ghl-prototype-home.html" title="new homepage"></iframe></div></div>
+  </div>
+  <div class="notes">
+    <div class="note b"><b>Now:</b> tiny hero, then a wall of post links + sidebar. No value proposition, no clear "what is this / why trust it," no focused CTA.</div>
+    <div class="note a"><b>New:</b> trial pitch up top → why-30-not-14 → who-it's-for/who-skips → proof → a curated guide hub. One job: convert to the trial.</div>
+  </div>
+</div></section>
+
+<!-- ES -->
+<section><div class="wrap">
+  <div class="sec-num">02 — SPANISH  (/es/)</div>
+  <h2>From bare blog index to Spanish trial landing</h2>
+  <div class="ba">
+    <div class="pane"><div class="bar"><span>BEFORE — live now</span><span class="tag t-before">blog index</span></div>
+      <div class="scroll"><img src="live-es.png" alt="current /es/"></div></div>
+    <div class="pane"><div class="bar"><span>AFTER — new design (clickable)</span><span class="tag t-after">trial landing</span></div>
+      <div class="scroll"><iframe src="ghl-prototype-es.html" title="new /es/"></iframe></div></div>
+  </div>
+  <div class="notes">
+    <div class="note b"><b>Now:</b> just a list of Spanish post cards (your live Opiniones + Precios are in there). No hero, no landing, no pitch.</div>
+    <div class="note a"><b>New:</b> a real Spanish landing answering the Google questions (¿qué es?, ¿cuánto cuesta?, ¿es confiable?) + the 30-day trial. The #1 SEO lane.</div>
+  </div>
+</div></section>
+
+<!-- KEEP -->
+<section><div class="wrap">
+  <div class="sec-num">03 — THE MONEY PAGE  (kept)</div>
+  <h2>Free-trial blog — stays as-is, it earns</h2>
+  <div class="keep"><div class="bar"><span>Free-trial blog — 37 affiliate clicks/90d</span><span class="tag t-after">keep</span></div>
+    <div class="scroll"><img src="live-trial.png" alt="free trial blog"></div></div>
+  <p class="foot">Left panes are screenshots of the live site (June 2026). Right panes are the new design running live and clickable. The free-trial blog is your #1 earner, so the plan protects it and points the new homepage's trial CTA at it — it doesn't get redesigned.</p>
+</div></section>
+</body>
+</html>
