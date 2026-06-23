@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GlobalHighLevel — Hub &amp; Spoke Interlinking Map</title>
+<title>GlobalHighLevel — Interlinking (Caleb Ulku method)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
-    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--green-soft:rgba(52,211,153,.13);--blue:#7c9cff;--blue-soft:rgba(124,156,255,.12)}
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--green-soft:rgba(52,211,153,.13);--red:#fb7185;--red-soft:rgba(251,113,133,.13);--blue:#7c9cff;--blue-soft:rgba(124,156,255,.12)}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.5;padding-bottom:70px}
   .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
@@ -19,139 +19,130 @@
   header{padding:48px 0 24px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
   section{padding:34px 0;border-bottom:1px solid var(--line)}
   .sec-num{font-size:.78rem;color:var(--amber);font-weight:700;letter-spacing:1px}
-  a{color:var(--amber)}
 
-  /* rules */
-  .rules{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:20px}
+  /* corrections */
+  .corr{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+  .corr .c{border-radius:12px;padding:16px 18px;border:1px solid var(--line);background:var(--surface)}
+  .corr .wrong{border-color:rgba(251,113,133,.4)}.corr .right{border-color:rgba(52,211,153,.4)}
+  .corr .lab{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+  .wrong .lab{color:var(--red)}.right .lab{color:var(--green)}
+  .corr p{font-size:.9rem;margin-top:6px}
+
+  .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
   .rule{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:14px}
-  .rule .n{font-size:.75rem;font-weight:700;color:var(--amber);letter-spacing:.5px}
-  .rule p{font-size:.84rem;margin-top:5px}
+  .rule .n{font-size:.74rem;font-weight:700;color:var(--amber);letter-spacing:.5px}
+  .rule p{font-size:.85rem;margin-top:5px}
+  .rule code{font-size:.78em;background:var(--surface2);color:var(--amber);padding:1px 5px;border-radius:4px}
 
-  /* parent */
-  .parent{margin-top:8px;display:flex;justify-content:center}
-  .pbox{background:linear-gradient(180deg,var(--amber-soft),transparent);border:1.5px solid var(--amber);border-radius:14px;padding:14px 30px;text-align:center}
-  .pbox .t{font-weight:800;font-size:1.05rem}.pbox .s{color:var(--text2);font-size:.8rem;margin-top:2px}
+  /* apex + silos */
+  .apex{display:flex;justify-content:center;margin-top:8px}
+  .abox{background:linear-gradient(180deg,var(--amber-soft),transparent);border:1.5px solid var(--amber);border-radius:14px;padding:13px 28px;text-align:center}
+  .abox .t{font-weight:800}.abox .s{color:var(--text2);font-size:.8rem;margin-top:2px}
   .down{text-align:center;color:var(--amber);font-size:20px;margin:8px 0}
+  .silos{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:6px}
+  .silo{border:1.5px dashed var(--line);border-radius:13px;padding:13px}
+  .silo.es{border-color:rgba(124,156,255,.4)}
+  .silo .top{font-weight:700;font-size:.9rem;background:var(--amber-soft);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:6px 9px;color:var(--text)}
+  .silo.es .top{background:var(--blue-soft);border-color:rgba(124,156,255,.3)}
+  .silo .tier{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:9px 0 4px}
+  .var{font-size:.8rem;color:var(--text2);padding:4px 8px;background:var(--surface);border:1px solid var(--line);border-radius:7px;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+  .var .circ{color:var(--amber);font-size:.8rem}
+  .gap{font-size:.74rem;color:var(--muted);font-style:italic;margin-top:4px}
+  .isolated{text-align:center;color:var(--muted);font-size:.78rem;margin-top:10px;border-top:1px dashed var(--line);padding-top:8px}
 
-  /* silo board */
-  .board{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:6px}
-  .silo{border-radius:16px;padding:18px;border:1.5px dashed var(--line)}
-  .silo.en{border-color:rgba(52,211,153,.4)}
-  .silo.es{border-color:rgba(124,156,255,.45)}
-  .silo .flag{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
-  .en .flag{color:var(--green)}.es .flag{color:var(--blue)}
-  .silo h3{font-size:1rem;margin-bottom:10px}
-  .silo .micro{font-size:.78rem;color:var(--muted);margin-bottom:12px}
+  .conv{margin-top:20px;background:var(--surface);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:14px 18px;font-size:.95rem}
+  .conv b{color:var(--text)}
+  .langsplit{margin-top:14px;background:var(--surface);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:14px 18px;font-size:.95rem}
 
-  .cluster{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:10px}
-  .hub{font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:8px}
-  .hub .pill{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:1px 7px;border-radius:20px;background:var(--amber-soft);color:var(--amber)}
-  .spokes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-  .spoke{font-size:.8rem;background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:var(--text2)}
-  .spoke::before{content:"└ ";color:var(--muted)}
-
-  .pillar{background:linear-gradient(180deg,var(--amber-soft),transparent);border:1.5px solid var(--amber);border-radius:12px;padding:14px 16px;margin-top:6px}
-  .pillar .t{font-weight:800}.pillar .s{font-size:.82rem;color:var(--text2);margin-top:3px}
-  .conv{text-align:center;color:var(--amber);font-weight:700;font-size:.82rem;margin:10px 0}
-
-  .switch{margin-top:18px;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.9rem;color:var(--text2)}
-  .switch b{color:var(--text)}
-
-  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:.85rem;color:var(--text2)}
-  .legend span{display:flex;align-items:center;gap:7px}
-  .ln{width:22px;height:0;border-top:2px solid var(--amber)}
-  .ln.up{border-top-style:solid;border-color:var(--green)}.ln.cross{border-top-style:dashed;border-color:var(--amber)}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;font-size:.84rem;color:var(--text2)}
+  .legend span{display:flex;align-items:center;gap:7px}.dot{width:11px;height:11px;border-radius:3px}
   .foot{color:var(--muted);font-size:12px;margin-top:20px}
-  @media(max-width:840px){.rules{grid-template-columns:1fr 1fr}.board{grid-template-columns:1fr}}
+  a{color:var(--amber)}
+  @media(max-width:860px){.corr,.rules,.silos{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.corr,.rules,.silos{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header><div class="wrap">
-  <div class="eyebrow">Hub &amp; Spoke Interlinking · per Caleb (RicketyRoo) + Search Engine Journal</div>
-  <h1>How the pages link — parent, hub, spoke.</h1>
-  <p class="lead">Built to the documented hub-and-spoke / parent-child model, applied to your real pages. The homepage is the parent. Each topic is a hub with its spokes. Everything funnels to the commercial pillar (the free-trial blog — your #1 earner). English and Spanish are separate microsites.</p>
+  <div class="eyebrow">Interlinking · Caleb Ulku method · AI SEO Mastery Pro (your course)</div>
+  <h1>Isolated silos, link circles, conversion via the affiliate CTA.</h1>
+  <p class="lead">Rebuilt from your actual course (Caleb Ulku, lessons 02 + 12), not a web blog. His rules are stricter than the generic version — and they change the map in two big ways.</p>
 </div></header>
 
-<!-- THE DOCUMENTED RULES -->
+<!-- WHAT I GOT WRONG -->
 <section><div class="wrap">
-  <div class="sec-num">01 — THE RULES (pulled, not guessed)</div>
-  <h2>Five mechanics from the docs</h2>
+  <div class="sec-num">01 — TWO THINGS I HAD WRONG</div>
+  <h2>Corrected to Caleb's actual rules</h2>
+  <div class="corr">
+    <div class="c wrong"><div class="lab">✕ My earlier map</div><p>Everything funneled <b style="color:var(--text)">internally</b> to the free-trial blog across topics. And topic pages sat in the <b style="color:var(--text)">nav</b>.</p></div>
+    <div class="c right"><div class="lab">✓ Caleb's rule</div><p><b style="color:var(--text)">Never cross-link between silos.</b> And <b style="color:var(--text)">keep rank pages out of the nav</b> (nav links pass ~0 authority and burn the "first link" slot). Conversion happens via the <b style="color:var(--text)">external affiliate CTA</b>, which doesn't break silos.</p></div>
+  </div>
+</div></section>
+
+<!-- THE RULES -->
+<section><div class="wrap">
+  <div class="sec-num">02 — CALEB'S RULES (from the course)</div>
+  <h2>How authority + silos actually work</h2>
   <div class="rules">
-    <div class="rule"><div class="n">1 · UP</div><p>Every <b style="color:var(--text)">spoke links back to its hub</b> with a keyword-rich anchor.</p></div>
-    <div class="rule"><div class="n">2 · DOWN</div><p><b style="color:var(--text)">Hub links down</b> to each of its spokes.</p></div>
-    <div class="rule"><div class="n">3 · SIBLINGS</div><p>Spoke→spoke <b style="color:var(--text)">only when relevant</b> — never link everything to everything.</p></div>
-    <div class="rule"><div class="n">4 · SILO</div><p>Each cluster is <b style="color:var(--text)">its own microsite</b>. Keep it topically clean.</p></div>
-    <div class="rule"><div class="n">5 · COMMERCIAL</div><p>Cross-silo links are fine <b style="color:var(--text)">to the money page</b>, with a transactional anchor.</p></div>
+    <div class="rule"><div class="n">AUTHORITY</div><p>Only <b style="color:var(--text)">editorial body links</b> pass juice. Nav/footer/sidebar ≈ 0. And <b style="color:var(--text)">only the first link to a URL on a page counts.</b></p></div>
+    <div class="rule"><div class="n">NAV</div><p><b style="color:var(--text)">Don't put pages you want to rank in the nav</b> — the nav link gets crawled first and wastes the pass. Link them from body content instead.</p></div>
+    <div class="rule"><div class="n">STRUCTURE</div><p>3 tiers: <code>Topic</code> (pillar) → <code>Variations</code> (15) → <code>Supporting</code>. Each topic = one silo.</p></div>
+    <div class="rule"><div class="n">WITHIN A SILO</div><p>Topic links down to all variations; every variation links back up; variations form a <b style="color:var(--text)">link circle</b> (V1→V2→V3→V1).</p></div>
+    <div class="rule"><div class="n">SILO INTEGRITY</div><p><b style="color:var(--text)">Never cross-link between different silos.</b> Topic 4's variation must not link to Topic 1. This is the strict rule.</p></div>
+    <div class="rule"><div class="n">NOFOLLOW</div><p>Don't sculpt with nofollow — Google penalizes it, and total link count divides the authority anyway. Internal links = external links.</p></div>
   </div>
 </div></section>
 
 <!-- THE MAP -->
 <section><div class="wrap">
-  <div class="sec-num">02 — YOUR SITE, MAPPED</div>
-  <h2>Parent → hubs → spokes → the pillar</h2>
-
-  <div class="parent">
-    <div class="pbox"><div class="t">🏠 Homepage /  (the parent)</div><div class="s">brand + "gohighlevel 30 day free trial" · links down to every hub + the language switch</div></div>
-  </div>
-  <div class="down">↓ links down to each hub</div>
-
-  <div class="board">
-    <!-- ENGLISH SILO -->
-    <div class="silo en">
-      <div class="flag">🇺🇸 English microsite</div>
-      <div class="micro">topic hubs + their spokes — all funnel to the trial blog</div>
-
-      <div class="cluster"><div class="hub">💲 Pricing <span class="pill">hub</span></div>
-        <div class="spokes"><span class="spoke">leverage-ai-pricing</span><span class="spoke">how to pay less</span></div></div>
-      <div class="cluster"><div class="hub">💳 Payments <span class="pill">hub</span></div>
-        <div class="spokes"><span class="spoke">payment-providers</span><span class="spoke">ACH / NMI setup</span></div></div>
-      <div class="cluster"><div class="hub">📞 Phone &amp; Voice <span class="pill">hub</span></div>
-        <div class="spokes"><span class="spoke">reduce spam calls (IVR)</span></div></div>
-      <div class="cluster"><div class="hub">💬 SMS &amp; Messaging <span class="pill">hub</span></div>
-        <div class="spokes"><span class="spoke">unsolicited-sms compliance</span></div></div>
-      <div class="cluster"><div class="hub">⚙️ CRM &amp; Sites <span class="pill">hub</span></div>
-        <div class="spokes"><span class="spoke">google-contacts sync</span><span class="spoke">launch a website</span><span class="spoke">uberall local SEO</span></div></div>
-
-      <div class="conv">every spoke links UP to its hub  ·  and ACROSS to ↓</div>
-      <div class="pillar"><div class="t">★ COMMERCIAL PILLAR — Free-trial blog</div><div class="s">/blog/gohighlevel-free-trial-30-days-extended/ · 37 affiliate clicks/90d · anchor: "start the 30-day free trial"</div></div>
-    </div>
-
-    <!-- SPANISH SILO -->
-    <div class="silo es">
-      <div class="flag">🇪🇸 Spanish microsite (the growth bet)</div>
-      <div class="micro">its own hub + spokes — does NOT link into the English silo</div>
-
-      <div class="cluster"><div class="hub">🏠 /es/ landing <span class="pill">silo hub</span></div>
-        <div class="spokes"><span class="spoke">links down to all ES spokes</span></div></div>
-      <div class="cluster"><div class="hub">⭐ Opiniones <span class="pill">hub</span></div>
-        <div class="spokes"><span class="spoke">¿es confiable?</span><span class="spoke">vs alternativas</span></div></div>
-      <div class="cluster"><div class="hub">💲 Precios <span class="pill">hub</span></div>
-        <div class="spokes"><span class="spoke">¿cuánto cuesta?</span><span class="spoke">planes 2026</span></div></div>
-      <div class="cluster"><div class="hub">❓ Qué es GHL <span class="pill">hub</span></div>
-        <div class="spokes"><span class="spoke">para qué sirve</span></div></div>
-      <div class="cluster"><div class="hub">💳 Pagos LATAM <span class="pill">hub</span></div>
-        <div class="spokes"><span class="spoke">MercadoPago</span><span class="spoke">automatización</span></div></div>
-
-      <div class="conv">ES spokes link UP to /es/ + ACROSS to ↓</div>
-      <div class="pillar" style="border-color:var(--blue);background:linear-gradient(180deg,var(--blue-soft),transparent)"><div class="t" style="color:var(--blue)">COMMERCIAL PILLAR — /es/ trial</div><div class="s">la prueba gratis de 30 días · anchor: "empezar la prueba de 30 días"</div></div>
-    </div>
+  <div class="sec-num">03 — YOUR SITE AS SILOS</div>
+  <h2>English silos (each isolated)</h2>
+  <div class="apex"><div class="abox"><div class="t">🏠 Homepage / (apex)</div><div class="s">body-links down to each Topic pillar · affiliate CTA · NOT a nav dump</div></div></div>
+  <div class="down">↓ body editorial links to each Topic pillar</div>
+  <div class="silos">
+    <div class="silo"><div class="top">💲 Pricing</div>
+      <div class="tier">Topic</div><div class="var">pricing-plans-2026</div>
+      <div class="tier">Variations ⟲</div><div class="var"><span class="circ">⟲</span>leverage-ai-pricing</div>
+      <div class="gap">needs more variations</div><div class="isolated">isolated silo</div></div>
+    <div class="silo"><div class="top">💳 Payments</div>
+      <div class="tier">Topic</div><div class="var">master-payment-providers</div>
+      <div class="tier">Variations ⟲</div><div class="gap">build: ACH, Stripe, invoices…</div><div class="isolated">isolated silo</div></div>
+    <div class="silo"><div class="top">📞 Phone &amp; Voice</div>
+      <div class="tier">Topic</div><div class="var">reduce-spam-calls-ivr</div>
+      <div class="tier">Variations ⟲</div><div class="gap">build: voice AI, call routing…</div><div class="isolated">isolated silo</div></div>
+    <div class="silo"><div class="top">💬 SMS</div>
+      <div class="tier">Topic</div><div class="var">unsolicited-sms-compliance</div>
+      <div class="tier">Variations ⟲</div><div class="gap">build: A2P, WhatsApp…</div><div class="isolated">isolated silo</div></div>
+    <div class="silo"><div class="top">⚙️ CRM / Automation</div>
+      <div class="tier">Topic</div><div class="var">automate-google-contacts</div>
+      <div class="tier">Variations ⟲</div><div class="gap">build: workflows, pipelines…</div><div class="isolated">isolated silo</div></div>
+    <div class="silo"><div class="top">🌐 Sites</div>
+      <div class="tier">Topic</div><div class="var">launch-a-website</div>
+      <div class="tier">Variations ⟲</div><div class="var"><span class="circ">⟲</span>uberall-local-listings</div><div class="isolated">isolated silo</div></div>
+    <div class="silo"><div class="top">★ Trial / Start</div>
+      <div class="tier">Topic (money)</div><div class="var">free-trial-30-days-extended</div>
+      <div class="tier">Variations ⟲</div><div class="gap">its own silo · 37 clicks</div><div class="isolated">isolated silo</div></div>
+    <div class="silo es"><div class="top">🇪🇸 Spanish silos →</div>
+      <div class="tier">separate microsite</div><div class="var">opiniones</div><div class="var">precios</div><div class="var">qué-es</div><div class="var">pagos-latam</div>
+      <div class="isolated">own silos · own apex /es/</div></div>
   </div>
 
-  <div class="switch">🔗 <b>The only link between the two microsites</b> = the language switch ("Español / English" + hreflang). No English page links to a Spanish page's content, and vice-versa.</div>
+  <div class="conv">💰 <b>Conversion (Caleb-safe):</b> every page carries the <b>external affiliate CTA</b> to gohighlevel.com. External links don't break silo integrity — so this drives the trial signup WITHOUT cross-linking silos internally. That's how "everything → the trial" works without violating the rule.</div>
+  <div class="langsplit">🔗 <b>English ↔ Spanish:</b> joined only by the language switch + hreflang. The Spanish silos are a separate microsite with their own apex (/es/) and their own isolated silos (opiniones, precios, qué-es, pagos).</div>
 
   <div class="legend">
-    <span><span class="ln up"></span>spoke → hub (up, keyword anchor)</span>
-    <span><span class="ln"></span>hub → spoke (down)</span>
-    <span><span class="ln cross"></span>spoke → commercial pillar (transactional anchor)</span>
+    <span><span class="dot" style="background:var(--amber)"></span>Topic pillar (Tier 1)</span>
+    <span><span class="dot" style="background:var(--surface2);border:1px solid var(--line)"></span>Variation (Tier 2, link circle ⟲)</span>
+    <span><span class="dot" style="background:var(--blue)"></span>Spanish microsite</span>
   </div>
 </div></section>
 
-<!-- WHY -->
+<!-- THE HONEST GAP -->
 <section><div class="wrap">
-  <div class="sec-num">03 — WHY THIS SHAPE</div>
-  <h2>It matches the money + the docs</h2>
-  <p class="lead" style="font-size:1rem">The free-trial blog is your real earner (37 affiliate clicks/90d), so it's the commercial pillar every spoke points to with a transactional anchor — exactly what the SEJ rule says to do. Topic hubs build authority for their head terms; spokes feed the hubs. Keeping English and Spanish as separate microsites stops the language-mixing problem you caught, and matches the "each cluster is its own microsite" rule.</p>
-  <p class="foot">Sources: Caleb / RicketyRoo "Hub and Spoke Content Models", Search Engine Journal "How Should We Internally Link Hub &amp; Spoke Content". Page roles assigned from your 15 live posts + the GA4 affiliate-click data. The homepage spec already funnels to the trial blog; this map defines the link rules for the rest of the build.</p>
+  <div class="sec-num">04 — THE HONEST GAP</div>
+  <h2>Your silos are 1-page stubs</h2>
+  <p class="lead" style="font-size:1rem">Caleb's model wants each Topic to have ~15 variations forming a link circle. You have <b style="color:var(--text)">15 posts total</b> — so most silos are a single pillar with no variations yet. The interlinking structure is right, but it only gets powerful once each money silo (Pricing, Payments, Trial) has its variations built out. For this first slice: set the silo skeleton, link the homepage to the topic pillars by body links (not nav), and drive conversion through the affiliate CTA. Then build variations into the silos that matter (Pricing, Trial, the Spanish cluster).</p>
+  <p class="foot">Source: Caleb Ulku, "AI SEO Mastery Pro" — lessons <i>How SEO Authority is Passed</i> (02), <i>Basic Site Structure</i> (12), <i>How to Structure the Core 30</i> (05), in your smb-knowledge-base. Note: there's already a <code>es-pricing-silo-caleb-linking</code> branch on the GHL repo — prior Caleb-style silo work to fold in.</p>
 </div></section>
 </body>
 </html>
