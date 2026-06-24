@@ -113,16 +113,15 @@
   .hubcard .k{font-size:.78rem;letter-spacing:1px;text-transform:uppercase;color:var(--amber);font-weight:700}
   .hubcard h4{font-size:1.05rem;margin:8px 0 4px;font-weight:700}
   .hubcard p{font-size:.9rem;color:var(--muted)}
-  .guidecard{display:flex;align-items:center;gap:18px;margin:30px auto 0;max-width:640px;background:linear-gradient(180deg,var(--surface2),#10131c);border:1px solid var(--line);border-radius:16px;padding:20px 24px;transition:transform .12s ease,border-color .15s}
-  .guidecard:hover{border-color:var(--blue);transform:translateY(-1px)}
-  .gc-ic{flex:0 0 46px;height:46px;border-radius:12px;background:rgba(124,156,255,.14);display:flex;align-items:center;justify-content:center;color:var(--blue)}
-  .gc-ic svg{width:23px;height:23px}
-  .gc-body{flex:1}
-  .gc-k{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--blue);font-weight:700}
-  .gc-t{color:var(--text);font-weight:700;font-size:1.1rem;margin:2px 0 3px;line-height:1.2}
+  .guidecard{display:flex;align-items:center;gap:18px;margin:30px auto 0;max-width:660px;background:linear-gradient(180deg,var(--surface),#0c0f16);border:1px solid rgba(245,158,11,.45);border-radius:16px;padding:22px 26px;transition:transform .12s ease,border-color .15s,box-shadow .15s;box-shadow:0 12px 44px -18px rgba(245,158,11,.42)}
+  .guidecard:hover{border-color:var(--amber);transform:translateY(-1px);box-shadow:0 16px 52px -16px rgba(245,158,11,.58)}
+  .gc-ic{flex:0 0 48px;height:48px;border-radius:12px;background:rgba(245,158,11,.15);display:flex;align-items:center;justify-content:center;color:var(--amber)}
+  .gc-ic svg{width:24px;height:24px}
+  .gc-body{flex:1;text-align:left}
+  .gc-k{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--amber);font-weight:700}
+  .gc-t{color:var(--text);font-weight:800;font-size:1.18rem;margin:2px 0 3px;line-height:1.2}
   .gc-d{color:var(--text2);font-size:.9rem;line-height:1.4}
-  .gc-arrow{color:var(--blue);font-weight:700;white-space:nowrap;font-size:.95rem}
-  :root{--blue:#7c9cff}
+  .gc-arrow{color:var(--amber);font-weight:800;white-space:nowrap;font-size:1rem}
   .clusters{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
   .cluster{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column}
   .cluster h3{font-size:1.08rem;font-weight:800;color:var(--text);margin-bottom:6px}
@@ -198,28 +197,21 @@
     <span class="eyebrow">The free GoHighLevel library + the extended trial</span>
     <h1>Everything <em>GoHighLevel</em> — free guides and the 30-day trial.</h1>
     <p class="sub">GlobalHighLevel is the free library for setting GoHighLevel up right — tutorials, a podcast, and the <b>extended 30-day trial</b> (double the standard 14). Start with the complete trial guide, or jump straight in.</p>
-    <div class="cta-row">
-      <a class="btn lg" href="https://globalhighlevel.com/blog/gohighlevel-free-trial-30-days-extended/">Read the 30-day trial guide →</a>
-      <a href="https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=hero-secondary&utm_campaign=trial" target="_blank" rel="nofollow noopener" style="color:var(--text2);font-size:.95rem;align-self:center;border-bottom:1px solid var(--line);padding-bottom:2px">or start the trial now →</a>
+    <a class="guidecard" href="https://globalhighlevel.com/blog/gohighlevel-free-trial-30-days-extended/">
+      <div class="gc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h6"/></svg></div>
+      <div class="gc-body">
+        <div class="gc-k">Our most-read guide</div>
+        <div class="gc-t">The complete 30-day free trial guide</div>
+        <div class="gc-d">Eligibility, the exact steps, FAQs, and how to claim it — the full walkthrough.</div>
+      </div>
+      <span class="gc-arrow">Read →</span>
+    </a>
+    <div class="cta-row" style="justify-content:center;margin-top:16px">
+      <a href="https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=hero-secondary&utm_campaign=trial" target="_blank" rel="nofollow noopener" style="color:var(--text2);font-size:.95rem;border-bottom:1px solid var(--line);padding-bottom:2px">or start the trial now →</a>
     </div>
     <p class="micro">The guide covers eligibility, the exact steps, and how to claim the extended trial. <b>$97+/mo</b> only if you keep it past day 30.</p>
   </div>
 </div></header>
-
-<section class="band"><div class="wrap" style="text-align:center">
-  <span class="eyebrow">The 30-day trial</span>
-  <h2>Everyone gets 14 days. Through us, you get 30.</h2>
-  <p class="lead" style="margin:12px auto 0">Double the runway, plus a free live setup bootcamp. The full how-to — eligibility, the steps, the bootcamp, FAQs — lives in one guide.</p>
-  <a class="guidecard" href="https://globalhighlevel.com/blog/gohighlevel-free-trial-30-days-extended/">
-    <div class="gc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h6"/></svg></div>
-    <div class="gc-body">
-      <div class="gc-k">Our most-read guide</div>
-      <div class="gc-t">The complete 30-day free trial guide</div>
-      <div class="gc-d">Eligibility, the exact steps, FAQs, and how to claim it — the full walkthrough.</div>
-    </div>
-    <span class="gc-arrow">Read →</span>
-  </a>
-</div></section>
 
 <section class="band"><div class="wrap">
   <span class="eyebrow">Two ways people use it</span>
