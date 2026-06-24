@@ -137,15 +137,25 @@
     .navlinks .btn{padding:9px 13px;font-size:.82rem}
   }
 </style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@graph":[
+    {"@type":"Organization","@id":"https://globalhighlevel.com/#org","name":"GlobalHighLevel","url":"https://globalhighlevel.com/","description":"Free GoHighLevel tutorials, guides and a podcast for business owners and agencies worldwide.","sameAs":["https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV"]},
+    {"@type":"WebSite","@id":"https://globalhighlevel.com/#website","url":"https://globalhighlevel.com/","name":"GlobalHighLevel","publisher":{"@id":"https://globalhighlevel.com/#org"},"inLanguage":"en"},
+    {"@type":"WebPage","@id":"https://globalhighlevel.com/#webpage","url":"https://globalhighlevel.com/","name":"GoHighLevel 30-Day Free Trial: Double the Standard 14","isPartOf":{"@id":"https://globalhighlevel.com/#website"},"about":{"@id":"https://globalhighlevel.com/#org"},"inLanguage":"en"}
+  ]
+}
+</script>
 </head>
 <body>
 
 <!-- spec strip: notes for Bill, not part of the page -->
 <div class="spec"><div class="wrap">
-  <span><b>DRAFT · Homepage v1</b></span>
+  <span><b>DRAFT · Homepage v2</b></span>
   <span>Target keyword: <code>gohighlevel 30 day free trial</code></span>
-  <span>&lt;title&gt; <code>GoHighLevel Free Trial: Get 30 Days (Not 14)</code></span>
-  <span>H1 carries the term ↓</span>
+  <span>+ bootcamp conversion section · JSON-LD schema (Org/WebSite/WebPage)</span>
+  <span>card-hold claim corrected to match the live offer ↓</span>
 </div></div>
 
 <nav><div class="wrap">
@@ -168,25 +178,40 @@
         <a class="btn lg" href="https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=hero&utm_campaign=trial" target="_blank" rel="nofollow noopener">Start my 30-day free trial →</a>
         <a href="#why" style="color:var(--text2);font-size:.92rem;align-self:center;border-bottom:1px solid var(--line);padding-bottom:2px">or see why 30 days beats 14 ↓</a>
       </div>
-      <p class="micro">Goes straight to GoHighLevel. It asks for a card to start (a ~$1 hold, not a charge) — cancel before day 30 and you pay nothing. <b>$97/mo</b> only if you stay.</p>
+      <p class="micro">Takes you to GoHighLevel's free bootcamp + trial signup. No upfront payment to start; the trial is free for 30 days (standard text, call &amp; email usage may apply while you test). <b>$97+/mo</b> only if you keep it past day 30.</p>
     </div>
     <div class="trialcard">
       <h3>What you're getting</h3>
       <div class="price">30 days free <small>/ then $97+/mo</small></div>
       <div class="row"><span class="lbl">Standard trial everywhere else</span><span class="strike">14 days</span></div>
       <div class="row"><span class="lbl">Your trial through GlobalHighLevel</span><span class="win">30 days</span></div>
-      <div class="row"><span class="lbl">CRM, funnels, automation, calendars</span><span style="color:var(--green);font-weight:700">All in</span></div>
-      <div class="row"><span class="lbl">Setup guides while you trial</span><span style="color:var(--green);font-weight:700">Free</span></div>
+      <div class="row"><span class="lbl">Free live setup bootcamp (daily)</span><span style="color:var(--green);font-weight:700">Included</span></div>
+      <div class="row"><span class="lbl">5 setup playbooks to keep</span><span style="color:var(--green);font-weight:700">Free</span></div>
     </div>
   </div>
 </div></header>
+
+<section class="band" id="bootcamp"><div class="wrap">
+  <span class="eyebrow">What happens when you click “Start”</span>
+  <h2>Your trial comes with a free live setup bootcamp.</h2>
+  <p class="lead">Starting the 30-day trial through us also drops you into GoHighLevel's free live bootcamp — so week one isn't you alone, staring at a blank dashboard. Here's exactly what you're walking into, before you click.</p>
+  <div class="grid g3">
+    <div class="card"><div class="n">LIVE</div><h3>A daily guided setup class</h3><p>A click-by-click Zoom session every weekday (11am CT, about an hour) with real HighLevel coaches and live Q&amp;A. It's live-only — not recorded — so plan to show up to the one you book.</p></div>
+    <div class="card"><div class="n">WINS</div><h3>Six quick wins, set up with you</h3><p>You get text marketing, missed-call text-back, the mobile app, social integrations, Google Business chat, and reviews working — guided, not guessing your way through it.</p></div>
+    <div class="card"><div class="n">YOURS</div><h3>Five playbooks to keep</h3><p>Lead-Gen Playbook, the 5-Day Reviews Challenge, the SaaSPRENEUR Playbook, a Launch Snapshot, and funnel templates — yours whether you stay past day 30 or not.</p></div>
+  </div>
+  <div class="cta-row" style="margin-top:32px">
+    <a class="btn lg" href="https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=bootcamp&utm_campaign=trial" target="_blank" rel="nofollow noopener">Start the trial + claim my bootcamp seat →</a>
+  </div>
+  <p class="micro">No upfront payment to start. The trial's free for 30 days — only standard usage (texts, calls, emails) applies while you test. <b>$97+/mo</b> only if you keep it.</p>
+</div></section>
 
 <section class="band"><div class="wrap">
   <span class="eyebrow">Two ways people use it</span>
   <h2>Which are you?</h2>
   <div class="grid g2" style="margin-top:28px">
-    <div class="card for"><h3>I run my own business</h3><p>Contractors, salons, gyms, clinics, real estate. Get the missed call answered, the review asked, the follow-up sent — automatically. One platform instead of five separate tools.</p><a href="ghl-hub-service.html" style="color:var(--amber);font-weight:600;display:inline-block;margin-top:12px">See the business-owner guides →</a></div>
-    <div class="card"><h3>I run an agency</h3><p>Resell GoHighLevel as your own with white-label and sub-accounts. Run every client from a single dashboard.</p><a href="ghl-hub-agency.html" style="color:var(--amber);font-weight:600;display:inline-block;margin-top:12px">See the agency guides →</a></div>
+    <div class="card for"><h3>For service businesses</h3><p>Contractors, salons, gyms, clinics, real estate. Get the missed call answered, the review asked, the follow-up sent — automatically. One platform instead of five separate tools.</p><a href="ghl-hub-service.html" style="color:var(--amber);font-weight:600;display:inline-block;margin-top:12px">GoHighLevel for service businesses →</a></div>
+    <div class="card"><h3>For agencies</h3><p>Resell GoHighLevel as your own with white-label and sub-accounts. Run every client from a single dashboard.</p><a href="ghl-hub-agency.html" style="color:var(--amber);font-weight:600;display:inline-block;margin-top:12px">GoHighLevel for agencies →</a></div>
   </div>
 </div></section>
 
