@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- TARGET KEYWORD baked in: "gohighlevel 30 day free trial" -->
-<title>GoHighLevel 30-Day Free Trial: Double the Standard 14 | GlobalHighLevel</title>
+<!-- OPTION A: homepage targets the BRAND; money page owns "free trial" -->
+<title>GoHighLevel: Free Guides, Tutorials &amp; the 30-Day Free Trial | GlobalHighLevel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
@@ -113,20 +113,22 @@
   .hubcard .k{font-size:.78rem;letter-spacing:1px;text-transform:uppercase;color:var(--amber);font-weight:700}
   .hubcard h4{font-size:1.05rem;margin:8px 0 4px;font-weight:700}
   .hubcard p{font-size:.9rem;color:var(--muted)}
-  .guidecallout{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:28px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:0 12px 12px 0;padding:18px 24px;transition:border-color .15s}
-  .guidecallout:hover{border-color:var(--amber)}
-  .gc-k{font-size:.74rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--amber);font-weight:700}
-  .gc-t{color:var(--text);font-weight:600;font-size:1.05rem;margin-top:3px}
-  .gc-arrow{color:var(--amber);font-weight:700;white-space:nowrap;font-size:.95rem}
+  .guidecard{display:flex;align-items:center;gap:18px;margin:30px auto 0;max-width:640px;background:linear-gradient(180deg,var(--surface2),#10131c);border:1px solid var(--line);border-radius:16px;padding:20px 24px;transition:transform .12s ease,border-color .15s}
+  .guidecard:hover{border-color:var(--blue);transform:translateY(-1px)}
+  .gc-ic{flex:0 0 46px;height:46px;border-radius:12px;background:rgba(124,156,255,.14);display:flex;align-items:center;justify-content:center;color:var(--blue)}
+  .gc-ic svg{width:23px;height:23px}
+  .gc-body{flex:1}
+  .gc-k{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--blue);font-weight:700}
+  .gc-t{color:var(--text);font-weight:700;font-size:1.1rem;margin:2px 0 3px;line-height:1.2}
+  .gc-d{color:var(--text2);font-size:.9rem;line-height:1.4}
+  .gc-arrow{color:var(--blue);font-weight:700;white-space:nowrap;font-size:.95rem}
+  :root{--blue:#7c9cff}
   .clusters{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
-  .cluster{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .cluster{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column}
   .cluster h3{font-size:1.08rem;font-weight:800;color:var(--text);margin-bottom:6px}
-  .cluster>p{font-size:.9rem;color:var(--muted);margin-bottom:14px}
-  .cluster ul.links{list-style:none;display:flex;flex-direction:column;gap:9px}
-  .cluster ul.links li{padding-left:18px;position:relative}
-  .cluster ul.links li::before{content:"→";position:absolute;left:0;color:var(--amber);font-size:.82rem;top:1px}
-  .cluster ul.links a{color:var(--text2);font-size:.92rem;font-weight:500}
-  .cluster ul.links a:hover{color:var(--amber)}
+  .cluster>p{font-size:.92rem;color:var(--text2);margin-bottom:16px;flex:1}
+  .cluster-link{color:var(--amber);font-weight:700;font-size:.95rem;margin-top:auto}
+  .cluster-link:hover{opacity:.85}
   @media(max-width:820px){.clusters{grid-template-columns:1fr}}
   .es-banner{margin-top:18px;background:linear-gradient(90deg,var(--amber-soft),transparent);
     border:1px solid rgba(245,158,11,.35);border-radius:14px;padding:18px 24px;display:flex;
@@ -167,7 +169,7 @@
   "@graph":[
     {"@type":"Organization","@id":"https://globalhighlevel.com/#org","name":"GlobalHighLevel","url":"https://globalhighlevel.com/","description":"Free GoHighLevel tutorials, guides and a podcast for business owners and agencies worldwide.","sameAs":["https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV"]},
     {"@type":"WebSite","@id":"https://globalhighlevel.com/#website","url":"https://globalhighlevel.com/","name":"GlobalHighLevel","publisher":{"@id":"https://globalhighlevel.com/#org"},"inLanguage":"en"},
-    {"@type":"WebPage","@id":"https://globalhighlevel.com/#webpage","url":"https://globalhighlevel.com/","name":"GoHighLevel 30-Day Free Trial: Double the Standard 14","isPartOf":{"@id":"https://globalhighlevel.com/#website"},"about":{"@id":"https://globalhighlevel.com/#org"},"inLanguage":"en"}
+    {"@type":"WebPage","@id":"https://globalhighlevel.com/#webpage","url":"https://globalhighlevel.com/","name":"GoHighLevel: Free Guides, Tutorials & the 30-Day Free Trial","isPartOf":{"@id":"https://globalhighlevel.com/#website"},"about":{"@id":"https://globalhighlevel.com/#org"},"inLanguage":"en"}
   ]
 }
 </script>
@@ -176,10 +178,9 @@
 
 <!-- spec strip: notes for Bill, not part of the page -->
 <div class="spec"><div class="wrap">
-  <span><b>DRAFT · Homepage v2</b></span>
-  <span>Target keyword: <code>gohighlevel 30 day free trial</code></span>
-  <span>+ bootcamp conversion section · JSON-LD schema (Org/WebSite/WebPage)</span>
-  <span>card-hold claim corrected to match the live offer ↓</span>
+  <span><b>OPTION A · brand hub → funnels to money page</b></span>
+  <span>Homepage targets <code>gohighlevel · go high level</code> (brand). Money page owns "free trial".</span>
+  <span>5 cluster hub-links (not 18) · CTAs funnel to the money page · 1 affiliate link — max juice to the earner ↓</span>
 </div></div>
 
 <nav><div class="wrap">
@@ -194,13 +195,14 @@
 
 <header class="hero"><div class="wrap">
   <div class="hero-single">
-    <span class="eyebrow">Free GoHighLevel guides + the extended trial</span>
-    <h1>The GoHighLevel <em>30-Day Free Trial</em> — double the standard 14.</h1>
-    <p class="sub">Everyone gets GoHighLevel's standard 14-day trial. Start through us and you get <b>double the runway</b> — enough time to actually set it up, put real work through it, and decide if it's for you.</p>
+    <span class="eyebrow">The free GoHighLevel library + the extended trial</span>
+    <h1>Everything <em>GoHighLevel</em> — free guides and the 30-day trial.</h1>
+    <p class="sub">GlobalHighLevel is the free library for setting GoHighLevel up right — tutorials, a podcast, and the <b>extended 30-day trial</b> (double the standard 14). Start with the complete trial guide, or jump straight in.</p>
     <div class="cta-row">
-      <a class="btn lg" href="https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=hero&utm_campaign=trial" target="_blank" rel="nofollow noopener">Start my 30-day free trial →</a>
+      <a class="btn lg" href="https://globalhighlevel.com/blog/gohighlevel-free-trial-30-days-extended/">Read the 30-day trial guide →</a>
+      <a href="https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=hero-secondary&utm_campaign=trial" target="_blank" rel="nofollow noopener" style="color:var(--text2);font-size:.95rem;align-self:center;border-bottom:1px solid var(--line);padding-bottom:2px">or start the trial now →</a>
     </div>
-    <p class="micro">No upfront payment to start. Free for 30 days — only standard usage applies. <b>$97+/mo</b> only if you keep it.</p>
+    <p class="micro">The guide covers eligibility, the exact steps, and how to claim the extended trial. <b>$97+/mo</b> only if you keep it past day 30.</p>
   </div>
 </div></header>
 
@@ -218,7 +220,7 @@
       <p style="color:var(--muted);font-size:.85rem;margin-top:12px">Yours whether you stay past day 30 or not.</p></div>
   </div>
   <div class="cta-row" style="margin-top:32px;justify-content:center">
-    <a class="btn lg" href="https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=bootcamp&utm_campaign=trial" target="_blank" rel="nofollow noopener">Start the trial + claim my bootcamp seat →</a>
+    <a class="btn lg" href="https://globalhighlevel.com/blog/gohighlevel-free-trial-30-days-extended/">See how the extended trial works →</a>
   </div>
   <p class="micro" style="text-align:center">No upfront payment to start. The trial's free for 30 days — only standard usage (texts, calls, emails) applies while you test. <b>$97+/mo</b> only if you keep it.</p>
 </div></section>
@@ -232,12 +234,14 @@
     <div class="card"><div class="n">02</div><h3>Run live clients through it</h3><p>Thirty days is enough to move actual customers and follow-ups through it and watch it work — the only way to know it fits how you operate.</p></div>
     <div class="card"><div class="n">03</div><h3>No lock-in</h3><p>Same cancel-anytime terms. If it's not for you, leave before day 30 and pay nothing. We'd rather you decide from how it performed, not a rushed two weeks.</p></div>
   </div>
-  <a class="guidecallout" href="https://globalhighlevel.com/blog/gohighlevel-free-trial-30-days-extended/">
-    <div>
-      <div class="gc-k">The complete guide</div>
-      <div class="gc-t">The full 30-day free trial guide — eligibility, the exact steps, FAQs &amp; how to claim it</div>
+  <a class="guidecard" href="https://globalhighlevel.com/blog/gohighlevel-free-trial-30-days-extended/">
+    <div class="gc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h9l5 5v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6"/><path d="M8 13h8M8 17h6"/></svg></div>
+    <div class="gc-body">
+      <div class="gc-k">Our most-read guide</div>
+      <div class="gc-t">The complete 30-day free trial guide</div>
+      <div class="gc-d">Eligibility, the exact steps, FAQs, and how to claim it — the full walkthrough.</div>
     </div>
-    <span class="gc-arrow">Read it →</span>
+    <span class="gc-arrow">Read →</span>
   </a>
 </div></section>
 
@@ -300,51 +304,28 @@
   <div class="clusters">
     <div class="cluster">
       <h3>AI &amp; Automation</h3>
-      <p>Put the platform on autopilot — agents, workflows, and AI that answers for you.</p>
-      <ul class="links">
-        <li><a href="/ai-agents-agent-studio/">Build AI agents in Agent Studio</a></li>
-        <li><a href="/workflows-automation/">Automate your workflows</a></li>
-        <li><a href="/conversation-ai/">Set up a Conversation AI chatbot</a></li>
-        <li><a href="/voice-ai/">Answer the phone with Voice AI</a></li>
-      </ul>
+      <p>Put the platform on autopilot — AI agents and Agent Studio, workflows, Conversation AI, and Voice AI.</p>
+      <a class="cluster-link" href="/ai-automation/">Explore AI &amp; Automation →</a>
     </div>
     <div class="cluster">
       <h3>CRM &amp; Communication</h3>
-      <p>Run your contacts, conversations, and calendar from one place.</p>
-      <ul class="links">
-        <li><a href="/crm-contacts/">Organize contacts in the CRM</a></li>
-        <li><a href="/email-sms-messaging/">Send email &amp; SMS campaigns</a></li>
-        <li><a href="/calls-phone/">Handle calls, IVR &amp; spam filtering</a></li>
-        <li><a href="/calendars-booking/">Take bookings on a calendar</a></li>
-      </ul>
+      <p>Run the whole customer relationship in one place — CRM &amp; contacts, email &amp; SMS, calls &amp; IVR, and the calendar.</p>
+      <a class="cluster-link" href="/crm-communication/">Explore CRM &amp; Communication →</a>
     </div>
     <div class="cluster">
       <h3>Sites, Funnels &amp; Reputation</h3>
-      <p>Capture leads and look credible — pages, forms, reviews, and social.</p>
-      <ul class="links">
-        <li><a href="/websites-funnels/">Build websites &amp; funnels</a></li>
-        <li><a href="/forms-surveys/">Create forms &amp; surveys</a></li>
-        <li><a href="/reviews-listings/">Collect reviews &amp; manage listings</a></li>
-        <li><a href="/social-content/">Schedule social posts &amp; content</a></li>
-      </ul>
+      <p>Capture leads and look credible — websites &amp; funnels, forms &amp; surveys, reviews &amp; listings, and social posting.</p>
+      <a class="cluster-link" href="/sites-funnels-reputation/">Explore Sites &amp; Reputation →</a>
     </div>
     <div class="cluster">
       <h3>Payments &amp; Pricing</h3>
-      <p>Get paid inside GoHighLevel, and know what it actually costs.</p>
-      <ul class="links">
-        <li><a href="/payments-checkout/">Take payments &amp; checkout</a></li>
-        <li><a href="https://globalhighlevel.com/blog/gohighlevel-pricing-plans-2026-complete-guide/">Understand GoHighLevel pricing</a></li>
-      </ul>
+      <p>Get paid inside GoHighLevel and know exactly what it costs — payments &amp; checkout, plus the full pricing breakdown.</p>
+      <a class="cluster-link" href="/payments-pricing/">Explore Payments &amp; Pricing →</a>
     </div>
     <div class="cluster">
       <h3>Developer &amp; Scale</h3>
-      <p>The power-user layer — integrations, data, reporting, and white-label apps.</p>
-      <ul class="links">
-        <li><a href="/apis-webhooks/">Connect APIs &amp; webhooks</a></li>
-        <li><a href="/reporting-analytics/">Track performance with reporting</a></li>
-        <li><a href="/custom-objects/">Model data with custom objects</a></li>
-        <li><a href="/mobile-app-white-label/">Ship a white-label mobile app</a></li>
-      </ul>
+      <p>The power-user layer — APIs &amp; webhooks, reporting &amp; analytics, custom objects, and white-label mobile apps.</p>
+      <a class="cluster-link" href="/developer-scale/">Explore Developer &amp; Scale →</a>
     </div>
   </div>
   <div class="es-banner" id="es">
@@ -358,9 +339,9 @@
   <h2>Get your 30-day GoHighLevel free trial</h2>
   <p class="lead">Double the standard trial, plus the free live bootcamp while you set it up. Decide from a real test, not a rushed two weeks.</p>
   <div class="cta-row" style="justify-content:center">
-    <a class="btn lg" href="https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=footer&utm_campaign=trial" target="_blank" rel="nofollow noopener">Start my 30 days free →</a>
+    <a class="btn lg" href="https://globalhighlevel.com/blog/gohighlevel-free-trial-30-days-extended/">Get the complete 30-day trial guide →</a>
   </div>
-  <p class="micro" style="text-align:center">$97+/mo only if you keep it · cancel any time before day 30</p>
+  <p class="micro" style="text-align:center">Eligibility, the steps, and how to claim it · $97+/mo only if you keep it past day 30</p>
 </div></section>
 
 <footer><div class="wrap">
