@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Homepage — Design Fixes Board</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--red:#fb7185;--blue:#7c9cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text2);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.55;padding-bottom:90px}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 26px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{color:var(--text);font-weight:800;font-size:2.1rem;letter-spacing:-1px;margin:10px 0;line-height:1.1}
+  .lead{font-size:1.05rem;color:var(--text);max-width:850px}
+  header{padding:42px 0 20px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  .fx{margin:26px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#0c0f16}
+  .fx-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+  .fx-head h3{color:var(--text);font-size:1.08rem;font-weight:800}
+  .fx-head .meta{display:flex;gap:8px;align-items:center}
+  .tag{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.5px}
+  .t-high{background:rgba(251,113,133,.15);color:var(--red)} .t-med{background:rgba(245,158,11,.15);color:var(--amber)} .t-pol{background:var(--surface2);color:var(--muted)}
+  .rec{font-size:11px;font-weight:700;color:var(--green)}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .cols>div{padding:18px 20px}
+  .cols .cur{border-right:1px solid var(--line)}
+  .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:10px}
+  .cur .lbl{color:var(--red)} .pro .lbl{color:var(--green)}
+  .note{padding:13px 20px;border-top:1px solid var(--line);background:var(--surface);font-size:.92rem}
+  .note b{color:var(--text)}
+  /* mini rendered components */
+  .mini{font-size:13px}
+  .mini-card{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .mini-card h4{color:var(--text);font-size:1rem;font-weight:700;margin-bottom:6px}
+  .mini-card p{font-size:.86rem;color:var(--text2)}
+  ul.b{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:6px}
+  ul.b li{padding-left:18px;position:relative;font-size:.86rem;color:var(--text2)}
+  ul.b li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--amber)}
+  .minibtn{display:inline-block;background:var(--amber);color:#07080a;font-weight:700;border-radius:7px;padding:7px 13px;font-size:.8rem;margin-top:10px}
+  .txtlink{color:var(--amber);font-weight:600;font-size:.82rem;display:inline-block;margin-top:9px}
+  .strip{background:#0c0f16;border:1px dashed var(--line);border-radius:8px;padding:7px 11px;font-size:11.5px;color:var(--muted)}
+  .flowrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px;font-size:.8rem}
+  .pill{background:var(--surface2);border:1px solid var(--line);border-radius:7px;padding:6px 10px;color:var(--text2)}
+  .pill.hot{border-color:var(--amber);color:var(--text)}
+  .pill.move{border-color:var(--green);color:var(--green)}
+  .arr{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:4px}
+  td{border-bottom:1px solid var(--line);padding:8px 10px;vertical-align:top}
+  td.old{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--red);width:42%}
+  td.new{color:var(--text2)}
+  .bars{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+  .barline{display:flex;align-items:center;gap:9px;font-size:.8rem}
+  .barline .nm{width:118px;text-align:right;color:var(--text2)}
+  .barline .bx{height:14px;border-radius:3px;background:linear-gradient(90deg,var(--amber),#fbbf24)}
+  .applybar{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .ab{font-size:.82rem;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 13px;color:var(--text2)}
+  @media(max-width:760px){.cols{grid-template-columns:1fr}.cols .cur{border-right:0;border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Homepage design review · current → proposed</div>
+  <h1>The 6 findings, each shown both ways.</h1>
+  <p class="lead">Finding 1 (hero dead space) is already fixed and live in the proof. These are the remaining six. Left = how it is now, right = the proposed fix. My recommendation is on each. Tell me which to apply (all, some, or none).</p>
+</div></header>
+<div class="wrap">
+
+<!-- #1 DRAFT strip -->
+<div class="fx">
+  <div class="fx-head"><h3>1 · The “DRAFT” strip at the very top</h3><div class="meta"><span class="tag t-high">PRE-LIVE</span><span class="rec">REC: keep for now</span></div></div>
+  <div class="cols">
+    <div class="cur"><div class="lbl">Now</div>
+      <div class="strip"><b style="color:var(--amber)">DRAFT · Homepage v2</b> &nbsp; Target keyword: gohighlevel 30 day free trial &nbsp; + bootcamp section · JSON-LD schema…</div>
+      <p style="margin-top:10px;font-size:.86rem">A grey notes bar I put there so you can see what each version contains. It is not part of the real page.</p>
+    </div>
+    <div class="pro"><div class="lbl">Before live</div>
+      <p class="mini" style="font-size:.9rem">Deleted entirely. The page would start straight at the menu. It exists only so you can track what changed between proofs.</p>
+    </div>
+  </div>
+  <div class="note"><b>Suggestion:</b> leave it while we’re proofing (it’s useful), strip it the moment we build for live. Zero risk either way.</div>
+</div>
+
+<!-- #2 bootcamp cards -->
+<div class="fx">
+  <div class="fx-head"><h3>2 · Bootcamp cards are a wall of text</h3><div class="meta"><span class="tag t-med">MEDIUM</span><span class="rec">REC: apply</span></div></div>
+  <div class="cols">
+    <div class="cur"><div class="lbl">Now — paragraph</div>
+      <div class="mini-card"><h4>A daily guided setup class</h4>
+        <p>A click-by-click Zoom session every weekday (11am CT, about an hour) with real HighLevel coaches and live Q&amp;A. It’s live-only — not recorded — so plan to show up to the one you book.</p></div>
+    </div>
+    <div class="pro"><div class="lbl">Proposed — scannable</div>
+      <div class="mini-card"><h4>A daily guided setup class</h4>
+        <ul class="b"><li>Live Zoom, every weekday at 11am CT</li><li>~1 hour, real HighLevel coaches + Q&amp;A</li><li>Live only — not recorded, so show up</li></ul></div>
+    </div>
+  </div>
+  <div class="note"><b>Suggestion:</b> same facts, but as a headline + 3 bullets people actually scan. Apply to all three bootcamp cards. Pure formatting — safe.</div>
+</div>
+
+<!-- #3 + #4 which are you placement -->
+<div class="fx">
+  <div class="fx-head"><h3>3 + 4 · “Which are you?” order & the hub links</h3><div class="meta"><span class="tag t-med">MEDIUM</span><span class="rec">REC: reorder</span></div></div>
+  <div class="cols">
+    <div class="cur"><div class="lbl">Now — routing before the sell</div>
+      <div class="flowrow"><span class="pill hot">Hero</span><span class="arr">→</span><span class="pill">Bootcamp</span><span class="arr">→</span><span class="pill move">Which are you? (hubs)</span><span class="arr">→</span><span class="pill">Why 30 days</span></div>
+      <p style="margin-top:12px;font-size:.86rem">People get sent off to a hub <i>before</i> the page has made the 30-day case.</p>
+    </div>
+    <div class="pro"><div class="lbl">Proposed — sell, then route</div>
+      <div class="flowrow"><span class="pill hot">Hero</span><span class="arr">→</span><span class="pill">Bootcamp</span><span class="arr">→</span><span class="pill">Why 30 days</span><span class="arr">→</span><span class="pill move">Which are you? (hubs)</span></div>
+      <p style="margin-top:12px;font-size:.86rem">Routing happens <i>after</i> they’re sold. Plus a small “Start the trial” link on each card so the CTA is never more than one click away.</p>
+    </div>
+  </div>
+  <div class="note"><b>On #4 (do the hub links steal conversions?):</b> not really — the hubs are <b>your own pages and they also push the trial</b>, so a click there is a more targeted path to the same CTA, not a leak. Fix is the reorder above, not removing the cards.</div>
+</div>
+
+<!-- persona card mini -->
+<div class="fx">
+  <div class="fx-head"><h3>4b · The persona card, with the trial always one click away</h3><div class="meta"><span class="tag t-pol">OPTIONAL</span><span class="rec">REC: nice-to-have</span></div></div>
+  <div class="cols">
+    <div class="cur"><div class="lbl">Now</div>
+      <div class="mini-card"><h4>For service businesses</h4><p>Contractors, salons, gyms, clinics, real estate. Answer the missed call, ask for the review, send the follow-up — automatically.</p>
+        <a class="txtlink">GoHighLevel for service businesses →</a></div>
+    </div>
+    <div class="pro"><div class="lbl">Proposed</div>
+      <div class="mini-card"><h4>For service businesses</h4><p>Contractors, salons, gyms, clinics, real estate. Answer the missed call, ask for the review, send the follow-up — automatically.</p>
+        <a class="minibtn">Start my 30-day trial →</a><br><a class="txtlink">or see the service-business guides →</a></div>
+    </div>
+  </div>
+  <div class="note"><b>Suggestion:</b> keep the hub link, but add the trial as the primary button so routing never costs you the conversion. Optional — only if you like it.</div>
+</div>
+
+<!-- #5 repeated phrases -->
+<div class="fx">
+  <div class="fx-head"><h3>5 · Repeated vague phrases</h3><div class="meta"><span class="tag t-med">MEDIUM</span><span class="rec">REC: swap a few</span></div></div>
+  <div class="note" style="border-top:0;background:transparent;padding-bottom:0"><b>Same phrases recur across hero, “why 30 days,” who-it’s-for, and the final CTA.</b> Swap repeats for concrete outcomes:</div>
+  <div style="padding:6px 20px 16px">
+    <table>
+      <tr><td class="old">“enough time to decide if it’s for you”</td><td class="new">build your first automation and watch one real lead move through it</td></tr>
+      <tr><td class="old">“put real work through it”</td><td class="new">run real customers and follow-ups through it</td></tr>
+      <tr><td class="old">“decide with real data”</td><td class="new">see your first missed-call text-back fire before you pay</td></tr>
+      <tr><td class="old">“that difference is the whole game”</td><td class="new">that’s the difference between a tour and a real test</td></tr>
+    </table>
+  </div>
+  <div class="note"><b>Suggestion:</b> keep the plain-spoken voice, just kill the repeats. Copy only — I’d do these with you so they sound like you.</div>
+</div>
+
+<!-- #6 spacing -->
+<div class="fx">
+  <div class="fx-head"><h3>6 · Every section is the same height</h3><div class="meta"><span class="tag t-pol">POLISH</span><span class="rec">REC: minor</span></div></div>
+  <div class="cols">
+    <div class="cur"><div class="lbl">Now — all 72px</div>
+      <div class="bars">
+        <div class="barline"><span class="nm">Bootcamp</span><span class="bx" style="width:160px"></span></div>
+        <div class="barline"><span class="nm">Which are you?</span><span class="bx" style="width:160px"></span></div>
+        <div class="barline"><span class="nm">Why 30 days</span><span class="bx" style="width:160px"></span></div>
+        <div class="barline"><span class="nm">Guides</span><span class="bx" style="width:160px"></span></div>
+      </div>
+      <p style="margin-top:10px;font-size:.84rem">Everything feels equally important, so nothing leads.</p>
+    </div>
+    <div class="pro"><div class="lbl">Proposed — varied weight</div>
+      <div class="bars">
+        <div class="barline"><span class="nm">Bootcamp</span><span class="bx" style="width:200px"></span></div>
+        <div class="barline"><span class="nm">Which are you?</span><span class="bx" style="width:110px"></span></div>
+        <div class="barline"><span class="nm">Why 30 days</span><span class="bx" style="width:200px"></span></div>
+        <div class="barline"><span class="nm">Guides</span><span class="bx" style="width:120px"></span></div>
+      </div>
+      <p style="margin-top:10px;font-size:.84rem">Big sections breathe, routing/utility sections tighten. Creates a rhythm.</p>
+    </div>
+  </div>
+  <div class="note"><b>Suggestion:</b> minor CSS — give the key sections more padding, tighten the routing/guide sections. Lowest priority.</div>
+</div>
+
+<div class="fx" style="border-color:rgba(52,211,153,.4)">
+  <div class="fx-head"><h3>What I’d apply</h3><div class="meta"><span class="rec">my pick</span></div></div>
+  <div class="note" style="border-top:0">
+    <b>Now (safe, no copy debates):</b> #2 (scannable bootcamp cards) + #3/#4 (reorder “Which are you?” after “why 30 days”). <br>
+    <b>With you (your voice):</b> #5 (swap the repeated phrases). <br>
+    <b>Whenever:</b> #6 (section rhythm) + #1 (strip the DRAFT bar) at go-live.
+    <div class="applybar"><span class="ab">Reply: “do 2 and 3”</span><span class="ab">or “do all the safe ones”</span><span class="ab">or pick per item</span></div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
