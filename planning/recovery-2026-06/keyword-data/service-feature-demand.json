@@ -1,0 +1,226 @@
+{
+  "overview": [
+    {
+      "keyword": "ai answering service",
+      "volume_ads": 1900,
+      "volume_clickstream": 1987,
+      "difficulty": 18,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "ai receptionist",
+      "volume_ads": 5400,
+      "volume_clickstream": 8316,
+      "difficulty": 11,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "ai receptionist for small business",
+      "volume_ads": 1000,
+      "volume_clickstream": 1726,
+      "difficulty": 13,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "automated review requests",
+      "volume_ads": 40,
+      "volume_clickstream": null,
+      "difficulty": 0,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "crm for service business",
+      "volume_ads": 210,
+      "volume_clickstream": 209,
+      "difficulty": 23,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "field service crm",
+      "volume_ads": 320,
+      "volume_clickstream": 52,
+      "difficulty": 36,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "missed call text back",
+      "volume_ads": 390,
+      "volume_clickstream": 889,
+      "difficulty": 0,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "missed call text back software",
+      "volume_ads": 110,
+      "volume_clickstream": 366,
+      "difficulty": 0,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "online booking software",
+      "volume_ads": 880,
+      "volume_clickstream": 52,
+      "difficulty": 78,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "software for service business",
+      "volume_ads": 90,
+      "volume_clickstream": 52,
+      "difficulty": 15,
+      "intent": "commercial",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "ai receptionist",
+      "volume": 5400,
+      "difficulty": 11
+    },
+    {
+      "keyword": "online appointment booking software",
+      "volume": 4400,
+      "difficulty": 67
+    },
+    {
+      "keyword": "online booking appointment software",
+      "volume": 4400,
+      "difficulty": 67
+    },
+    {
+      "keyword": "ringcentral ai receptionist",
+      "volume": 1900,
+      "difficulty": 4
+    },
+    {
+      "keyword": "ai answering service",
+      "volume": 1900,
+      "difficulty": 18
+    },
+    {
+      "keyword": "ai receptionist for small business",
+      "volume": 1000,
+      "difficulty": 13
+    },
+    {
+      "keyword": "booking online software",
+      "volume": 880,
+      "difficulty": 89
+    },
+    {
+      "keyword": "online booking software",
+      "volume": 880,
+      "difficulty": 78
+    },
+    {
+      "keyword": "booking software online",
+      "volume": 880,
+      "difficulty": 100
+    },
+    {
+      "keyword": "software online booking",
+      "volume": 880,
+      "difficulty": 100
+    },
+    {
+      "keyword": "ai phone answering service",
+      "volume": 720,
+      "difficulty": 22
+    },
+    {
+      "keyword": "online booking software for hotels",
+      "volume": 590,
+      "difficulty": 55
+    },
+    {
+      "keyword": "hotel online booking software",
+      "volume": 590,
+      "difficulty": 4
+    },
+    {
+      "keyword": "hotel booking online software",
+      "volume": 590,
+      "difficulty": 30
+    },
+    {
+      "keyword": "online hotel booking software",
+      "volume": 590,
+      "difficulty": 15
+    },
+    {
+      "keyword": "smith ai virtual receptionist",
+      "volume": 480,
+      "difficulty": 14
+    },
+    {
+      "keyword": "field service software for small business",
+      "volume": 480,
+      "difficulty": 11
+    },
+    {
+      "keyword": "field service management software for small business",
+      "volume": 480,
+      "difficulty": 23
+    },
+    {
+      "keyword": "ai receptionist software",
+      "volume": 390,
+      "difficulty": 23
+    },
+    {
+      "keyword": "missed call text back",
+      "volume": 390,
+      "difficulty": 0
+    },
+    {
+      "keyword": "rosie ai answering service",
+      "volume": 390,
+      "difficulty": 0
+    },
+    {
+      "keyword": "service desk software for small business",
+      "volume": 390,
+      "difficulty": 60
+    },
+    {
+      "keyword": "best ai receptionist",
+      "volume": 320,
+      "difficulty": 32
+    },
+    {
+      "keyword": "online booking and scheduling software",
+      "volume": 320,
+      "difficulty": 78
+    },
+    {
+      "keyword": "online booking scheduling software",
+      "volume": 320,
+      "difficulty": 89
+    }
+  ],
+  "serp": {},
+  "cost": 0.1454,
+  "area": "South Venice FL",
+  "seeds": [
+    "ai receptionist",
+    "ai receptionist for small business",
+    "missed call text back",
+    "missed call text back software",
+    "ai answering service",
+    "automated review requests",
+    "online booking software",
+    "crm for service business",
+    "software for service business",
+    "field service crm"
+  ]
+}
