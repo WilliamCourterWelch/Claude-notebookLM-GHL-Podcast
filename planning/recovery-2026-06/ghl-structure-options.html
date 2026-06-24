@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Structure Options — Hub-funnel vs Money-page-as-hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--red:#fb7185;--blue:#7c9cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text2);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.55;padding-bottom:90px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 26px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{color:var(--text);font-weight:800;font-size:2.05rem;letter-spacing:-1px;margin:10px 0;line-height:1.1}
+  .lead{font-size:1.05rem;color:var(--text);max-width:880px}
+  header{padding:42px 0 20px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  .opt{margin:24px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#0c0f16}
+  .opt.b{border-color:rgba(124,156,255,.35)} .opt.rec{border-color:rgba(52,211,153,.5);box-shadow:0 0 0 1px rgba(52,211,153,.22)}
+  .opt-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+  .opt-head h2{color:var(--text);font-size:1.18rem;font-weight:800}
+  .tag{font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+  .tag.rec{background:rgba(52,211,153,.16);color:var(--green)} .tag.idea{background:rgba(124,156,255,.16);color:var(--blue)}
+  .body{display:grid;grid-template-columns:300px 1fr;gap:0}
+  .diagram{padding:22px 20px;border-right:1px solid var(--line);background:#0a0d13}
+  .pc{padding:18px 20px}
+  /* nodes */
+  .node{border-radius:9px;padding:7px 11px;font-size:.82rem;font-weight:600;display:inline-block}
+  .home{background:var(--amber);color:#07080a;font-weight:800}
+  .hub{background:rgba(124,156,255,.15);color:var(--blue);border:1px solid rgba(124,156,255,.4)}
+  .spoke{background:var(--surface2);color:var(--text2);border:1px solid var(--line);font-weight:500;font-size:.76rem;padding:5px 9px}
+  .money{background:rgba(52,211,153,.16);color:var(--green);border:1px solid rgba(52,211,153,.4)}
+  .aff{background:#1a1208;color:var(--amber);border:1px dashed rgba(245,158,11,.5);font-size:.76rem}
+  .center{text-align:center}.stem{height:16px;width:2px;background:var(--line);margin:6px auto}
+  .row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:4px 0}
+  .lbl{font-size:.7rem;color:var(--muted);text-align:center;margin-top:4px}
+  ul{list-style:none;margin-top:6px}
+  ul li{padding-left:22px;position:relative;margin:7px 0;font-size:.92rem}
+  .pro li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}
+  .con li::before{content:"✕";position:absolute;left:0;color:var(--red);font-weight:800}
+  .pc h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:6px}
+  .pc .pro h4{color:var(--green)} .pc .con h4{color:var(--red)}
+  .note{background:var(--surface);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:14px 18px;margin:24px 0;font-size:.97rem}
+  .note.good{border-left-color:var(--green)} .note b{color:var(--text)}
+  @media(max-width:820px){.body{grid-template-columns:1fr}.diagram{border-right:0;border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Internal structure · two ways to point the authority</div>
+  <h1>Hub-funnel vs. push it all through the money page.</h1>
+  <p class="lead">Your idea: make the trial page the center — homepage feeds it, and instead of just bouncing people off to GoHighLevel, it also routes them into "Which are you?". Here's that head-to-head with the hub-funnel, honestly.</p>
+</div></header>
+<div class="wrap">
+
+<!-- OPTION B (Bill's idea) -->
+<div class="opt b">
+  <div class="opt-head"><h2>Your idea — money page is the hub</h2><span class="tag idea">YOUR IDEA</span></div>
+  <div class="body">
+    <div class="diagram">
+      <div class="center"><span class="node home">HOMEPAGE</span></div>
+      <div class="stem"></div>
+      <div class="center"><span class="node money">Trial money page</span></div>
+      <div class="stem"></div>
+      <div class="row"><span class="node aff">→ GHL affiliate (off-site)</span></div>
+      <div class="row" style="margin-top:8px"><span class="node hub">Service hub</span><span class="node hub">Agency hub</span></div>
+      <div class="stem"></div>
+      <div class="row"><span class="node spoke">spokes…</span><span class="node spoke">spokes…</span></div>
+      <div class="lbl">Hubs sit 2 clicks below home</div>
+    </div>
+    <div class="pc">
+      <div class="pro"><h4>Pros</h4><ul>
+        <li>Pours the homepage's authority onto your single best-converting page — could push it up for "gohighlevel free trial / 30 day trial"</li>
+        <li>Stops the trial page being a dead-end that only bounces to the affiliate — it now keeps people on-site</li>
+        <li>Internal links match where the money actually is</li>
+      </ul></div>
+      <div class="con"><h4>Cons</h4><ul>
+        <li><b>Buries the hubs a level deeper</b> (2 clicks from home, not 1) — they get less authority and rank weaker for "gohighlevel agency / for service business"</li>
+        <li><b>Re-mixes the silos</b> — both topics now funnel through one non-topical conversion page, the chokepoint you're trying to avoid</li>
+        <li><b>Dilutes the money page's one job</b> — adding "which are you?" links next to its trial CTA competes with the conversion (the exact thing we just fixed on the homepage)</li>
+        <li>One page becomes a single point of failure for the whole tree</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<!-- OPTION A (recommended) -->
+<div class="opt rec">
+  <div class="opt-head"><h2>Hub-funnel — hubs AND money page both at level 1</h2><span class="tag rec">★ RECOMMENDED</span></div>
+  <div class="body">
+    <div class="diagram">
+      <div class="center"><span class="node home">HOMEPAGE</span></div>
+      <div class="stem"></div>
+      <div class="row"><span class="node hub">Service hub</span><span class="node hub">Agency hub</span><span class="node money">Trial page</span></div>
+      <div class="lbl">all three 1 click from home</div>
+      <div class="stem"></div>
+      <div class="row"><span class="node spoke">spokes</span><span class="node spoke">spokes</span><span class="node aff">→ affiliate</span></div>
+    </div>
+    <div class="pc">
+      <div class="pro"><h4>Pros</h4><ul>
+        <li><b>You don't have to choose.</b> The homepage has enough authority to make all three (2 hubs + trial page) strong level-1 pages at once</li>
+        <li>Hubs stay 1 click from home → maximum ranking power for the head terms</li>
+        <li>Clean silos — each hub owns its topic, no shared chokepoint</li>
+        <li>Trial page stays a focused converter: receives a direct strong link, sends to the affiliate, nothing competing</li>
+      </ul></div>
+      <div class="con"><h4>Cons</h4><ul>
+        <li>The trial page isn't the single "center" — authority is shared across 3 pages instead of stacked on 1</li>
+        <li>Needs the bottom "by topic" grid removed/repointed so the homepage isn't also scattering to spokes</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+
+<div class="note good"><b>The key thing your idea gets right — and how we keep it without the cost:</b> you're right that the trial page shouldn't just dump people off-site. So in Option A we still add <b>2 small contextual links</b> from the trial page to the hubs ("New to GoHighLevel? See what it does for <u>service businesses</u> / <u>agencies</u>") — but placed <b>below</b> its trial CTA, as a secondary path for people who aren't ready to convert. That captures your "keep them on-site, route to who-are-you" instinct without burying the hubs or diluting the CTA.</div>
+
+<div class="note"><b>Why A beats B in one line:</b> B makes <i>one</i> page strong by making the hubs weaker (2 clicks down). A makes the hubs <i>and</i> the trial page strong at the same time, because they're all direct children of your strongest page. You're not trading — you get both.</div>
+
+</div>
+</body>
+</html>

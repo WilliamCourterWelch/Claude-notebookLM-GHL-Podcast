@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Homepage Blueprint + 2 Decisions</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--red:#fb7185;--blue:#7c9cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text2);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.5;padding-bottom:90px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 26px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{color:var(--text);font-weight:800;font-size:2.05rem;letter-spacing:-1px;margin:10px 0;line-height:1.1}
+  .lead{font-size:1.05rem;color:var(--text);max-width:870px}
+  header{padding:40px 0 20px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  section{padding:28px 0;border-bottom:1px solid var(--line)}
+  h2{color:var(--text);font-weight:800;font-size:1.3rem;margin-bottom:4px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 4px;font-size:.82rem}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+  /* stack */
+  .stack{margin-top:14px;display:flex;flex-direction:column;gap:9px}
+  .blk{display:grid;grid-template-columns:30px 1fr 250px;align-items:center;gap:14px;border:1px solid var(--line);border-radius:11px;padding:13px 16px;background:#0c0f16}
+  .blk .num{font-size:.8rem;font-weight:800;color:var(--muted);text-align:center}
+  .blk .name{font-weight:700;color:var(--text);font-size:1rem}
+  .blk .job{font-size:.84rem;color:var(--muted);margin-top:1px}
+  .links{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+  .lk{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:20px}
+  .lk.aff{background:#1a1208;color:var(--amber);border:1px dashed rgba(245,158,11,.5)}
+  .lk.money{background:rgba(52,211,153,.14);color:var(--green)}
+  .lk.hub{background:rgba(124,156,255,.15);color:var(--blue)}
+  .lk.lang{background:var(--surface2);color:var(--text2)}
+  .lk.none{background:var(--surface2);color:var(--muted)}
+  .blk.cta{border-color:rgba(245,158,11,.3)} .blk.funnel{border-color:rgba(124,156,255,.4)}
+  .blk.decide{border-color:rgba(251,113,133,.4);background:#140d10}
+  .badge{font-size:10px;font-weight:800;color:var(--red);letter-spacing:.5px}
+  /* decisions */
+  .q{margin-top:16px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0c0f16}
+  .q-head{padding:13px 18px;background:var(--surface);border-bottom:1px solid var(--line);font-weight:800;color:var(--text)}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .o{padding:16px 18px}
+  .o.a{border-right:1px solid var(--line)}
+  .o .pick{font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:20px;letter-spacing:.5px}
+  .o .pick.rec{background:rgba(52,211,153,.16);color:var(--green)} .o .pick.alt{background:var(--surface2);color:var(--muted)}
+  .o h4{color:var(--text);font-size:1rem;margin:8px 0 6px}
+  .o p{font-size:.9rem}
+  .o ul{list-style:none;margin-top:8px}.o li{padding-left:18px;position:relative;font-size:.86rem;margin:5px 0}
+  .o li::before{content:"–";position:absolute;left:0;color:var(--muted)}
+  .note{background:var(--surface);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:13px 17px;margin-top:16px;font-size:.93rem}
+  .note b{color:var(--text)}
+  @media(max-width:760px){.blk{grid-template-columns:24px 1fr}.links{grid-column:1/-1;justify-content:flex-start;margin-top:6px}.opts{grid-template-columns:1fr}.o.a{border-right:0;border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Homepage blueprint · where every link points</div>
+  <h1>My layout, and the 2 calls left to make.</h1>
+  <p class="lead">The section order is settled from our pass. This shows what each section does and, on the right, where it links — so you can see the hub-funnel (home → hubs → spokes) and the money path. Two blocks in red are still your decision.</p>
+  <div class="legend">
+    <span><span class="dot" style="background:#1a1208;border:1px dashed #f59e0b"></span> → GHL affiliate (nofollow)</span>
+    <span><span class="dot" style="background:#34d399"></span> → trial money page</span>
+    <span><span class="dot" style="background:#7c9cff"></span> → hubs (the funnel down)</span>
+    <span><span class="dot" style="background:#171c2a;border:1px solid #222a3d"></span> language / none</span>
+  </div>
+</div></header>
+
+<section><div class="wrap">
+  <h2>The homepage, top to bottom</h2>
+  <div class="stack">
+    <div class="blk"><div class="num">—</div><div><div class="name">Nav</div><div class="job">Guides · Podcast · Español · CTA — no rank targets (Option A)</div></div><div class="links"><span class="lk aff">CTA → affiliate</span><span class="lk lang">Español</span></div></div>
+    <div class="blk cta"><div class="num">1</div><div><div class="name">Hero (centered)</div><div class="job">The 30-day trial offer · one CTA</div></div><div class="links"><span class="lk aff">→ affiliate</span></div></div>
+    <div class="blk cta"><div class="num">2</div><div><div class="name">Bootcamp — what you get</div><div class="job">Sets expectations · one centered CTA</div></div><div class="links"><span class="lk aff">→ affiliate</span></div></div>
+    <div class="blk"><div class="num">3</div><div><div class="name">Why 30 days</div><div class="job">The argument · links to the full trial guide</div></div><div class="links"><span class="lk money">→ trial money page</span></div></div>
+    <div class="blk"><div class="num">4</div><div><div class="name">Who it's for / who should skip</div><div class="job">Honest qualify — keeps them on page</div></div><div class="links"><span class="lk none">none</span></div></div>
+    <div class="blk funnel"><div class="num">5</div><div><div class="name">Which are you? &nbsp;<span style="color:var(--blue);font-size:.74rem">★ the funnel down</span></div><div class="job">Routes qualified people into a hub (keyword-anchor body links)</div></div><div class="links"><span class="lk hub">→ Service hub</span><span class="lk hub">→ Agency hub</span></div></div>
+    <div class="blk"><div class="num">6</div><div><div class="name">Who's behind this (credibility + podcast)</div><div class="job">E-E-A-T · proves a real brand</div></div><div class="links"><span class="lk none">podcast (ext, new tab)</span></div></div>
+    <div class="blk decide"><div class="num">7</div><div><div class="name">"Set up by topic" grid &nbsp;<span class="badge">DECISION #2</span></div><div class="job">Currently 6 direct spoke links — the scatter we flagged</div></div><div class="links"><span class="lk hub">repoint → hubs?</span><span class="lk none">or remove?</span></div></div>
+    <div class="blk cta"><div class="num">8</div><div><div class="name">Final CTA</div><div class="job">Last conversion push</div></div><div class="links"><span class="lk aff">→ affiliate</span></div></div>
+    <div class="blk"><div class="num">9</div><div><div class="name">Footer</div><div class="job">Hub links for wayfinding + affiliate disclosure</div></div><div class="links"><span class="lk hub">hubs (UX)</span></div></div>
+  </div>
+  <div class="note"><b>The money page's job (off this page):</b> the trial guide stays a focused converter — it links to the affiliate, plus the <b>2 small "new to GHL? service / agencies" links below its CTA</b> (your routing idea, kept). It is <b>not</b> the funnel; the hubs are.</div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Decision #1 — two hubs, or three?</h2>
+  <p style="font-size:.92rem;margin-top:4px">The audit found <b>AI / Agent-Studio is your single biggest organic demand</b> (killed pages with 1,862 + 1,162 + 721 impressions). The catch: "AI" is a <i>topic</i>, not a <i>person</i> — so it doesn't fit the "Which are you?" persona question the way Service and Agency do.</p>
+  <div class="q">
+    <div class="q-head">How many pillar hubs do we build?</div>
+    <div class="opts">
+      <div class="o a"><span class="pick rec">RECOMMENDED</span>
+        <h4>3 pillars — but AI is a topic, not a persona</h4>
+        <p>Keep "Which are you?" as the 2 personas (Service, Agency). Build <b>AI / Automation</b> as a third pillar reached from the "by topic" grid (Decision #2), not from the persona question.</p>
+        <ul><li>Captures the demand you're already getting</li><li>Keeps "Which are you?" a clean 2-way persona choice</li><li>Service owners AND agencies both want AI — so it sits across both, as a topic</li></ul>
+      </div>
+      <div class="o b"><span class="pick alt">SIMPLER</span>
+        <h4>2 pillars for now</h4>
+        <p>Service + Agency only. Add the AI hub in a later wave once the two persona silos are ranking.</p>
+        <ul><li>Less to build and interlink right now</li><li>Leaves your biggest organic demand on the table for now</li><li>Easy to add later</li></ul>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Decision #2 — the "set up by topic" grid (block 7)</h2>
+  <div class="q">
+    <div class="q-head">What do we do with the 6-tile grid at the bottom?</div>
+    <div class="opts">
+      <div class="o a"><span class="pick rec">RECOMMENDED (pairs with 3 pillars)</span>
+        <h4>Repoint the tiles to the hubs</h4>
+        <p>Keep the visual grid, but the tiles link to your <b>pillars</b> (Service, Agency, AI/Automation) — not 6 random spokes. This becomes the "by topic" home for the AI hub, since AI isn't in "Which are you?".</p>
+        <ul><li>No more scatter — homepage only funnels to hubs</li><li>Gives the AI pillar a home on the homepage</li><li>Keeps a familiar grid for scanners</li></ul>
+      </div>
+      <div class="o b"><span class="pick alt">CLEANEST (pairs with 2 pillars)</span>
+        <h4>Remove the grid entirely</h4>
+        <p>Delete it. "Which are you?" is the only path down; the 6 old guides get linked from inside whichever hub owns them.</p>
+        <ul><li>Simplest, tightest homepage</li><li>Hubs are the single funnel</li><li>No place to surface an AI pillar on the homepage</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="note"><b>They link up:</b> 3 pillars → repoint the grid (it carries the AI pillar). 2 pillars → remove the grid (the two persona cards are enough). Pick #1 and #2 falls out of it.</div>
+</div></section>
+
+</body>
+</html>

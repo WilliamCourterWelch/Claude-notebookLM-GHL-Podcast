@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Nav Design Options</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--red:#fb7185;--blue:#7c9cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text2);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.55;padding-bottom:80px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 26px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{color:var(--text);font-weight:800;font-size:2.1rem;letter-spacing:-1px;margin:10px 0;line-height:1.1}
+  .lead{font-size:1.05rem;color:var(--text);max-width:840px}
+  header{padding:42px 0 20px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  .rule{background:var(--surface);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:14px 18px;margin-top:18px;font-size:.95rem}
+  .rule b{color:var(--text)}
+  .opt{margin:30px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#0c0f16}
+  .opt.rec{border-color:rgba(52,211,153,.5);box-shadow:0 0 0 1px rgba(52,211,153,.25)}
+  .opt-head{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+  .opt-head h3{color:var(--text);font-size:1.1rem;font-weight:800}
+  .tag{font-size:11px;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+  .tag.rec{background:rgba(52,211,153,.16);color:var(--green)}
+  .tag.cur{background:var(--surface2);color:var(--muted)}
+  .tag.no{background:rgba(251,113,133,.14);color:var(--red)}
+  /* the actual rendered nav bar */
+  .navbar{display:flex;align-items:center;justify-content:space-between;height:62px;padding:0 22px;background:rgba(7,8,10,.92);border-bottom:1px solid var(--line)}
+  .logo{font-weight:800;font-size:1.1rem;color:var(--text)}.logo span{color:var(--amber)}
+  .nl{display:flex;align-items:center;gap:22px;font-size:.92rem;color:var(--text2);font-weight:500}
+  .nl a{color:var(--text2);text-decoration:none}.nl .drop::after{content:" ▾";color:var(--muted)}
+  .btn{background:var(--amber);color:#07080a;font-weight:700;border-radius:9px;padding:10px 16px;font-size:.88rem;text-decoration:none}
+  .ana{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .ana>div{padding:16px 20px}
+  .ana .seo{border-right:1px solid var(--line)}
+  .ana h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+  .ana .seo h4{color:var(--green)}.ana .ux h4{color:var(--blue)}
+  .ana p{font-size:.92rem;color:var(--text2)}
+  .ico{font-weight:800}.good{color:var(--green)}.bad{color:var(--red)}
+  .foot-note{font-size:.86rem;color:var(--muted);padding:12px 20px;border-top:1px solid var(--line);background:var(--surface)}
+  .foot-note b{color:var(--text2)}
+  table{width:100%;border-collapse:collapse;margin-top:14px;font-size:.9rem}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+  td b{color:var(--text)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Navigation design · before the interlinking step</div>
+  <h1>What should live in the menu?</h1>
+  <p class="lead">Three options, rendered exactly as they'd look. The decision is mostly SEO: where the hub links live changes which link Google credits. My recommendation is marked.</p>
+  <div class="rule"><b>Caleb's rule that decides this:</b> Google counts only the <b>first</b> link to a page, and the nav sits <i>before</i> your body in the code. Put a hub in the top nav and that weak, generic nav link becomes the "first link" — wasting the credit that should go to your keyword-anchor body link ("GoHighLevel for service businesses →" in the hero cards). So: <b>keep rank-target pages (the hubs &amp; spokes) out of the top nav.</b></div>
+</div></header>
+
+<div class="wrap">
+
+<!-- CURRENT -->
+<div class="opt">
+  <div class="opt-head"><h3>What's there now</h3><span class="tag cur">CURRENT</span></div>
+  <div class="navbar">
+    <div class="logo">Global<span>HighLevel</span></div>
+    <div class="nl"><a>Guides</a><a>Why 30 days</a><a>Español</a><a class="btn">Start 30 Days Free</a></div>
+  </div>
+  <div class="foot-note"><b>Issue:</b> "Why 30 days" is a homepage-only anchor (#why) — it makes no sense in a sitewide menu on a hub or blog page. Otherwise harmless; just not thought-through for the whole site.</div>
+</div>
+
+<!-- OPTION A -->
+<div class="opt rec">
+  <div class="opt-head"><h3>Option A — Lean &amp; conversion-first</h3><span class="tag rec">★ RECOMMENDED</span></div>
+  <div class="navbar">
+    <div class="logo">Global<span>HighLevel</span></div>
+    <div class="nl"><a>Guides</a><a>Podcast</a><a>Español</a><a class="btn">Start 30 Days Free</a></div>
+  </div>
+  <div class="ana">
+    <div class="seo"><h4>SEO</h4><p><span class="ico good">✓</span> No rank targets in nav → the hero's keyword-anchor cards stay the "first link" to each hub and keep the credit. Silos stay clean.</p></div>
+    <div class="ux"><h4>UX / Conversion</h4><p><span class="ico good">✓</span> Four items, one clear CTA — fixes the "too busy" flag. "Podcast" surfaces a trust signal. Hubs reached via the body cards + footer.</p></div>
+  </div>
+  <div class="foot-note"><b>Hubs live in:</b> the hero "Which are you?" cards (authority) + the footer (UX navigation from any page). <b>Podcast</b> = Spotify link, builds credibility, isn't an SEO competitor.</div>
+</div>
+
+<!-- OPTION B -->
+<div class="opt">
+  <div class="opt-head"><h3>Option B — Category nav (conventional)</h3><span class="tag no">SEO COST</span></div>
+  <div class="navbar">
+    <div class="logo">Global<span>HighLevel</span></div>
+    <div class="nl"><a>For Service Businesses</a><a>For Agencies</a><a>Guides</a><a>Español</a><a class="btn">Start Free</a></div>
+  </div>
+  <div class="ana">
+    <div class="seo"><h4>SEO</h4><p><span class="ico bad">✕</span> Both hubs in nav = the nav link becomes the first link to each hub, sitewide. Wastes the body-link credit and cross-links both silos from every page.</p></div>
+    <div class="ux"><h4>UX / Conversion</h4><p><span class="ico good">✓</span> Most discoverable — both audiences see their path instantly. But 5 items + CTA is busier above the fold.</p></div>
+  </div>
+  <div class="foot-note"><b>Verdict:</b> the "normal SaaS" look, but it directly breaks Caleb's first-link rule. Only worth it if discoverability matters more than ranking — which, for a recovery play, it doesn't.</div>
+</div>
+
+<!-- OPTION C -->
+<div class="opt">
+  <div class="opt-head"><h3>Option C — "Solutions" dropdown</h3><span class="tag no">PARTIAL COST</span></div>
+  <div class="navbar">
+    <div class="logo">Global<span>HighLevel</span></div>
+    <div class="nl"><a class="drop">Solutions</a><a>Guides</a><a>Español</a><a class="btn">Start Free</a></div>
+  </div>
+  <div class="ana">
+    <div class="seo"><h4>SEO</h4><p><span class="ico bad">✕</span> Tidier, but the dropdown still hard-links all three hubs sitewide in the code — same first-link problem as B, just visually hidden.</p></div>
+    <div class="ux"><h4>UX / Conversion</h4><p><span class="ico good">✓</span> Clean bar, groups Service / Agency / AI under one item. Scales if we add the AI hub. Slight extra click to reach a hub.</p></div>
+  </div>
+  <div class="foot-note"><b>Verdict:</b> best if we commit to 3+ hubs and want a clean bar — but it doesn't actually fix the SEO issue, it just hides it. Good "phase 2" once the silos rank.</div>
+</div>
+
+<table>
+  <thead><tr><th>Option</th><th>Caleb first-link safe?</th><th>Above-the-fold clutter</th><th>Hub discoverability</th><th>Best for</th></tr></thead>
+  <tbody>
+    <tr><td><b>A · Lean</b></td><td class="good">✓ Yes</td><td class="good">Lowest</td><td>Via body + footer</td><td><b>Ranking recovery (now)</b></td></tr>
+    <tr><td>B · Category</td><td class="bad">✕ No</td><td>Highest</td><td class="good">Highest</td><td>Brand sites that already rank</td></tr>
+    <tr><td>C · Dropdown</td><td class="bad">✕ No</td><td class="good">Low</td><td class="good">High</td><td>Phase 2, 3+ hubs</td></tr>
+  </tbody>
+</table>
+
+<div class="rule" style="margin-top:26px"><b>My pick: Option A.</b> You're recovering from a content-quality demotion — every bit of internal-link authority should flow through editorial body links to the hubs, not get burned on nav. Lean nav also fixes the "above the fold too busy" note and the mobile overflow. Hubs stay reachable through the hero cards (where they earn the credit) and the footer (for getting around). When the silos are ranking, we can graduate to the Option C dropdown.</div>
+
+</div>
+</body>
+</html>
