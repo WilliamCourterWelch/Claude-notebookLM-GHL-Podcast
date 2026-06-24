@@ -1,0 +1,290 @@
+{
+  "overview": [
+    {
+      "keyword": "all in one software for small business",
+      "volume_ads": 20,
+      "volume_clickstream": 0,
+      "difficulty": 12,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel agency",
+      "volume_ads": 210,
+      "volume_clickstream": 313,
+      "difficulty": 36,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "software for service business",
+      "volume_ads": 90,
+      "volume_clickstream": 52,
+      "difficulty": 15,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "white label crm",
+      "volume_ads": 260,
+      "volume_clickstream": 261,
+      "difficulty": 9,
+      "intent": "commercial",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "field service software for small business",
+      "volume": 480,
+      "difficulty": 11
+    },
+    {
+      "keyword": "field service management software for small business",
+      "volume": 480,
+      "difficulty": 23
+    },
+    {
+      "keyword": "service desk software for small business",
+      "volume": 390,
+      "difficulty": 60
+    },
+    {
+      "keyword": "white label crm",
+      "volume": 260,
+      "difficulty": 9
+    },
+    {
+      "keyword": "crm white label",
+      "volume": 260,
+      "difficulty": 9
+    },
+    {
+      "keyword": "white label crm system",
+      "volume": 260,
+      "difficulty": 9
+    },
+    {
+      "keyword": "customer service software for small business",
+      "volume": 210,
+      "difficulty": 17
+    },
+    {
+      "keyword": "gohighlevel agency",
+      "volume": 210,
+      "difficulty": 36
+    },
+    {
+      "keyword": "scheduling software for service business",
+      "volume": 140,
+      "difficulty": 15
+    },
+    {
+      "keyword": "service software for small business",
+      "volume": 140,
+      "difficulty": 35
+    },
+    {
+      "keyword": "software for small service business",
+      "volume": 140,
+      "difficulty": 35
+    },
+    {
+      "keyword": "best field service management software for small business",
+      "volume": 110,
+      "difficulty": 3
+    },
+    {
+      "keyword": "software for service business",
+      "volume": 90,
+      "difficulty": 15
+    },
+    {
+      "keyword": "hvac service software for small business",
+      "volume": 70,
+      "difficulty": 33
+    },
+    {
+      "keyword": "service scheduling software for small business",
+      "volume": 70,
+      "difficulty": 44
+    },
+    {
+      "keyword": "service management software for small business",
+      "volume": 50,
+      "difficulty": 12
+    },
+    {
+      "keyword": "best customer service software for small business",
+      "volume": 50,
+      "difficulty": 17
+    },
+    {
+      "keyword": "crm software for service business",
+      "volume": 40,
+      "difficulty": 35
+    },
+    {
+      "keyword": "white label crm platform",
+      "volume": 40,
+      "difficulty": 8
+    },
+    {
+      "keyword": "white label crm software",
+      "volume": 40,
+      "difficulty": 4
+    },
+    {
+      "keyword": "gohighlevel agency pro plan",
+      "volume": 40,
+      "difficulty": null
+    },
+    {
+      "keyword": "best scheduling software for service business",
+      "volume": 30,
+      "difficulty": 32
+    },
+    {
+      "keyword": "best software for service business",
+      "volume": 30,
+      "difficulty": 53
+    },
+    {
+      "keyword": "customer service software for small business free",
+      "volume": 30,
+      "difficulty": 29
+    },
+    {
+      "keyword": "accounting software for service business",
+      "volume": 30,
+      "difficulty": 55
+    }
+  ],
+  "serp": {
+    "all in one software for small business": {
+      "top_domains": [
+        "www.reddit.com",
+        "www.striven.com",
+        "onedesk.com",
+        "www.bdc.ca",
+        "agilityportal.io",
+        "www.honeybook.com",
+        "www.nerdwallet.com",
+        "www.1tool.com"
+      ],
+      "paa": [
+        "What is the best software to manage a small business?",
+        "Is there a free alternative to QuickBooks for small business?",
+        "What is the all in one platform for businesses?",
+        "What is the simplest bookkeeping software?"
+      ],
+      "related": [
+        "Free all in one software for small business",
+        "Best all in one software for small business",
+        "All in one software for small business free download",
+        "All-in one business management software free",
+        "Best all in one business management software",
+        "Business management software free Download",
+        "All-in-one business app",
+        "Business management software for small business",
+        "Free all in one software for small business",
+        "Best all in one software for small business"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "software for service business": {
+      "top_domains": [
+        "www.workiz.com",
+        "www.reddit.com",
+        "www.simprogroup.com",
+        "www.servicetitan.com",
+        "www.servicefusion.com",
+        "service.works",
+        "monday.com",
+        "www.zendesk.com"
+      ],
+      "paa": [
+        "What is the best service software?",
+        "What is the best CRM for a service-based business?",
+        "What is software as a service for small business?",
+        "What's the difference between CRM and FSM?"
+      ],
+      "related": [],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "white label crm": {
+      "top_domains": [
+        "www.reddit.com",
+        "jetpackcrm.com",
+        "www.pipedrive.com",
+        "salespype.com",
+        "www.knack.com",
+        "intandem.vcita.com",
+        "whitelabelcrm.com",
+        "soffront.com"
+      ],
+      "paa": [
+        "What is the white label in CRM?",
+        "What are the 4 types of CRM?",
+        "What is a white label CRM for real estate?",
+        "What are the top 5 CRMs?"
+      ],
+      "related": [
+        "White label crm examples",
+        "White-label CRM meaning",
+        "White label crm with ai",
+        "White label crm free",
+        "White label CRM reseller",
+        "GoHighLevel white label pricing",
+        "GoHighLevel white label SaaS",
+        "White label real estate CRM",
+        "White label crm examples",
+        "White-label CRM meaning"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "gohighlevel agency": {
+      "top_domains": [
+        "www.gohighlevel.com",
+        "www.reddit.com",
+        "www.instagram.com",
+        "www.salesforge.ai",
+        "www.youtube.com",
+        "neogenmedia.com",
+        "thegohighlevelagency.com",
+        "www.trustpilot.com"
+      ],
+      "paa": [
+        "What is a GoHighLevel agency?",
+        "How much does HighLevel agency cost?",
+        "What companies use GoHighLevel?",
+        "Who owns GoHighLevel Company?"
+      ],
+      "related": [
+        "GoHighLevel login",
+        "GoHighLevel login and password",
+        "Go high level pricing",
+        "What is go high level",
+        "GoHighLevel competitors",
+        "GoHighLevel revenue",
+        "GoHighLevel App",
+        "Gohighlevel valuation",
+        "GoHighLevel login",
+        "GoHighLevel login and password"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    }
+  },
+  "cost": 0.0837,
+  "area": "hub-content-plan",
+  "seeds": [
+    "all in one software for small business",
+    "software for service business",
+    "white label crm",
+    "gohighlevel agency"
+  ]
+}
