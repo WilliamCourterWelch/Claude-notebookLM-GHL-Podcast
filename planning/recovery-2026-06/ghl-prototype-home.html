@@ -113,6 +113,16 @@
   .hubcard .k{font-size:.78rem;letter-spacing:1px;text-transform:uppercase;color:var(--amber);font-weight:700}
   .hubcard h4{font-size:1.05rem;margin:8px 0 4px;font-weight:700}
   .hubcard p{font-size:.9rem;color:var(--muted)}
+  .clusters{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+  .cluster{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+  .cluster h3{font-size:1.08rem;font-weight:800;color:var(--text);margin-bottom:6px}
+  .cluster>p{font-size:.9rem;color:var(--muted);margin-bottom:14px}
+  .cluster ul.links{list-style:none;display:flex;flex-direction:column;gap:9px}
+  .cluster ul.links li{padding-left:18px;position:relative}
+  .cluster ul.links li::before{content:"→";position:absolute;left:0;color:var(--amber);font-size:.82rem;top:1px}
+  .cluster ul.links a{color:var(--text2);font-size:.92rem;font-weight:500}
+  .cluster ul.links a:hover{color:var(--amber)}
+  @media(max-width:820px){.clusters{grid-template-columns:1fr}}
   .es-banner{margin-top:18px;background:linear-gradient(90deg,var(--amber-soft),transparent);
     border:1px solid rgba(245,158,11,.35);border-radius:14px;padding:18px 24px;display:flex;
     justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
@@ -273,16 +283,58 @@
 </div></section>
 
 <section class="band" id="guides"><div class="wrap">
-  <span class="eyebrow">Free guides</span>
+  <span class="eyebrow">Every GoHighLevel topic</span>
   <h2>Set GoHighLevel up right — by topic</h2>
-  <p class="lead">Real, specific walkthroughs. Pick the corner you're working on.</p>
-  <div class="hub">
-    <a class="hubcard" target="_blank" href="https://globalhighlevel.com/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/"><div class="k">Agency &amp; Platform</div><h4>Launch &amp; scale</h4><p>Build a site, sub-accounts, snapshots, white-label.</p></a>
-    <a class="hubcard" target="_blank" href="https://globalhighlevel.com/blog/master-payment-providers-gohighlevel-complete-setup-guide/"><div class="k">Payments</div><h4>Get paid anywhere</h4><p>Providers, LATAM payments, India UPI, invoices.</p></a>
-    <a class="hubcard" target="_blank" href="https://globalhighlevel.com/blog/how-to-reduce-spam-calls-gohighlevel-ivr-number-intelligence/"><div class="k">Phone &amp; Voice</div><h4>Calls &amp; AI</h4><p>Cut spam calls, set up IVR, voice AI lead capture.</p></a>
-    <a class="hubcard" target="_blank" href="https://globalhighlevel.com/blog/unsolicited-sms-gohighlevel-compliance-risk/"><div class="k">SMS &amp; Messaging</div><h4>Stay compliant</h4><p>A2P registration, WhatsApp API, drip mode.</p></a>
-    <a class="hubcard" target="_blank" href="https://globalhighlevel.com/blog/automate-google-contacts-gohighlevel-sync/"><div class="k">CRM &amp; Contacts</div><h4>Automate the busywork</h4><p>Google Contacts sync, smart lists, workflows.</p></a>
-    <a class="hubcard" target="_blank" href="https://globalhighlevel.com/blog/gohighlevel-pricing-plans-2026-complete-guide/"><div class="k">Pricing</div><h4>What it really costs</h4><p>2026 plans, $97 starting point, how to pay less.</p></a>
+  <p class="lead">The full library, organized. Pick the area you're working on.</p>
+  <div class="clusters">
+    <div class="cluster">
+      <h3>AI &amp; Automation</h3>
+      <p>Put the platform on autopilot — agents, workflows, and AI that answers for you.</p>
+      <ul class="links">
+        <li><a href="/ai-agents-agent-studio/">Build AI agents in Agent Studio</a></li>
+        <li><a href="/workflows-automation/">Automate your workflows</a></li>
+        <li><a href="/conversation-ai/">Set up a Conversation AI chatbot</a></li>
+        <li><a href="/voice-ai/">Answer the phone with Voice AI</a></li>
+      </ul>
+    </div>
+    <div class="cluster">
+      <h3>CRM &amp; Communication</h3>
+      <p>Run your contacts, conversations, and calendar from one place.</p>
+      <ul class="links">
+        <li><a href="/crm-contacts/">Organize contacts in the CRM</a></li>
+        <li><a href="/email-sms-messaging/">Send email &amp; SMS campaigns</a></li>
+        <li><a href="/calls-phone/">Handle calls, IVR &amp; spam filtering</a></li>
+        <li><a href="/calendars-booking/">Take bookings on a calendar</a></li>
+      </ul>
+    </div>
+    <div class="cluster">
+      <h3>Sites, Funnels &amp; Reputation</h3>
+      <p>Capture leads and look credible — pages, forms, reviews, and social.</p>
+      <ul class="links">
+        <li><a href="/websites-funnels/">Build websites &amp; funnels</a></li>
+        <li><a href="/forms-surveys/">Create forms &amp; surveys</a></li>
+        <li><a href="/reviews-listings/">Collect reviews &amp; manage listings</a></li>
+        <li><a href="/social-content/">Schedule social posts &amp; content</a></li>
+      </ul>
+    </div>
+    <div class="cluster">
+      <h3>Payments &amp; Pricing</h3>
+      <p>Get paid inside GoHighLevel, and know what it actually costs.</p>
+      <ul class="links">
+        <li><a href="/payments-checkout/">Take payments &amp; checkout</a></li>
+        <li><a href="https://globalhighlevel.com/blog/gohighlevel-pricing-plans-2026-complete-guide/">Understand GoHighLevel pricing</a></li>
+      </ul>
+    </div>
+    <div class="cluster">
+      <h3>Developer &amp; Scale</h3>
+      <p>The power-user layer — integrations, data, reporting, and white-label apps.</p>
+      <ul class="links">
+        <li><a href="/apis-webhooks/">Connect APIs &amp; webhooks</a></li>
+        <li><a href="/reporting-analytics/">Track performance with reporting</a></li>
+        <li><a href="/custom-objects/">Model data with custom objects</a></li>
+        <li><a href="/mobile-app-white-label/">Ship a white-label mobile app</a></li>
+      </ul>
+    </div>
   </div>
   <div class="es-banner" id="es">
     <div><b style="color:var(--text)">¿Hablas español?</b> <span style="color:var(--text2)">La biblioteca de guías de GoHighLevel y la prueba de 30 días, en español.</span></div>
