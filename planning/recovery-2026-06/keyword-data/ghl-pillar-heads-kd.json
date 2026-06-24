@@ -1,0 +1,345 @@
+{
+  "overview": [
+    {
+      "keyword": "gohighlevel agency",
+      "volume_ads": 210,
+      "volume_clickstream": 313,
+      "difficulty": 36,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel ai agents",
+      "volume_ads": 170,
+      "volume_clickstream": 104,
+      "difficulty": 6,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel api",
+      "volume_ads": 880,
+      "volume_clickstream": 11402,
+      "difficulty": 24,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel automation",
+      "volume_ads": 170,
+      "volume_clickstream": 523,
+      "difficulty": 17,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel calendar",
+      "volume_ads": 70,
+      "volume_clickstream": 104,
+      "difficulty": 0,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel conversation ai",
+      "volume_ads": 50,
+      "volume_clickstream": 261,
+      "difficulty": 9,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel crm",
+      "volume_ads": 3600,
+      "volume_clickstream": 3086,
+      "difficulty": 17,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel custom objects",
+      "volume_ads": 20,
+      "volume_clickstream": 0,
+      "difficulty": 0,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel email marketing",
+      "volume_ads": 90,
+      "volume_clickstream": 0,
+      "difficulty": 12,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel forms",
+      "volume_ads": 90,
+      "volume_clickstream": 104,
+      "difficulty": 0,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel funnels",
+      "volume_ads": 140,
+      "volume_clickstream": 0,
+      "difficulty": 13,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel mobile app",
+      "volume_ads": 70,
+      "volume_clickstream": 52,
+      "difficulty": 31,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel payments",
+      "volume_ads": 10,
+      "volume_clickstream": 0,
+      "difficulty": null,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel pricing",
+      "volume_ads": 5400,
+      "volume_clickstream": 12134,
+      "difficulty": 5,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel reporting",
+      "volume_ads": 20,
+      "volume_clickstream": 209,
+      "difficulty": 0,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel reviews",
+      "volume_ads": 1000,
+      "volume_clickstream": 1150,
+      "difficulty": 2,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel saas mode",
+      "volume_ads": 50,
+      "volume_clickstream": 104,
+      "difficulty": 0,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel sms",
+      "volume_ads": 70,
+      "volume_clickstream": 52,
+      "difficulty": 0,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel social media",
+      "volume_ads": 10,
+      "volume_clickstream": 85,
+      "difficulty": null,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel voice ai",
+      "volume_ads": 90,
+      "volume_clickstream": 366,
+      "difficulty": 7,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel website",
+      "volume_ads": 210,
+      "volume_clickstream": 261,
+      "difficulty": 10,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel white label",
+      "volume_ads": 260,
+      "volume_clickstream": 575,
+      "difficulty": 8,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel workflows",
+      "volume_ads": 110,
+      "volume_clickstream": 52,
+      "difficulty": 2,
+      "intent": "navigational",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "gohighlevel pricing",
+      "volume": 5400,
+      "difficulty": 5
+    },
+    {
+      "keyword": "gohighlevel crm",
+      "volume": 3600,
+      "difficulty": 17
+    },
+    {
+      "keyword": "gohighlevel reviews",
+      "volume": 1000,
+      "difficulty": 2
+    },
+    {
+      "keyword": "gohighlevel api",
+      "volume": 880,
+      "difficulty": 24
+    },
+    {
+      "keyword": "gohighlevel api documentation",
+      "volume": 390,
+      "difficulty": 24
+    },
+    {
+      "keyword": "gohighlevel white label",
+      "volume": 260,
+      "difficulty": 8
+    },
+    {
+      "keyword": "gohighlevel website builder",
+      "volume": 260,
+      "difficulty": 12
+    },
+    {
+      "keyword": "gohighlevel website template",
+      "volume": 260,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel website templates",
+      "volume": 260,
+      "difficulty": 0
+    },
+    {
+      "keyword": "gohighlevel agency",
+      "volume": 210,
+      "difficulty": 36
+    },
+    {
+      "keyword": "gohighlevel website",
+      "volume": 210,
+      "difficulty": 10
+    },
+    {
+      "keyword": "gohighlevel ai agents",
+      "volume": 170,
+      "difficulty": 6
+    },
+    {
+      "keyword": "gohighlevel automation",
+      "volume": 170,
+      "difficulty": 17
+    },
+    {
+      "keyword": "crm gohighlevel",
+      "volume": 170,
+      "difficulty": 32
+    },
+    {
+      "keyword": "is gohighlevel a crm",
+      "volume": 170,
+      "difficulty": 10
+    },
+    {
+      "keyword": "gohighlevel white label support",
+      "volume": 140,
+      "difficulty": 0
+    },
+    {
+      "keyword": "gohighlevel pricing plan",
+      "volume": 140,
+      "difficulty": 7
+    },
+    {
+      "keyword": "gohighlevel pricing plans",
+      "volume": 140,
+      "difficulty": 5
+    },
+    {
+      "keyword": "gohighlevel funnels",
+      "volume": 140,
+      "difficulty": 13
+    },
+    {
+      "keyword": "gohighlevel workflows",
+      "volume": 110,
+      "difficulty": 2
+    },
+    {
+      "keyword": "gohighlevel white label pricing",
+      "volume": 110,
+      "difficulty": 0
+    },
+    {
+      "keyword": "gohighlevel api docs",
+      "volume": 110,
+      "difficulty": 10
+    },
+    {
+      "keyword": "gohighlevel sms pricing",
+      "volume": 90,
+      "difficulty": 0
+    },
+    {
+      "keyword": "gohighlevel crm pricing",
+      "volume": 90,
+      "difficulty": 5
+    },
+    {
+      "keyword": "gohighlevel email marketing",
+      "volume": 90,
+      "difficulty": 12
+    }
+  ],
+  "serp": {},
+  "cost": 0.2898,
+  "area": "South Venice FL",
+  "seeds": [
+    "gohighlevel ai agents",
+    "gohighlevel agent studio",
+    "gohighlevel workflows",
+    "gohighlevel automation",
+    "gohighlevel reporting",
+    "gohighlevel agency",
+    "gohighlevel white label",
+    "gohighlevel saas mode",
+    "gohighlevel pricing",
+    "gohighlevel crm",
+    "gohighlevel sms",
+    "gohighlevel email marketing",
+    "gohighlevel payments",
+    "gohighlevel api",
+    "gohighlevel calendar",
+    "gohighlevel funnels",
+    "gohighlevel website",
+    "gohighlevel conversation ai",
+    "gohighlevel voice ai",
+    "gohighlevel forms",
+    "gohighlevel custom objects",
+    "gohighlevel reviews",
+    "gohighlevel for service business",
+    "gohighlevel mobile app",
+    "gohighlevel social media"
+  ]
+}
