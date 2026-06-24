@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlobalHighLevel — Spanish Pages Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07080a;--surface:#111520;--surface2:#171c2a;--line:#222a3d;--amber:#f59e0b;--amber-soft:rgba(245,158,11,.12);
+    --text:#eef2ff;--text2:#9aa6c4;--muted:#5b688a;--green:#34d399;--green-soft:rgba(52,211,153,.13);--red:#fb7185;--red-soft:rgba(251,113,133,.13);--blue:#7c9cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"DM Sans",system-ui,sans-serif;font-size:15px;line-height:1.5;padding-bottom:70px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+  .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}
+  h1{font-size:clamp(1.9rem,4vw,2.7rem);font-weight:800;letter-spacing:-1px;line-height:1.08;margin:12px 0}
+  h2{font-size:1.3rem;font-weight:800}
+  p{color:var(--text2)}.lead{font-size:1.04rem;color:var(--text);max-width:880px}
+  code{background:var(--surface2);color:var(--amber);padding:1px 6px;border-radius:5px;font-size:.84em;font-family:ui-monospace,monospace}
+  header{padding:46px 0 24px;border-bottom:1px solid var(--line);background:radial-gradient(800px 320px at 82% -20%,rgba(245,158,11,.10),transparent 60%)}
+  section{padding:30px 0;border-bottom:1px solid var(--line)}
+  .sec-num{font-size:.78rem;color:var(--amber);font-weight:700;letter-spacing:1px}
+  .verdict{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px}
+  .vc{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:14px 18px;flex:1;min-width:170px}
+  .vc .n{font-size:1.6rem;font-weight:800}.vc .l{font-size:.82rem;color:var(--text2);margin-top:3px}
+  .vc.good .n{color:var(--green)}.vc.warn .n{color:var(--amber)}
+  .pg{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:16px}
+  .pg .nm{font-weight:800;font-size:1.05rem}
+  .pg .url{font-family:ui-monospace,monospace;font-size:.74rem;color:var(--muted);margin-top:2px;margin-bottom:12px}
+  .h1row{margin-bottom:12px}
+  .h1lab{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+  .h1cur{color:var(--text2);font-size:.92rem;text-decoration:line-through;text-decoration-color:var(--red)}
+  .h1new{color:var(--text);font-size:.96rem;font-weight:600}
+  .h1new b{color:var(--amber)}
+  .h1keep{color:var(--green);font-size:.85rem;font-weight:700}
+  .struct{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+  .chip{font-size:.78rem;background:var(--surface2);border:1px solid var(--line);border-radius:20px;padding:3px 10px;color:var(--text2)}
+  .paa{margin-top:10px}
+  .paa .q{display:flex;align-items:center;gap:8px;font-size:.88rem;padding:4px 0}
+  .ok{color:var(--green);font-weight:800}.miss{color:var(--red);font-weight:800}
+  .miss-txt{color:var(--red)}
+  .note{background:var(--surface);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:14px 18px;margin-top:18px;font-size:.94rem}
+  .note b{color:var(--text)}
+  .foot{color:var(--muted);font-size:12px;margin-top:18px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="eyebrow">Spanish pages audit · H1 · markup · PAA coverage</div>
+  <h1>Your Spanish pages are solid. Small tweaks.</h1>
+  <p class="lead">Scraped all 4 live Spanish pages: heading structure, whether content matches the headings, and whether they answer the People-Also-Ask questions we pulled. Headings are good. The fixes are 2 H1 tweaks + a handful of missing PAA answers.</p>
+  <div class="verdict">
+    <div class="vc good"><div class="n">✓</div><div class="l">Heading structure (8-10 H2s each, content-matched, FAQ on every page)</div></div>
+    <div class="vc good"><div class="n">3 / 4</div><div class="l">H1s already exact-match (precios, qué-es clean)</div></div>
+    <div class="vc warn"><div class="n">5</div><div class="l">PAA gaps to fill across the 4 pages</div></div>
+  </div>
+</div></header>
+
+<!-- OPINIONES -->
+<section><div class="wrap">
+  <div class="sec-num">PAGE 1</div>
+  <div class="pg">
+    <div class="nm">Opiniones</div><div class="url">/blog/gohighlevel-opiniones-es-confiable-vale-la-pena/</div>
+    <div class="h1row">
+      <div class="h1lab">H1 — drop "Honesta"</div>
+      <div class="h1cur">GoHighLevel Opiniones 2026: ¿Es Confiable y Vale la Pena? Reseña Honesta</div>
+      <div class="h1new">→ GoHighLevel <b>Opiniones</b> 2026: ¿Es Confiable y Vale la Pena?</div>
+    </div>
+    <div class="h1lab">Markup — 10 H2s, content-matched ✓</div>
+    <div class="struct"><span class="chip">¿Qué es?</span><span class="chip">Lo bueno</span><span class="chip">Lo que vi (1ª mano)</span><span class="chip">Lo malo</span><span class="chip">Opiniones LATAM</span><span class="chip">vs alternativas</span><span class="chip">¿Cuánto cuesta?</span><span class="chip">¿Vale la pena?</span><span class="chip">FAQ</span></div>
+    <div class="paa">
+      <div class="q"><span class="ok">✓</span> ¿Qué es / para qué sirve?</div>
+      <div class="q"><span class="ok">✓</span> ¿Cuánto cuesta?</div>
+      <div class="q"><span class="ok">✓</span> ¿Es confiable?</div>
+      <div class="q"><span class="miss">✗</span> <span class="miss-txt">¿Quién está detrás de GoHighLevel? — ADD this section/FAQ</span></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- PRECIOS -->
+<section><div class="wrap">
+  <div class="sec-num">PAGE 2</div>
+  <div class="pg">
+    <div class="nm">Precios</div><div class="url">/blog/gohighlevel-precios-planes-2026-guia-completa/</div>
+    <div class="h1row">
+      <div class="h1lab">H1 — <span class="h1keep">KEEP (clean exact-match)</span></div>
+      <div class="h1new">GoHighLevel <b>Precios</b> 2026: Planes, Costos y Guía Completa</div>
+    </div>
+    <div class="h1lab">Markup — 10 H2s, content-matched ✓</div>
+    <div class="struct"><span class="chip">Por qué importa</span><span class="chip">Los 3 planes</span><span class="chip">Tabla comparativa</span><span class="chip">Costos ocultos</span><span class="chip">Precios moneda local</span><span class="chip">Para quién</span><span class="chip">vs alternativas LATAM</span><span class="chip">Plan anual</span><span class="chip">30 días gratis</span><span class="chip">FAQ</span></div>
+    <div class="paa">
+      <div class="q"><span class="ok">✓</span> ¿Cuánto cuesta?</div>
+      <div class="q"><span class="ok">✓</span> ¿Qué es? / alternativas</div>
+      <div class="q"><span class="miss">✗</span> <span class="miss-txt">¿GoHighLevel es gratuito o de pago? — ADD a clear FAQ answer</span></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- QUE ES -->
+<section><div class="wrap">
+  <div class="sec-num">PAGE 3</div>
+  <div class="pg">
+    <div class="nm">Qué es</div><div class="url">/blog/que-es-gohighlevel-mejor-alternativa…/</div>
+    <div class="h1row">
+      <div class="h1lab">H1 — <span class="h1keep">KEEP exact-match</span> (a bit long; optional trim)</div>
+      <div class="h1new"><b>Qué es GoHighLevel</b> y Por Qué es la Mejor Alternativa a Herramientas Locales en Latinoamérica</div>
+    </div>
+    <div class="h1lab">Markup — 8 H2s, content-matched ✓</div>
+    <div class="struct"><span class="chip">El problema</span><span class="chip">¿Qué es? todo-en-uno</span><span class="chip">Mejor alternativa</span><span class="chip">¿Para qué sirve?</span><span class="chip">¿Cuánto cuesta?</span><span class="chip">¿Es gratis?</span><span class="chip">¿Para quién?</span><span class="chip">FAQ</span></div>
+    <div class="paa">
+      <div class="q"><span class="ok">✓</span> ¿Cuánto cuesta? · ¿para qué sirve? · ¿es gratis?</div>
+      <div class="q"><span class="miss">✗</span> <span class="miss-txt">¿Qué tan bueno es GoHighLevel? — ADD</span></div>
+      <div class="q"><span class="miss">✗</span> <span class="miss-txt">GoHighLevel significado / "go hai level" — ADD a one-line clarifier</span></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- LATAM PAGOS -->
+<section><div class="wrap">
+  <div class="sec-num">PAGE 4</div>
+  <div class="pg">
+    <div class="nm">LATAM pagos</div><div class="url">/blog/gohighlevel-latam-pagos-agencias/</div>
+    <div class="h1row">
+      <div class="h1lab">H1 — retarget to MercadoPago + drop "honesta"</div>
+      <div class="h1cur">GoHighLevel en Latinoamérica 2026: la guía honesta de pagos para agencias</div>
+      <div class="h1new">→ GoHighLevel <b>MercadoPago</b>: Cómo Cobrar Pagos en Latinoamérica (2026)</div>
+    </div>
+    <div class="h1lab">Markup — 10 H2s, content-matched ✓</div>
+    <div class="struct"><span class="chip">Qué encontrarás</span><span class="chip">Los 2 flujos de pago</span><span class="chip">Flujo B (stack)</span><span class="chip">Flujo A (restricción)</span><span class="chip">¿Interfaz en español?</span><span class="chip">Comparación por país</span><span class="chip">Guías por país</span><span class="chip">FAQ</span><span class="chip">Fuentes</span></div>
+    <div class="paa">
+      <div class="q"><span class="ok">✓</span> MercadoPago · pagos · WhatsApp · cobrar (mostly covered)</div>
+      <div class="q"><span class="ok">✓</span> Restricción de pagos (honest constraint — good)</div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-num">SUMMARY</div>
+  <h2>The fix list</h2>
+  <p class="lead" style="font-size:1rem"><b style="color:var(--text)">H1:</b> drop "Honesta" on opiniones; retarget latam-pagos to "GoHighLevel MercadoPago" (+ drop "honesta"). Precios + qué-es keep. <br><b style="color:var(--text)">PAA fills (5):</b> opiniones → "¿Quién está detrás?"; precios → "¿gratuito o de pago?"; qué-es → "¿qué tan bueno?" + "significado".</p>
+  <div class="note"><b>Two protocol flags before this goes live:</b> (1) these are live converting pages, so the edits go through the <b>seo-deploy-gate</b> (log changed URLs to the Sheet + cooldown before push). (2) I'm not a native Spanish speaker — the "honesta" removal and new H1 wording should get a <b>native check</b> first ("reseña honesta" is a more standard phrase in Spanish than "honest" is in English).</div>
+  <p class="foot">Scraped live 2026-06-24. PAA from DataForSEO SERP pulls (es-p0-serp). Heading structure + content-match verified by extraction. Per Caleb: H1 exact-match + answer the PAA.</p>
+</div></section>
+</body>
+</html>
