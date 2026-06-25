@@ -1,0 +1,630 @@
+{
+  "overview": [
+    {
+      "keyword": "automatizacion marketing",
+      "volume_ads": 70,
+      "volume_clickstream": 0,
+      "difficulty": 0,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "crm para pequenas empresas",
+      "volume_ads": 10,
+      "volume_clickstream": null,
+      "difficulty": null,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "embudos de ventas",
+      "volume_ads": 260,
+      "volume_clickstream": 562,
+      "difficulty": 7,
+      "intent": "informational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel precios",
+      "volume_ads": 40,
+      "volume_clickstream": 112,
+      "difficulty": null,
+      "intent": "commercial",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "gohighlevel whatsapp",
+      "volume_ads": 20,
+      "volume_clickstream": 56,
+      "difficulty": null,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "recepcionista virtual",
+      "volume_ads": 50,
+      "volume_clickstream": 56,
+      "difficulty": 40,
+      "intent": "navigational",
+      "state": "has_volume"
+    },
+    {
+      "keyword": "whatsapp business api",
+      "volume_ads": 1300,
+      "volume_clickstream": 4668,
+      "difficulty": 18,
+      "intent": "commercial",
+      "state": "has_volume"
+    }
+  ],
+  "ideas": [
+    {
+      "keyword": "whatsapp api for business",
+      "volume": 1300,
+      "difficulty": 74
+    },
+    {
+      "keyword": "whatsapp api business",
+      "volume": 1300,
+      "difficulty": 9
+    },
+    {
+      "keyword": "whatsapp business api",
+      "volume": 1300,
+      "difficulty": 18
+    },
+    {
+      "keyword": "embudos de ventas",
+      "volume": 260,
+      "difficulty": 7
+    },
+    {
+      "keyword": "marketing de automatizacion",
+      "volume": 210,
+      "difficulty": 4
+    },
+    {
+      "keyword": "automatizacion de marketing",
+      "volume": 210,
+      "difficulty": 0
+    },
+    {
+      "keyword": "api whatsapp business",
+      "volume": 210,
+      "difficulty": 15
+    },
+    {
+      "keyword": "api de whatsapp business",
+      "volume": 140,
+      "difficulty": 0
+    },
+    {
+      "keyword": "crm para agencias de viajes",
+      "volume": 90,
+      "difficulty": 0
+    },
+    {
+      "keyword": "automatizacion marketing",
+      "volume": 70,
+      "difficulty": 0
+    },
+    {
+      "keyword": "whatsapp business cloud api",
+      "volume": 70,
+      "difficulty": null
+    },
+    {
+      "keyword": "gohighlevel que es",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "recepcionista virtual",
+      "volume": 50,
+      "difficulty": 40
+    },
+    {
+      "keyword": "whatsapp business api precios",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "whatsapp business api precio",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "meta whatsapp business api",
+      "volume": 50,
+      "difficulty": null
+    },
+    {
+      "keyword": "whatsapp business api pricing",
+      "volume": 50,
+      "difficulty": 44
+    },
+    {
+      "keyword": "whatsapp business api price",
+      "volume": 50,
+      "difficulty": 60
+    },
+    {
+      "keyword": "gohighlevel precios",
+      "volume": 40,
+      "difficulty": null
+    },
+    {
+      "keyword": "crm para agencias de marketing",
+      "volume": 40,
+      "difficulty": null
+    },
+    {
+      "keyword": "automatizacion marketing digital",
+      "volume": 30,
+      "difficulty": null
+    },
+    {
+      "keyword": "crm para agencias de turismo",
+      "volume": 20,
+      "difficulty": null
+    },
+    {
+      "keyword": "herramientas de automatizacion marketing digital",
+      "volume": 20,
+      "difficulty": null
+    },
+    {
+      "keyword": "automatizacion email marketing",
+      "volume": 20,
+      "difficulty": 49
+    },
+    {
+      "keyword": "automatizacion de marketing digital",
+      "volume": 20,
+      "difficulty": null
+    }
+  ],
+  "serp": {
+    "que es gohighlevel": {
+      "top_domains": [
+        "www.reddit.com",
+        "efectonewton.com",
+        "alextorre.com",
+        "kersagency.es",
+        "flownexion.com",
+        "www.youtube.com",
+        "appcritic.es",
+        "gohighlevelespana.es"
+      ],
+      "paa": [
+        "\u00bfQu\u00e9 es GoHighLevel y c\u00f3mo funciona?",
+        "\u00bfCu\u00e1nto cobra GoHighLevel?",
+        "\u00bfC\u00f3mo puedo cancelar mi plan de GoHighLevel?",
+        "\u00bfQu\u00e9 tan bueno es GoHighLevel?"
+      ],
+      "related": [
+        "GoHighLevel Espa\u00f1ol",
+        "Gohighlevel precio",
+        "Gohighlevel espa\u00f1a",
+        "GoHighLevel opiniones",
+        "Gohighlevel app",
+        "CRM GoHighLevel",
+        "HubSpot",
+        "GoHighLevel Que es y para que sirve",
+        "GoHighLevel Espa\u00f1ol",
+        "Gohighlevel precio"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "gohighlevel alternativa": {
+      "top_domains": [
+        "clientify.com",
+        "saleoid.com",
+        "www.appvizer.es",
+        "gohighlevelespana.es",
+        "gohighlevel-precios.com",
+        "www.youtube.com",
+        "resources.rework.com",
+        "www.reddit.com"
+      ],
+      "paa": [],
+      "related": [
+        "Clienty",
+        "Clientify web",
+        "CRM para comerciales",
+        "Clienty",
+        "Clientify web",
+        "CRM para comerciales"
+      ],
+      "serp_exists": true,
+      "has_paa": false
+    },
+    "gohighlevel precios": {
+      "top_domains": [
+        "www.gohighlevel.com",
+        "kersagency.es",
+        "appcritic.es",
+        "gohighlevel-precios.com",
+        "gohighlevelespana.es",
+        "www.gohighlevel.com",
+        "netpartners.marketing",
+        "help.gohighlevel.com"
+      ],
+      "paa": [
+        "\u00bfCu\u00e1les son las tarifas de GoHighLevel?",
+        "\u00bfCu\u00e1nto cobra GoHighLevel?",
+        "\u00bfGoHighLevel es gratuito o de pago?",
+        "\u00bfQu\u00e9 es GoHighLevel y c\u00f3mo funciona?"
+      ],
+      "related": [
+        "GHL precio",
+        "Planes de GoHighLevel",
+        "Gohighlevel affiliate",
+        "GoHighLevel Espa\u00f1ol",
+        "Clickfunnels precios",
+        "GoHighLevel white label",
+        "GoHighLevel youtube",
+        "CRM GoHighLevel",
+        "GHL precio",
+        "Planes de GoHighLevel"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "gohighlevel es gratis": {
+      "top_domains": [
+        "ghlenespanol.com",
+        "clientify.com",
+        "kersagency.es",
+        "www.gohighlevel.com",
+        "gohighlevelespana.es",
+        "kersagency.es",
+        "appcritic.es",
+        "www.gohighlevel.com"
+      ],
+      "paa": [
+        "\u00bfCu\u00e1nto cuesta GoHighLevel?",
+        "\u00bfC\u00f3mo funciona GoHighLevel?",
+        "\u00bfCu\u00e1nto cuesta High Level?",
+        "\u00bfCu\u00e1les son las alternativas a GoHighLevel?"
+      ],
+      "related": [
+        "Gohighlevel precio",
+        "GoHighLevel Espa\u00f1ol",
+        "GoHighLevel opiniones",
+        "High level espa\u00f1ol",
+        "Curso GoHighLevel",
+        "Como funciona gohighlevel",
+        "Para que sirve GoHighLevel",
+        "Gohighlevel hispano",
+        "Gohighlevel precio",
+        "GoHighLevel Espa\u00f1ol"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "crm para agencias": {
+      "top_domains": [
+        "www.hubspot.es",
+        "www.ahora.es",
+        "wiwink.com",
+        "blog.salesflare.com",
+        "www.ofi.es",
+        "www.datacrm.com",
+        "sapi.es",
+        "clientify.com"
+      ],
+      "paa": [],
+      "related": [
+        "CRM marketing que es",
+        "CRM que es",
+        "CRM para turismo",
+        "CRM para comerciales",
+        "CRM para \u00f3pticas",
+        "Crm almeria",
+        "CRM precios",
+        "CRM WhatsApp",
+        "CRM marketing que es",
+        "CRM que es"
+      ],
+      "serp_exists": true,
+      "has_paa": false
+    },
+    "crm para pequenas empresas": {
+      "top_domains": [
+        "www.salesforce.com",
+        "www.zoho.com",
+        "www.zendesk.es",
+        "www.forcemanager.com",
+        "www.ahora.es",
+        "acelerapyme.dipujaen.es",
+        "www.sage.com",
+        "recursosparapymes.com"
+      ],
+      "paa": [],
+      "related": [
+        "CRM Que es y para que sirve",
+        "CRM gratuito",
+        "CRM para empresas",
+        "CRM gratis para aut\u00f3nomos",
+        "CRM para gesti\u00f3n de clientes",
+        "Mejor CRM para pymes",
+        "CRM gratis para pymes",
+        "CRM precio",
+        "CRM Que es y para que sirve",
+        "CRM gratuito"
+      ],
+      "serp_exists": true,
+      "has_paa": false
+    },
+    "gohighlevel automatizacion": {
+      "top_domains": [
+        "www.youtube.com",
+        "kersagency.es",
+        "togrowagencia.com",
+        "www.reddit.com",
+        "kersagency.es",
+        "www.youtube.com",
+        "taqiro.com",
+        "www.youtube.com"
+      ],
+      "paa": [
+        "\u00bfQu\u00e9 es GoHighLevel y c\u00f3mo funciona?",
+        "\u00bfC\u00f3mo crear automatizaci\u00f3n en GoHighLevel?",
+        "\u00bfCu\u00e1nto cobra GoHighLevel?",
+        "\u00bfCu\u00e1les son los 4 tipos de automatizaci\u00f3n?"
+      ],
+      "related": [],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "automatizacion marketing": {
+      "top_domains": [
+        "www.ibm.com",
+        "www.salesforce.com",
+        "www.isdi.education",
+        "clientify.com",
+        "mailchimp.com",
+        "blog.hubspot.es",
+        "insiderone.com",
+        "btodigital.es"
+      ],
+      "paa": [
+        "\u00bfQu\u00e9 es una automatizaci\u00f3n de marketing?",
+        "\u00bfQu\u00e9 es la automatizaci\u00f3n del marketing?",
+        "\u00bfCu\u00e1les son los 4 tipos de automatizaci\u00f3n?",
+        "\u00bfQu\u00e9 es la regla 3-3-3 en marketing?"
+      ],
+      "related": [
+        "Marketing automation ejemplos",
+        "Marketing automation herramientas",
+        "Automatizaci\u00f3n de procesos en marketing digital",
+        "Marketing digital automatizado",
+        "Marketing automation curso",
+        "HubSpot",
+        "Salesforce marketing curso",
+        "Marketing automation ejemplos",
+        "Marketing automation herramientas",
+        "Automatizaci\u00f3n de procesos en marketing digital"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "embudos de ventas": {
+      "top_domains": [
+        "www.camaravalencia.com",
+        "www.ibm.com",
+        "universidadeuropea.com",
+        "advertising.amazon.com",
+        "www.pipedrive.com",
+        "es.wikipedia.org",
+        "mailchimp.com",
+        "www.forcemanager.com"
+      ],
+      "paa": [
+        "\u00bfQu\u00e9 es un embudo de ventas?",
+        "\u00bfCu\u00e1les son las 4 etapas del embudo de ventas?",
+        "\u00bfC\u00f3mo generar embudos de ventas?",
+        "\u00bfCu\u00e1les son las 5 t\u00e9cnicas de ventas?"
+      ],
+      "related": [
+        "Embudo de ventas ejemplo",
+        "Embudo de ventas marketing digital",
+        "Funnel de ventas marketing",
+        "En la etapa de cultivo de un embudo de ventas se puede utilizar",
+        "Embudo de ventas en ingles",
+        "Embudo de conversi\u00f3n",
+        "Sales funnel",
+        "Embudo de ventas TOFU, MOFU, BOFU",
+        "Embudo de ventas ejemplo",
+        "Embudo de ventas marketing digital"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "recepcionista virtual": {
+      "top_domains": [
+        "es.linkedin.com",
+        "www.goto.com",
+        "aircall.io",
+        "www.infojobs.net",
+        "www.ringover.es",
+        "www.ionos.es",
+        "qamarero.com",
+        "mx.indeed.com"
+      ],
+      "paa": [
+        "\u00bfQu\u00e9 hace una recepcionista virtual?",
+        "\u00bfQu\u00e9 es una recepcionista virtual?",
+        "\u00bfCu\u00e1nto dinero gana un asistente virtual?",
+        "\u00bfQu\u00e9 necesito para trabajar de asistente virtual?"
+      ],
+      "related": [
+        "Recepcionista virtual empleo",
+        "Recepcionista IA",
+        "Recepcionista virtual empleo",
+        "Recepcionista IA"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "marca blanca crm": {
+      "top_domains": [
+        "crmmarcablanca.com",
+        "www.reddit.com",
+        "payproglobal.com",
+        "chatsell.net",
+        "es.dashthis.com",
+        "www.emailvendorselection.com",
+        "www.instagram.com",
+        "www.europapress.es"
+      ],
+      "paa": [
+        "\u00bfQu\u00e9 es un CRM con marca blanca?",
+        "\u00bfQu\u00e9 es la marca blanca en CRM?",
+        "\u00bfCu\u00e1les son las principales marcas de CRM?",
+        "\u00bfCu\u00e1les son las marcas blancas?"
+      ],
+      "related": [
+        "Saas marca blanca",
+        "Agencia de ia marca blanca",
+        "Chatbot marca blanca",
+        "White label SaaS",
+        "Chatsell",
+        "Saas marca blanca",
+        "Agencia de ia marca blanca",
+        "Chatbot marca blanca",
+        "White label SaaS",
+        "Chatsell"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "gohighlevel pagos": {
+      "top_domains": [
+        "appcritic.es",
+        "tampabaypay.com",
+        "www.instagram.com",
+        "gohighlevel-precios.com",
+        "www.reddit.com",
+        "efectonewton.com",
+        "www.gohighlevel.com",
+        "www.youtube.com"
+      ],
+      "paa": [
+        "\u00bfCu\u00e1nto cobra GoHighLevel?",
+        "\u00bfGoHighLevel acepta pagos?",
+        "\u00bfGoHighLevel es gratuito o de pago?",
+        "\u00bfCu\u00e1nto cuesta GoHighLevel?"
+      ],
+      "related": [],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "gohighlevel opiniones": {
+      "top_domains": [
+        "es.trustpilot.com",
+        "appcritic.es",
+        "www.reddit.com",
+        "alextorre.com",
+        "www.capterra.es",
+        "www.reddit.com",
+        "clientify.com",
+        "es.trustpilot.com"
+      ],
+      "paa": [
+        "\u00bfQu\u00e9 es GoHighLevel y para qu\u00e9 sirve?",
+        "\u00bfQui\u00e9n est\u00e1 detr\u00e1s de GoHighLevel?",
+        "\u00bfCu\u00e1nto cobra GoHighLevel?",
+        "\u00bfQu\u00e9 es mejor, Salesforce o GoHighLevel?"
+      ],
+      "related": [
+        "GoHighLevel que es",
+        "GoHighLevel Espa\u00f1ol",
+        "Gohighlevel precio",
+        "HubSpot",
+        "Manychat",
+        "System io opiniones",
+        "Systeme io es seguro",
+        "GoHighLevel que es",
+        "GoHighLevel Espa\u00f1ol",
+        "Gohighlevel precio"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "gohighlevel whatsapp": {
+      "top_domains": [
+        "help.gohighlevel.com",
+        "waghl.com",
+        "www.reddit.com",
+        "applevel.ilumosdigital.com",
+        "help.gohighlevel.com",
+        "adqueria.com",
+        "ideas.gohighlevel.com",
+        "www.instagram.com"
+      ],
+      "paa": [
+        "\u00bfC\u00f3mo puedo conectar GoHighLevel con WhatsApp?",
+        "\u00bfGoHighLevel funciona con WhatsApp?",
+        "\u00bfQu\u00e9 es GoHighLevel?",
+        "\u00bfC\u00f3mo puedo cancelar mi plan de GoHighLevel?"
+      ],
+      "related": [],
+      "serp_exists": true,
+      "has_paa": true
+    },
+    "whatsapp business api": {
+      "top_domains": [
+        "whatsappbusiness.com",
+        "developers.facebook.com",
+        "www.brevo.com",
+        "whatsappbusiness.com",
+        "www.linkmobility.com",
+        "www.reddit.com",
+        "clientify.com",
+        "www.twilio.com"
+      ],
+      "paa": [
+        "Is WhatsApp Business API free to use?",
+        "How do I get WhatsApp Business API?",
+        "What is the difference between WhatsApp Business app and WhatsApp Business API?",
+        "What is the best WhatsApp Business API?"
+      ],
+      "related": [
+        "WhatsApp Business API pricing",
+        "WhatsApp Business API free",
+        "WhatsApp Business API download",
+        "WhatsApp Business API login",
+        "WhatsApp Business API Meta",
+        "WhatsApp Business API documentation",
+        "WhatsApp Business API reddit",
+        "WhatsApp Business API how to get",
+        "WhatsApp Business API pricing",
+        "WhatsApp Business API free"
+      ],
+      "serp_exists": true,
+      "has_paa": true
+    }
+  },
+  "cost": 0.2358,
+  "area": "South Venice FL",
+  "seeds": [
+    "que es gohighlevel",
+    "gohighlevel alternativa",
+    "gohighlevel precios",
+    "gohighlevel es gratis",
+    "crm para agencias",
+    "crm para pequenas empresas",
+    "gohighlevel automatizacion",
+    "automatizacion marketing",
+    "embudos de ventas",
+    "recepcionista virtual",
+    "marca blanca crm",
+    "gohighlevel pagos",
+    "gohighlevel opiniones",
+    "gohighlevel whatsapp",
+    "whatsapp business api"
+  ]
+}
