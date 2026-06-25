@@ -1028,10 +1028,10 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
     _footer_clusters = [
         ("AI Receptionist &amp; Lead Capture", "/category/agency-platform/"),
         ("AI Agents &amp; Automation", "/blog/leverage-ai-pricing-updates-gohighlevel-save-more/"),
-        ("CRM &amp; Communication", "/blog/automate-google-contacts-gohighlevel-sync/"),
+        ("CRM &amp; Communication", "/category/crm-communication/"),
         ("Sites, Funnels &amp; Reputation", "/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/"),
         ("Agency, White-Label &amp; SaaS", "/category/agency-platform/"),
-        ("Payments &amp; Pricing", "/blog/gohighlevel-pricing-plans-2026-complete-guide/"),
+        ("Payments &amp; Pricing", "/category/payments-pricing/"),
     ]
     footer_cat_links = "".join(f'        <a href="{u}">{n}</a>\n' for n, u in _footer_clusters)
 
@@ -1801,10 +1801,10 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
   <div class="clusters">
     <div class="cluster"><h3>AI Receptionist &amp; Lead Capture</h3><p>Never miss a call or a lead &mdash; AI receptionist, missed-call text-back, and automatic review requests.</p><a class="cl" href="/category/agency-platform/">Explore guides &rarr;</a></div>
     <div class="cluster"><h3>AI Agents &amp; Automation</h3><p>Put the platform on autopilot &mdash; AI agents, workflows, and Conversation AI.</p><a class="cl" href="/blog/leverage-ai-pricing-updates-gohighlevel-save-more/">Explore guides &rarr;</a></div>
-    <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/blog/automate-google-contacts-gohighlevel-sync/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/category/crm-communication/">Explore guides &rarr;</a></div>
     <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/">Explore guides &rarr;</a></div>
     <div class="cluster"><h3>Agency, White-Label &amp; SaaS</h3><p>Resell GoHighLevel as your own &mdash; white-label, SaaS mode, sub-accounts, and snapshots.</p><a class="cl" href="/category/agency-platform/">Explore guides &rarr;</a></div>
-    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/blog/gohighlevel-pricing-plans-2026-complete-guide/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/category/payments-pricing/">Explore guides &rarr;</a></div>
   </div>
   <div class="es-banner">
     <div><b style="color:var(--text)">&iquest;Hablas espa&ntilde;ol?</b> <span style="color:var(--text2)">La biblioteca de gu&iacute;as de GoHighLevel y la prueba de 30 d&iacute;as, en espa&ntilde;ol.</span></div>
@@ -3054,7 +3054,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
     <div class="cluster"><h3>CRM y Comunicaci&oacute;n</h3><p>Maneja toda la relaci&oacute;n con el cliente en un solo lugar &mdash; CRM, email y SMS, tel&eacute;fono y calendario.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
     <div class="cluster"><h3>Sitios, Embudos y Reputaci&oacute;n</h3><p>Captura leads y proyecta confianza &mdash; sitios y embudos, formularios, rese&ntilde;as y reputaci&oacute;n.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
     <div class="cluster"><h3>Agencia, Marca Blanca y SaaS</h3><p>Revende GoHighLevel como tuyo &mdash; marca blanca, modo SaaS, sub-cuentas y reportes.</p><a class="cl" href="/blog/gohighlevel-latam-pagos-agencias/">Explorar gu&iacute;as &rarr;</a></div>
-    <div class="cluster"><h3>Pagos y Precios</h3><p>Cobra dentro de GoHighLevel y conoce el costo real &mdash; MercadoPago y pasarelas para LATAM, m&aacute;s el desglose de precios.</p><a class="cl" href="/blog/gohighlevel-precios-planes-2026-guia-completa/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Pagos y Precios</h3><p>Cobra dentro de GoHighLevel y conoce el costo real &mdash; MercadoPago y pasarelas para LATAM, m&aacute;s el desglose de precios.</p><a class="cl" href="/es/category/payments-pricing/">Explorar gu&iacute;as &rarr;</a></div>
   </div>
   <div class="es-banner">
     <div><b style="color:var(--text)">Prefer English?</b> <span style="color:var(--text2)">The full GoHighLevel guide library and the 30-day trial.</span></div>
