@@ -459,7 +459,10 @@ CSS = f"""
   --text3:#6b7ea8;
   --border:rgba(255,255,255,0.06);
   --max:1120px;
-  --content:665px;
+  --content:700px;
+  --post-shell:1140px;
+  --post-aside:300px;
+  --accent:var(--amber);
   --sans:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 }}
 *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
@@ -580,8 +583,10 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 /* ── Reading progress bar ─────────────────────────────────────────────────── */
 #reading-progress{{position:fixed;top:0;left:0;height:3px;width:0;background:var(--amber);z-index:9999;transition:width .1s linear}}
 
-/* ── POST PAGE — single-column centered ───────────────────────────────────── */
-.post-container{{max-width:var(--content);margin:0 auto;padding:100px 24px 48px}}
+/* ── POST PAGE — article + sticky sidebar (TOC lifts into the right gutter) ── */
+.post-container{{max-width:var(--post-shell);margin:0 auto;padding:96px 24px 56px;display:grid;grid-template-columns:minmax(0,var(--content)) var(--post-aside);gap:0 56px;align-items:start}}
+.post-container>*{{grid-column:1;min-width:0}}
+.post-container>.toc{{grid-column:2;grid-row:1;position:sticky;top:80px;align-self:start;margin:0}}
 
 /* Breadcrumb */
 .post-breadcrumb{{font-size:.8rem;color:var(--text3);margin-bottom:24px}}
@@ -597,7 +602,7 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 
 /* Share row */
 .share-row{{display:flex;align-items:center;gap:12px;padding:12px 0 28px;border-bottom:1px solid var(--border);margin-bottom:32px;font-size:13px;color:var(--text3)}}
-.share-btn{{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--text2);background:transparent;cursor:pointer;transition:border-color .15s,color .15s}}
+.share-btn{{display:inline-flex;align-items:center;gap:5px;min-height:40px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--text2);background:transparent;cursor:pointer;transition:border-color .15s,color .15s}}
 .share-btn:hover{{border-color:var(--amber);color:var(--text);text-decoration:none}}
 
 /* CTA — below byline (compact one-liner) */
@@ -611,7 +616,7 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .cta-inline a:hover{{color:var(--amber-light)}}
 
 /* CTA — end of article box */
-.cta-end{{background:var(--surface);border:1px solid var(--amber-border);border-radius:10px;padding:32px;text-align:center;margin:48px 0}}
+.cta-end{{background:var(--surface);border:1px solid var(--amber-border);border-radius:8px;padding:32px;text-align:center;margin:48px 0}}
 .cta-end h3{{font-family:var(--sans);font-size:1.25rem;font-weight:800;color:var(--text);margin-bottom:10px}}
 .cta-end p{{font-size:.9rem;color:var(--text2);margin:0 0 20px;max-width:440px;margin-left:auto;margin-right:auto}}
 .cta-end .fine{{font-size:.75rem;color:var(--text3);margin-top:12px}}
@@ -620,8 +625,8 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 
 /* Post body typography */
 .post-body{{font-size:19px;line-height:1.75;color:#e5e7eb}}
-.post-body h2{{font-family:var(--sans);font-size:1.5rem;font-weight:800;color:var(--text);margin:48px 0 14px}}
-.post-body h3{{font-size:1.15rem;font-weight:700;color:#f3f4f6;margin:32px 0 10px}}
+.post-body h2{{font-family:var(--sans);font-size:1.75rem;line-height:1.3;font-weight:800;color:var(--text);margin:56px 0 16px}}
+.post-body h3{{font-size:1.3rem;line-height:1.35;font-weight:700;color:#f3f4f6;margin:36px 0 10px}}
 .post-body p{{margin-bottom:20px}}
 .post-body ul,.post-body ol{{margin:0 0 20px 24px}}
 .post-body li{{margin-bottom:8px}}
@@ -808,6 +813,8 @@ footer{{border-top:1px solid var(--border);padding:56px 24px 36px;margin-top:80p
   .hp-body{{grid-template-columns:1fr}}
   .hp-sidebar{{position:static;display:grid;grid-template-columns:1fr 1fr;gap:24px}}
   .related-grid{{grid-template-columns:repeat(2,1fr)}}
+  .post-container{{display:block;max-width:760px}}
+  .post-container>.toc{{position:static;margin:0 0 28px}}
 }}
 @media(max-width:640px){{
   .hp-sidebar{{grid-template-columns:1fr}}
