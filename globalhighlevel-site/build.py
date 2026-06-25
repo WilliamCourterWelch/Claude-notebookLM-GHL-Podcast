@@ -459,7 +459,7 @@ CSS = f"""
   --text3:#6b7ea8;
   --border:rgba(255,255,255,0.06);
   --max:1120px;
-  --content:760px;
+  --content:820px;
   --accent:var(--amber);
   --sans:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 }}
@@ -618,6 +618,14 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .cta-end .fine{{font-size:.75rem;color:var(--text3);margin-top:12px}}
 .btn-amber{{display:inline-flex;align-items:center;gap:8px;background:var(--amber);color:#000;font-size:.85rem;font-weight:700;padding:11px 22px;border-radius:6px;transition:all .2s;text-decoration:none}}
 .btn-amber:hover{{background:var(--amber-light);transform:translateY(-1px);text-decoration:none}}
+
+/* ── TL;DR answer box (answer-first, above the article — no scrolling to find the point) ── */
+.tldr{{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:22px 26px;margin:0 0 32px}}
+.tldr-label{{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--amber);margin-bottom:8px}}
+.tldr p{{font-size:1.02rem;line-height:1.6;color:var(--text2);margin:0 0 10px}}
+.tldr p:last-child{{margin-bottom:0}}
+.tldr strong{{color:var(--text);font-weight:700}}
+.tldr a{{color:var(--amber);font-weight:600}}
 
 /* Post body typography */
 .post-body{{font-size:19px;line-height:1.75;color:#e5e7eb}}
@@ -1360,7 +1368,7 @@ def faq_schema(html_content: str) -> str:
     if not m:
         return ""
     sec = m.group(1)
-    pairs = re.findall(r'<h3>(.*?)</h3>(.*?)(?=<h3>|$)', sec, re.S)
+    pairs = re.findall(r'<h3[^>]*>(.*?)</h3>(.*?)(?=<h3[^>]*>|$)', sec, re.S)
     pairs += re.findall(r'<p><strong>([^<]*[?¿][^<]*)</strong>(.*?)</p>', sec, re.S)  # bold-paragraph FAQs (hub)
     entities = []
     for q, a in pairs:
@@ -1437,9 +1445,19 @@ def build_post_page(post: dict, all_posts: list = None):
     else:
         toc_html = ""
 
+    # ── TL;DR answer box (answer-first) — only when post defines tldr ──────────
+    _tldr = post.get("tldr")
+    tldr_html = ""
+    if _tldr:
+        _paras = _tldr if isinstance(_tldr, list) else [_tldr]
+        _body = "".join(f"<p>{para}</p>" for para in _paras)
+        tldr_html = f'<div class="tldr"><div class="tldr-label">The short version</div>{_body}</div>'
+
     # ── CTA #1 — Below byline (compact one-liner) ─────────────────────────────
     cta1 = f"""
 <p class="cta-byline">Follow along &mdash; <a href="/start/">get 30 days free &rarr;</a></p>"""
+    if _tldr:
+        cta1 = ""  # the TL;DR already gives the answer up top; drop the redundant one-liner
 
     # ── CTA #2 — Mid-article inline ───────────────────────────────────────────
     cta_mid = f"""
@@ -1565,6 +1583,7 @@ def build_post_page(post: dict, all_posts: list = None):
     {"<span class='sep'>&middot;</span><span>" + date_str + "</span>" if date_str else ""}
     <span class="sep">&middot;</span><span>{rtime}</span>
   </div>
+  {tldr_html}
   {share_html}
   {cta1}
   {toc_html}
