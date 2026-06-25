@@ -439,6 +439,18 @@ def sanitize_content(html: str) -> str:
         flags=re.DOTALL
     )
 
+    # Remove the in-content "What's in This Guide" box (duplicate of the template TOC)
+    html = re.sub(
+        r'<div[^>]*style="[^"]*border-left:4px solid #f59e0b[^"]*"[^>]*>.*?</div>',
+        '',
+        html,
+        flags=re.DOTALL
+    )
+
+    # Let the template control heading typography — strip inline styles on h2/h3
+    # (firehose-era inline font-sizes fought the template and made hierarchy inconsistent)
+    html = re.sub(r'(<h[23]\b[^>]*?)\s+style="[^"]*"([^>]*>)', r'\1\2', html)
+
     return html
 
 # ── CSS — TechCrunch-style editorial layout ──────────────────────────────────
