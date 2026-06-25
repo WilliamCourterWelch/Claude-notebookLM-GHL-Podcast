@@ -1597,12 +1597,12 @@ def build_post_page(post: dict, all_posts: list = None):
     <span class="sep">&middot;</span><span>{rtime}</span>
   </div>
   {tldr_html}
-  {share_html}
   {cta1}
   {toc_html}
   {podcast_html}
   <div class="post-body">{body_with_ctas}</div>
   {cta3}
+  {share_html}
   {author_html}
   {related_html}
 </div>
