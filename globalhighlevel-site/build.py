@@ -626,8 +626,8 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .tldr p{{font-size:1.02rem;line-height:1.6;color:var(--text2);margin:0 0 10px}}
 .tldr p:last-child{{margin-bottom:0}}
 .tldr strong{{color:var(--text);font-weight:700}}
-.tldr a{{color:var(--amber);font-weight:600}}
-.tldr-cta{{margin-top:18px;font-size:.92rem;padding:12px 24px}}
+.tldr a:not(.btn-amber){{color:var(--amber);font-weight:600}}
+.tldr-cta{{margin-top:18px;font-size:.92rem;padding:12px 24px;color:#000}}
 
 /* Post body typography */
 .post-body{{font-size:19px;line-height:1.75;color:#e5e7eb}}
