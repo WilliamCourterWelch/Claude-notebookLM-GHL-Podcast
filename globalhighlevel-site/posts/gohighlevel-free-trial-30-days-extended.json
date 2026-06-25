@@ -12,5 +12,37 @@
   },
   "language": "en",
   "topic": "Agency & Platform",
-  "author": "William Welch"
+  "author": "William Welch",
+  "offer_hero": {
+    "badge": "Extended 30-day free trial",
+    "headline": "GoHighLevel free for <em>30 days</em> — not the standard 14.",
+    "sub": "Everyone gets the standard 14-day trial. Start through us and you get double the time to set it up, move a real client over, and decide without the clock rushing you.",
+    "cta": "Start my 30 days free",
+    "fine": "$0 for 30 days · ~$1 card-verification hold, no subscription charge · cancel anytime",
+    "card_label": "What you get",
+    "card_big": "30 days free <small>/ then $97+/mo</small>",
+    "rows": [
+      {
+        "label": "Standard trial elsewhere",
+        "value": "14 days",
+        "kind": "strike"
+      },
+      {
+        "label": "Your trial here",
+        "value": "30 days",
+        "kind": "win"
+      },
+      {
+        "label": "CRM, funnels, automation, calendars",
+        "value": "All included",
+        "kind": "yes"
+      },
+      {
+        "label": "Setup guides while you trial",
+        "value": "Free",
+        "kind": "yes"
+      }
+    ],
+    "sticky": "30 days free — double the standard trial"
+  }
 }
