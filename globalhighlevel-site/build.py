@@ -3028,7 +3028,41 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
                 pag_html += f' <a href="{href}"{cls}>{pg}</a>'
             pag_html += "</div>"
 
-        body = f"""
+        if page == 1 and lang_code == "es":
+            money_url = "/blog/gohighlevel-precios-planes-2026-guia-completa/"
+            body = f"""
+<header class="hh"><div class="container">
+  <h1>Todo sobre <em>GoHighLevel</em> &mdash; gu&iacute;as en espa&ntilde;ol y precios claros.</h1>
+  <p class="sub">GlobalHighLevel es la biblioteca gratuita para configurar GoHighLevel correctamente &mdash; tutoriales reales de gente que lo usa de verdad, los <b>precios sin letra chica</b> y la prueba extendida de 30 d&iacute;as. Empieza por la gu&iacute;a completa de precios.</p>
+  <a class="guidecard" href="{money_url}">
+    <div class="gc-ic">&#9733;</div>
+    <div>
+      <div class="gc-k">Nuestra gu&iacute;a m&aacute;s le&iacute;da</div>
+      <div class="gc-t">Precios de GoHighLevel 2026: cu&aacute;nto cuesta y si es gratis</div>
+      <div class="gc-d">Planes, el precio real desde $97, la prueba de 30 d&iacute;as y c&oacute;mo pagar menos.</div>
+    </div>
+    <span class="gc-arrow">Leer &rarr;</span>
+  </a>
+</div></header>
+<section class="hubsec" id="guides"><div class="container">
+  <span class="eyebrow">Cada tema de GoHighLevel</span>
+  <h2>Configura GoHighLevel bien &mdash; por tema</h2>
+  <p class="lead">La biblioteca completa, organizada. Elige el &aacute;rea en la que est&aacute;s trabajando.</p>
+  <div class="clusters">
+    <div class="cluster"><h3>WhatsApp y Captaci&oacute;n de Leads</h3><p>El canal #1 en espa&ntilde;ol &mdash; API de WhatsApp Business, conectar GHL con WhatsApp y respuesta autom&aacute;tica a cada lead.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Automatizaci&oacute;n y Agentes IA</h3><p>Pon la plataforma en piloto autom&aacute;tico &mdash; workflows, seguimiento de leads y agentes con IA.</p><a class="cl" href="/blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>CRM y Comunicaci&oacute;n</h3><p>Maneja toda la relaci&oacute;n con el cliente en un solo lugar &mdash; CRM, email y SMS, tel&eacute;fono y calendario.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Sitios, Embudos y Reputaci&oacute;n</h3><p>Captura leads y proyecta confianza &mdash; sitios y embudos, formularios, rese&ntilde;as y reputaci&oacute;n.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Agencia, Marca Blanca y SaaS</h3><p>Revende GoHighLevel como tuyo &mdash; marca blanca, modo SaaS, sub-cuentas y reportes.</p><a class="cl" href="/blog/gohighlevel-latam-pagos-agencias/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Pagos y Precios</h3><p>Cobra dentro de GoHighLevel y conoce el costo real &mdash; MercadoPago y pasarelas para LATAM, m&aacute;s el desglose de precios.</p><a class="cl" href="/blog/gohighlevel-precios-planes-2026-guia-completa/">Explorar gu&iacute;as &rarr;</a></div>
+  </div>
+  <div class="es-banner">
+    <div><b style="color:var(--text)">Prefer English?</b> <span style="color:var(--text2)">The full GoHighLevel guide library and the 30-day trial.</span></div>
+    <a class="btn-amber" href="/" style="font-size:.85rem;padding:10px 18px">Go to the English site &rarr;</a>
+  </div>
+</div></section>"""
+        else:
+            body = f"""
 <div class="cat-header">
   <div class="container">
     <div class="section-label fade-1" style="border-bottom:none;padding-bottom:0;margin-bottom:8px">{lang_name}</div>
