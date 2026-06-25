@@ -965,7 +965,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
     ok, msg = validate_meta(canonical, title, description)
     if not ok:
         LANG_META_VIOLATIONS.append(msg)
-    og_img = og_image or os.getenv("OG_IMAGE_URL", "")
+    og_img = og_image or os.getenv("OG_IMAGE_URL", f"{SITE_URL}/images/og-default.png")
     cats = CATEGORIES
     aff = affiliate_for(lang)
 
@@ -1540,11 +1540,14 @@ def build_post_page(post: dict, all_posts: list = None):
 </div>"""
 
     # ── Schema ─────────────────────────────────────────────────────────────────
+    _art_img = (post.get("image") or f"{SITE_URL}/images/og-default.png")
     article_schema = json.dumps({
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": title,
         "description": description,
+        "image": [_art_img],
+        "inLanguage": post.get("language", "en"),
         "datePublished": post.get("publishedAt", post.get("uploadedAt", "")),
         "dateModified": post.get("publishedAt", post.get("uploadedAt", "")),
         "author": {
@@ -1562,11 +1565,28 @@ def build_post_page(post: dict, all_posts: list = None):
             "url": SITE_URL,
             "logo": {
                 "@type": "ImageObject",
-                "url": f"{SITE_URL}/logo.png"
+                "url": f"{SITE_URL}/images/logo.png",
+                "width": 512,
+                "height": 512
             }
+        },
+        "speakable": {
+            "@type": "SpeakableSpecification",
+            "cssSelector": [".post-title", ".tldr"]
         },
         "mainEntityOfPage": {"@type": "WebPage", "@id": canonical},
         "url": canonical
+    })
+    # BreadcrumbList — Home > Category > Title (the visible breadcrumb, now machine-readable)
+    breadcrumb_schema = json.dumps({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE_URL}/"},
+            {"@type": "ListItem", "position": 2, "name": category,
+             "item": f"{SITE_URL}/category/{cat_slug}/"},
+            {"@type": "ListItem", "position": 3, "name": title, "item": canonical},
+        ]
     })
     faq_ld = faq_schema(html_content)
 
@@ -1611,6 +1631,7 @@ def build_post_page(post: dict, all_posts: list = None):
   {related_html}
 </div>
 <script type="application/ld+json">{article_schema}</script>
+<script type="application/ld+json">{breadcrumb_schema}</script>
 {faq_ld}
 {progress_js}"""
 
