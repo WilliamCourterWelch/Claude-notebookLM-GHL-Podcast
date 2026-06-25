@@ -478,7 +478,8 @@ img{{max-width:100%;height:auto}}
 
 /* ── NAV — fixed, backdrop blur, animated underlines ──────────────────────── */
 nav{{position:fixed;top:0;inset-x:0;z-index:200;background:rgba(7,8,10,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}}
-.nav-inner{{max-width:var(--max);margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}}
+.nav-inner{{max-width:var(--max);margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:32px}}
+.logo{{flex-shrink:0}}
 .logo{{font-family:var(--sans);font-size:1.15rem;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:0;color:var(--text)}}
 .logo-amber{{color:var(--amber)}}
 .nav-links{{display:flex;align-items:center;gap:24px}}
@@ -1037,36 +1038,20 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
   <div class="nav-inner">
     <a href="/" class="logo">Global<span class="logo-amber">HighLevel</span></a>
     <div class="nav-links">
-      <a href="/" class="nav-link">Home</a>
-      <div class="nav-dropdown">
-        <a class="nav-link">Topics <span style="font-size:10px">&#9662;</span></a>
-        <div class="nav-dropdown-menu">
-{dropdown_links}        </div>
-      </div>
-      <a href="/services/" class="nav-link">Services</a>
-      <a href="/about/" class="nav-link">About</a>
+      <a href="/#guides" class="nav-link">{'Guías' if lang == 'es' else 'Guides'}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" class="nav-link" target="_blank" rel="noopener">Podcast</a>
-      <div class="nav-dropdown">
-        <a class="nav-link">{current_lang_native} <span style="font-size:10px">&#9662;</span></a>
-        <div class="nav-dropdown-menu">
-{lang_links}        </div>
-      </div>
-      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
+      <a href="{'/' if lang == 'es' else '/es/'}" class="nav-link">{'English' if lang == 'es' else 'Español'}</a>
+      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
     </div>
     <input type="checkbox" id="mobile-toggle">
     <label for="mobile-toggle" class="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
     </label>
     <div class="mobile-menu">
-      <a href="/">Home</a>
-      <a href="/services/">Services</a>
-      <a href="/about/">About</a>
-{dropdown_links}      <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
-      <div style="padding:12px 24px;border-top:1px solid var(--surface)">
-        <span style="font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Language</span><br>
-        {mobile_lang_links}
-      </div>
-      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
+      <a href="/#guides">{'Guías' if lang == 'es' else 'Guides'}</a>
+      <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
+      <a href="{'/' if lang == 'es' else '/es/'}">{'English' if lang == 'es' else 'Español'}</a>
+      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
     </div>
   </div>
 </nav>
