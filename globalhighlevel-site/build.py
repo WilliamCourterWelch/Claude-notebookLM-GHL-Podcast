@@ -619,36 +619,6 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .btn-amber{{display:inline-flex;align-items:center;gap:8px;background:var(--amber);color:#000;font-size:.85rem;font-weight:700;padding:11px 22px;border-radius:6px;transition:all .2s;text-decoration:none}}
 .btn-amber:hover{{background:var(--amber-light);transform:translateY(-1px);text-decoration:none}}
 
-/* ── OFFER HERO — money/landing pages (Caleb: offer + reviews above the fold, full-width band) ── */
-.offer-hero{{background:linear-gradient(180deg,var(--surface),#0c0f16);border-bottom:1px solid var(--border)}}
-.offer-hero-inner{{max-width:1040px;margin:0 auto;padding:44px 24px;display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}}
-.offer-badge{{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--amber);margin-bottom:12px}}
-.offer-headline{{font-family:var(--sans);font-size:clamp(1.7rem,3vw,2.4rem);font-weight:800;line-height:1.12;letter-spacing:-.5px;color:var(--text);margin-bottom:14px}}
-.offer-headline em{{font-style:normal;color:var(--amber)}}
-.offer-sub{{font-size:1.02rem;color:var(--text2);line-height:1.6;margin-bottom:22px;max-width:480px}}
-.offer-cta{{font-size:.95rem;padding:13px 26px}}
-.offer-fine{{font-size:.78rem;color:var(--text3);margin-top:12px}}
-.offer-card{{background:#0d111a;border:1px solid var(--amber-border);border-radius:8px;padding:24px}}
-.offer-card h4{{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--text3);font-weight:700;margin-bottom:8px}}
-.offer-card .big{{font-size:1.7rem;font-weight:800;letter-spacing:-.5px;color:var(--text);margin-bottom:8px}}
-.offer-card .big small{{font-size:.82rem;color:var(--text2);font-weight:500}}
-.offer-row{{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-bottom:1px dashed var(--border);font-size:.92rem;color:var(--text2)}}
-.offer-row:last-child{{border-bottom:0}}
-.offer-row .strike{{color:var(--text3);text-decoration:line-through}}
-.offer-row .win{{color:var(--amber);font-weight:800;font-size:1.02rem}}
-.offer-row .yes{{color:#34d399;font-weight:700}}
-@media(max-width:760px){{.offer-hero-inner{{grid-template-columns:1fr;gap:24px;padding:32px 20px}}}}
-
-/* ── Mobile sticky CTA bar (Caleb mobile pattern) ── */
-.sticky-cta{{display:none}}
-@media(max-width:760px){{
-  .sticky-cta{{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:9998;align-items:center;gap:12px;padding:10px 16px;background:rgba(7,8,10,.96);border-top:1px solid var(--amber-border);backdrop-filter:blur(8px)}}
-  .sticky-cta .sc-txt{{flex:1;font-size:.8rem;color:var(--text2);line-height:1.3}}
-  .sticky-cta .sc-txt b{{color:var(--text)}}
-  .sticky-cta .btn-amber{{padding:11px 16px;font-size:.8rem;white-space:nowrap}}
-  .post-container{{padding-bottom:84px}}
-}}
-
 /* Post body typography */
 .post-body{{font-size:19px;line-height:1.75;color:#e5e7eb}}
 .post-body h2{{font-family:var(--sans);font-size:1.75rem;line-height:1.3;font-weight:800;color:var(--text);margin:56px 0 16px}}
@@ -1471,38 +1441,6 @@ def build_post_page(post: dict, all_posts: list = None):
     cta1 = f"""
 <p class="cta-byline">Follow along &mdash; <a href="/start/">get 30 days free &rarr;</a></p>"""
 
-    # ── Offer hero (Caleb money/landing treatment) — only when post defines offer_hero ──
-    oh = post.get("offer_hero") or {}
-    offer_hero_html = ""
-    sticky_cta_html = ""
-    if oh:
-        _rows = "".join(
-            f'<div class="offer-row"><span>{r.get("label","")}</span>'
-            f'<span class="{r.get("kind","")}">{r.get("value","")}</span></div>'
-            for r in oh.get("rows", [])
-        )
-        offer_hero_html = f"""
-<section class="offer-hero"><div class="offer-hero-inner">
-  <div class="offer-copy">
-    <span class="offer-badge">{oh.get("badge","")}</span>
-    <div class="offer-headline">{oh.get("headline","")}</div>
-    <p class="offer-sub">{oh.get("sub","")}</p>
-    <a class="btn-amber offer-cta" href="{aff}&utm_campaign={slug}_hero" target="_blank" rel="nofollow noopener">{oh.get("cta","Start free")} &rarr;</a>
-    <div class="offer-fine">{oh.get("fine","")}</div>
-  </div>
-  <div class="offer-card">
-    <h4>{oh.get("card_label","What you get")}</h4>
-    <div class="big">{oh.get("card_big","")}</div>
-    {_rows}
-  </div>
-</div></section>"""
-        sticky_cta_html = (
-            f'<div class="sticky-cta"><span class="sc-txt"><b>{oh.get("sticky","30 days free")}</b></span>'
-            f'<a class="btn-amber" href="{aff}&utm_campaign={slug}_sticky" target="_blank" rel="nofollow noopener">Start free &rarr;</a></div>'
-        )
-        # offer hero already carries the headline + CTA; drop the redundant compact CTA
-        cta1 = ""
-
     # ── CTA #2 — Mid-article inline ───────────────────────────────────────────
     cta_mid = f"""
 <p class="cta-inline">This is built into GoHighLevel.
@@ -1616,7 +1554,6 @@ def build_post_page(post: dict, all_posts: list = None):
 
     body = f"""
 <div id="reading-progress"></div>
-{offer_hero_html}
 <div class="post-container">
   <div class="post-breadcrumb fade-1">
     <a href="/">Home</a><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
@@ -1639,7 +1576,6 @@ def build_post_page(post: dict, all_posts: list = None):
 </div>
 <script type="application/ld+json">{article_schema}</script>
 {faq_ld}
-{sticky_cta_html}
 {progress_js}"""
 
     post_lang = post.get("language", "en")
