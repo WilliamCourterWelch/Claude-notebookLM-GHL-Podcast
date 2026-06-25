@@ -1407,11 +1407,18 @@ def build_post_page(post: dict, all_posts: list = None):
     html_content = sanitize_content(html_content)
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
-    if all_posts:
+    # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
+    # SEO links until a real cluster exists to link to (set on the post JSON).
+    _mvp_minimal = post.get("mvp_minimal_links")
+    if all_posts and not _mvp_minimal:
         html_content = inject_internal_links(html_content, post, all_posts)
     # P1.2: editorial in-body link up to the category hub (only when the hub is built).
-    if _cat_built:
+    if _cat_built and not _mvp_minimal:
         html_content += _hub_link_block(category, cat_slug, slug)
+    if _mvp_minimal:
+        # strip hard-coded internal /blog/ and /category/ anchors (keep the visible text)
+        html_content = re.sub(r'<a\b[^>]*\bhref="(?:/blog/|/category/)[^"]*"[^>]*>(.*?)</a>',
+                              r'\1', html_content, flags=re.S)
 
     # ── Podcast section ───────────────────────────────────────────────────────
     if episode_id:
@@ -1455,14 +1462,14 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── CTA #1 — Below byline (compact one-liner) ─────────────────────────────
     cta1 = f"""
-<p class="cta-byline">Follow along &mdash; <a href="/start/">get 30 days free &rarr;</a></p>"""
+<p class="cta-byline">Follow along &mdash; <a href="/start/" rel="nofollow">get 30 days free &rarr;</a></p>"""
     if _tldr:
         cta1 = ""  # the TL;DR already gives the answer up top; drop the redundant one-liner
 
     # ── CTA #2 — Mid-article inline ───────────────────────────────────────────
     cta_mid = f"""
 <p class="cta-inline">This is built into GoHighLevel.
-<a href="/start/">Try it free for 30 days &rarr;</a></p>"""
+<a href="/start/" rel="nofollow">Try it free for 30 days &rarr;</a></p>"""
     body_with_ctas = inject_inline_ctas(html_content, cta_mid)
 
     # ── CTA #3 — End of article box ───────────────────────────────────────────
@@ -1756,7 +1763,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         <div class="sidebar-cta">
           <div class="s-headline">Try GoHighLevel Free</div>
           <div class="s-sub">30 days full access — double the standard 14-day trial.</div>
-          <a href="/start/" class="btn-amber" style="display:block;text-align:center;font-size:.8rem">Start Free Trial</a>
+          <a href="/start/" rel="nofollow" class="btn-amber" style="display:block;text-align:center;font-size:.8rem">Start Free Trial</a>
           <div class="s-fine">Cancel anytime &mdash; $0 for 30 days</div>
         </div>
       </div>
