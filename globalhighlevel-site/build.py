@@ -1024,10 +1024,16 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         href = l["prefix"] + "/" if l["prefix"] else "/"
         mobile_lang_links += f'<a href="{href}" style="display:inline-block;margin-right:16px;font-size:.9rem">{l["native"]}</a>'
 
-    # Footer category links (top 4)
-    footer_cat_links = ""
-    for c in [c for c in cats if c["slug"] in LIVE_CATEGORY_SLUGS][:4]:
-        footer_cat_links += f'        <a href="/category/{c["slug"]}/">{c["name"]}</a>\n'
+    # Footer Topics = the 6 homepage clusters (links-safe to existing pages until hubs build)
+    _footer_clusters = [
+        ("AI Receptionist &amp; Lead Capture", "/category/agency-platform/"),
+        ("AI Agents &amp; Automation", "/blog/leverage-ai-pricing-updates-gohighlevel-save-more/"),
+        ("CRM &amp; Communication", "/blog/automate-google-contacts-gohighlevel-sync/"),
+        ("Sites, Funnels &amp; Reputation", "/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/"),
+        ("Agency, White-Label &amp; SaaS", "/category/agency-platform/"),
+        ("Payments &amp; Pricing", "/blog/gohighlevel-pricing-plans-2026-complete-guide/"),
+    ]
+    footer_cat_links = "".join(f'        <a href="{u}">{n}</a>\n' for n, u in _footer_clusters)
 
     # Footer language links
     footer_lang_links = ""
