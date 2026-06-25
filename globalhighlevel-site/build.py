@@ -1122,12 +1122,6 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
       <div class="footer-col">
         <h4>Languages</h4>
 {footer_lang_links}      </div>
-      <div class="footer-col">
-        <h4>Resources</h4>
-        <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
-        <a href="https://help.gohighlevel.com" target="_blank" rel="noopener">GHL Help Center</a>
-        <a href="{aff}" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
-      </div>
     </div>
     <div class="footer-bottom">
       <span>&copy; {datetime.now().year} GlobalHighLevel.com</span>
