@@ -459,9 +459,7 @@ CSS = f"""
   --text3:#6b7ea8;
   --border:rgba(255,255,255,0.06);
   --max:1120px;
-  --content:700px;
-  --post-shell:1140px;
-  --post-aside:300px;
+  --content:760px;
   --accent:var(--amber);
   --sans:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 }}
@@ -583,10 +581,8 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 /* ── Reading progress bar ─────────────────────────────────────────────────── */
 #reading-progress{{position:fixed;top:0;left:0;height:3px;width:0;background:var(--amber);z-index:9999;transition:width .1s linear}}
 
-/* ── POST PAGE — article + sticky sidebar (TOC lifts into the right gutter) ── */
-.post-container{{max-width:var(--post-shell);margin:0 auto;padding:96px 24px 56px;display:grid;grid-template-columns:minmax(0,var(--content)) var(--post-aside);gap:0 56px;align-items:start}}
-.post-container>*{{grid-column:1;min-width:0}}
-.post-container>.toc{{grid-column:2;grid-row:1;position:sticky;top:80px;align-self:start;margin:0}}
+/* ── POST PAGE — single clean column (Caleb: no side-rail; in-content links only) ── */
+.post-container{{max-width:var(--content);margin:0 auto;padding:96px 24px 56px}}
 
 /* Breadcrumb */
 .post-breadcrumb{{font-size:.8rem;color:var(--text3);margin-bottom:24px}}
@@ -813,8 +809,6 @@ footer{{border-top:1px solid var(--border);padding:56px 24px 36px;margin-top:80p
   .hp-body{{grid-template-columns:1fr}}
   .hp-sidebar{{position:static;display:grid;grid-template-columns:1fr 1fr;gap:24px}}
   .related-grid{{grid-template-columns:repeat(2,1fr)}}
-  .post-container{{display:block;max-width:760px}}
-  .post-container>.toc{{position:static;margin:0 0 28px}}
 }}
 @media(max-width:640px){{
   .hp-sidebar{{grid-template-columns:1fr}}
