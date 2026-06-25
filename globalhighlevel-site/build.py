@@ -499,7 +499,7 @@ nav{{position:fixed;top:0;inset-x:0;z-index:200;background:rgba(7,8,10,0.85);bac
 .nav-link::after{{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--amber);transition:width .2s ease-in-out}}
 .nav-link:hover{{color:var(--text);text-decoration:none}}
 .nav-link:hover::after{{width:100%}}
-.nav-cta{{font-size:.8rem;font-weight:700;color:#000;background:var(--amber);padding:7px 16px;border-radius:100px;transition:background .15s}}
+.nav-cta{{font-size:.8rem;font-weight:700;color:#000;background:var(--amber);padding:8px 18px;border-radius:8px;transition:background .15s}}
 .nav-cta:hover{{background:var(--amber-light);text-decoration:none}}
 
 /* ── HAMBURGER MENU ──────────────────────────────────────────────────────── */
@@ -610,8 +610,8 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .post-byline .sep{{color:var(--text3);opacity:.4}}
 
 /* Share row */
-.share-row{{display:flex;align-items:center;gap:12px;padding:12px 0 28px;border-bottom:1px solid var(--border);margin-bottom:32px;font-size:13px;color:var(--text3)}}
-.share-btn{{display:inline-flex;align-items:center;gap:5px;min-height:40px;padding:8px 14px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--text2);background:transparent;cursor:pointer;transition:border-color .15s,color .15s}}
+.share-row{{display:flex;align-items:center;gap:12px;padding:18px 0 0;border-top:1px solid var(--border);margin:24px 0 36px;font-size:13px;color:var(--text3);opacity:.8}}
+.share-btn{{display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:7px 13px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--text2);background:transparent;cursor:pointer;transition:border-color .15s,color .15s}}
 .share-btn:hover{{border-color:var(--amber);color:var(--text);text-decoration:none}}
 
 /* CTA — below byline (compact one-liner) */
@@ -629,7 +629,14 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .cta-end h3{{font-family:var(--sans);font-size:1.25rem;font-weight:800;color:var(--text);margin-bottom:10px}}
 .cta-end p{{font-size:.9rem;color:var(--text2);margin:0 0 20px;max-width:440px;margin-left:auto;margin-right:auto}}
 .cta-end .fine{{font-size:.75rem;color:var(--text3);margin-top:12px}}
-.btn-amber{{display:inline-flex;align-items:center;gap:8px;background:var(--amber);color:#000;font-size:.85rem;font-weight:700;padding:11px 22px;border-radius:6px;transition:all .2s;text-decoration:none}}
+.btn-amber{{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--amber);color:#000;font-size:.85rem;font-weight:700;padding:11px 22px;border-radius:8px;min-height:42px;transition:all .2s;text-decoration:none}}
+
+/* ── Bootcamp section — subtle framed panel (it's a real perk, give it weight) ── */
+.bootcamp-section{{margin:52px 0;padding:26px 28px;background:rgba(255,255,255,.035);border:1px solid var(--amber-border);border-radius:8px}}
+.bootcamp-section h2{{margin-top:0}}
+.bootcamp-section h3{{margin-top:24px}}
+.bootcamp-section ul{{margin-bottom:0}}
+.bootcamp-section li::marker{{color:var(--amber)}}
 .btn-amber:hover{{background:var(--amber-light);transform:translateY(-1px);text-decoration:none}}
 
 /* ── TL;DR answer box (answer-first, above the article — no scrolling to find the point) ── */
