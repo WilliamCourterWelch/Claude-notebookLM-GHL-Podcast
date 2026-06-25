@@ -591,6 +591,33 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 /* ── Cards grid (for category pages) ──────────────────────────────────────── */
 .cards-grid{{display:flex;flex-direction:column;gap:0}}
 
+/* ── HOMEPAGE brand-hub (hero guide-card -> money page, 6 topic clusters) ── */
+.hh{{padding:88px 0 64px;text-align:center;background:radial-gradient(820px 420px at 50% -12%,rgba(245,158,11,.13),transparent 64%)}}
+.hh h1{{font-family:var(--sans);font-size:clamp(2.4rem,5.4vw,4.2rem);font-weight:800;line-height:1.04;letter-spacing:-1.6px;color:var(--text);margin:0 auto;max-width:900px}}
+.hh h1 em{{font-style:normal;color:var(--amber)}}
+.hh .sub{{font-size:1.22rem;color:var(--text2);max-width:640px;margin:22px auto 0;line-height:1.55}}
+.hh .sub b{{color:var(--text);font-weight:600}}
+.guidecard{{display:flex;align-items:center;gap:18px;margin:34px auto 0;max-width:720px;background:linear-gradient(180deg,var(--surface),#0c0f16);border:1px solid var(--amber-border);border-radius:12px;padding:20px 24px;text-align:left;transition:transform .12s,border-color .15s}}
+.guidecard:hover{{border-color:var(--amber);transform:translateY(-1px);text-decoration:none}}
+.gc-ic{{flex:0 0 46px;height:46px;border-radius:11px;background:var(--amber-dim);display:flex;align-items:center;justify-content:center;color:var(--amber);font-size:22px;font-weight:800}}
+.gc-k{{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--amber);font-weight:700}}
+.gc-t{{color:var(--text);font-weight:800;font-size:1.12rem;margin:2px 0 3px;line-height:1.2}}
+.gc-d{{color:var(--text2);font-size:.9rem;line-height:1.4}}
+.gc-arrow{{color:var(--amber);font-weight:800;white-space:nowrap;margin-left:auto}}
+.hubsec{{padding:8px 0 72px}}
+.hubsec .eyebrow{{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}}
+.hubsec h2{{font-family:var(--sans);font-size:clamp(1.7rem,3vw,2.3rem);font-weight:800;letter-spacing:-.7px;margin:8px 0 6px;color:var(--text)}}
+.hubsec .lead{{color:var(--text2);font-size:1.08rem;margin:0 0 36px}}
+.clusters{{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}}
+.cluster{{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;flex-direction:column;transition:border-color .15s}}
+.cluster:hover{{border-color:var(--amber)}}
+.cluster h3{{font-size:1.08rem;font-weight:800;color:var(--text);margin:0 0 6px}}
+.cluster p{{font-size:.92rem;color:var(--text2);margin:0 0 16px;flex:1;line-height:1.5}}
+.cluster .cl{{color:var(--amber);font-weight:700;font-size:.92rem;margin-top:auto}}
+.cluster .cl:hover{{text-decoration:none;opacity:.85}}
+.es-banner{{margin-top:20px;background:linear-gradient(90deg,var(--amber-dim),transparent);border:1px solid var(--amber-border);border-radius:14px;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}}
+@media(max-width:820px){{.clusters{{grid-template-columns:1fr}}.hh{{padding:54px 0 40px}}}}
+
 /* ── Reading progress bar ─────────────────────────────────────────────────── */
 #reading-progress{{position:fixed;top:0;left:0;height:3px;width:0;background:var(--amber);z-index:9999;transition:width .1s linear}}
 
@@ -1752,55 +1779,38 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
   <span class="sidebar-cat-count">{c_count}</span>
 </a>"""
 
+        money_url = "/blog/gohighlevel-free-trial-30-days-extended/"
         body = f"""
-<div class="container" style="padding-top:56px">
-  <div class="hp-hero fade-1" style="text-align:center;padding:48px 0 40px">
-    <h1 style="font-family:var(--sans);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:var(--text);line-height:1.15;letter-spacing:-.5px;margin:0 0 12px">GoHighLevel Tutorials, Tips &amp; 30-Day Free Trial</h1>
-    <p style="font-size:1.1rem;color:var(--muted);max-width:640px;margin:0 auto 20px;line-height:1.6">Learn how to automate your agency with GoHighLevel. Free tutorials, podcast episodes &amp; step-by-step guides — updated daily.</p>
-    <a href="{AFFILIATE}&utm_campaign=hero" class="btn-amber" style="font-size:.9rem;padding:12px 28px" target="_blank" rel="nofollow noopener">Start Your 30-Day Free Trial</a>
-  </div>
-  <div class="hp-featured fade-1">
-    <div class="hp-lead">
-      {lead_cat_html}
-      <h2 class="hp-lead-title"><a href="{post_url(lead)}">{lead_title}</a></h2>
-      <p class="hp-lead-desc">{lead_desc}</p>
-      <div class="hp-lead-meta">{lead_date} &middot; {lead_rtime}</div>
+<header class="hh"><div class="container">
+  <h1>Everything <em>GoHighLevel</em> &mdash; free guides and the 30-day trial.</h1>
+  <p class="sub">GlobalHighLevel is the free library for setting GoHighLevel up right &mdash; real tutorials from people who actually use it, plus the <b>extended 30-day trial</b> (double the standard 14). Start with the complete trial guide.</p>
+  <a class="guidecard" href="{money_url}">
+    <div class="gc-ic">&#9733;</div>
+    <div>
+      <div class="gc-k">Our most-read guide</div>
+      <div class="gc-t">The complete 30-day free trial guide</div>
+      <div class="gc-d">Eligibility, the exact steps, the promo-code truth, and the free setup bootcamp &mdash; the full walkthrough.</div>
     </div>
-    <div class="hp-stack">{stack_html}</div>
+    <span class="gc-arrow">Read &rarr;</span>
+  </a>
+</div></header>
+<section class="hubsec" id="guides"><div class="container">
+  <span class="eyebrow">Every GoHighLevel topic</span>
+  <h2>Set GoHighLevel up right &mdash; by topic</h2>
+  <p class="lead">The full library, organized. Pick the area you're working on.</p>
+  <div class="clusters">
+    <div class="cluster"><h3>AI Receptionist &amp; Lead Capture</h3><p>Never miss a call or a lead &mdash; AI receptionist, missed-call text-back, and automatic review requests.</p><a class="cl" href="/category/agency-platform/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>AI Agents &amp; Automation</h3><p>Put the platform on autopilot &mdash; AI agents, workflows, and Conversation AI.</p><a class="cl" href="/blog/leverage-ai-pricing-updates-gohighlevel-save-more/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/blog/automate-google-contacts-gohighlevel-sync/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>Agency, White-Label &amp; SaaS</h3><p>Resell GoHighLevel as your own &mdash; white-label, SaaS mode, sub-accounts, and snapshots.</p><a class="cl" href="/category/agency-platform/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/blog/gohighlevel-pricing-plans-2026-complete-guide/">Explore guides &rarr;</a></div>
   </div>
-  <div class="hp-body">
-    <div class="hp-articles">
-      <div class="section-label">Latest</div>
-      {articles_html}
-      {pages_html}
-    </div>
-    <aside class="hp-sidebar">
-      <div class="sidebar-section">
-        <div class="section-label">Trending</div>
-        <div class="sidebar-trending">{trending_html}</div>
-      </div>
-      <div class="sidebar-section">
-        <div class="section-label">Topics</div>
-        <div class="sidebar-trending">{topics_html}</div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-podcast">
-          <div class="section-label" style="border-bottom-color:#1DB954">Podcast</div>
-          <p>"Go High Level" on Spotify — 380 followers, new episodes daily.</p>
-          <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" class="btn-spotify" target="_blank" rel="noopener">Listen on Spotify</a>
-        </div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-cta">
-          <div class="s-headline">Try GoHighLevel Free</div>
-          <div class="s-sub">30 days full access — double the standard 14-day trial.</div>
-          <a href="/start/" rel="nofollow" class="btn-amber" style="display:block;text-align:center;font-size:.8rem">Start Free Trial</a>
-          <div class="s-fine">Cancel anytime &mdash; $0 for 30 days</div>
-        </div>
-      </div>
-    </aside>
+  <div class="es-banner">
+    <div><b style="color:var(--text)">&iquest;Hablas espa&ntilde;ol?</b> <span style="color:var(--text2)">La biblioteca de gu&iacute;as de GoHighLevel y la prueba de 30 d&iacute;as, en espa&ntilde;ol.</span></div>
+    <a class="btn-amber" href="/es/" style="font-size:.85rem;padding:10px 18px">Ir a la versi&oacute;n en espa&ntilde;ol &rarr;</a>
   </div>
-</div>"""
+</div></section>"""
     else:
         # Non-first pages or empty: simple list
         cards_html = ""
