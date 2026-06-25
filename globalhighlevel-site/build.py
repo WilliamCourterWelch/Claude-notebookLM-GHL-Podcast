@@ -439,9 +439,13 @@ def sanitize_content(html: str) -> str:
         flags=re.DOTALL
     )
 
-    # Remove the in-content "What's in This Guide" box (duplicate of the template TOC)
+    # Remove the in-content "What's in This Guide" box (duplicate of the template TOC).
+    # MUST require an in-page #anchor (the TOC signature) so we don't delete substantive
+    # orange-left-border callouts ("30-Day Game Plan") or affiliate-CTA boxes that share
+    # the border style. (review 2026-06-25: the broad version nuked real content + 2 ES CTAs.)
     html = re.sub(
-        r'<div[^>]*style="[^"]*border-left:4px solid #f59e0b[^"]*"[^>]*>.*?</div>',
+        r'<div[^>]*style="[^"]*border-left:4px solid #f59e0b[^"]*"[^>]*>'
+        r'(?:(?!</div>).)*?href="#(?:(?!</div>).)*?</div>',
         '',
         html,
         flags=re.DOTALL
@@ -1090,7 +1094,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
   <div class="nav-inner">
     <a href="/" class="logo">Global<span class="logo-amber">HighLevel</span></a>
     <div class="nav-links">
-      <a href="/#guides" class="nav-link">{'Guías' if lang == 'es' else 'Guides'}</a>
+      <a href="{'/es/#guides' if lang == 'es' else '/#guides'}" class="nav-link">{'Guías' if lang == 'es' else 'Guides'}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" class="nav-link" target="_blank" rel="noopener">Podcast</a>
       <a href="{'/' if lang == 'es' else '/es/'}" class="nav-link">{'English' if lang == 'es' else 'Español'}</a>
       <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
@@ -1100,7 +1104,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
       <span></span><span></span><span></span>
     </label>
     <div class="mobile-menu">
-      <a href="/#guides">{'Guías' if lang == 'es' else 'Guides'}</a>
+      <a href="{'/es/#guides' if lang == 'es' else '/#guides'}">{'Guías' if lang == 'es' else 'Guides'}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
       <a href="{'/' if lang == 'es' else '/es/'}">{'English' if lang == 'es' else 'Español'}</a>
       <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
@@ -1604,16 +1608,20 @@ def build_post_page(post: dict, all_posts: list = None):
         "mainEntityOfPage": {"@type": "WebPage", "@id": canonical},
         "url": canonical
     })
-    # BreadcrumbList — Home > Category > Title (the visible breadcrumb, now machine-readable)
+    # BreadcrumbList — Home > Category > Title (the visible breadcrumb, now machine-readable).
+    # Only emit the category crumb when that hub page is actually built; otherwise the
+    # breadcrumb would link a 404 category URL (review 2026-06-25). Mirrors the visible
+    # breadcrumb, which already degrades to a <span> when _cat_built is false.
+    _crumbs = [{"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE_URL}/"}]
+    if _cat_built:
+        _crumbs.append({"@type": "ListItem", "position": 2, "name": category,
+                        "item": f"{SITE_URL}/category/{cat_slug}/"})
+    _crumbs.append({"@type": "ListItem", "position": len(_crumbs) + 1,
+                    "name": title, "item": canonical})
     breadcrumb_schema = json.dumps({
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
-        "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE_URL}/"},
-            {"@type": "ListItem", "position": 2, "name": category,
-             "item": f"{SITE_URL}/category/{cat_slug}/"},
-            {"@type": "ListItem", "position": 3, "name": title, "item": canonical},
-        ]
+        "itemListElement": _crumbs,
     })
     faq_ld = faq_schema(html_content)
 
