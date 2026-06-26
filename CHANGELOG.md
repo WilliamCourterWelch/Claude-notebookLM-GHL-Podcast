@@ -2,6 +2,20 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.0.0] - 2026-06-25
+### Added
+- **English brand-hub homepage.** The `/` homepage is now an "Everything GoHighLevel" brand hub: a single primary guide card to the 30-day free-trial money page, 6 topic-cluster cards (links-safe — one descriptive anchor per cluster URL), and a Spanish banner to `/es/`. Replaces the old post-firehose index that diluted authority across every URL.
+- **Spanish brand-hub homepage at `/es/`.** Mirror build for `lang=='es'` ("Todo sobre GoHighLevel"): primary card to the precios money page, 6 Spanish cluster cards, English banner back to `/`.
+- **Complete structured data for SEO + LLM citation.** Article schema gains `image`, `inLanguage`, and `speakable` (`.post-title`, `.tldr`); `BreadcrumbList`, `WebSite`, and a fixed `logo` (512x512). Added `og-default.png` (1200x630) and a branded `logo.png`. Money-page TL;DR answer box + bootcamp CTA panel.
+### Changed
+- **Relabeled the taxonomy into cluster categories** (Payments & Pricing, CRM & Communication, Agency & Platform) so every live topic forms a 2+ post hub that lists and links its spokes — 0 orphans (`verify.py`: 17/17 listed). Renamed category slugs 301-redirect from the old paths.
+- **Consolidated the money-page discount FAQ cluster (10 -> 5).** Merged the promo/discount/coupon-code synonym trio into one Q&A and dropped near-duplicate "best deal"/"how do I get a discount"/"summer promo" variants, keeping the genuinely distinct intents (annual billing, student/nonprofit, Black Friday, affiliate). Removes the keyword-variant doorway pattern that matches the April quality-demotion fingerprint; FAQPage schema drops to 17 honest Q&As. Summer-of-AI affiliate link preserved inside the Black Friday answer.
+- **Adopted the homepage nav site-wide, language-aware.** `Guías` -> `/es/#guides` on Spanish pages, `Guides` -> `/#guides` on English. Money pages strip unqualified outbound links (`mvp_minimal_links`) and `nofollow` the robots-blocked `/start/` CTA so no editorial juice leaks to it.
+### Fixed
+- **5 critical pre-ship fixes** (caught by `/review` — Claude adversarial subagent + Codex structured review): (1) narrowed the duplicate-TOC sanitizer regex to require a `#anchor` so it stops deleting real callout content ("30-Day Game Plan", "Timing Tip") and the ES affiliate CTAs; (2) Spanish nav `Guías` was pointing at the English `/#guides` — now `/es/#guides`; (3) `BreadcrumbList` JSON-LD was emitting category URLs that 404 for single-post topics — gated to built hubs; (4) `razorpay-india` left on a stale category label; (5) renamed category slugs had no 301.
+### For contributors
+- Build stays a single `python3 build.py` (Cloudflare Pages on push to main); `verify.py` is the structural gate (language/slug agreement, English-only root categories, 0 orphans, 0 dead links). Both green on this release.
+
 ## [0.1.0.28] - 2026-06-22
 ### Fixed
 - **Killed the internal-anchor spam pattern that matches the April quality-demotion fingerprint.** The "Keep Reading" related cards wrapped the category tag and the post title in one link, so Google saw the same ~60-character anchor ("Agency & Platform GoHighLevel Pricing 2026...") repeated 8x sitewide pointing at the money pages. Related cards now link the title only (category is plain text), the in-article link injector emits multi-word descriptive anchors only (no bare "GoHighLevel"/"pricing"/"payments" single-word anchors), and a sitewide cap stops any one anchor->URL pair from repeating more than 3x.

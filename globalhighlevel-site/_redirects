@@ -374,3 +374,9 @@
 /blog/que-es-gohighlevel-guia-completa-agencias-2026/ /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
 /blog/que-es-gohighlevel-ghl-plataforma-automatizacion-agencias-latinoamerica /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
 /blog/que-es-gohighlevel-ghl-plataforma-automatizacion-agencias-latinoamerica/ /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
+
+# Category slug renames 2026-06-25 (relabel into cluster categories) — old slugs were live/indexed
+/category/payments-commerce /category/payments-pricing/ 301
+/category/payments-commerce/ /category/payments-pricing/ 301
+/category/crm-contacts /category/crm-communication/ 301
+/category/crm-contacts/ /category/crm-communication/ 301

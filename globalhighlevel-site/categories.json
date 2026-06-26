@@ -69,8 +69,8 @@
       ]
     },
     {
-      "name": "CRM & Contacts",
-      "slug": "crm-contacts",
+      "name": "CRM & Communication",
+      "slug": "crm-communication",
       "description": "Manage pipelines, import contacts, and organize your CRM in GoHighLevel.",
       "keywords": [
         "crm",
@@ -96,8 +96,8 @@
       ]
     },
     {
-      "name": "Payments & Commerce",
-      "slug": "payments-commerce",
+      "name": "Payments & Pricing",
+      "slug": "payments-pricing",
       "description": "Set up Stripe, NMI, gift cards, and manage transactions in GoHighLevel.",
       "keywords": [
         "payment",

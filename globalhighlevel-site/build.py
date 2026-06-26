@@ -439,6 +439,22 @@ def sanitize_content(html: str) -> str:
         flags=re.DOTALL
     )
 
+    # Remove the in-content "What's in This Guide" box (duplicate of the template TOC).
+    # MUST require an in-page #anchor (the TOC signature) so we don't delete substantive
+    # orange-left-border callouts ("30-Day Game Plan") or affiliate-CTA boxes that share
+    # the border style. (review 2026-06-25: the broad version nuked real content + 2 ES CTAs.)
+    html = re.sub(
+        r'<div[^>]*style="[^"]*border-left:4px solid #f59e0b[^"]*"[^>]*>'
+        r'(?:(?!</div>).)*?href="#(?:(?!</div>).)*?</div>',
+        '',
+        html,
+        flags=re.DOTALL
+    )
+
+    # Let the template control heading typography — strip inline styles on h2/h3
+    # (firehose-era inline font-sizes fought the template and made hierarchy inconsistent)
+    html = re.sub(r'(<h[23]\b[^>]*?)\s+style="[^"]*"([^>]*>)', r'\1\2', html)
+
     return html
 
 # ── CSS — TechCrunch-style editorial layout ──────────────────────────────────
@@ -459,7 +475,8 @@ CSS = f"""
   --text3:#6b7ea8;
   --border:rgba(255,255,255,0.06);
   --max:1120px;
-  --content:665px;
+  --content:820px;
+  --accent:var(--amber);
   --sans:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 }}
 *,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
@@ -477,7 +494,8 @@ img{{max-width:100%;height:auto}}
 
 /* ── NAV — fixed, backdrop blur, animated underlines ──────────────────────── */
 nav{{position:fixed;top:0;inset-x:0;z-index:200;background:rgba(7,8,10,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}}
-.nav-inner{{max-width:var(--max);margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}}
+.nav-inner{{max-width:var(--max);margin:0 auto;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:32px}}
+.logo{{flex-shrink:0}}
 .logo{{font-family:var(--sans);font-size:1.15rem;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:0;color:var(--text)}}
 .logo-amber{{color:var(--amber)}}
 .nav-links{{display:flex;align-items:center;gap:24px}}
@@ -485,7 +503,7 @@ nav{{position:fixed;top:0;inset-x:0;z-index:200;background:rgba(7,8,10,0.85);bac
 .nav-link::after{{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--amber);transition:width .2s ease-in-out}}
 .nav-link:hover{{color:var(--text);text-decoration:none}}
 .nav-link:hover::after{{width:100%}}
-.nav-cta{{font-size:.8rem;font-weight:700;color:#000;background:var(--amber);padding:7px 16px;border-radius:100px;transition:background .15s}}
+.nav-cta{{font-size:.8rem;font-weight:700;color:#000;background:var(--amber);padding:8px 18px;border-radius:8px;transition:background .15s}}
 .nav-cta:hover{{background:var(--amber-light);text-decoration:none}}
 
 /* ── HAMBURGER MENU ──────────────────────────────────────────────────────── */
@@ -577,11 +595,38 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 /* ── Cards grid (for category pages) ──────────────────────────────────────── */
 .cards-grid{{display:flex;flex-direction:column;gap:0}}
 
+/* ── HOMEPAGE brand-hub (hero guide-card -> money page, 6 topic clusters) ── */
+.hh{{padding:88px 0 64px;text-align:center;background:radial-gradient(820px 420px at 50% -12%,rgba(245,158,11,.13),transparent 64%)}}
+.hh h1{{font-family:var(--sans);font-size:clamp(2.4rem,5.4vw,4.2rem);font-weight:800;line-height:1.04;letter-spacing:-1.6px;color:var(--text);margin:0 auto;max-width:900px}}
+.hh h1 em{{font-style:normal;color:var(--amber)}}
+.hh .sub{{font-size:1.22rem;color:var(--text2);max-width:640px;margin:22px auto 0;line-height:1.55}}
+.hh .sub b{{color:var(--text);font-weight:600}}
+.guidecard{{display:flex;align-items:center;gap:18px;margin:34px auto 0;max-width:720px;background:linear-gradient(180deg,var(--surface),#0c0f16);border:1px solid var(--amber-border);border-radius:12px;padding:20px 24px;text-align:left;transition:transform .12s,border-color .15s}}
+.guidecard:hover{{border-color:var(--amber);transform:translateY(-1px);text-decoration:none}}
+.gc-ic{{flex:0 0 46px;height:46px;border-radius:11px;background:var(--amber-dim);display:flex;align-items:center;justify-content:center;color:var(--amber);font-size:22px;font-weight:800}}
+.gc-k{{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--amber);font-weight:700}}
+.gc-t{{color:var(--text);font-weight:800;font-size:1.12rem;margin:2px 0 3px;line-height:1.2}}
+.gc-d{{color:var(--text2);font-size:.9rem;line-height:1.4}}
+.gc-arrow{{color:var(--amber);font-weight:800;white-space:nowrap;margin-left:auto}}
+.hubsec{{padding:8px 0 72px}}
+.hubsec .eyebrow{{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:var(--amber);font-weight:700}}
+.hubsec h2{{font-family:var(--sans);font-size:clamp(1.7rem,3vw,2.3rem);font-weight:800;letter-spacing:-.7px;margin:8px 0 6px;color:var(--text)}}
+.hubsec .lead{{color:var(--text2);font-size:1.08rem;margin:0 0 36px}}
+.clusters{{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}}
+.cluster{{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;flex-direction:column;transition:border-color .15s}}
+.cluster:hover{{border-color:var(--amber)}}
+.cluster h3{{font-size:1.08rem;font-weight:800;color:var(--text);margin:0 0 6px}}
+.cluster p{{font-size:.92rem;color:var(--text2);margin:0 0 16px;flex:1;line-height:1.5}}
+.cluster .cl{{color:var(--amber);font-weight:700;font-size:.92rem;margin-top:auto}}
+.cluster .cl:hover{{text-decoration:none;opacity:.85}}
+.es-banner{{margin-top:20px;background:linear-gradient(90deg,var(--amber-dim),transparent);border:1px solid var(--amber-border);border-radius:14px;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}}
+@media(max-width:820px){{.clusters{{grid-template-columns:1fr}}.hh{{padding:54px 0 40px}}}}
+
 /* ── Reading progress bar ─────────────────────────────────────────────────── */
 #reading-progress{{position:fixed;top:0;left:0;height:3px;width:0;background:var(--amber);z-index:9999;transition:width .1s linear}}
 
-/* ── POST PAGE — single-column centered ───────────────────────────────────── */
-.post-container{{max-width:var(--content);margin:0 auto;padding:100px 24px 48px}}
+/* ── POST PAGE — single clean column (Caleb: no side-rail; in-content links only) ── */
+.post-container{{max-width:var(--content);margin:0 auto;padding:96px 24px 56px}}
 
 /* Breadcrumb */
 .post-breadcrumb{{font-size:.8rem;color:var(--text3);margin-bottom:24px}}
@@ -596,8 +641,8 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .post-byline .sep{{color:var(--text3);opacity:.4}}
 
 /* Share row */
-.share-row{{display:flex;align-items:center;gap:12px;padding:12px 0 28px;border-bottom:1px solid var(--border);margin-bottom:32px;font-size:13px;color:var(--text3)}}
-.share-btn{{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--text2);background:transparent;cursor:pointer;transition:border-color .15s,color .15s}}
+.share-row{{display:flex;align-items:center;gap:12px;padding:18px 0 0;border-top:1px solid var(--border);margin:24px 0 36px;font-size:13px;color:var(--text3);opacity:.8}}
+.share-btn{{display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:7px 13px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--text2);background:transparent;cursor:pointer;transition:border-color .15s,color .15s}}
 .share-btn:hover{{border-color:var(--amber);color:var(--text);text-decoration:none}}
 
 /* CTA — below byline (compact one-liner) */
@@ -611,17 +656,33 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .cta-inline a:hover{{color:var(--amber-light)}}
 
 /* CTA — end of article box */
-.cta-end{{background:var(--surface);border:1px solid var(--amber-border);border-radius:10px;padding:32px;text-align:center;margin:48px 0}}
+.cta-end{{background:var(--surface);border:1px solid var(--amber-border);border-radius:8px;padding:32px;text-align:center;margin:48px 0}}
 .cta-end h3{{font-family:var(--sans);font-size:1.25rem;font-weight:800;color:var(--text);margin-bottom:10px}}
 .cta-end p{{font-size:.9rem;color:var(--text2);margin:0 0 20px;max-width:440px;margin-left:auto;margin-right:auto}}
 .cta-end .fine{{font-size:.75rem;color:var(--text3);margin-top:12px}}
-.btn-amber{{display:inline-flex;align-items:center;gap:8px;background:var(--amber);color:#000;font-size:.85rem;font-weight:700;padding:11px 22px;border-radius:6px;transition:all .2s;text-decoration:none}}
+.btn-amber{{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--amber);color:#000;font-size:.85rem;font-weight:700;padding:11px 22px;border-radius:8px;min-height:42px;transition:all .2s;text-decoration:none}}
+
+/* ── Bootcamp section — subtle framed panel (it's a real perk, give it weight) ── */
+.bootcamp-section{{margin:52px 0;padding:26px 28px;background:rgba(255,255,255,.035);border:1px solid var(--amber-border);border-radius:8px}}
+.bootcamp-section h2{{margin-top:0}}
+.bootcamp-section h3{{margin-top:24px}}
+.bootcamp-section ul{{margin-bottom:0}}
+.bootcamp-section li::marker{{color:var(--amber)}}
 .btn-amber:hover{{background:var(--amber-light);transform:translateY(-1px);text-decoration:none}}
+
+/* ── TL;DR answer box (answer-first, above the article — no scrolling to find the point) ── */
+.tldr{{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:22px 26px;margin:0 0 32px}}
+.tldr-label{{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--amber);margin-bottom:8px}}
+.tldr p{{font-size:1.02rem;line-height:1.6;color:var(--text2);margin:0 0 10px}}
+.tldr p:last-child{{margin-bottom:0}}
+.tldr strong{{color:var(--text);font-weight:700}}
+.tldr a:not(.btn-amber){{color:var(--amber);font-weight:600}}
+.tldr-cta{{margin-top:18px;font-size:.92rem;padding:12px 24px;color:#000}}
 
 /* Post body typography */
 .post-body{{font-size:19px;line-height:1.75;color:#e5e7eb}}
-.post-body h2{{font-family:var(--sans);font-size:1.5rem;font-weight:800;color:var(--text);margin:48px 0 14px}}
-.post-body h3{{font-size:1.15rem;font-weight:700;color:#f3f4f6;margin:32px 0 10px}}
+.post-body h2{{font-family:var(--sans);font-size:1.75rem;line-height:1.3;font-weight:800;color:var(--text);margin:56px 0 16px}}
+.post-body h3{{font-size:1.3rem;line-height:1.35;font-weight:700;color:#f3f4f6;margin:36px 0 10px}}
 .post-body p{{margin-bottom:20px}}
 .post-body ul,.post-body ol{{margin:0 0 20px 24px}}
 .post-body li{{margin-bottom:8px}}
@@ -935,7 +996,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
     ok, msg = validate_meta(canonical, title, description)
     if not ok:
         LANG_META_VIOLATIONS.append(msg)
-    og_img = og_image or os.getenv("OG_IMAGE_URL", "")
+    og_img = og_image or os.getenv("OG_IMAGE_URL", f"{SITE_URL}/images/og-default.png")
     cats = CATEGORIES
     aff = affiliate_for(lang)
 
@@ -967,10 +1028,16 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         href = l["prefix"] + "/" if l["prefix"] else "/"
         mobile_lang_links += f'<a href="{href}" style="display:inline-block;margin-right:16px;font-size:.9rem">{l["native"]}</a>'
 
-    # Footer category links (top 4)
-    footer_cat_links = ""
-    for c in [c for c in cats if c["slug"] in LIVE_CATEGORY_SLUGS][:4]:
-        footer_cat_links += f'        <a href="/category/{c["slug"]}/">{c["name"]}</a>\n'
+    # Footer Topics = the 6 homepage clusters (links-safe to existing pages until hubs build)
+    _footer_clusters = [
+        ("AI Receptionist &amp; Lead Capture", "/category/agency-platform/"),
+        ("AI Agents &amp; Automation", "/blog/leverage-ai-pricing-updates-gohighlevel-save-more/"),
+        ("CRM &amp; Communication", "/category/crm-communication/"),
+        ("Sites, Funnels &amp; Reputation", "/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/"),
+        ("Agency, White-Label &amp; SaaS", "/category/agency-platform/"),
+        ("Payments &amp; Pricing", "/category/payments-pricing/"),
+    ]
+    footer_cat_links = "".join(f'        <a href="{u}">{n}</a>\n' for n, u in _footer_clusters)
 
     # Footer language links
     footer_lang_links = ""
@@ -1027,36 +1094,20 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
   <div class="nav-inner">
     <a href="/" class="logo">Global<span class="logo-amber">HighLevel</span></a>
     <div class="nav-links">
-      <a href="/" class="nav-link">Home</a>
-      <div class="nav-dropdown">
-        <a class="nav-link">Topics <span style="font-size:10px">&#9662;</span></a>
-        <div class="nav-dropdown-menu">
-{dropdown_links}        </div>
-      </div>
-      <a href="/services/" class="nav-link">Services</a>
-      <a href="/about/" class="nav-link">About</a>
+      <a href="{'/es/#guides' if lang == 'es' else '/#guides'}" class="nav-link">{'Guías' if lang == 'es' else 'Guides'}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" class="nav-link" target="_blank" rel="noopener">Podcast</a>
-      <div class="nav-dropdown">
-        <a class="nav-link">{current_lang_native} <span style="font-size:10px">&#9662;</span></a>
-        <div class="nav-dropdown-menu">
-{lang_links}        </div>
-      </div>
-      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
+      <a href="{'/' if lang == 'es' else '/es/'}" class="nav-link">{'English' if lang == 'es' else 'Español'}</a>
+      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
     </div>
     <input type="checkbox" id="mobile-toggle">
     <label for="mobile-toggle" class="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
     </label>
     <div class="mobile-menu">
-      <a href="/">Home</a>
-      <a href="/services/">Services</a>
-      <a href="/about/">About</a>
-{dropdown_links}      <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
-      <div style="padding:12px 24px;border-top:1px solid var(--surface)">
-        <span style="font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Language</span><br>
-        {mobile_lang_links}
-      </div>
-      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
+      <a href="{'/es/#guides' if lang == 'es' else '/#guides'}">{'Guías' if lang == 'es' else 'Guides'}</a>
+      <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
+      <a href="{'/' if lang == 'es' else '/es/'}">{'English' if lang == 'es' else 'Español'}</a>
+      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
     </div>
   </div>
 </nav>
@@ -1075,12 +1126,6 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
       <div class="footer-col">
         <h4>Languages</h4>
 {footer_lang_links}      </div>
-      <div class="footer-col">
-        <h4>Resources</h4>
-        <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
-        <a href="https://help.gohighlevel.com" target="_blank" rel="noopener">GHL Help Center</a>
-        <a href="{aff}" target="_blank" rel="nofollow noopener">Free 30-Day Trial</a>
-      </div>
     </div>
     <div class="footer-bottom">
       <span>&copy; {datetime.now().year} GlobalHighLevel.com</span>
@@ -1359,7 +1404,7 @@ def faq_schema(html_content: str) -> str:
     if not m:
         return ""
     sec = m.group(1)
-    pairs = re.findall(r'<h3>(.*?)</h3>(.*?)(?=<h3>|$)', sec, re.S)
+    pairs = re.findall(r'<h3[^>]*>(.*?)</h3>(.*?)(?=<h3[^>]*>|$)', sec, re.S)
     pairs += re.findall(r'<p><strong>([^<]*[?¿][^<]*)</strong>(.*?)</p>', sec, re.S)  # bold-paragraph FAQs (hub)
     entities = []
     for q, a in pairs:
@@ -1398,11 +1443,18 @@ def build_post_page(post: dict, all_posts: list = None):
     html_content = sanitize_content(html_content)
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
-    if all_posts:
+    # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
+    # SEO links until a real cluster exists to link to (set on the post JSON).
+    _mvp_minimal = post.get("mvp_minimal_links")
+    if all_posts and not _mvp_minimal:
         html_content = inject_internal_links(html_content, post, all_posts)
     # P1.2: editorial in-body link up to the category hub (only when the hub is built).
-    if _cat_built:
+    if _cat_built and not _mvp_minimal:
         html_content += _hub_link_block(category, cat_slug, slug)
+    if _mvp_minimal:
+        # strip hard-coded internal /blog/ and /category/ anchors (keep the visible text)
+        html_content = re.sub(r'<a\b[^>]*\bhref="(?:/blog/|/category/)[^"]*"[^>]*>(.*?)</a>',
+                              r'\1', html_content, flags=re.S)
 
     # ── Podcast section ───────────────────────────────────────────────────────
     if episode_id:
@@ -1436,14 +1488,29 @@ def build_post_page(post: dict, all_posts: list = None):
     else:
         toc_html = ""
 
+    # ── TL;DR answer box (answer-first) — only when post defines tldr ──────────
+    _tldr = post.get("tldr")
+    tldr_html = ""
+    if _tldr:
+        _paras = _tldr if isinstance(_tldr, list) else [_tldr]
+        _body = "".join(f"<p>{para}</p>" for para in _paras)
+        _tcta = post.get("tldr_cta")
+        _tctahtml = ""
+        if _tcta:
+            _tctahtml = (f'<a class="btn-amber tldr-cta" href="{aff}&utm_campaign={slug}_tldr" '
+                         f'target="_blank" rel="nofollow noopener">{_tcta} &rarr;</a>')
+        tldr_html = f'<div class="tldr"><div class="tldr-label">The short version</div>{_body}{_tctahtml}</div>'
+
     # ── CTA #1 — Below byline (compact one-liner) ─────────────────────────────
     cta1 = f"""
-<p class="cta-byline">Follow along &mdash; <a href="/start/">get 30 days free &rarr;</a></p>"""
+<p class="cta-byline">Follow along &mdash; <a href="/start/" rel="nofollow">get 30 days free &rarr;</a></p>"""
+    if _tldr:
+        cta1 = ""  # the TL;DR already gives the answer up top; drop the redundant one-liner
 
     # ── CTA #2 — Mid-article inline ───────────────────────────────────────────
     cta_mid = f"""
 <p class="cta-inline">This is built into GoHighLevel.
-<a href="/start/">Try it free for 30 days &rarr;</a></p>"""
+<a href="/start/" rel="nofollow">Try it free for 30 days &rarr;</a></p>"""
     body_with_ctas = inject_inline_ctas(html_content, cta_mid)
 
     # ── CTA #3 — End of article box ───────────────────────────────────────────
@@ -1504,11 +1571,14 @@ def build_post_page(post: dict, all_posts: list = None):
 </div>"""
 
     # ── Schema ─────────────────────────────────────────────────────────────────
+    _art_img = (post.get("image") or f"{SITE_URL}/images/og-default.png")
     article_schema = json.dumps({
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": title,
         "description": description,
+        "image": [_art_img],
+        "inLanguage": post.get("language", "en"),
         "datePublished": post.get("publishedAt", post.get("uploadedAt", "")),
         "dateModified": post.get("publishedAt", post.get("uploadedAt", "")),
         "author": {
@@ -1526,11 +1596,32 @@ def build_post_page(post: dict, all_posts: list = None):
             "url": SITE_URL,
             "logo": {
                 "@type": "ImageObject",
-                "url": f"{SITE_URL}/logo.png"
+                "url": f"{SITE_URL}/images/logo.png",
+                "width": 512,
+                "height": 512
             }
+        },
+        "speakable": {
+            "@type": "SpeakableSpecification",
+            "cssSelector": [".post-title", ".tldr"]
         },
         "mainEntityOfPage": {"@type": "WebPage", "@id": canonical},
         "url": canonical
+    })
+    # BreadcrumbList — Home > Category > Title (the visible breadcrumb, now machine-readable).
+    # Only emit the category crumb when that hub page is actually built; otherwise the
+    # breadcrumb would link a 404 category URL (review 2026-06-25). Mirrors the visible
+    # breadcrumb, which already degrades to a <span> when _cat_built is false.
+    _crumbs = [{"@type": "ListItem", "position": 1, "name": "Home", "item": f"{SITE_URL}/"}]
+    if _cat_built:
+        _crumbs.append({"@type": "ListItem", "position": 2, "name": category,
+                        "item": f"{SITE_URL}/category/{cat_slug}/"})
+    _crumbs.append({"@type": "ListItem", "position": len(_crumbs) + 1,
+                    "name": title, "item": canonical})
+    breadcrumb_schema = json.dumps({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": _crumbs,
     })
     faq_ld = faq_schema(html_content)
 
@@ -1564,16 +1655,18 @@ def build_post_page(post: dict, all_posts: list = None):
     {"<span class='sep'>&middot;</span><span>" + date_str + "</span>" if date_str else ""}
     <span class="sep">&middot;</span><span>{rtime}</span>
   </div>
-  {share_html}
+  {tldr_html}
   {cta1}
   {toc_html}
   {podcast_html}
   <div class="post-body">{body_with_ctas}</div>
   {cta3}
+  {share_html}
   {author_html}
   {related_html}
 </div>
 <script type="application/ld+json">{article_schema}</script>
+<script type="application/ld+json">{breadcrumb_schema}</script>
 {faq_ld}
 {progress_js}"""
 
@@ -1694,55 +1787,38 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
   <span class="sidebar-cat-count">{c_count}</span>
 </a>"""
 
+        money_url = "/blog/gohighlevel-free-trial-30-days-extended/"
         body = f"""
-<div class="container" style="padding-top:56px">
-  <div class="hp-hero fade-1" style="text-align:center;padding:48px 0 40px">
-    <h1 style="font-family:var(--sans);font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:var(--text);line-height:1.15;letter-spacing:-.5px;margin:0 0 12px">GoHighLevel Tutorials, Tips &amp; 30-Day Free Trial</h1>
-    <p style="font-size:1.1rem;color:var(--muted);max-width:640px;margin:0 auto 20px;line-height:1.6">Learn how to automate your agency with GoHighLevel. Free tutorials, podcast episodes &amp; step-by-step guides — updated daily.</p>
-    <a href="{AFFILIATE}&utm_campaign=hero" class="btn-amber" style="font-size:.9rem;padding:12px 28px" target="_blank" rel="nofollow noopener">Start Your 30-Day Free Trial</a>
-  </div>
-  <div class="hp-featured fade-1">
-    <div class="hp-lead">
-      {lead_cat_html}
-      <h2 class="hp-lead-title"><a href="{post_url(lead)}">{lead_title}</a></h2>
-      <p class="hp-lead-desc">{lead_desc}</p>
-      <div class="hp-lead-meta">{lead_date} &middot; {lead_rtime}</div>
+<header class="hh"><div class="container">
+  <h1>Everything <em>GoHighLevel</em> &mdash; free guides and the 30-day trial.</h1>
+  <p class="sub">GlobalHighLevel is the free library for setting GoHighLevel up right &mdash; real tutorials from people who actually use it, plus the <b>extended 30-day trial</b> (double the standard 14). Start with the complete trial guide.</p>
+  <a class="guidecard" href="{money_url}">
+    <div class="gc-ic">&#9733;</div>
+    <div>
+      <div class="gc-k">Our most-read guide</div>
+      <div class="gc-t">The complete 30-day free trial guide</div>
+      <div class="gc-d">Eligibility, the exact steps, the promo-code truth, and the free setup bootcamp &mdash; the full walkthrough.</div>
     </div>
-    <div class="hp-stack">{stack_html}</div>
+    <span class="gc-arrow">Read &rarr;</span>
+  </a>
+</div></header>
+<section class="hubsec" id="guides"><div class="container">
+  <span class="eyebrow">Every GoHighLevel topic</span>
+  <h2>Set GoHighLevel up right &mdash; by topic</h2>
+  <p class="lead">The full library, organized. Pick the area you're working on.</p>
+  <div class="clusters">
+    <div class="cluster"><h3>AI Receptionist &amp; Lead Capture</h3><p>Never miss a call or a lead &mdash; AI receptionist, missed-call text-back, and automatic review requests.</p><a class="cl" href="/category/agency-platform/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>AI Agents &amp; Automation</h3><p>Put the platform on autopilot &mdash; AI agents, workflows, and Conversation AI.</p><a class="cl" href="/blog/leverage-ai-pricing-updates-gohighlevel-save-more/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/category/crm-communication/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>Agency, White-Label &amp; SaaS</h3><p>Resell GoHighLevel as your own &mdash; white-label, SaaS mode, sub-accounts, and snapshots.</p><a class="cl" href="/category/agency-platform/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/category/payments-pricing/">Explore guides &rarr;</a></div>
   </div>
-  <div class="hp-body">
-    <div class="hp-articles">
-      <div class="section-label">Latest</div>
-      {articles_html}
-      {pages_html}
-    </div>
-    <aside class="hp-sidebar">
-      <div class="sidebar-section">
-        <div class="section-label">Trending</div>
-        <div class="sidebar-trending">{trending_html}</div>
-      </div>
-      <div class="sidebar-section">
-        <div class="section-label">Topics</div>
-        <div class="sidebar-trending">{topics_html}</div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-podcast">
-          <div class="section-label" style="border-bottom-color:#1DB954">Podcast</div>
-          <p>"Go High Level" on Spotify — 380 followers, new episodes daily.</p>
-          <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" class="btn-spotify" target="_blank" rel="noopener">Listen on Spotify</a>
-        </div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-cta">
-          <div class="s-headline">Try GoHighLevel Free</div>
-          <div class="s-sub">30 days full access — double the standard 14-day trial.</div>
-          <a href="/start/" class="btn-amber" style="display:block;text-align:center;font-size:.8rem">Start Free Trial</a>
-          <div class="s-fine">Cancel anytime &mdash; $0 for 30 days</div>
-        </div>
-      </div>
-    </aside>
+  <div class="es-banner">
+    <div><b style="color:var(--text)">&iquest;Hablas espa&ntilde;ol?</b> <span style="color:var(--text2)">La biblioteca de gu&iacute;as de GoHighLevel y la prueba de 30 d&iacute;as, en espa&ntilde;ol.</span></div>
+    <a class="btn-amber" href="/es/" style="font-size:.85rem;padding:10px 18px">Ir a la versi&oacute;n en espa&ntilde;ol &rarr;</a>
   </div>
-</div>"""
+</div></section>"""
     else:
         # Non-first pages or empty: simple list
         cards_html = ""
@@ -2960,7 +3036,41 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
                 pag_html += f' <a href="{href}"{cls}>{pg}</a>'
             pag_html += "</div>"
 
-        body = f"""
+        if page == 1 and lang_code == "es":
+            money_url = "/blog/gohighlevel-precios-planes-2026-guia-completa/"
+            body = f"""
+<header class="hh"><div class="container">
+  <h1>Todo sobre <em>GoHighLevel</em> &mdash; gu&iacute;as en espa&ntilde;ol y precios claros.</h1>
+  <p class="sub">GlobalHighLevel es la biblioteca gratuita para configurar GoHighLevel correctamente &mdash; tutoriales reales de gente que lo usa de verdad, los <b>precios sin letra chica</b> y la prueba extendida de 30 d&iacute;as. Empieza por la gu&iacute;a completa de precios.</p>
+  <a class="guidecard" href="{money_url}">
+    <div class="gc-ic">&#9733;</div>
+    <div>
+      <div class="gc-k">Nuestra gu&iacute;a m&aacute;s le&iacute;da</div>
+      <div class="gc-t">Precios de GoHighLevel 2026: cu&aacute;nto cuesta y si es gratis</div>
+      <div class="gc-d">Planes, el precio real desde $97, la prueba de 30 d&iacute;as y c&oacute;mo pagar menos.</div>
+    </div>
+    <span class="gc-arrow">Leer &rarr;</span>
+  </a>
+</div></header>
+<section class="hubsec" id="guides"><div class="container">
+  <span class="eyebrow">Cada tema de GoHighLevel</span>
+  <h2>Configura GoHighLevel bien &mdash; por tema</h2>
+  <p class="lead">La biblioteca completa, organizada. Elige el &aacute;rea en la que est&aacute;s trabajando.</p>
+  <div class="clusters">
+    <div class="cluster"><h3>WhatsApp y Captaci&oacute;n de Leads</h3><p>El canal #1 en espa&ntilde;ol &mdash; API de WhatsApp Business, conectar GHL con WhatsApp y respuesta autom&aacute;tica a cada lead.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Automatizaci&oacute;n y Agentes IA</h3><p>Pon la plataforma en piloto autom&aacute;tico &mdash; workflows, seguimiento de leads y agentes con IA.</p><a class="cl" href="/blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>CRM y Comunicaci&oacute;n</h3><p>Maneja toda la relaci&oacute;n con el cliente en un solo lugar &mdash; CRM, email y SMS, tel&eacute;fono y calendario.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Sitios, Embudos y Reputaci&oacute;n</h3><p>Captura leads y proyecta confianza &mdash; sitios y embudos, formularios, rese&ntilde;as y reputaci&oacute;n.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Agencia, Marca Blanca y SaaS</h3><p>Revende GoHighLevel como tuyo &mdash; marca blanca, modo SaaS, sub-cuentas y reportes.</p><a class="cl" href="/blog/gohighlevel-latam-pagos-agencias/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Pagos y Precios</h3><p>Cobra dentro de GoHighLevel y conoce el costo real &mdash; MercadoPago y pasarelas para LATAM, m&aacute;s el desglose de precios.</p><a class="cl" href="/es/category/payments-pricing/">Explorar gu&iacute;as &rarr;</a></div>
+  </div>
+  <div class="es-banner">
+    <div><b style="color:var(--text)">Prefer English?</b> <span style="color:var(--text2)">The full GoHighLevel guide library and the 30-day trial.</span></div>
+    <a class="btn-amber" href="/" style="font-size:.85rem;padding:10px 18px">Go to the English site &rarr;</a>
+  </div>
+</div></section>"""
+        else:
+            body = f"""
 <div class="cat-header">
   <div class="container">
     <div class="section-label fade-1" style="border-bottom:none;padding-bottom:0;margin-bottom:8px">{lang_name}</div>
