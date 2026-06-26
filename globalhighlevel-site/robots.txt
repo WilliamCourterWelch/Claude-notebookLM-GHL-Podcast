@@ -1,9 +1,14 @@
 User-agent: *
 Allow: /
+# Attribution/conversion surfaces — kept out of organic SERPs so podcast/blog
+# click data stays clean. Parallel SEO blog pages rank for these queries instead.
+Disallow: /trial/
+Disallow: /coupon/
+Disallow: /start/
 
 Sitemap: https://globalhighlevel.com/sitemap.xml
 
-# AI crawlers explicitly allowed — see llms.txt for structured content index
+# AI crawlers explicitly allowed (incl. the attribution paths) — see llms.txt for structured content index
 User-agent: GPTBot
 Allow: /
 
