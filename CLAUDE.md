@@ -62,10 +62,11 @@
 
 ## Deploy Checklist — BLOCKING (do not skip)
 Before ANY `git push origin main` that touches SEO content (posts, redirects, build.py, meta rewrites):
-1. **Log to Google Sheet FIRST** — "SEO Changelog Tracker" (ID: `1rK5UjtCeuzwwqIRE7GxC39_b3-10dSogUyxfe_Ycc0o`), Changelog tab. One row per change: Date, Business, Slug, Action, Attempt, Position, Impressions, CTR, Old Title, New Title.
-2. **Update `seo-cooldown.json`** — add entries for every page touched. scp to VPS.
-3. **THEN push.** If Sheet write fails, fix auth. Do not push undocumented changes.
-This is Rule 7 of `seo-deploy-gate`. Sheet is source of truth. JSON is fallback.
+1. **Log to gbrain FIRST (always-on log of record)** — `add_timeline_entry` on page `globalhighlevel-seo-changelog`, one entry per deploy listing each touched slug · action · pre-change position/impressions if known. gbrain is connected every session and does not depend on the flaky Sheets MCP, so this is the gate that actually holds. Amended 2026-06-26 (Bill): gbrain is source of truth.
+2. **Mirror to the Google Sheet when available** — "SEO Changelog Tracker" (ID: `1rK5UjtCeuzwwqIRE7GxC39_b3-10dSogUyxfe_Ycc0o`), Changelog tab, same row schema (Date, Business, Slug, Action, Attempt, Position, Impressions, CTR, Old Title, New Title). Requires the `workspace-mcp` Sheets tools (or a future `seo-ops-agent` sheet-sync script) to be loaded. If not loaded, the gbrain log in step 1 satisfies the gate — do NOT block the deploy on the Sheet.
+3. **Update `seo-cooldown.json`** — add entries for every page touched (fallback mirror; VPS pipeline retired, so scp no longer required).
+4. **THEN push.**
+This is Rule 7 of `seo-deploy-gate` (skill currently not installed — the rule is enforced manually). **gbrain timeline is source of truth; Sheet + JSON are mirrors.**
 
 ## Affiliate Link
 All GHL links must include `fp_ref=amplifi-technologies12`. Full rules in `globalhighlevel-site/CLAUDE.md`.
