@@ -22,6 +22,7 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
+from xml.sax.saxutils import escape as _xml_escape
 
 from lang_check import validate_meta
 
@@ -1915,31 +1916,95 @@ def build_category_pages(posts: list[dict]):
         write(PUBLIC_DIR / "category" / cat_slug / "index.html", html)
 
 
+def _xml_attr(s: str) -> str:
+    """Escape a string for safe use inside a double-quoted XML attribute value."""
+    return _xml_escape(s, {'"': "&quot;"})
+
+
+def _sitemap_loc(url: str) -> str:
+    """Escape a URL for safe use as XML element text (<loc>/<lastmod>)."""
+    return _xml_escape(url)
+
+
+def _sitemap_alts(page_path: str) -> str:
+    """xhtml:link hreflang alternates for an index/category page, in sitemap form.
+    Mirrors _build_hreflang_tags (only emits variants that were actually built, via
+    BUILT_PAGE_PATHS) but returns <xhtml:link.../> nodes for inclusion inside <url>.
+    Returns "" unless there are >=2 real language variants (a single-variant page
+    has no alternates to declare). All href values are XML-attribute-escaped."""
+    out = []
+    for lang in LANGUAGES:
+        prefix = lang.get("prefix", "")
+        rel = f'{prefix}{page_path}' if page_path else f'{prefix}/'
+        if rel not in BUILT_PAGE_PATHS:
+            continue
+        out.append(f'<xhtml:link rel="alternate" hreflang="{_xml_attr(lang["code"])}" href="{_xml_attr(SITE_URL + rel)}"/>')
+    if len(out) < 2:
+        return ""
+    default_rel = page_path or "/"
+    if default_rel in BUILT_PAGE_PATHS:
+        out.append(f'<xhtml:link rel="alternate" hreflang="x-default" href="{_xml_attr(SITE_URL + default_rel)}"/>')
+    return "".join(out)
+
+
+def _sitemap_post_alts(translations: dict) -> str:
+    """xhtml:link hreflang alternates for a blog post, from its slug-per-language map.
+    Mirrors _build_post_hreflang_tags; skips pruned siblings (not in LIVE_POST_SLUGS).
+    Returns "" unless >=2 live language variants exist."""
+    if not translations or not isinstance(translations, dict):
+        return ""
+    out = []
+    for code, slug in translations.items():
+        if not slug or slug not in LIVE_POST_SLUGS:
+            continue
+        out.append(f'<xhtml:link rel="alternate" hreflang="{_xml_attr(code)}" href="{_xml_attr(f"{SITE_URL}/blog/{slug}/")}"/>')
+    if len(out) < 2:
+        return ""
+    default_slug = translations.get("en") if translations.get("en") in LIVE_POST_SLUGS else ""
+    if not default_slug:
+        default_slug = next((s for s in translations.values() if s in LIVE_POST_SLUGS), "")
+    if default_slug:
+        out.append(f'<xhtml:link rel="alternate" hreflang="x-default" href="{_xml_attr(f"{SITE_URL}/blog/{default_slug}/")}"/>')
+    return "".join(out)
+
+
 def build_sitemap(posts: list[dict]):
-    urls = [f"  <url><loc>{SITE_URL}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>"]
+    # Build/deploy date stamps the derived index + hub pages (/, /es/, categories):
+    # they legitimately change whenever the site is rebuilt with new content/structure,
+    # so a fresh lastmod is the correct re-crawl signal post-deploy. Posts carry their
+    # own updatedAt/publishedAt date (real content freshness).
+    build_date = datetime.now().strftime("%Y-%m-%d")
+    home_alts = _sitemap_alts("")
+    urls = [f"  <url><loc>{_sitemap_loc(f'{SITE_URL}/')}</loc><lastmod>{build_date}</lastmod><changefreq>daily</changefreq><priority>1.0</priority>{home_alts}</url>"]
     # /trial/, /start/, /coupon/ are excluded from sitemap:
     # - /trial/ and /start/ are noindex conversion surfaces (podcast/blog CTAs)
     # - /coupon/ 301 redirects to /blog/gohighlevel-free-trial-30-days-extended/ (discount-consolidation 2026-04-21)
-    urls.append(f"  <url><loc>{SITE_URL}/services/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>")
-    urls.append(f"  <url><loc>{SITE_URL}/about/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>")
+    urls.append(f"  <url><loc>{_sitemap_loc(f'{SITE_URL}/services/')}</loc><lastmod>{build_date}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>")
+    urls.append(f"  <url><loc>{_sitemap_loc(f'{SITE_URL}/about/')}</loc><lastmod>{build_date}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>")
     # Only list pages that were actually built. The 2026-06-03 prune emptied many
     # categories/languages; build_sitemap runs after the category and language
     # page builders, so the index.html on disk is ground truth for these entries
     # — never advertise a 404 to Google.
     for c in CATEGORIES:
         if (PUBLIC_DIR / "category" / c["slug"] / "index.html").exists():
-            urls.append(f'  <url><loc>{SITE_URL}/category/{c["slug"]}/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>')
+            alts = _sitemap_alts(f'/category/{c["slug"]}/')
+            urls.append(f'  <url><loc>{_sitemap_loc(SITE_URL + "/category/" + c["slug"] + "/")}</loc><lastmod>{build_date}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority>{alts}</url>')
     # Language hubs + language-specific topic pages
     for lang in LANGUAGES:
         prefix = lang["prefix"]
         if prefix and (PUBLIC_DIR / prefix.lstrip("/") / "index.html").exists():
-            urls.append(f'  <url><loc>{SITE_URL}{prefix}/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>')
+            urls.append(f'  <url><loc>{_sitemap_loc(f"{SITE_URL}{prefix}/")}</loc><lastmod>{build_date}</lastmod><changefreq>daily</changefreq><priority>0.9</priority>{home_alts}</url>')
             for c in CATEGORIES:
                 if (PUBLIC_DIR / prefix.lstrip("/") / "category" / c["slug"] / "index.html").exists():
-                    urls.append(f'  <url><loc>{SITE_URL}{prefix}/category/{c["slug"]}/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>')
+                    alts = _sitemap_alts(f'/category/{c["slug"]}/')
+                    urls.append(f'  <url><loc>{_sitemap_loc(SITE_URL + prefix + "/category/" + c["slug"] + "/")}</loc><lastmod>{build_date}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority>{alts}</url>')
     for p in posts:
-        date = p.get("publishedAt", p.get("uploadedAt", ""))[:10]
-        urls.append(f'  <url><loc>{SITE_URL}{post_url(p)}</loc><lastmod>{date}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>')
+        # Prefer an explicit updatedAt (real content edit) over publishedAt so a
+        # rebuilt post signals freshness instead of its original publish date.
+        date = (p.get("updatedAt") or p.get("publishedAt") or p.get("uploadedAt") or "")[:10]
+        lastmod = f'<lastmod>{date}</lastmod>' if date else ''
+        palts = _sitemap_post_alts(p.get("translations") or {})
+        urls.append(f'  <url><loc>{_sitemap_loc(f"{SITE_URL}{post_url(p)}")}</loc>{lastmod}<changefreq>monthly</changefreq><priority>0.8</priority>{palts}</url>')
 
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n  xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
     xml += "\n".join(urls)
@@ -1971,7 +2036,7 @@ GlobalHighLevel.com is a free resource covering GoHighLevel (GHL) — an all-in-
 
 - **Author:** William Welch — GoHighLevel user and affiliate
 - **Audience:** Digital marketing agency owners, freelancers, business owners
-- **Content:** 80+ step-by-step tutorials covering every major GoHighLevel feature
+- **Content:** {len(posts)} step-by-step tutorials and guides covering GoHighLevel features
 - **Podcast:** "Go High Level" on Spotify — https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV
 - **Free Trial:** 30-day GoHighLevel free trial (double the standard 14 days) — https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12
 

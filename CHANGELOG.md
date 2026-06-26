@@ -2,6 +2,17 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.1.0] - 2026-06-26
+### Fixed
+- **Sitemap `lastmod` now stamped on every URL (was 17/27).** The relaunched homepages and category hubs (`/`, `/es/`, `/in/`, all categories) had no `lastmod` at all, and the money page reported its April publish date despite being rebuilt today — so the sitemap was telling Google the relaunch never happened. Derived index/hub pages now stamp the build date; posts prefer an explicit `updatedAt` over `publishedAt`. The money page gained `updatedAt: 2026-06-26`. This is the freshness signal that gets the relaunch re-crawled.
+- **robots.txt now `Disallow`s the attribution paths** (`/trial/`, `/coupon/`, `/start/`) for normal crawlers, per the long-standing attribution-clean policy in `globalhighlevel-site/CLAUDE.md`. The AI-crawler groups (GPTBot/ClaudeBot/Google-Extended/PerplexityBot/anthropic-ai) keep `Allow: /` and can still crawl them.
+- **llms.txt tutorial count is now dynamic** (`{len(posts)}` = the real built count) instead of a stale hardcoded "80+".
+### Added
+- **Sitemap-level hreflang alternates** (`<xhtml:link rel="alternate">`) via new `_sitemap_alts`/`_sitemap_post_alts` helpers — the `xhtml` namespace was declared but unused. Now the `/` ↔ `/es/` ↔ `/in/` cluster, both EN↔ES category pairs, and the EN↔ES pricing-post pair carry reciprocal alternates + `x-default`. Page-level hreflang was already correct; this is the recommended sitemap-level complement for international/GEO. Pruned siblings and single-variant pages are correctly excluded.
+- **XML-attribute/element escaping** on all sitemap `<loc>` and `href` values (`_xml_attr`/`_sitemap_loc`) so a future `SITE_URL`/slug containing `&`/`"`/`<` can't invalidate the sitemap (defensive; caught by Codex adversarial review).
+### For contributors
+- Build stays `python3 build.py`; sitemap output validated with `xml.etree` (27/27 lastmod, 30 reciprocal hreflang nodes, well-formed). `verify.py` + the link-audit test suites all green.
+
 ## [0.2.0.0] - 2026-06-25
 ### Added
 - **English brand-hub homepage.** The `/` homepage is now an "Everything GoHighLevel" brand hub: a single primary guide card to the 30-day free-trial money page, 6 topic-cluster cards (links-safe — one descriptive anchor per cluster URL), and a Spanish banner to `/es/`. Replaces the old post-firehose index that diluted authority across every URL.
