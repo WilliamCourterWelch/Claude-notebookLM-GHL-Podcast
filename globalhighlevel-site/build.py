@@ -1036,7 +1036,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         ("CRM &amp; Communication", "/category/crm-communication/"),
         ("Sites, Funnels &amp; Reputation", "/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/"),
         ("Agency, White-Label &amp; SaaS", "/category/agency-platform/"),
-        ("Payments &amp; Pricing", "/category/payments-pricing/"),
+        ("Payments &amp; Pricing", "/blog/gohighlevel-payments-complete-guide/"),
     ]
     footer_cat_links = "".join(f'        <a href="{u}">{n}</a>\n' for n, u in _footer_clusters)
 
@@ -1813,7 +1813,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
     <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/category/crm-communication/">Explore guides &rarr;</a></div>
     <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/">Explore guides &rarr;</a></div>
     <div class="cluster"><h3>Agency, White-Label &amp; SaaS</h3><p>Resell GoHighLevel as your own &mdash; white-label, SaaS mode, sub-accounts, and snapshots.</p><a class="cl" href="/category/agency-platform/">Explore guides &rarr;</a></div>
-    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/category/payments-pricing/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/blog/gohighlevel-payments-complete-guide/">Explore guides &rarr;</a></div>
   </div>
   <div class="es-banner">
     <div><b style="color:var(--text)">&iquest;Hablas espa&ntilde;ol?</b> <span style="color:var(--text2)">La biblioteca de gu&iacute;as de GoHighLevel y la prueba de 30 d&iacute;as, en espa&ntilde;ol.</span></div>
