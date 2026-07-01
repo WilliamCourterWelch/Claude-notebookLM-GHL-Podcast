@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8"><title>GHL link map — hubs · pillars · money</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>body{background:#07080a;color:#eef2ff;font-family:'DM Sans',system-ui,sans-serif;max-width:1100px;margin:0 auto;padding:30px}
+h1{color:#f59e0b;font-weight:800} .stat{color:#7c8aab;font-size:14px} code{color:#f59e0b}
+.mermaid{background:#0f1320;border:1px solid #3d4a63;border-radius:12px;padding:22px;margin-top:12px}
+.k span{padding:3px 11px;border-radius:5px;font-size:12px;font-weight:700;margin-right:8px}
+.hm{background:#eef2ff;color:#07080a}.hb{background:#1a2740;color:#eef2ff;border:1px solid #f59e0b}.pl{background:#f59e0b;color:#07080a}.mn{background:#d4af37;color:#07080a}.ph{background:#181b24;color:#6b7791;border:1px dashed #3d4a63}</style></head>
+<body><h1>globalhighlevel.com — link map: homepage · hubs · pillars · money page</h1>
+<p class="stat">High-level flow only (structural nodes, not individual spokes). Generated 2026-07-01 from the live build · branch <code>seo-quickwins-2026-07-01</code>, not deployed · 🔗 = affiliate links on that page.</p>
+<p class="k"><span class="hm">🏠 Homepage</span><span class="hb">hub (has pillar)</span><span class="pl">★ Pillar</span><span class="mn">💰 Money page</span><span class="ph">placeholder hub</span></p>
+<p class="stat"><code>══&gt;</code> primary path · <code>--&gt;</code> hub/CTA link · <code>-.-&gt;</code> placeholder (no pillar behind it yet). Every pillar funnels to the money page; the homepage also links straight to it via the hero guide card.</p>
+<div class="mermaid">
+graph LR
+  HOME["🏠 Homepage /<br/>🔗 3"]:::home
+  MONEY["💰 Money page<br/>30-day free trial<br/>🔗 12"]:::money
+  HOME ==>|hero guide card| MONEY
+  h0["AI Receptionist & Lead Capture<br/><i>placeholder — no pillar</i>"]:::placeholder
+  HOME -.-> h0
+  h1["AI Agents & Automation<br/><i>hub</i>"]:::hubok
+  HOME --> h1
+  p1["★ AI Agents &amp; Automation<br/><b>PILLAR</b><br/>🔗 6"]:::pillar
+  h1 ==> p1
+  p1 -->|CTA| MONEY
+  h2["CRM & Communication<br/><i>placeholder — no pillar</i>"]:::placeholder
+  HOME -.-> h2
+  h3["Sites, Funnels & Reputation<br/><i>placeholder — no pillar</i>"]:::placeholder
+  HOME -.-> h3
+  h4["Agency, White-Label & SaaS<br/><i>placeholder — no pillar</i>"]:::placeholder
+  HOME -.-> h4
+  h5["Payments & Pricing<br/><i>hub</i>"]:::hubok
+  HOME --> h5
+  p5["★ GoHighLevel Payments guide<br/><b>PILLAR</b><br/>🔗 6"]:::pillar
+  h5 ==> p5
+  p5 -->|CTA| MONEY
+  classDef home fill:#eef2ff,stroke:#333,color:#07080a
+  classDef money fill:#d4af37,stroke:#fff,color:#07080a,font-weight:bold
+  classDef pillar fill:#f59e0b,stroke:#fff,color:#07080a,font-weight:bold
+  classDef hubok fill:#1a2740,stroke:#f59e0b,color:#eef2ff
+  classDef placeholder fill:#181b24,stroke:#3d4a63,color:#6b7791,stroke-dasharray:5
+</div>
+</body></html>

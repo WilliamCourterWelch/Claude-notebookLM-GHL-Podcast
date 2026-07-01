@@ -1,0 +1,52 @@
+<!doctype html><html><head><meta charset="utf-8"><title>GHL homepage→pillar→spoke link map</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>body{background:#07080a;color:#eef2ff;font-family:system-ui,sans-serif;max-width:1200px;margin:0 auto;padding:28px}
+h1{color:#f59e0b} .s{color:#7c8aab;font-size:14px} code{color:#f59e0b}
+.mermaid{background:#0f1320;border:1px solid #3d4a63;border-radius:12px;padding:20px}
+.k span{padding:3px 10px;border-radius:5px;font-size:12px;font-weight:700;margin-right:8px}
+.hm{background:#eef2ff;color:#07080a}.pl{background:#f59e0b;color:#07080a}.sp{background:#1a2740;color:#eef2ff;border:1px solid #3d4a63}.mn{background:#d4af37;color:#07080a}.ph{background:#181b24;color:#6b7791;border:1px dashed #3d4a63}</style></head>
+<body><h1>Homepage → cards → pillars → spokes → money page</h1>
+<p class="s">The REAL links from the built site. The homepage's 6 cluster cards link straight to a pillar (2) or a placeholder page (4). Pillars link down to their spokes; spokes link back up; everything funnels to the money page. aff = affiliate links on that page. Branch <code>seo-quickwins-2026-07-01</code>, not deployed.</p>
+<p class="k"><span class="hm">🏠 Homepage</span><span class="pl">★ Pillar</span><span class="sp">spoke</span><span class="mn">💰 Money</span><span class="ph">placeholder card</span></p>
+<p class="s"><code>══&gt; card / down</code> · <code>-.-&gt; up / placeholder</code> · <code>--&gt; CTA to money</code></p>
+<div class="mermaid">
+graph TD
+  HOME["🏠 HOMEPAGE /  (aff 3)"]:::home
+  MONEY["💰 Money page — 30-day trial  (aff 12)"]:::money
+  HOME ==>|hero guide card| MONEY
+  n0["AI Receptionist & Lead Capture<br/><i>placeholder → /category/agency-platform/</i>"]:::placeholder
+  HOME -.->|card| n0
+  n1["★ AI Agents & Automation<br/>PILLAR — GoHighLevel AI Agents & Automa  (aff 6)"]:::pillar
+  HOME ==>|card| n1
+  n2["Automate Google Contacts in Go<br/>spoke  (aff 5)"]:::spoke
+  n1 ==>|down| n2
+  n3["GHL AI Pricing 2025<br/>spoke  (aff 5)"]:::spoke
+  n1 ==>|down| n3
+  n1 -->|CTA| MONEY
+  n3["GHL AI Pricing 2025<br/>spoke  (aff 5)"]:::spoke
+  n3 -.->|up| n1
+  n2["Automate Google Contacts in Go<br/>spoke  (aff 5)"]:::spoke
+  n2 -.->|up| n1
+  n4["CRM & Communication<br/><i>placeholder → /category/crm-communication/</i>"]:::placeholder
+  HOME -.->|card| n4
+  n5["Sites, Funnels & Reputation<br/><i>placeholder → /blog/how-to-launch-a-website-in-gohighlevel-pro-templates/</i>"]:::placeholder
+  HOME -.->|card| n5
+  n0["Agency, White-Label & SaaS<br/><i>placeholder → /category/agency-platform/</i>"]:::placeholder
+  HOME -.->|card| n0
+  n6["★ Payments & Pricing<br/>PILLAR — GoHighLevel Payments  (aff 6)"]:::pillar
+  HOME ==>|card| n6
+  n7["GoHighLevel Pricing 2026<br/>spoke  (aff 8)"]:::spoke
+  n6 ==>|down| n7
+  n6 -->|CTA| MONEY
+  n8["Master Payment Providers in Go<br/>spoke  (aff 4)"]:::spoke
+  n6 ==>|down| n8
+  n7["GoHighLevel Pricing 2026<br/>spoke  (aff 8)"]:::spoke
+  n7 -.->|up| n6
+  n8["Master Payment Providers in Go<br/>spoke  (aff 4)"]:::spoke
+  n8 -.->|up| n6
+  classDef home fill:#eef2ff,stroke:#333,color:#07080a
+  classDef money fill:#d4af37,stroke:#fff,color:#07080a
+  classDef pillar fill:#f59e0b,stroke:#fff,color:#07080a
+  classDef spoke fill:#1a2740,stroke:#3d4a63,color:#eef2ff
+  classDef placeholder fill:#181b24,stroke:#3d4a63,color:#6b7791,stroke-dasharray:5
+</div></body></html>

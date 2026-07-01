@@ -264,8 +264,10 @@ def get_related(post: dict, all_posts: list, n: int = 3) -> list:
     target_lang = post_lang(post)
     same_lang = [p for p in all_posts if post_lang(p) == target_lang]
     same = [p for p in same_lang if p.get("slug") != slug and post_topic(p) == topic]
-    other = [p for p in same_lang if p.get("slug") != slug and post_topic(p) != topic]
-    return (same + other)[:n]
+    # Caleb silo integrity: related cards stay IN-SILO (same topic) only. Never pad
+    # with other-topic posts — that cross-links silos and leaks authority across topics.
+    # Fewer related cards on a thin silo is correct; a cross-silo card is not.
+    return same[:n]
 
 
 def _build_link_index(all_posts: list, target_lang=None) -> list[tuple[str, str, str, list[str]]]:
