@@ -1833,6 +1833,26 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
   {pages_html}
 </div>"""
 
+    # Homepage-only Organization JSON-LD (entity/logo recognition; other pages
+    # carry publisher Organization inside their Article schema).
+    if page == 1:
+        org_schema = json.dumps({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": SITE_NAME,
+            "url": SITE_URL,
+            "logo": {
+                "@type": "ImageObject",
+                "url": f"{SITE_URL}/images/logo.png",
+                "width": 512,
+                "height": 512,
+            },
+            "sameAs": [
+                "https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV",
+            ],
+        })
+        body += f'\n<script type="application/ld+json">{org_schema}</script>'
+
     html = base_html(
         title=f"{SITE_NAME} — {SITE_TAGLINE}" if page == 1 else f"Page {page} | {SITE_NAME}",
         description="Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies worldwide. Learn GHL step by step.",
