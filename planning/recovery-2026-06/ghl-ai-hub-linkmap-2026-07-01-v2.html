@@ -1,0 +1,41 @@
+<!doctype html><html><head><meta charset="utf-8"><title>AI Hub — 1 pillar + spokes</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>body{background:#07080a;color:#eef2ff;font-family:'DM Sans',system-ui,sans-serif;max-width:1000px;margin:0 auto;padding:30px}
+h1{color:#f59e0b} .stat{color:#7c8aab;font-size:14px} code{color:#f59e0b}
+.mermaid{background:#0f1320;border:1px solid #3d4a63;border-radius:12px;padding:20px;margin-top:12px}
+.k span{padding:3px 10px;border-radius:5px;font-size:12px;font-weight:700;margin-right:8px}
+.pill{background:#f59e0b;color:#07080a}.spk{background:#1a2740;color:#eef2ff;border:1px solid #3d4a63}.mon{background:#d4af37;color:#07080a}.oth{background:#20242e;color:#c3cbe0}.hm{background:#eef2ff;color:#07080a}</style></head>
+<body><h1>AI Agents &amp; Automation — the hub has ONE pillar</h1>
+<p class="stat"><b>1 hub = 1 pillar + spokes.</b> Amber box = this hub (the 1 pillar + its 3 spokes). Grey box = pages in OTHER hubs that the pillar links out to (they are NOT AI spokes). Only the pillar is 🆕 NEW; every spoke already existed. 🔗 = affiliate links on that built page.</p>
+<p class="k"><span class="hm">🏠 Homepage</span><span class="pill">Pillar (1, new)</span><span class="spk">AI spoke (existing)</span><span class="mon">Money page</span><span class="oth">Other-hub page</span></p>
+<p class="stat"><code>══&gt; down</code> pillar→page · <code>-.-&gt; up</code> page→pillar. A page with both = a closed loop.</p>
+<div class="mermaid">
+graph TD
+  HOME["🏠 Homepage<br/>existing · 🔗 3"]:::home
+  subgraph AIHUB["AI Agents & Automation HUB — 1 pillar + its spokes"]
+    n0["GoHighLevel AI Agents & Automation<br/><b>PILLAR</b> · 🆕 NEW<br/>🔗 6 affiliate links"]:::pillar
+    n1["Automate Google Contacts in GoHigh<br/><b>spoke</b> · existing<br/>🔗 5 affiliate links"]:::spoke
+    n2["GHL AI Pricing 2025<br/><b>spoke</b> · existing<br/>🔗 5 affiliate links"]:::spoke
+    n3["Unsolicited SMS in GoHighLevel<br/><b>spoke</b> · existing<br/>🔗 4 affiliate links"]:::spoke
+  end
+  subgraph OTHER["Cross-links OUT to other hubs (not AI spokes)"]
+    n4["GoHighLevel 30-Day Free Trial, Pro<br/><b>money page</b> · existing<br/>🔗 12 affiliate links"]:::money
+    n5["GoHighLevel Pricing 2026<br/><b>spoke</b> · existing<br/>🔗 8 affiliate links"]:::other
+  end
+  HOME ==> n0
+  n0 ==>|down| n1
+  n0 ==>|down| n3
+  n0 ==>|down| n5
+  n0 ==>|down| n4
+  n2 -.->|up| n0
+  n3 -.->|up| n0
+  n1 -.->|up| n0
+  classDef home fill:#eef2ff,stroke:#333,color:#07080a
+  classDef pillar fill:#f59e0b,stroke:#fff,color:#07080a
+  classDef spoke fill:#1a2740,stroke:#3d4a63,color:#eef2ff
+  classDef money fill:#d4af37,stroke:#fff,color:#07080a
+  classDef other fill:#20242e,stroke:#7c8aab,color:#c3cbe0
+  style AIHUB fill:#0f1320,stroke:#f59e0b,color:#f59e0b
+  style OTHER fill:#0d0f16,stroke:#3d4a63,color:#7c8aab
+</div>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',flowchart:{curve:'basis'}});</script></body></html>
