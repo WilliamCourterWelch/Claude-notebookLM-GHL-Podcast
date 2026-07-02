@@ -1076,6 +1076,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
 <meta name="description" content="{description}">
 {'<meta name="robots" content="noindex, follow">' if noindex else ''}
 <link rel="canonical" href="{canonical}">
+<link rel="icon" type="image/png" href="/images/logo.png">
 {hreflang_html}
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{description}">
@@ -1353,6 +1354,7 @@ def build_authority_page(post: dict, all_posts: list = None):
 <title>{title} | {SITE_NAME}</title>
 <meta name="description" content="{truncate(description, 160)}">
 <link rel="canonical" href="{canonical}">
+<link rel="icon" type="image/png" href="/images/logo.png">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{truncate(description, 160)}">
 <meta property="og:url" content="{canonical}">
@@ -1859,8 +1861,8 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         body += f'\n<script type="application/ld+json">{org_schema}</script>'
 
     html = base_html(
-        title=f"{SITE_NAME} — {SITE_TAGLINE}" if page == 1 else f"Page {page} | {SITE_NAME}",
-        description="Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies worldwide. Learn GHL step by step.",
+        title="GoHighLevel Tutorials, Guides & Strategies for Agencies" if page == 1 else f"Page {page} | {SITE_NAME}",
+        description="Free GoHighLevel tutorials and guides for marketing agencies: CRM, automation, funnels, payments and pricing explained step by step, plus a 30-day free trial." if page == 1 else "Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies worldwide. Learn GHL step by step.",
         canonical=canonical,
         body=body
     )

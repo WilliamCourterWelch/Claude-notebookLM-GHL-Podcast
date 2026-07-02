@@ -157,9 +157,14 @@ def main() -> int:
 
     def resolves(h: str) -> bool:
         h = norm(h)
-        return (h in pages or h in redirects
+        if (h in pages or h in redirects
                 or h.rstrip("/") + "/" in pages
-                or h.rstrip("/") in redirects or h.rstrip("/") + "/" in redirects)
+                or h.rstrip("/") in redirects or h.rstrip("/") + "/" in redirects):
+            return True
+        # Static assets (e.g. the /images/logo.png favicon) live in subdirs, not in the
+        # page set. An href that maps to a real file on disk in public/ resolves.
+        rel = h.lstrip("/")
+        return bool(rel) and (PUBLIC / rel).is_file()
 
     dangling: dict[str, int] = {}
     for f in PUBLIC.rglob("*.html"):
