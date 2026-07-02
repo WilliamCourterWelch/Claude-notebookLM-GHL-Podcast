@@ -2,6 +2,15 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.3.0] - 2026-07-02
+### Changed
+- **Reconciled the taxonomy: 8 category topics -> 5 hubs, aligned to the homepage.** The homepage hub cards and `categories.json` topics were two different taxonomies that didn't line up (cards pointed at colliding/placeholder categories). Collapsed to one 5-topic set: **AI Receptionist & Lead Capture** (was AI & Automation + Phone & Voice - AI agents/automation are now spokes under the searched "receptionist/lead capture" head term), **CRM & Communication** (+ Email + SMS), **Sites, Funnels & Reputation** (new), **Agency, White-Label & SaaS** (+ Analytics), **Payments & Pricing**. Re-filed 9 posts. Homepage cards 6 -> 4 (merged the two AI cards; dropped the empty-EN Agency card), each now points at its own distinct category page (no more shared/placeholder targets). ES homepage cards trimmed to the 3 with real ES content and repointed off the dead slug.
+- **Fixed the mis-filed Sites posts** (`launch-website`, `uberall`) - moved out of Agency into the new Sites/Funnels/Reputation hub.
+### Fixed
+- 301 redirects for the renamed category slugs (`/category/ai-automation/` -> `ai-receptionist-lead-capture`, `/category/agency-platform/` -> `sites-funnels-reputation`, ES equivalent) so old URLs don't 404.
+### For contributors
+- Known follow-up: the hub/category landing pages are auto-generated LISTS, not pillar articles. Next: write real pillar content for CRM, Sites, and AI Receptionist hubs (see TODOs). build.py + verify.py + tests green; /review (Codex) run.
+
 ## [0.2.2.0] - 2026-07-02
 ### Added
 - **Two hub pillar pages** (the site had zero real pillars before). `gohighlevel-ai-agents-automation-complete-guide` explains the three automation layers (Workflows / Conversation AI / Agent Studio); `gohighlevel-payments-complete-guide` covers accepting payments in GHL (Stripe/PayPal/NMI/Authorize.net/Square native, MercadoPago regional) and is aimed to NOT cannibalize the ranking pricing page. Homepage + footer cluster cards repointed to both. Both PAA-grounded (DataForSEO) and fact-checked by Codex + a Claude adversarial pass (18 factual fixes, incl. Conversation AI is metered not free on Starter).
