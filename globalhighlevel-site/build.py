@@ -1433,7 +1433,10 @@ def build_post_page(post: dict, all_posts: list = None):
     # are empty (404); a non-English post whose topic has no built EN category page
     # (e.g. a lone Spanish AI-Automation post) shows the label as plain text instead.
     _cat_built  = cat_slug in LIVE_CATEGORY_SLUGS
-    cat_bc      = f'<a href="/category/{cat_slug}/">{category}</a>' if _cat_built else f'<span>{category}</span>'
+    # Caleb first-link rule: breadcrumb crumbs are non-followed text so they don't spend
+    # a link-share on Home/category from every page. The category still gets one followed
+    # link via the eyebrow (below); BreadcrumbList JSON-LD carries the hierarchy for Google.
+    cat_bc      = f'<span>{category}</span>'
     cat_eyebrow = f'<a href="/category/{cat_slug}/" style="color:var(--amber);text-decoration:none">{category}</a>' if _cat_built else f'<span style="color:var(--amber)">{category}</span>'
     date_str    = fmt_date(post.get("publishedAt", post.get("uploadedAt", "")))
     html_content = post.get("html_content", "")
@@ -1649,7 +1652,7 @@ def build_post_page(post: dict, all_posts: list = None):
 <div id="reading-progress"></div>
 <div class="post-container">
   <div class="post-breadcrumb fade-1">
-    <a href="/">Home</a><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
+    <span>Home</span><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
   </div>
   <div class="post-eyebrow fade-1">{cat_eyebrow}</div>
   <h1 class="post-title fade-2">{title}</h1>
