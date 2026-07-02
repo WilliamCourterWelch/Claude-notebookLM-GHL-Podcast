@@ -1033,12 +1033,10 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
 
     # Footer Topics = the 6 homepage clusters (links-safe to existing pages until hubs build)
     _footer_clusters = [
-        ("AI Receptionist &amp; Lead Capture", "/category/agency-platform/"),
-        ("AI Agents &amp; Automation", "/blog/gohighlevel-ai-agents-automation-complete-guide/"),
+        ("AI Receptionist &amp; Lead Capture", "/category/ai-receptionist-lead-capture/"),
         ("CRM &amp; Communication", "/category/crm-communication/"),
-        ("Sites, Funnels &amp; Reputation", "/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/"),
-        ("Agency, White-Label &amp; SaaS", "/category/agency-platform/"),
-        ("Payments &amp; Pricing", "/blog/gohighlevel-payments-complete-guide/"),
+        ("Sites, Funnels &amp; Reputation", "/category/sites-funnels-reputation/"),
+        ("Payments &amp; Pricing", "/category/payments-pricing/"),
     ]
     footer_cat_links = "".join(f'        <a href="{u}">{n}</a>\n' for n, u in _footer_clusters)
 
@@ -1815,12 +1813,10 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
   <h2>Set GoHighLevel up right &mdash; by topic</h2>
   <p class="lead">The full library, organized. Pick the area you're working on.</p>
   <div class="clusters">
-    <div class="cluster"><h3>AI Receptionist &amp; Lead Capture</h3><p>Never miss a call or a lead &mdash; AI receptionist, missed-call text-back, and automatic review requests.</p><a class="cl" href="/category/agency-platform/">AI receptionist &amp; lead-capture guides &rarr;</a></div>
-    <div class="cluster"><h3>AI Agents &amp; Automation</h3><p>Put the platform on autopilot &mdash; AI agents, workflows, and Conversation AI.</p><a class="cl" href="/blog/gohighlevel-ai-agents-automation-complete-guide/">AI agents &amp; automation guides &rarr;</a></div>
+    <div class="cluster"><h3>AI Receptionist &amp; Lead Capture</h3><p>Never miss a call or a lead &mdash; AI receptionist, missed-call text-back, AI agents and Conversation AI.</p><a class="cl" href="/category/ai-receptionist-lead-capture/">AI receptionist &amp; lead-capture guides &rarr;</a></div>
     <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/category/crm-communication/">CRM &amp; communication guides &rarr;</a></div>
-    <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/">Sites, funnels &amp; reputation guides &rarr;</a></div>
-    <div class="cluster"><h3>Agency, White-Label &amp; SaaS</h3><p>Resell GoHighLevel as your own &mdash; white-label, SaaS mode, sub-accounts, and snapshots.</p><a class="cl" href="/category/agency-platform/">Agency &amp; white-label guides &rarr;</a></div>
-    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/blog/gohighlevel-payments-complete-guide/">Payments &amp; pricing guides &rarr;</a></div>
+    <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/category/sites-funnels-reputation/">Sites, funnels &amp; reputation guides &rarr;</a></div>
+    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/category/payments-pricing/">Payments &amp; pricing guides &rarr;</a></div>
   </div>
   <div class="es-banner">
     <div><b style="color:var(--text)">&iquest;Hablas espa&ntilde;ol?</b> <span style="color:var(--text2)">La biblioteca de gu&iacute;as de GoHighLevel y la prueba de 30 d&iacute;as, en espa&ntilde;ol.</span></div>
@@ -3149,11 +3145,8 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
   <h2>Configura GoHighLevel bien &mdash; por tema</h2>
   <p class="lead">La biblioteca completa, organizada. Elige el &aacute;rea en la que est&aacute;s trabajando.</p>
   <div class="clusters">
-    <div class="cluster"><h3>WhatsApp y Captaci&oacute;n de Leads</h3><p>El canal #1 en espa&ntilde;ol &mdash; API de WhatsApp Business, conectar GHL con WhatsApp y respuesta autom&aacute;tica a cada lead.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
-    <div class="cluster"><h3>Automatizaci&oacute;n y Agentes IA</h3><p>Pon la plataforma en piloto autom&aacute;tico &mdash; workflows, seguimiento de leads y agentes con IA.</p><a class="cl" href="/blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/">Explorar gu&iacute;as &rarr;</a></div>
-    <div class="cluster"><h3>CRM y Comunicaci&oacute;n</h3><p>Maneja toda la relaci&oacute;n con el cliente en un solo lugar &mdash; CRM, email y SMS, tel&eacute;fono y calendario.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
-    <div class="cluster"><h3>Sitios, Embudos y Reputaci&oacute;n</h3><p>Captura leads y proyecta confianza &mdash; sitios y embudos, formularios, rese&ntilde;as y reputaci&oacute;n.</p><a class="cl" href="/es/category/agency-platform/">Explorar gu&iacute;as &rarr;</a></div>
-    <div class="cluster"><h3>Agencia, Marca Blanca y SaaS</h3><p>Revende GoHighLevel como tuyo &mdash; marca blanca, modo SaaS, sub-cuentas y reportes.</p><a class="cl" href="/blog/gohighlevel-latam-pagos-agencias/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Automatizaci&oacute;n y Agentes IA</h3><p>Pon la plataforma en piloto autom&aacute;tico &mdash; workflows, WhatsApp, seguimiento de leads y agentes con IA.</p><a class="cl" href="/blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Agencia, Marca Blanca y SaaS</h3><p>Revende GoHighLevel como tuyo &mdash; marca blanca, modo SaaS, sub-cuentas y reportes.</p><a class="cl" href="/es/category/agency-white-label-saas/">Explorar gu&iacute;as &rarr;</a></div>
     <div class="cluster"><h3>Pagos y Precios</h3><p>Cobra dentro de GoHighLevel y conoce el costo real &mdash; MercadoPago y pasarelas para LATAM, m&aacute;s el desglose de precios.</p><a class="cl" href="/es/category/payments-pricing/">Explorar gu&iacute;as &rarr;</a></div>
   </div>
   <div class="es-banner">
