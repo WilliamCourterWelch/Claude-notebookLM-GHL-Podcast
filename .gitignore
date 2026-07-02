@@ -39,3 +39,4 @@ venv/
 globalhighlevel-site/migration-proposal.csv
 globalhighlevel-site/migration-proposal.*.bak.csv
 .gbrain-source
+.context/
