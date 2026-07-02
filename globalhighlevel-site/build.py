@@ -264,8 +264,10 @@ def get_related(post: dict, all_posts: list, n: int = 3) -> list:
     target_lang = post_lang(post)
     same_lang = [p for p in all_posts if post_lang(p) == target_lang]
     same = [p for p in same_lang if p.get("slug") != slug and post_topic(p) == topic]
-    other = [p for p in same_lang if p.get("slug") != slug and post_topic(p) != topic]
-    return (same + other)[:n]
+    # Caleb silo integrity: related cards stay IN-SILO (same topic) only. Never pad
+    # with other-topic posts — that cross-links silos and leaks authority across topics.
+    # Fewer related cards on a thin silo is correct; a cross-silo card is not.
+    return same[:n]
 
 
 def _build_link_index(all_posts: list, target_lang=None) -> list[tuple[str, str, str, list[str]]]:
@@ -1032,11 +1034,11 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
     # Footer Topics = the 6 homepage clusters (links-safe to existing pages until hubs build)
     _footer_clusters = [
         ("AI Receptionist &amp; Lead Capture", "/category/agency-platform/"),
-        ("AI Agents &amp; Automation", "/blog/leverage-ai-pricing-updates-gohighlevel-save-more/"),
+        ("AI Agents &amp; Automation", "/blog/gohighlevel-ai-agents-automation-complete-guide/"),
         ("CRM &amp; Communication", "/category/crm-communication/"),
         ("Sites, Funnels &amp; Reputation", "/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/"),
         ("Agency, White-Label &amp; SaaS", "/category/agency-platform/"),
-        ("Payments &amp; Pricing", "/category/payments-pricing/"),
+        ("Payments &amp; Pricing", "/blog/gohighlevel-payments-complete-guide/"),
     ]
     footer_cat_links = "".join(f'        <a href="{u}">{n}</a>\n' for n, u in _footer_clusters)
 
@@ -1074,6 +1076,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
 <meta name="description" content="{description}">
 {'<meta name="robots" content="noindex, follow">' if noindex else ''}
 <link rel="canonical" href="{canonical}">
+<link rel="icon" type="image/png" href="/images/logo.png">
 {hreflang_html}
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{description}">
@@ -1351,6 +1354,7 @@ def build_authority_page(post: dict, all_posts: list = None):
 <title>{title} | {SITE_NAME}</title>
 <meta name="description" content="{truncate(description, 160)}">
 <link rel="canonical" href="{canonical}">
+<link rel="icon" type="image/png" href="/images/logo.png">
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{truncate(description, 160)}">
 <meta property="og:url" content="{canonical}">
@@ -1431,7 +1435,10 @@ def build_post_page(post: dict, all_posts: list = None):
     # are empty (404); a non-English post whose topic has no built EN category page
     # (e.g. a lone Spanish AI-Automation post) shows the label as plain text instead.
     _cat_built  = cat_slug in LIVE_CATEGORY_SLUGS
-    cat_bc      = f'<a href="/category/{cat_slug}/">{category}</a>' if _cat_built else f'<span>{category}</span>'
+    # Caleb first-link rule: breadcrumb crumbs are non-followed text so they don't spend
+    # a link-share on Home/category from every page. The category still gets one followed
+    # link via the eyebrow (below); BreadcrumbList JSON-LD carries the hierarchy for Google.
+    cat_bc      = f'<span>{category}</span>'
     cat_eyebrow = f'<a href="/category/{cat_slug}/" style="color:var(--amber);text-decoration:none">{category}</a>' if _cat_built else f'<span style="color:var(--amber)">{category}</span>'
     date_str    = fmt_date(post.get("publishedAt", post.get("uploadedAt", "")))
     html_content = post.get("html_content", "")
@@ -1647,7 +1654,7 @@ def build_post_page(post: dict, all_posts: list = None):
 <div id="reading-progress"></div>
 <div class="post-container">
   <div class="post-breadcrumb fade-1">
-    <a href="/">Home</a><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
+    <span>Home</span><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
   </div>
   <div class="post-eyebrow fade-1">{cat_eyebrow}</div>
   <h1 class="post-title fade-2">{title}</h1>
@@ -1808,12 +1815,12 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
   <h2>Set GoHighLevel up right &mdash; by topic</h2>
   <p class="lead">The full library, organized. Pick the area you're working on.</p>
   <div class="clusters">
-    <div class="cluster"><h3>AI Receptionist &amp; Lead Capture</h3><p>Never miss a call or a lead &mdash; AI receptionist, missed-call text-back, and automatic review requests.</p><a class="cl" href="/category/agency-platform/">Explore guides &rarr;</a></div>
-    <div class="cluster"><h3>AI Agents &amp; Automation</h3><p>Put the platform on autopilot &mdash; AI agents, workflows, and Conversation AI.</p><a class="cl" href="/blog/leverage-ai-pricing-updates-gohighlevel-save-more/">Explore guides &rarr;</a></div>
-    <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/category/crm-communication/">Explore guides &rarr;</a></div>
-    <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/">Explore guides &rarr;</a></div>
-    <div class="cluster"><h3>Agency, White-Label &amp; SaaS</h3><p>Resell GoHighLevel as your own &mdash; white-label, SaaS mode, sub-accounts, and snapshots.</p><a class="cl" href="/category/agency-platform/">Explore guides &rarr;</a></div>
-    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/category/payments-pricing/">Explore guides &rarr;</a></div>
+    <div class="cluster"><h3>AI Receptionist &amp; Lead Capture</h3><p>Never miss a call or a lead &mdash; AI receptionist, missed-call text-back, and automatic review requests.</p><a class="cl" href="/category/agency-platform/">AI receptionist &amp; lead-capture guides &rarr;</a></div>
+    <div class="cluster"><h3>AI Agents &amp; Automation</h3><p>Put the platform on autopilot &mdash; AI agents, workflows, and Conversation AI.</p><a class="cl" href="/blog/gohighlevel-ai-agents-automation-complete-guide/">AI agents &amp; automation guides &rarr;</a></div>
+    <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/category/crm-communication/">CRM &amp; communication guides &rarr;</a></div>
+    <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/blog/how-to-launch-a-website-in-gohighlevel-pro-templates/">Sites, funnels &amp; reputation guides &rarr;</a></div>
+    <div class="cluster"><h3>Agency, White-Label &amp; SaaS</h3><p>Resell GoHighLevel as your own &mdash; white-label, SaaS mode, sub-accounts, and snapshots.</p><a class="cl" href="/category/agency-platform/">Agency &amp; white-label guides &rarr;</a></div>
+    <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/blog/gohighlevel-payments-complete-guide/">Payments &amp; pricing guides &rarr;</a></div>
   </div>
   <div class="es-banner">
     <div><b style="color:var(--text)">&iquest;Hablas espa&ntilde;ol?</b> <span style="color:var(--text2)">La biblioteca de gu&iacute;as de GoHighLevel y la prueba de 30 d&iacute;as, en espa&ntilde;ol.</span></div>
@@ -1833,9 +1840,29 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
   {pages_html}
 </div>"""
 
+    # Homepage-only Organization JSON-LD (entity/logo recognition; other pages
+    # carry publisher Organization inside their Article schema).
+    if page == 1:
+        org_schema = json.dumps({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": SITE_NAME,
+            "url": SITE_URL,
+            "logo": {
+                "@type": "ImageObject",
+                "url": f"{SITE_URL}/images/logo.png",
+                "width": 512,
+                "height": 512,
+            },
+            "sameAs": [
+                "https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV",
+            ],
+        })
+        body += f'\n<script type="application/ld+json">{org_schema}</script>'
+
     html = base_html(
-        title=f"{SITE_NAME} — {SITE_TAGLINE}" if page == 1 else f"Page {page} | {SITE_NAME}",
-        description="Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies worldwide. Learn GHL step by step.",
+        title="GoHighLevel Tutorials, Guides & Strategies for Agencies" if page == 1 else f"Page {page} | {SITE_NAME}",
+        description="Free GoHighLevel tutorials and guides for marketing agencies: CRM, automation, funnels, payments and pricing explained step by step, plus a 30-day free trial." if page == 1 else "Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies worldwide. Learn GHL step by step.",
         canonical=canonical,
         body=body
     )

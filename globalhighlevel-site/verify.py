@@ -157,9 +157,20 @@ def main() -> int:
 
     def resolves(h: str) -> bool:
         h = norm(h)
-        return (h in pages or h in redirects
+        if (h in pages or h in redirects
                 or h.rstrip("/") + "/" in pages
-                or h.rstrip("/") in redirects or h.rstrip("/") + "/" in redirects)
+                or h.rstrip("/") in redirects or h.rstrip("/") + "/" in redirects):
+            return True
+        # Static assets (e.g. the /images/logo.png favicon) live in subdirs, not in the
+        # page set. An href that maps to a real file INSIDE public/ resolves — but reject
+        # any ".." traversal so a link can't escape public/ and match a repo file (which
+        # would never be deployed as a live asset). Confirm the resolved path stays under public/.
+        rel = h.lstrip("/")
+        if not rel or ".." in rel.split("/"):
+            return False
+        target = (PUBLIC / rel).resolve()
+        pub = PUBLIC.resolve()
+        return (target == pub or pub in target.parents) and target.is_file()
 
     dangling: dict[str, int] = {}
     for f in PUBLIC.rglob("*.html"):

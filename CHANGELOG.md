@@ -2,6 +2,19 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.2.0] - 2026-07-02
+### Added
+- **Two hub pillar pages** (the site had zero real pillars before). `gohighlevel-ai-agents-automation-complete-guide` explains the three automation layers (Workflows / Conversation AI / Agent Studio); `gohighlevel-payments-complete-guide` covers accepting payments in GHL (Stripe/PayPal/NMI/Authorize.net/Square native, MercadoPago regional) and is aimed to NOT cannibalize the ranking pricing page. Homepage + footer cluster cards repointed to both. Both PAA-grounded (DataForSEO) and fact-checked by Codex + a Claude adversarial pass (18 factual fixes, incl. Conversation AI is metered not free on Starter).
+- **Homepage Organization JSON-LD** (logo + sameAs Spotify) on `/` only; **favicon** `<link>` site-wide.
+### Changed
+- **Caleb-canon internal linking.** Silo integrity (re-filed the two automation posts into the AI & Automation topic; `get_related` no longer pads thin silos with other-topic posts — kills cross-silo related cards); spoke link-circles added; each spoke's FIRST in-content link now points up to its pillar; breadcrumb Home/category crumbs de-followed site-wide (BreadcrumbList JSON-LD kept); the 6 homepage hub cards now use unique descriptive anchors instead of 6× "Explore guides".
+- **Money-page FAQ 17 -> 12** (dropped the discount keyword-variant doorway cluster).
+- **Homepage title 85 -> 55 chars, meta description 116 -> 158 chars** (Caleb on-page limits).
+### Fixed
+- **verify.py** now resolves internal hrefs that map to a real file on disk (static assets like the favicon), with a `..`-traversal guard + public/-containment check (caught by Codex/Claude review). Fixed one mislabeled post category. Removed 4 dead pipeline scripts (classify-posts, migrate_lang_topic, design-homepage, design-log).
+### For contributors
+- Build stays `python3 build.py`; `verify.py` + `test_audit_links` + `test_build_links` + `test_ghl_capture` all green. Ran `/review` (Codex + Claude adversarial, 1 finding fixed) before ship. gbrain SEO changelog is the deploy-gate log of record (seo-cooldown.json retired).
+
 ## [0.2.1.0] - 2026-06-26
 ### Fixed
 - **Sitemap `lastmod` now stamped on every URL (was 17/27).** The relaunched homepages and category hubs (`/`, `/es/`, `/in/`, all categories) had no `lastmod` at all, and the money page reported its April publish date despite being rebuilt today — so the sitemap was telling Google the relaunch never happened. Derived index/hub pages now stamp the build date; posts prefer an explicit `updatedAt` over `publishedAt`. The money page gained `updatedAt: 2026-06-26`. This is the freshness signal that gets the relaunch re-crawled.

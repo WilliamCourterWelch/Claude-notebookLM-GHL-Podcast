@@ -1,0 +1,53 @@
+<!doctype html><html><head><meta charset="utf-8"><title>GHL two hubs — Caleb-clean link map</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>body{background:#07080a;color:#eef2ff;font-family:system-ui,sans-serif;max-width:1150px;margin:0 auto;padding:28px}
+h1{color:#f59e0b} .s{color:#7c8aab;font-size:14px} code{color:#f59e0b}
+.mermaid{background:#0f1320;border:1px solid #3d4a63;border-radius:12px;padding:22px}
+.k span{padding:3px 10px;border-radius:5px;font-size:12px;font-weight:700;margin-right:8px}
+.hm{background:#eef2ff;color:#07080a}.pl{background:#f59e0b;color:#07080a}.sp{background:#1a2740;color:#eef2ff;border:1px solid #3d4a63}.mn{background:#d4af37;color:#07080a}</style></head>
+<body><h1>AI Agents &amp; Payments hubs — Caleb-clean link map</h1>
+<p class="s">Both silos after the canon fixes. Each box = one silo (1 pillar + its spokes, no cross-silo editorial links). Generated 2026-07-01 from live links · branch <code>seo-quickwins-2026-07-01</code>, not deployed · 🔗 = affiliate links.</p>
+<p class="k"><span class="hm">🏠 Home</span><span class="pl">★ Pillar</span><span class="sp">spoke</span><span class="mn">💰 Money</span></p>
+<p class="s"><code>══&gt; down</code> pillar→spoke · <code>-.-&gt; up</code> spoke→pillar · <code>══&gt; circle</code> spoke↔spoke link-circle · <code>--&gt; CTA</code> to money. Both spokes in a silo point to each other (circle) AND up to the pillar; the pillar points down to both; everything funnels to money.</p>
+<div class="mermaid">
+graph TD
+  HOME["🏠 HOMEPAGE"]:::home
+  MONEY["💰 Money page<br/>30-day trial · 🔗12"]:::money
+  HOME ==> MONEY
+  subgraph Sn0["AI Agents & Automation — silo"]
+    n1["★ PILLAR<br/>GoHighLevel AI Agents & Au<br/>🔗6"]:::pillar
+    n2["Automate Google Contacts i<br/>spoke · 🔗5"]:::spoke
+    n3["GHL AI Pricing 2025<br/>spoke · 🔗5"]:::spoke
+  end
+  HOME ==>|card| n1
+  n1 ==>|down| n2
+  n1 ==>|down| n3
+  n1 -->|CTA| MONEY
+  n2 -.->|up| n1
+  n2 ==>|circle| n3:::none
+  n2 -->|CTA| MONEY
+  n3 -.->|up| n1
+  n3 ==>|circle| n2:::none
+  n3 -->|CTA| MONEY
+  subgraph Sn4["Payments & Pricing — silo"]
+    n5["★ PILLAR<br/>GoHighLevel Payments<br/>🔗6"]:::pillar
+    n6["GoHighLevel Pricing 2026<br/>spoke · 🔗8"]:::spoke
+    n7["Master Payment Providers i<br/>spoke · 🔗4"]:::spoke
+  end
+  HOME ==>|card| n5
+  n5 ==>|down| n6
+  n5 -->|CTA| MONEY
+  n5 ==>|down| n7
+  n6 -.->|up| n5
+  n6 ==>|circle| n7:::none
+  n6 -->|CTA| MONEY
+  n7 -.->|up| n5
+  n7 ==>|circle| n6:::none
+  n7 -->|CTA| MONEY
+  classDef home fill:#eef2ff,stroke:#333,color:#07080a
+  classDef money fill:#d4af37,stroke:#fff,color:#07080a
+  classDef pillar fill:#f59e0b,stroke:#fff,color:#07080a
+  classDef spoke fill:#1a2740,stroke:#3d4a63,color:#eef2ff
+  classDef none fill:#1a2740,stroke:#3d4a63,color:#eef2ff
+  linkStyle default stroke-width:1.5px
+</div></body></html>

@@ -1,0 +1,83 @@
+<!doctype html><html><head><meta charset="utf-8"><title>GHL hubs — clean link map</title>
+<style>body{background:#07080a;color:#eef2ff;font-family:system-ui,Arial;max-width:1040px;margin:0 auto;padding:26px}
+h1{color:#f59e0b;margin-bottom:4px} p{color:#7c8aab;font-size:14px}
+.legend{margin:14px 0} .legend span{display:inline-block;margin-right:18px;font-size:13px}
+.sw{display:inline-block;width:26px;height:0;border-top:3px solid;vertical-align:middle;margin-right:6px}</style></head>
+<body>
+<h1>AI Agents &amp; Payments hubs — link map</h1>
+<p>Two clean silos. Each pillar links to its spokes and back; the two spokes link to each other (circle); everything funnels to the money page. No cross-silo links. Branch <code style="color:#f59e0b">seo-quickwins-2026-07-01</code>, not deployed.</p>
+<div class="legend">
+<span><span class="sw" style="border-color:#6b7791"></span>homepage → pillar (card)</span>
+<span><span class="sw" style="border-color:#f59e0b"></span>pillar ⇄ spoke (down + up)</span>
+<span><span class="sw" style="border-color:#5aa9ff"></span>spoke ⇄ spoke (link-circle)</span>
+<span><span class="sw" style="border-color:#d4af37"></span>→ money page (CTA)</span>
+</div>
+<svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" font-family="system-ui,Arial">
+<defs>
+<marker id="g" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#6b7791"/></marker>
+<marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b"/></marker>
+<marker id="astart" markerWidth="9" markerHeight="9" refX="1" refY="3" orient="auto"><path d="M7,0 L0,3 L7,6 Z" fill="#f59e0b"/></marker>
+<marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#5aa9ff"/></marker>
+<marker id="bstart" markerWidth="9" markerHeight="9" refX="1" refY="3" orient="auto"><path d="M7,0 L0,3 L7,6 Z" fill="#5aa9ff"/></marker>
+<marker id="gold" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#d4af37"/></marker>
+</defs>
+<rect width="1000" height="600" fill="#07080a"/>
+
+<!-- HOME -->
+<line x1="430" y1="80" x2="320" y2="150" stroke="#6b7791" stroke-width="2" marker-end="url(#g)"/>
+<line x1="570" y1="80" x2="680" y2="150" stroke="#6b7791" stroke-width="2" marker-end="url(#g)"/>
+<text x="360" y="118" font-size="10" fill="#8b96ad">card</text>
+<text x="620" y="118" font-size="10" fill="#8b96ad">card</text>
+<!-- HOME -> money (hero) big side curve -->
+<path d="M500,82 C 500,300 500,420 500,510" stroke="#d4af37" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#gold)"/>
+<text x="508" y="300" font-size="10" fill="#d4af37">hero card → money</text>
+
+<!-- AI pillar <-> spokes (down+up double arrow) -->
+<line x1="255" y1="215" x2="185" y2="290" stroke="#f59e0b" stroke-width="2" marker-end="url(#a)" marker-start="url(#astart)"/>
+<line x1="300" y1="215" x2="360" y2="290" stroke="#f59e0b" stroke-width="2" marker-end="url(#a)" marker-start="url(#astart)"/>
+<!-- AI spoke circle -->
+<line x1="270" y1="322" x2="290" y2="322" stroke="#5aa9ff" stroke-width="2" marker-end="url(#b)" marker-start="url(#bstart)"/>
+<!-- AI pillar -> money -->
+<line x1="290" y1="220" x2="470" y2="515" stroke="#d4af37" stroke-width="1.6" marker-end="url(#gold)" opacity=".85"/>
+
+<!-- PAY pillar <-> spokes -->
+<line x1="745" y1="215" x2="815" y2="290" stroke="#f59e0b" stroke-width="2" marker-end="url(#a)" marker-start="url(#astart)"/>
+<line x1="700" y1="215" x2="640" y2="290" stroke="#f59e0b" stroke-width="2" marker-end="url(#a)" marker-start="url(#astart)"/>
+<line x1="710" y1="322" x2="730" y2="322" stroke="#5aa9ff" stroke-width="2" marker-end="url(#b)" marker-start="url(#bstart)"/>
+<line x1="710" y1="220" x2="530" y2="515" stroke="#d4af37" stroke-width="1.6" marker-end="url(#gold)" opacity=".85"/>
+
+<!-- boxes -->
+<rect x="415" y="30" width="170" height="54" rx="10" fill="#eef2ff" stroke="#eef2ff" stroke-width="2"/>
+<text x="500.0" y="50" text-anchor="middle" font-size="11" font-weight="800" fill="#07080a" letter-spacing=".5">HOMEPAGE</text>
+<text x="500.0" y="68" text-anchor="middle" font-size="12.5" font-weight="700" fill="#07080a">/</text>
+<text x="500.0" y="85" text-anchor="middle" font-size="11" fill="#07080a" opacity=".8">🔗 3 affiliate</text>
+<rect x="190" y="152" width="190" height="66" rx="10" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
+<text x="285.0" y="172" text-anchor="middle" font-size="11" font-weight="800" fill="#07080a" letter-spacing=".5">★ PILLAR</text>
+<text x="285.0" y="190" text-anchor="middle" font-size="12.5" font-weight="700" fill="#07080a">AI Agents & Automation</text>
+<text x="285.0" y="207" text-anchor="middle" font-size="11" fill="#07080a" opacity=".8">🔗 6 affiliate</text>
+<rect x="620" y="152" width="190" height="66" rx="10" fill="#f59e0b" stroke="#fff" stroke-width="2"/>
+<text x="715.0" y="172" text-anchor="middle" font-size="11" font-weight="800" fill="#07080a" letter-spacing=".5">★ PILLAR</text>
+<text x="715.0" y="190" text-anchor="middle" font-size="12.5" font-weight="700" fill="#07080a">Payments & Pricing</text>
+<text x="715.0" y="207" text-anchor="middle" font-size="11" fill="#07080a" opacity=".8">🔗 6 affiliate</text>
+<rect x="110" y="290" width="168" height="64" rx="10" fill="#1a2740" stroke="#3d4a63" stroke-width="2"/>
+<text x="194.0" y="310" text-anchor="middle" font-size="11" font-weight="800" fill="#eef2ff" letter-spacing=".5">SPOKE</text>
+<text x="194.0" y="328" text-anchor="middle" font-size="12.5" font-weight="700" fill="#eef2ff">Automate contacts</text>
+<text x="194.0" y="345" text-anchor="middle" font-size="11" fill="#eef2ff" opacity=".8">🔗 5 affiliate</text>
+<rect x="300" y="290" width="168" height="64" rx="10" fill="#1a2740" stroke="#3d4a63" stroke-width="2"/>
+<text x="384.0" y="310" text-anchor="middle" font-size="11" font-weight="800" fill="#eef2ff" letter-spacing=".5">SPOKE</text>
+<text x="384.0" y="328" text-anchor="middle" font-size="12.5" font-weight="700" fill="#eef2ff">AI pricing tips</text>
+<text x="384.0" y="345" text-anchor="middle" font-size="11" fill="#eef2ff" opacity=".8">🔗 5 affiliate</text>
+<rect x="548" y="290" width="168" height="64" rx="10" fill="#1a2740" stroke="#3d4a63" stroke-width="2"/>
+<text x="632.0" y="310" text-anchor="middle" font-size="11" font-weight="800" fill="#eef2ff" letter-spacing=".5">SPOKE</text>
+<text x="632.0" y="328" text-anchor="middle" font-size="12.5" font-weight="700" fill="#eef2ff">Pricing guide</text>
+<text x="632.0" y="345" text-anchor="middle" font-size="11" fill="#eef2ff" opacity=".8">🔗 8 affiliate</text>
+<rect x="738" y="290" width="168" height="64" rx="10" fill="#1a2740" stroke="#3d4a63" stroke-width="2"/>
+<text x="822.0" y="310" text-anchor="middle" font-size="11" font-weight="800" fill="#eef2ff" letter-spacing=".5">SPOKE</text>
+<text x="822.0" y="328" text-anchor="middle" font-size="12.5" font-weight="700" fill="#eef2ff">Payment providers</text>
+<text x="822.0" y="345" text-anchor="middle" font-size="11" fill="#eef2ff" opacity=".8">🔗 4 affiliate</text>
+<rect x="410" y="512" width="180" height="60" rx="10" fill="#d4af37" stroke="#fff" stroke-width="2"/>
+<text x="500.0" y="532" text-anchor="middle" font-size="11" font-weight="800" fill="#07080a" letter-spacing=".5">💰 MONEY PAGE</text>
+<text x="500.0" y="550" text-anchor="middle" font-size="12.5" font-weight="700" fill="#07080a">30-day free trial</text>
+<text x="500.0" y="567" text-anchor="middle" font-size="11" fill="#07080a" opacity=".8">🔗 12 affiliate</text>
+</svg>
+</body></html>
