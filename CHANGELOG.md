@@ -2,6 +2,14 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.4.0] - 2026-07-03
+### Added
+- **Agency, White-Label & SaaS hub — pillar + first spoke** (the hub was English-empty; v0.2.3.0 had dropped its homepage card for that reason). `gohighlevel-saas-mode-white-label-agency-guide` (~1,580w pillar) explains SaaS Mode, the Agency Pro $497 plan that unlocks it, sub-accounts, snapshots, rebilling, reselling, and white-labeling. `gohighlevel-sub-accounts-snapshots-agency-guide` (~965w spoke) covers sub-accounts + snapshots. Built via `/research-product-wedge` from the killed firehose corpus (67 EN agency pages) and fact-checked (Codex 3-pass DONE + Claude adversarial). Corrects the source drafts' fabricated per-seat fee model; states the real cost (flat $497 + usage, unlimited sub-accounts), billing rails (Stripe/NMI/Authorize.net/Square), no-certification reselling, white-label app as a separate ~$497 add-on, and the 30-day trial as a promo (14-day standard). Caleb linking: pillar<->spoke reciprocal, first in-body link is the trial CTA (not Spotify), in-silo only.
+### Changed
+- **Restored the Agency homepage hub card** (build.py) now that `/category/agency-white-label-saas/` has >= 2 EN posts and builds. Homepage now shows all 5 hubs.
+### For contributors
+- Step 0 DataForSEO + Step 0.5 GSC (anti-cannibalization: TARGET, no incumbent) run; claim-ledger gated; /review clean (Codex adversarial: approve). 66 more agency drafts remain in the reuse corpus for slow drip. Prior deploy-gate: gbrain `globalhighlevel-seo-changelog` timeline logged.
+
 ## [0.2.3.0] - 2026-07-02
 ### Changed
 - **Reconciled the taxonomy: 8 category topics -> 5 hubs, aligned to the homepage.** The homepage hub cards and `categories.json` topics were two different taxonomies that didn't line up (cards pointed at colliding/placeholder categories). Collapsed to one 5-topic set: **AI Receptionist & Lead Capture** (was AI & Automation + Phone & Voice - AI agents/automation are now spokes under the searched "receptionist/lead capture" head term), **CRM & Communication** (+ Email + SMS), **Sites, Funnels & Reputation** (new), **Agency, White-Label & SaaS** (+ Analytics), **Payments & Pricing**. Re-filed 9 posts. Homepage cards 6 -> 4 (merged the two AI cards; dropped the empty-EN Agency card), each now points at its own distinct category page (no more shared/placeholder targets). ES homepage cards trimmed to the 3 with real ES content and repointed off the dead slug.

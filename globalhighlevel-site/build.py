@@ -1817,6 +1817,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
     <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/category/crm-communication/">CRM &amp; communication guides &rarr;</a></div>
     <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/category/sites-funnels-reputation/">Sites, funnels &amp; reputation guides &rarr;</a></div>
     <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/category/payments-pricing/">Payments &amp; pricing guides &rarr;</a></div>
+    <div class="cluster"><h3>Agency, White-Label &amp; SaaS</h3><p>Turn GoHighLevel into your own software &mdash; SaaS Mode, white-label, sub-accounts, snapshots, and reselling at your own price.</p><a class="cl" href="/category/agency-white-label-saas/">Agency, white-label &amp; SaaS guides &rarr;</a></div>
   </div>
   <div class="es-banner">
     <div><b style="color:var(--text)">&iquest;Hablas espa&ntilde;ol?</b> <span style="color:var(--text2)">La biblioteca de gu&iacute;as de GoHighLevel y la prueba de 30 d&iacute;as, en espa&ntilde;ol.</span></div>
