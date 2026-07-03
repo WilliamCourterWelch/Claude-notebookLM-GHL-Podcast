@@ -51,6 +51,7 @@ class LinkParser(HTMLParser):
         self._buf = ""
         self._link_in_body = False
         self.card_count = 0
+        self.has_body = False           # True if page has a post-body (a pillar-backed hub)
 
     def _is_body_wrapper(self, attrs):
         tokens = (dict(attrs).get("class") or "").split()
@@ -69,6 +70,7 @@ class LinkParser(HTMLParser):
             self.stack.append((tag, is_body))
             if is_body:
                 self.body_count += 1
+                self.has_body = True
 
     def handle_endtag(self, tag):
         if tag == "a" and self._href is not None:
@@ -121,7 +123,9 @@ def main():
         p = LinkParser()
         p.feed(f.read_text(encoding="utf-8", errors="replace"))
 
-        if "/category/" in page and p.card_count < MIN_HUB_CARDS:
+        # A pillar-backed hub renders the full pillar article (has a post-body), so it
+        # is content-rich even with <2 spoke cards — only flag list-only hubs as thin.
+        if "/category/" in page and p.card_count < MIN_HUB_CARDS and not p.has_body:
             thin_hubs.append((page, p.card_count))
 
         for href, anchor, in_body in p.links:

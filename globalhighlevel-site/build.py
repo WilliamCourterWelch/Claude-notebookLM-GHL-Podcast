@@ -56,6 +56,10 @@ LANGUAGES  = []   # language definitions (list of dicts)
 # EN category slugs that actually have a built page after the 2026-06-03 prune.
 # Gates nav/footer category links so they never point at an emptied (404) category.
 LIVE_CATEGORY_SLUGS = set()
+# 2026-07-03: a hub pillar lives on /category/{topic}/. This maps each pillar's old
+# /blog/ URL -> its hub URL. write() rewrites internal links, the /blog/ page is not
+# built, and _redirects 301s the old URL to the hub. One canonical URL per pillar.
+PILLAR_HUB_MAP = {}
 # P0.3 (2026-06-22): site-wide cap on identical crawlable anchor->URL pairs. Even
 # title-only related anchors + injected body links can repeat the same anchor text at
 # the same URL across many posts, the manipulative-anchor signal Google demotes. Keyed
@@ -400,6 +404,10 @@ def load_categories() -> tuple[list[dict], list[dict]]:
     return [], []
 
 def write(path: Path, html: str):
+    # Repoint any internal link to a pillar's old /blog/ URL to its /category/ hub
+    # (the pillar's single canonical home). Catches hard-coded + auto-injected links.
+    for _blog, _hub in PILLAR_HUB_MAP.items():
+        html = html.replace(f'href="{_blog}"', f'href="{_hub}"')
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(html, encoding="utf-8")
     print(f"  ✓ {path.relative_to(PUBLIC_DIR)}")
@@ -1307,6 +1315,10 @@ def build_authority_page(post: dict, all_posts: list = None):
     date_str = fmt_date(post.get("publishedAt", ""))
     rtime = read_time(html_content)
     canonical = f"{SITE_URL}{post_url(post)}"
+    # 2026-07-03: a pillar's content is the hub PAGE; the /blog/ copy canonicalizes
+    # to /category/{topic}/ so search engines consolidate on the hub, not two URLs.
+    if post.get("isPillar") and post.get("language", "en") == "en":
+        canonical = f"{SITE_URL}/category/{slugify(post_topic(post))}/"
 
     is_hub = post.get("is_series_hub", False)
     vertical = post.get("vertical", "")
@@ -1444,6 +1456,10 @@ def build_post_page(post: dict, all_posts: list = None):
     episode_id  = post.get("transistorEpisodeId", "")
     rtime       = read_time(html_content)
     canonical   = f"{SITE_URL}{post_url(post)}"
+    # A hub pillar's content lives on /category/{topic}/; this /blog/ copy points its
+    # canonical there so search engines consolidate on the hub, not two URLs.
+    if post.get("isPillar") and post.get("language", "en") == "en":
+        canonical = f"{SITE_URL}/category/{slugify(post_topic(post))}/"
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
@@ -1452,12 +1468,17 @@ def build_post_page(post: dict, all_posts: list = None):
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
     # SEO links until a real cluster exists to link to (set on the post JSON).
     _mvp_minimal = post.get("mvp_minimal_links")
-    if all_posts and not _mvp_minimal:
+    # A pillar's canonical home is the /category/ hub page (which renders this same
+    # content with its links intact). This /blog/ copy is noindex + canonical'd to the
+    # hub, so strip its internal editorial links to avoid double-counting them site-wide.
+    _pillar_blog = bool(post.get("isPillar")) and post.get("language", "en") == "en"
+    _suppress_links = _mvp_minimal or _pillar_blog
+    if all_posts and not _suppress_links:
         html_content = inject_internal_links(html_content, post, all_posts)
     # P1.2: editorial in-body link up to the category hub (only when the hub is built).
-    if _cat_built and not _mvp_minimal:
+    if _cat_built and not _suppress_links:
         html_content += _hub_link_block(category, cat_slug, slug)
-    if _mvp_minimal:
+    if _suppress_links:
         # strip hard-coded internal /blog/ and /category/ anchors (keep the visible text)
         html_content = re.sub(r'<a\b[^>]*\bhref="(?:/blog/|/category/)[^"]*"[^>]*>(.*?)</a>',
                               r'\1', html_content, flags=re.S)
@@ -1691,6 +1712,7 @@ def build_post_page(post: dict, all_posts: list = None):
         text_dir=post_dir,
         hreflang_override=hreflang_override,
         disable_hreflang_fallback=True,
+        noindex=_pillar_blog,   # /blog/ copy of a hub pillar: canonical'd to /category/
     )
     write(PUBLIC_DIR / post_output_rel(post) / "index.html", html)
 
@@ -1817,6 +1839,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
     <div class="cluster"><h3>CRM &amp; Communication</h3><p>Run the whole customer relationship in one place &mdash; CRM, email &amp; SMS, the phone system, and the calendar.</p><a class="cl" href="/category/crm-communication/">CRM &amp; communication guides &rarr;</a></div>
     <div class="cluster"><h3>Sites, Funnels &amp; Reputation</h3><p>Capture leads and look credible &mdash; websites &amp; funnels, forms, reviews, and listings.</p><a class="cl" href="/category/sites-funnels-reputation/">Sites, funnels &amp; reputation guides &rarr;</a></div>
     <div class="cluster"><h3>Payments &amp; Pricing</h3><p>Get paid inside GoHighLevel and know exactly what it costs &mdash; payments and the full pricing breakdown.</p><a class="cl" href="/category/payments-pricing/">Payments &amp; pricing guides &rarr;</a></div>
+    <div class="cluster"><h3>Agency, White-Label &amp; SaaS</h3><p>Turn GoHighLevel into your own software &mdash; SaaS Mode, white-label, sub-accounts, snapshots, and reselling at your own price.</p><a class="cl" href="/category/agency-white-label-saas/">Agency, white-label &amp; SaaS guides &rarr;</a></div>
   </div>
   <div class="es-banner">
     <div><b style="color:var(--text)">&iquest;Hablas espa&ntilde;ol?</b> <span style="color:var(--text2)">La biblioteca de gu&iacute;as de GoHighLevel y la prueba de 30 d&iacute;as, en espa&ntilde;ol.</span></div>
@@ -1890,8 +1913,13 @@ def build_category_pages(posts: list[dict]):
         cat_slug = slugify(cat)
         if len(cat_posts) < MIN_HUB_POSTS:
             continue  # P1.1: don't build thin 1-post hubs (2026-06-22)
+        # 2026-07-03: if this hub has a pillar, the hub PAGE itself renders the
+        # pillar content (content-rich landing), with the remaining posts (spokes)
+        # listed below. The pillar's own /blog/ page canonicalizes here.
+        pillar = next((p for p in cat_posts if p.get("isPillar")), None)
+        list_posts = [p for p in cat_posts if not p.get("isPillar")] if pillar else cat_posts
         cards_html = ""
-        for p in cat_posts:
+        for p in list_posts:
             slug     = p.get("slug", "")
             title    = p.get("title", p.get("seoTitle", "Untitled"))
             desc     = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 130)
@@ -1916,7 +1944,27 @@ def build_category_pages(posts: list[dict]):
         cat_config = next((c for c in CATEGORIES if c["slug"] == cat_slug), None)
         cat_desc = cat_config["description"] if cat_config else f"Free GoHighLevel {cat.lower()} guides and tutorials."
 
-        body = f"""
+        if pillar:
+            # Content-rich hub: render the pillar article as the page body, then
+            # list the spokes below it. Pillar html_content is self-contained
+            # (its own ToC + CTA), so it is NOT sanitized (no template TOC/CTA here).
+            p_title = pillar.get("title", cat)
+            p_body  = pillar.get("html_content", "")
+            more_html = (f'''
+<div class="container">
+  <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>
+  <div class="cards-grid" style="padding:0 0 80px">{cards_html}</div>
+</div>''' if cards_html else "")
+            body = f"""
+<div class="post-container">
+  <div class="post-eyebrow fade-1">{display_cat(cat)}</div>
+  <h1 class="post-title fade-2">{p_title}</h1>
+  <div class="post-body fade-3">{p_body}</div>
+</div>{more_html}"""
+            page_title = pillar.get("title", f"{cat} | {SITE_NAME}")
+            page_desc  = truncate(pillar.get("description", f"Free GoHighLevel {cat.lower()} guides and tutorials."), 158)
+        else:
+            body = f"""
 <div class="cat-header">
   <div class="container">
     <div class="section-label fade-1" style="border-bottom:none;padding-bottom:0;margin-bottom:8px">Category</div>
@@ -1928,11 +1976,13 @@ def build_category_pages(posts: list[dict]):
 <div class="container">
   <div class="cards-grid" style="padding:32px 0 80px">{cards_html}</div>
 </div>"""
+            page_title = f"{cat} | {SITE_NAME}"
+            page_desc  = f"Free GoHighLevel {cat.lower()} guides and tutorials. Step-by-step help for agencies and businesses."
 
         canonical = f"{SITE_URL}/category/{cat_slug}/"
         html = base_html(
-            title=f"{cat} | {SITE_NAME}",
-            description=f"Free GoHighLevel {cat.lower()} guides and tutorials. Step-by-step help for agencies and businesses.",
+            title=page_title,
+            description=page_desc,
             canonical=canonical,
             body=body
         )
@@ -3278,12 +3328,26 @@ def main():
     if IMAGES_SRC.exists():
         shutil.copytree(IMAGES_SRC, PUBLIC_DIR / "images")
 
-    global CATEGORIES, LANGUAGES, LIVE_CATEGORY_SLUGS, LIVE_LANG_CODES, BUILT_PAGE_PATHS, LIVE_POST_SLUGS
+    global CATEGORIES, LANGUAGES, LIVE_CATEGORY_SLUGS, LIVE_LANG_CODES, BUILT_PAGE_PATHS, LIVE_POST_SLUGS, PILLAR_HUB_MAP
     CATEGORIES, LANGUAGES = load_categories()
 
     posts     = load_posts()
     published = load_published()
     merged    = merge_data(posts, published)
+
+    # Each EN hub pillar lives on /category/{topic}/; map its old /blog/ URL to the hub.
+    PILLAR_HUB_MAP = {
+        f"/blog/{p['slug']}/": f"/category/{slugify(post_topic(p))}/"
+        for p in merged
+        if p.get("isPillar") and p.get("language", "en") == "en" and p.get("slug")
+    }
+    # 301 the old /blog/ pillar URLs to their hubs (the /blog/ page is not built, so
+    # the redirect fires — static files would otherwise take precedence on Pages).
+    if PILLAR_HUB_MAP:
+        with open(PUBLIC_DIR / "_redirects", "a", encoding="utf-8") as _rf:
+            _rf.write("\n# hub pillars: /blog/ copy 301s to the /category/ hub (2026-07-03)\n")
+            for _blog, _hub in PILLAR_HUB_MAP.items():
+                _rf.write(f"{_blog} {_hub} 301\n")
 
     print(f"  Posts found: {len(posts)}")
     print(f"  Episodes in published.json: {len(published)}")
@@ -3338,6 +3402,9 @@ def main():
     authority_count = 0
     blog_count = 0
     for p in merged:
+        # EN hub pillars render on their /category/ hub, not as a /blog/ page (it 301s there).
+        if p.get("isPillar") and p.get("language", "en") == "en":
+            continue
         is_series = p.get("is_series_hub") or p.get("url_path", "").startswith("/es/para/") or p.get("url_path", "").startswith("/for/")
         if is_series:
             build_authority_page(p, all_posts=merged)
