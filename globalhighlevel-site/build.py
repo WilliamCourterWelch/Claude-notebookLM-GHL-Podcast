@@ -56,6 +56,10 @@ LANGUAGES  = []   # language definitions (list of dicts)
 # EN category slugs that actually have a built page after the 2026-06-03 prune.
 # Gates nav/footer category links so they never point at an emptied (404) category.
 LIVE_CATEGORY_SLUGS = set()
+# 2026-07-03: a hub pillar lives on /category/{topic}/. This maps each pillar's old
+# /blog/ URL -> its hub URL. write() rewrites internal links, the /blog/ page is not
+# built, and _redirects 301s the old URL to the hub. One canonical URL per pillar.
+PILLAR_HUB_MAP = {}
 # P0.3 (2026-06-22): site-wide cap on identical crawlable anchor->URL pairs. Even
 # title-only related anchors + injected body links can repeat the same anchor text at
 # the same URL across many posts, the manipulative-anchor signal Google demotes. Keyed
@@ -400,6 +404,10 @@ def load_categories() -> tuple[list[dict], list[dict]]:
     return [], []
 
 def write(path: Path, html: str):
+    # Repoint any internal link to a pillar's old /blog/ URL to its /category/ hub
+    # (the pillar's single canonical home). Catches hard-coded + auto-injected links.
+    for _blog, _hub in PILLAR_HUB_MAP.items():
+        html = html.replace(f'href="{_blog}"', f'href="{_hub}"')
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(html, encoding="utf-8")
     print(f"  ✓ {path.relative_to(PUBLIC_DIR)}")
@@ -3320,12 +3328,26 @@ def main():
     if IMAGES_SRC.exists():
         shutil.copytree(IMAGES_SRC, PUBLIC_DIR / "images")
 
-    global CATEGORIES, LANGUAGES, LIVE_CATEGORY_SLUGS, LIVE_LANG_CODES, BUILT_PAGE_PATHS, LIVE_POST_SLUGS
+    global CATEGORIES, LANGUAGES, LIVE_CATEGORY_SLUGS, LIVE_LANG_CODES, BUILT_PAGE_PATHS, LIVE_POST_SLUGS, PILLAR_HUB_MAP
     CATEGORIES, LANGUAGES = load_categories()
 
     posts     = load_posts()
     published = load_published()
     merged    = merge_data(posts, published)
+
+    # Each EN hub pillar lives on /category/{topic}/; map its old /blog/ URL to the hub.
+    PILLAR_HUB_MAP = {
+        f"/blog/{p['slug']}/": f"/category/{slugify(post_topic(p))}/"
+        for p in merged
+        if p.get("isPillar") and p.get("language", "en") == "en" and p.get("slug")
+    }
+    # 301 the old /blog/ pillar URLs to their hubs (the /blog/ page is not built, so
+    # the redirect fires — static files would otherwise take precedence on Pages).
+    if PILLAR_HUB_MAP:
+        with open(PUBLIC_DIR / "_redirects", "a", encoding="utf-8") as _rf:
+            _rf.write("\n# hub pillars: /blog/ copy 301s to the /category/ hub (2026-07-03)\n")
+            for _blog, _hub in PILLAR_HUB_MAP.items():
+                _rf.write(f"{_blog} {_hub} 301\n")
 
     print(f"  Posts found: {len(posts)}")
     print(f"  Episodes in published.json: {len(published)}")
@@ -3380,6 +3402,9 @@ def main():
     authority_count = 0
     blog_count = 0
     for p in merged:
+        # EN hub pillars render on their /category/ hub, not as a /blog/ page (it 301s there).
+        if p.get("isPillar") and p.get("language", "en") == "en":
+            continue
         is_series = p.get("is_series_hub") or p.get("url_path", "").startswith("/es/para/") or p.get("url_path", "").startswith("/for/")
         if is_series:
             build_authority_page(p, all_posts=merged)
