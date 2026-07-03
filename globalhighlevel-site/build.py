@@ -1307,6 +1307,10 @@ def build_authority_page(post: dict, all_posts: list = None):
     date_str = fmt_date(post.get("publishedAt", ""))
     rtime = read_time(html_content)
     canonical = f"{SITE_URL}{post_url(post)}"
+    # 2026-07-03: a pillar's content is the hub PAGE; the /blog/ copy canonicalizes
+    # to /category/{topic}/ so search engines consolidate on the hub, not two URLs.
+    if post.get("isPillar") and post.get("language", "en") == "en":
+        canonical = f"{SITE_URL}/category/{slugify(post_topic(post))}/"
 
     is_hub = post.get("is_series_hub", False)
     vertical = post.get("vertical", "")
@@ -1444,6 +1448,10 @@ def build_post_page(post: dict, all_posts: list = None):
     episode_id  = post.get("transistorEpisodeId", "")
     rtime       = read_time(html_content)
     canonical   = f"{SITE_URL}{post_url(post)}"
+    # A hub pillar's content lives on /category/{topic}/; this /blog/ copy points its
+    # canonical there so search engines consolidate on the hub, not two URLs.
+    if post.get("isPillar") and post.get("language", "en") == "en":
+        canonical = f"{SITE_URL}/category/{slugify(post_topic(post))}/"
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
@@ -1452,12 +1460,17 @@ def build_post_page(post: dict, all_posts: list = None):
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
     # SEO links until a real cluster exists to link to (set on the post JSON).
     _mvp_minimal = post.get("mvp_minimal_links")
-    if all_posts and not _mvp_minimal:
+    # A pillar's canonical home is the /category/ hub page (which renders this same
+    # content with its links intact). This /blog/ copy is noindex + canonical'd to the
+    # hub, so strip its internal editorial links to avoid double-counting them site-wide.
+    _pillar_blog = bool(post.get("isPillar")) and post.get("language", "en") == "en"
+    _suppress_links = _mvp_minimal or _pillar_blog
+    if all_posts and not _suppress_links:
         html_content = inject_internal_links(html_content, post, all_posts)
     # P1.2: editorial in-body link up to the category hub (only when the hub is built).
-    if _cat_built and not _mvp_minimal:
+    if _cat_built and not _suppress_links:
         html_content += _hub_link_block(category, cat_slug, slug)
-    if _mvp_minimal:
+    if _suppress_links:
         # strip hard-coded internal /blog/ and /category/ anchors (keep the visible text)
         html_content = re.sub(r'<a\b[^>]*\bhref="(?:/blog/|/category/)[^"]*"[^>]*>(.*?)</a>',
                               r'\1', html_content, flags=re.S)
@@ -1691,6 +1704,7 @@ def build_post_page(post: dict, all_posts: list = None):
         text_dir=post_dir,
         hreflang_override=hreflang_override,
         disable_hreflang_fallback=True,
+        noindex=_pillar_blog,   # /blog/ copy of a hub pillar: canonical'd to /category/
     )
     write(PUBLIC_DIR / post_output_rel(post) / "index.html", html)
 
@@ -1891,8 +1905,13 @@ def build_category_pages(posts: list[dict]):
         cat_slug = slugify(cat)
         if len(cat_posts) < MIN_HUB_POSTS:
             continue  # P1.1: don't build thin 1-post hubs (2026-06-22)
+        # 2026-07-03: if this hub has a pillar, the hub PAGE itself renders the
+        # pillar content (content-rich landing), with the remaining posts (spokes)
+        # listed below. The pillar's own /blog/ page canonicalizes here.
+        pillar = next((p for p in cat_posts if p.get("isPillar")), None)
+        list_posts = [p for p in cat_posts if not p.get("isPillar")] if pillar else cat_posts
         cards_html = ""
-        for p in cat_posts:
+        for p in list_posts:
             slug     = p.get("slug", "")
             title    = p.get("title", p.get("seoTitle", "Untitled"))
             desc     = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 130)
@@ -1917,7 +1936,27 @@ def build_category_pages(posts: list[dict]):
         cat_config = next((c for c in CATEGORIES if c["slug"] == cat_slug), None)
         cat_desc = cat_config["description"] if cat_config else f"Free GoHighLevel {cat.lower()} guides and tutorials."
 
-        body = f"""
+        if pillar:
+            # Content-rich hub: render the pillar article as the page body, then
+            # list the spokes below it. Pillar html_content is self-contained
+            # (its own ToC + CTA), so it is NOT sanitized (no template TOC/CTA here).
+            p_title = pillar.get("title", cat)
+            p_body  = pillar.get("html_content", "")
+            more_html = (f'''
+<div class="container">
+  <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>
+  <div class="cards-grid" style="padding:0 0 80px">{cards_html}</div>
+</div>''' if cards_html else "")
+            body = f"""
+<div class="post-container">
+  <div class="post-eyebrow fade-1">{display_cat(cat)}</div>
+  <h1 class="post-title fade-2">{p_title}</h1>
+  <div class="post-body fade-3">{p_body}</div>
+</div>{more_html}"""
+            page_title = pillar.get("title", f"{cat} | {SITE_NAME}")
+            page_desc  = truncate(pillar.get("description", f"Free GoHighLevel {cat.lower()} guides and tutorials."), 158)
+        else:
+            body = f"""
 <div class="cat-header">
   <div class="container">
     <div class="section-label fade-1" style="border-bottom:none;padding-bottom:0;margin-bottom:8px">Category</div>
@@ -1929,11 +1968,13 @@ def build_category_pages(posts: list[dict]):
 <div class="container">
   <div class="cards-grid" style="padding:32px 0 80px">{cards_html}</div>
 </div>"""
+            page_title = f"{cat} | {SITE_NAME}"
+            page_desc  = f"Free GoHighLevel {cat.lower()} guides and tutorials. Step-by-step help for agencies and businesses."
 
         canonical = f"{SITE_URL}/category/{cat_slug}/"
         html = base_html(
-            title=f"{cat} | {SITE_NAME}",
-            description=f"Free GoHighLevel {cat.lower()} guides and tutorials. Step-by-step help for agencies and businesses.",
+            title=page_title,
+            description=page_desc,
             canonical=canonical,
             body=body
         )
