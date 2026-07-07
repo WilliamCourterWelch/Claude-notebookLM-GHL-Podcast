@@ -2,6 +2,12 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.7.0] - 2026-07-07
+### Added
+- **Reselling & rebilling spoke** under the agency pillar. `gohighlevel-reselling-rebilling-agency-guide` is a focused first-hand guide: the reselling-vs-rebilling distinction, which plan unlocks markup (Unlimited rebills at cost, Agency Pro rebills with markup + full SaaS reselling), a real screenshot of the Reselling → Core Services screen (markup slider + Your Price/HighLevel Price/Your Profit margin builder), reselling usage-based marketplace apps (percentage vs fixed markup), letting clients self-cancel add-ons, and an "is reselling GoHighLevel legit?" answer. Targets the reselling/rebilling long-tail + reseller PAA — deliberately not the pillar's white-label/saas-mode head terms.
+### For contributors
+- Caleb silo: first in-body link points UP to the pillar (`/category/agency-white-label-saas/`), with sibling links to the sub-accounts/snapshots and white-label-setup spokes plus the pricing blog. 1 first-hand screenshot (`reselling.png`, owner-attested 2026-07-06). Codex fact-check applied: fixed 2 P1s (a core-services resale panel mislabeled as "rebilling"; imprecise screenshot numbers) plus pricing/definition hedges. build.py link-hygiene + Clarity gates green. Deploy-gate: gbrain `globalhighlevel-seo-changelog` timeline logged.
+
 ## [0.2.6.0] - 2026-07-07
 ### Added
 - **White-label setup spoke** under the agency pillar. `gohighlevel-white-label-setup-agency-guide` is a focused how-to: the logo, the custom login domain (CNAME-before-domain, the step people get stuck on), branded system emails + shared templates, controlling GoHighLevel's in-app banners, and the white-label mobile app (hedged as a higher-tier/paid add-on). First-hand with 1 real screenshot from a live Agency Pro account.
