@@ -1968,18 +1968,23 @@ def build_category_pages(posts: list[dict]):
             # carried WebSite schema, dropping the EEAT/rich-result signals. Reuse
             # faq_schema() so the FAQ mirrors the visible body Q&A.
             _pillar_canonical = f"{SITE_URL}/category/{cat_slug}/"
-            _pillar_ld = json.dumps({
+            _pub = pillar.get("publishedAt") or pillar.get("uploadedAt")
+            _mod = pillar.get("updatedAt") or _pub
+            _pillar_schema = {
                 "@context": "https://schema.org",
                 "@type": "Article",
                 "headline": p_title,
                 "description": page_desc,
                 "author": {"@type": "Person", "name": "William Welch"},
-                "datePublished": pillar.get("publishedAt", ""),
-                "dateModified": pillar.get("updatedAt", pillar.get("publishedAt", "")),
                 "mainEntityOfPage": {"@type": "WebPage", "@id": _pillar_canonical},
                 "url": _pillar_canonical,
                 "publisher": {"@type": "Organization", "name": SITE_NAME},
-            }, ensure_ascii=False)
+            }
+            if _pub:  # omit empty dates — invalid JSON-LD (codex 2026-07-07)
+                _pillar_schema["datePublished"] = _pub
+            if _mod:
+                _pillar_schema["dateModified"] = _mod
+            _pillar_ld = json.dumps(_pillar_schema, ensure_ascii=False)
             body += (f'\n<script type="application/ld+json">{_pillar_ld}</script>'
                      f'\n{faq_schema(p_body)}')
         else:
