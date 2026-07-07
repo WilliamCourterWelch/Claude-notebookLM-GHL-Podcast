@@ -2,6 +2,14 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.5.0] - 2026-07-07
+### Added
+- **First-hand screenshots on the Agency, White-Label & SaaS silo.** The pillar (`/category/agency-white-label-saas/`) now carries **5 real, PII-redacted screenshots** from a live GoHighLevel Agency Pro account — the SaaS Configurator, Sub-Accounts, Account Snapshots, Reselling, and Whitelabel settings — plus first-hand operator notes (e.g. the CNAME-must-resolve-first white-label gotcha). The sub-accounts/snapshots spoke gains 2 of those screenshots. This adds the real-usage / EEAT signal (screenshots + first-person experience) the pages lacked — the documented recovery lever for the site's thin-content demotion. Redaction is solid-bar (unrecoverable) and owner-attested; no client names, domains, or IDs published.
+### Changed
+- **Hub-pillar category pages now emit Article + FAQPage structured data.** The category-as-pillar rendering previously carried only `WebSite` schema; it now emits an `Article` (author, published/modified dates) and a `FAQPage` that mirrors the visible body Q&A, matching the blog-post template. Applies to every content-rich hub, so all pillars gain rich-result eligibility. build.py `build_category_pages` (isPillar branch only; non-pillar categories unchanged).
+### For contributors
+- Screenshots captured via /ghl-capture using in-app click navigation (GHL's SPA logs out on cold `goto`); solid-bar PII redaction verified image-by-image. Content fact-checked (Codex DONE + Claude adversarial, all pricing/tier/gating confirmed); the build.py schema change codex-reviewed (empty-date omission fix applied). Pre-existing `test_ghl_capture.py` `root`-fixture errors are unrelated to this branch. Deploy-gate: gbrain `globalhighlevel-seo-changelog` timeline logged.
+
 ## [0.2.4.0] - 2026-07-03
 ### Added
 - **CRM & Communication hub pillar + spoke rewire.** `gohighlevel-crm-communication-complete-guide` (~1,480w) covers the CRM, unified inbox, two-way SMS (with A2P 10DLC), email deliverability, LC Phone, and calendars. Built via /research-product-wedge from the 148-page killed CRM corpus, fact-checked (Codex DONE + Claude adversarial SHIP). The two existing CRM spokes (spam-calls, unsolicited-SMS) rewired so their first in-body link points up to the pillar. 4 of 5 EN hubs now have a pillar (Sites remaining).
