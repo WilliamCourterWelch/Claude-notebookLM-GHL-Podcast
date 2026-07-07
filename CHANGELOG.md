@@ -2,6 +2,12 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.6.0] - 2026-07-07
+### Added
+- **White-label setup spoke** under the agency pillar. `gohighlevel-white-label-setup-agency-guide` is a focused how-to: the logo, the custom login domain (CNAME-before-domain, the step people get stuck on), branded system emails + shared templates, controlling GoHighLevel's in-app banners, and the white-label mobile app (hedged as a higher-tier/paid add-on). First-hand with 1 real screenshot from a live Agency Pro account.
+### For contributors
+- Caleb silo: the spoke's first in-body link points UP to the pillar (`/category/agency-white-label-saas/`), plus a sibling link to the sub-accounts/snapshots spoke. Codex fact-check clean (hedged absolute "never sees GoHighLevel" claims). Builds green. Deploy-gate: gbrain `globalhighlevel-seo-changelog` logged.
+
 ## [0.2.5.0] - 2026-07-07
 ### Added
 - **First-hand screenshots on the Agency, White-Label & SaaS silo.** The pillar (`/category/agency-white-label-saas/`) now carries **5 real, PII-redacted screenshots** from a live GoHighLevel Agency Pro account — the SaaS Configurator, Sub-Accounts, Account Snapshots, Reselling, and Whitelabel settings — plus first-hand operator notes (e.g. the CNAME-must-resolve-first white-label gotcha). The sub-accounts/snapshots spoke gains 2 of those screenshots. This adds the real-usage / EEAT signal (screenshots + first-person experience) the pages lacked — the documented recovery lever for the site's thin-content demotion. Redaction is solid-bar (unrecoverable) and owner-attested; no client names, domains, or IDs published.
