@@ -1963,6 +1963,30 @@ def build_category_pages(posts: list[dict]):
 </div>{more_html}"""
             page_title = pillar.get("title", f"{cat} | {SITE_NAME}")
             page_desc  = truncate(pillar.get("description", f"Free GoHighLevel {cat.lower()} guides and tutorials."), 158)
+            # 2026-07-07: emit Article + FAQPage JSON-LD for the hub pillar (parity
+            # with the blog-post template). The category-as-pillar rendering only
+            # carried WebSite schema, dropping the EEAT/rich-result signals. Reuse
+            # faq_schema() so the FAQ mirrors the visible body Q&A.
+            _pillar_canonical = f"{SITE_URL}/category/{cat_slug}/"
+            _pub = pillar.get("publishedAt") or pillar.get("uploadedAt")
+            _mod = pillar.get("updatedAt") or _pub
+            _pillar_schema = {
+                "@context": "https://schema.org",
+                "@type": "Article",
+                "headline": p_title,
+                "description": page_desc,
+                "author": {"@type": "Person", "name": "William Welch"},
+                "mainEntityOfPage": {"@type": "WebPage", "@id": _pillar_canonical},
+                "url": _pillar_canonical,
+                "publisher": {"@type": "Organization", "name": SITE_NAME},
+            }
+            if _pub:  # omit empty dates — invalid JSON-LD (codex 2026-07-07)
+                _pillar_schema["datePublished"] = _pub
+            if _mod:
+                _pillar_schema["dateModified"] = _mod
+            _pillar_ld = json.dumps(_pillar_schema, ensure_ascii=False)
+            body += (f'\n<script type="application/ld+json">{_pillar_ld}</script>'
+                     f'\n{faq_schema(p_body)}')
         else:
             body = f"""
 <div class="cat-header">

@@ -1,0 +1,1289 @@
+{
+  "property": "ghl",
+  "site": "sc-domain:globalhighlevel.com",
+  "days": 90,
+  "window": {
+    "start": "2026-04-05",
+    "end": "2026-07-03"
+  },
+  "totals": {
+    "clicks": 72,
+    "impressions": 21507,
+    "ctr": 0.0033477472450829963,
+    "position": 14.448272655414517
+  },
+  "top_queries": [
+    {
+      "query": "ghl",
+      "clicks": 1,
+      "impressions": 726,
+      "ctr": 0.0013774104683195593,
+      "position": 10.418732782369146
+    },
+    {
+      "query": "go high level espa\u00f1ol",
+      "clicks": 1,
+      "impressions": 19,
+      "ctr": 0.05263157894736842,
+      "position": 39.73684210526316
+    },
+    {
+      "query": "gohighlevel promo code",
+      "clicks": 1,
+      "impressions": 9,
+      "ctr": 0.1111111111111111,
+      "position": 18.0
+    },
+    {
+      "query": "mcp gohighlevel",
+      "clicks": 1,
+      "impressions": 1,
+      "ctr": 1.0,
+      "position": 2.0
+    },
+    {
+      "query": "\"10 lakh per month\" \"gohighlevel\" agency india",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0.0,
+      "position": 5.0
+    }
+  ],
+  "top_pages": [
+    {
+      "page": "https://globalhighlevel.com/es/mercadopago-gohighlevel/",
+      "clicks": 4,
+      "impressions": 42,
+      "ctr": 0.09523809523809523,
+      "position": 7.833333333333333
+    },
+    {
+      "page": "https://globalhighlevel.com/blog/automate-client-support-ask-ai-agent-studio-gohighlevel/",
+      "clicks": 3,
+      "impressions": 1092,
+      "ctr": 0.0027472527472527475,
+      "position": 10.686813186813186
+    },
+    {
+      "page": "https://globalhighlevel.com/blog/automate-google-contacts-gohighlevel-sync/",
+      "clicks": 3,
+      "impressions": 167,
+      "ctr": 0.017964071856287425,
+      "position": 10.910179640718562
+    },
+    {
+      "page": "https://globalhighlevel.com/",
+      "clicks": 2,
+      "impressions": 728,
+      "ctr": 0.0027472527472527475,
+      "position": 47.57692307692308
+    },
+    {
+      "page": "https://globalhighlevel.com/blog/automatizacion-ghl-mercadopago-cierra-ventas/",
+      "clicks": 2,
+      "impressions": 2,
+      "ctr": 1.0,
+      "position": 5.5
+    }
+  ],
+  "source": "live",
+  "fetched_at": "2026-07-06T17:34:37.103916+00:00",
+  "cluster": {
+    "query_regex": "(saas mode|white ?label|white-label|agency|snapshot|reseller|sub.?account|resell)",
+    "page": null,
+    "rows": [
+      {
+        "query": "\"10 lakh per month\" \"gohighlevel\" agency india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-listings-suggestions-sync-data-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 11.0
+      },
+      {
+        "query": "\"10 lakh per month\" \"gohighlevel\" agency india",
+        "page": "https://globalhighlevel.com/blog/how-to-manage-gst-invoicing-with-gohighlevel-in-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "ghl agency",
+        "page": "https://globalhighlevel.com/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 92.0
+      },
+      {
+        "query": "ghl automation agency",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 57.0
+      },
+      {
+        "query": "ghl sub account",
+        "page": "https://globalhighlevel.com/blog/how-to-create-sub-accounts-gohighlevel-snapshots/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 34.0
+      },
+      {
+        "query": "ghl sub account transfer",
+        "page": "https://globalhighlevel.com/blog/how-to-transfer-domains-in-gohighlevel-unified-management/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 56.0
+      },
+      {
+        "query": "ghl sub accounts",
+        "page": "https://globalhighlevel.com/blog/how-to-create-sub-accounts-gohighlevel-snapshots/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 36.0
+      },
+      {
+        "query": "ghl transfer subaccount",
+        "page": "https://globalhighlevel.com/blog/migrate-prospects-gohighlevel-sub-account-management/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 37.5
+      },
+      {
+        "query": "go high level agency",
+        "page": "https://globalhighlevel.com/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 62.666666666666664
+      },
+      {
+        "query": "go high level agency",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 59.0
+      },
+      {
+        "query": "go high level agency",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 90.0
+      },
+      {
+        "query": "go high level white label pricing",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-pricing-plans-2026-complete-guide/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 91.5
+      },
+      {
+        "query": "gohighlevel agency",
+        "page": "https://globalhighlevel.com/",
+        "clicks": 0,
+        "impressions": 6,
+        "ctr": 0.0,
+        "position": 72.83333333333333
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month case study india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 11.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month case study india",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 8.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/ghl-automations-service-based-businesses-india-lead-to-client/",
+        "clicks": 0,
+        "impressions": 15,
+        "ctr": 0.0,
+        "position": 9.933333333333334
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/ghl-whatsapp-automation-indian-agencies-10x-messages/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/ghl-workflows-real-estate-agents-india-lead-follow-up-automation/",
+        "clicks": 0,
+        "impressions": 6,
+        "ctr": 0.0,
+        "position": 5.166666666666667
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 6.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 381,
+        "ctr": 0.0,
+        "position": 6.440944881889764
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-automations-workflows-scale-indian-agency/",
+        "clicks": 0,
+        "impressions": 8,
+        "ctr": 0.0,
+        "position": 7.625
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-indian-coaching-consulting-businesses/",
+        "clicks": 0,
+        "impressions": 16,
+        "ctr": 0.0,
+        "position": 8.125
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 24,
+        "ctr": 0.0,
+        "position": 9.083333333333334
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 82,
+        "ctr": 0.0,
+        "position": 5.597560975609756
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-vs-hubspot-pricing-indian-startups/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-vs-keap-indian-small-businesses/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 7.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 196,
+        "ctr": 0.0,
+        "position": 7.1938775510204085
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-saas-companies-white-label-gohighlevel/",
+        "clicks": 0,
+        "impressions": 34,
+        "ctr": 0.0,
+        "position": 9.764705882352942
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/kanban-view-gohighlevel-india-manage-deals/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 4.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/restore-ip-reputation-gohighlevel-email-deliverability-india/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 8.666666666666668
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/setup-payment-notifications-gohighlevel-wordpress-india/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/facebook-ads-gohighlevel-indian-agencies/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/ghl-whatsapp-automation-indian-service-businesses-step-by-step/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 9.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 5,
+        "ctr": 0.0,
+        "position": 7.6
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 8,
+        "ctr": 0.0,
+        "position": 6.75
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 5.333333333333333
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 8,
+        "ctr": 0.0,
+        "position": 8.75
+      },
+      {
+        "query": "gohighlevel agency 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 33,
+        "ctr": 0.0,
+        "position": 7.484848484848484
+      },
+      {
+        "query": "gohighlevel agency 10 lakhs per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 4,
+        "ctr": 0.0,
+        "position": 6.25
+      },
+      {
+        "query": "gohighlevel agency 10 lakhs per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 8,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakhs per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-automations-workflows-scale-indian-agency/",
+        "clicks": 0,
+        "impressions": 5,
+        "ctr": 0.0,
+        "position": 5.6
+      },
+      {
+        "query": "gohighlevel agency 10 lakhs per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-indian-coaching-consulting-businesses/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakhs per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 8.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakhs per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 8.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakhs per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 8.5
+      },
+      {
+        "query": "gohighlevel agency 10 lakhs per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-saas-companies-white-label-gohighlevel/",
+        "clicks": 0,
+        "impressions": 4,
+        "ctr": 0.0,
+        "position": 9.0
+      },
+      {
+        "query": "gohighlevel agency 10 lakhs per month india",
+        "page": "https://globalhighlevel.com/blog/setup-payment-notifications-gohighlevel-wordpress-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 4.0
+      },
+      {
+        "query": "gohighlevel agency case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 4,
+        "ctr": 0.0,
+        "position": 6.5
+      },
+      {
+        "query": "gohighlevel agency case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-automations-workflows-scale-indian-agency/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 6.5
+      },
+      {
+        "query": "gohighlevel agency case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 6.0
+      },
+      {
+        "query": "gohighlevel agency case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 8.0
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/ghl-whatsapp-automation-indian-agencies-10x-messages/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 9.666666666666666
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 9,
+        "ctr": 0.0,
+        "position": 8.222222222222221
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 9.0
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 9,
+        "ctr": 0.0,
+        "position": 5.888888888888889
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 4,
+        "ctr": 0.0,
+        "position": 8.5
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-saas-companies-white-label-gohighlevel/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 10.5
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/setup-payment-notifications-gohighlevel-wordpress-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 7.0
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 6.0
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 8.0
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 4,
+        "ctr": 0.0,
+        "position": 3.5
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 6,
+        "ctr": 0.0,
+        "position": 8.166666666666668
+      },
+      {
+        "query": "gohighlevel agency earnings 10 lakh per month india case study",
+        "page": "https://globalhighlevel.com/blog/how-indian-saas-companies-white-label-gohighlevel/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 4.0
+      },
+      {
+        "query": "gohighlevel agency earnings case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 9.333333333333334
+      },
+      {
+        "query": "gohighlevel agency earnings case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 11.0
+      },
+      {
+        "query": "gohighlevel agency earnings case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 9.0
+      },
+      {
+        "query": "gohighlevel agency earnings case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 9.0
+      },
+      {
+        "query": "gohighlevel agency earnings case study india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/ghl-automations-service-based-businesses-india-lead-to-client/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 8.0
+      },
+      {
+        "query": "gohighlevel agency earnings case study india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 5,
+        "ctr": 0.0,
+        "position": 8.2
+      },
+      {
+        "query": "gohighlevel agency earnings case study india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-automations-workflows-scale-indian-agency/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 6.0
+      },
+      {
+        "query": "gohighlevel agency earnings case study india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 6.5
+      },
+      {
+        "query": "gohighlevel agency earnings case study india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 7.0
+      },
+      {
+        "query": "gohighlevel agency earnings case study india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 11.0
+      },
+      {
+        "query": "gohighlevel agency earnings case study india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/how-indian-saas-companies-white-label-gohighlevel/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 9.666666666666666
+      },
+      {
+        "query": "gohighlevel agency income 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 5,
+        "ctr": 0.0,
+        "position": 6.8
+      },
+      {
+        "query": "gohighlevel agency income 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency income 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency income 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 5,
+        "ctr": 0.0,
+        "position": 10.4
+      },
+      {
+        "query": "gohighlevel agency income case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 3.0
+      },
+      {
+        "query": "gohighlevel agency income case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 8.5
+      },
+      {
+        "query": "gohighlevel agency income case study 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency income case study india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 10.5
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/ghl-automations-student-enrollment-workflows-india-coaching-centers/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 3.5
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 20,
+        "ctr": 0.0,
+        "position": 7.85
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-indian-coaching-consulting-businesses/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 8.333333333333332
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 6.5
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-indian-recruitment-agencies/",
+        "clicks": 0,
+        "impressions": 5,
+        "ctr": 0.0,
+        "position": 7.8
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-vs-hubspot-pricing-indian-startups/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 6.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/google-ads-gohighlevel-indian-agencies-2026/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 8,
+        "ctr": 0.0,
+        "position": 9.625
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/how-indian-saas-companies-white-label-gohighlevel/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/kanban-view-gohighlevel-india-manage-deals/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/restore-ip-reputation-gohighlevel-email-deliverability-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 9.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/setup-payment-notifications-gohighlevel-wordpress-india/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 6.666666666666667
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 8.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 11.0
+      },
+      {
+        "query": "gohighlevel agency india 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 12,
+        "ctr": 0.0,
+        "position": 8.166666666666668
+      },
+      {
+        "query": "gohighlevel agency india earnings 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-automations-workflows-scale-indian-agency/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 9.0
+      },
+      {
+        "query": "gohighlevel agency india earnings 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency india earnings 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 12.0
+      },
+      {
+        "query": "gohighlevel agency india revenue 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/ghl-whatsapp-automation-indian-agencies-10x-messages/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 12.0
+      },
+      {
+        "query": "gohighlevel agency india revenue 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-automations-workflows-scale-indian-agency/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency india revenue 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 12,
+        "ctr": 0.0,
+        "position": 6.25
+      },
+      {
+        "query": "gohighlevel agency india revenue 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/how-indian-saas-companies-white-label-gohighlevel/",
+        "clicks": 0,
+        "impressions": 4,
+        "ctr": 0.0,
+        "position": 7.5
+      },
+      {
+        "query": "gohighlevel agency india revenue 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/restore-ip-reputation-gohighlevel-email-deliverability-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "gohighlevel agency india revenue 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/setup-payment-notifications-gohighlevel-wordpress-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 4.0
+      },
+      {
+        "query": "gohighlevel agency pricing india monthly retainer",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-indian-recruitment-agencies/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 11.0
+      },
+      {
+        "query": "gohighlevel agency pricing india real estate automation",
+        "page": "https://globalhighlevel.com/blog/ghl-workflows-real-estate-agents-india-lead-follow-up-automation/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 12.0
+      },
+      {
+        "query": "gohighlevel agency pricing india real estate automation",
+        "page": "https://globalhighlevel.com/in/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "gohighlevel agency pricing monthly retainer india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-pricing-plans-2026-complete-guide/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 7.0
+      },
+      {
+        "query": "gohighlevel agency revenue 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 8.0
+      },
+      {
+        "query": "gohighlevel agency revenue 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-automations-workflows-scale-indian-agency/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 2.0
+      },
+      {
+        "query": "gohighlevel agency revenue 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 12.0
+      },
+      {
+        "query": "gohighlevel agency revenue 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/how-indian-saas-companies-white-label-gohighlevel/",
+        "clicks": 0,
+        "impressions": 11,
+        "ctr": 0.0,
+        "position": 8.454545454545453
+      },
+      {
+        "query": "gohighlevel agency revenue 10 lakh per month india",
+        "page": "https://globalhighlevel.com/blog/how-to-track-revenue-in-gohighlevel-agency-dashboard-guide/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 11.5
+      },
+      {
+        "query": "gohighlevel agency united states",
+        "page": "https://globalhighlevel.com/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 72.5
+      },
+      {
+        "query": "gohighlevel reseller",
+        "page": "https://globalhighlevel.com/blog/how-to-resell-usage-based-apps-in-gohighlevel-new-revenue/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 47.333333333333336
+      },
+      {
+        "query": "gohighlevel reseller profit margin",
+        "page": "https://globalhighlevel.com/blog/how-to-resell-usage-based-apps-in-gohighlevel-new-revenue/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 9.0
+      },
+      {
+        "query": "gohighlevel setup agency",
+        "page": "https://globalhighlevel.com/category/agency-platform/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 68.0
+      },
+      {
+        "query": "gohighlevel snapshot",
+        "page": "https://globalhighlevel.com/blog/how-to-create-sub-accounts-gohighlevel-snapshots/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 60.0
+      },
+      {
+        "query": "gohighlevel snapshot",
+        "page": "https://globalhighlevel.com/blog/manage-snapshot-push-settings-gohighlevel-control-sub-accounts/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 62.5
+      },
+      {
+        "query": "gohighlevel sub accounts",
+        "page": "https://globalhighlevel.com/blog/how-to-create-sub-accounts-gohighlevel-snapshots/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 38.0
+      },
+      {
+        "query": "gohighlevel subaccount setup guide",
+        "page": "https://globalhighlevel.com/blog/how-to-create-sub-accounts-gohighlevel-snapshots/",
+        "clicks": 0,
+        "impressions": 8,
+        "ctr": 0.0,
+        "position": 26.75
+      },
+      {
+        "query": "gohighlevel subaccount setup guide",
+        "page": "https://globalhighlevel.com/blog/how-to-use-subaccount-launchpad-in-gohighlevel-faster-onboarding/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 37.0
+      },
+      {
+        "query": "highlevel agency",
+        "page": "https://globalhighlevel.com/blog/que-es-gohighlevel-plataforma-automatizacion-agencias-latinoamerica/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 11.0
+      },
+      {
+        "query": "highlevel agency sub gohighlevel.c tx",
+        "page": "https://globalhighlevel.com/blog/que-es-gohighlevel-plataforma-automatizacion-agencias-latinoamerica/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "how to add sub account in go high level",
+        "page": "https://globalhighlevel.com/blog/how-to-create-sub-accounts-gohighlevel-snapshots/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 38.0
+      },
+      {
+        "query": "how to create sub account in go high level",
+        "page": "https://globalhighlevel.com/blog/how-to-create-sub-accounts-gohighlevel-snapshots/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 29.0
+      },
+      {
+        "query": "how to transfer ghl sub account",
+        "page": "https://globalhighlevel.com/blog/migrate-prospects-gohighlevel-sub-account-management/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 30.0
+      },
+      {
+        "query": "how to transfer sub account ghl",
+        "page": "https://globalhighlevel.com/blog/migrate-prospects-gohighlevel-sub-account-management/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 33.0
+      },
+      {
+        "query": "india gohighlevel agency 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/ghl-whatsapp-automation-indian-service-businesses-step-by-step/",
+        "clicks": 0,
+        "impressions": 6,
+        "ctr": 0.0,
+        "position": 6.0
+      },
+      {
+        "query": "india gohighlevel agency 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce/",
+        "clicks": 0,
+        "impressions": 6,
+        "ctr": 0.0,
+        "position": 7.166666666666667
+      },
+      {
+        "query": "india gohighlevel agency 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 12.0
+      },
+      {
+        "query": "india gohighlevel agency 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-automations-workflows-scale-indian-agency/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 8.0
+      },
+      {
+        "query": "india gohighlevel agency 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-conversation-ai-flow-builder-setup-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 2.0
+      },
+      {
+        "query": "india gohighlevel agency 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "india gohighlevel agency 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 4,
+        "ctr": 0.0,
+        "position": 10.0
+      },
+      {
+        "query": "india gohighlevel agency 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/how-indian-digital-marketing-agencies-use-gohighlevel-automations-to-scale/",
+        "clicks": 0,
+        "impressions": 6,
+        "ctr": 0.0,
+        "position": 10.333333333333334
+      },
+      {
+        "query": "india gohighlevel agency earnings 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-ai-agents-hindi-customer-support-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 11.0
+      },
+      {
+        "query": "india gohighlevel agency earnings 10 lakh per month case study",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-setup-guide-indian-agencies-zero-to-1-lakh-mrr/",
+        "clicks": 0,
+        "impressions": 3,
+        "ctr": 0.0,
+        "position": 8.666666666666668
+      },
+      {
+        "query": "real estate lead generation agency gohighlevel india revenue 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/ghl-workflows-real-estate-agents-india-lead-follow-up-automation/",
+        "clicks": 0,
+        "impressions": 2,
+        "ctr": 0.0,
+        "position": 5.5
+      },
+      {
+        "query": "real estate lead generation agency gohighlevel india revenue 10 lakh per month",
+        "page": "https://globalhighlevel.com/blog/gohighlevel-real-estate-lead-nurturing-india/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 5.0
+      },
+      {
+        "query": "sub account transfer ghl",
+        "page": "https://globalhighlevel.com/blog/migrate-prospects-gohighlevel-sub-account-management/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 35.0
+      },
+      {
+        "query": "transfer ghl sub account",
+        "page": "https://globalhighlevel.com/blog/migrate-prospects-gohighlevel-sub-account-management/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 32.0
+      },
+      {
+        "query": "white label go high level",
+        "page": "https://globalhighlevel.com/blog/how-indian-saas-companies-white-label-gohighlevel/",
+        "clicks": 0,
+        "impressions": 1,
+        "ctr": 0.0,
+        "position": 59.0
+      }
+    ]
+  }
+}

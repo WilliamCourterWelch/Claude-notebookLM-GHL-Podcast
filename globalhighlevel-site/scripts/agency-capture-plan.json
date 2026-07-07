@@ -1,0 +1,32 @@
+[
+  {
+    "name": "saas-configurator",
+    "url_or_app_area": "https://app.gohighlevel.com/saas_dashboard",
+    "claim_supported": "GoHighLevel's SaaS Configurator, where an agency turns GHL into a resellable SaaS product.",
+    "forbidden_overclaims": "Do not quote specific plan prices from this screen; do not imply any revenue figures."
+  },
+  {
+    "name": "sub-accounts",
+    "url_or_app_area": "https://app.gohighlevel.com/sub-accounts/accounts",
+    "claim_supported": "The Sub-Accounts screen where an agency creates and manages separate client accounts.",
+    "forbidden_overclaims": "Do not claim a specific client count; client/sub-account names must be reviewed/redacted before publish."
+  },
+  {
+    "name": "account-snapshots",
+    "url_or_app_area": "https://app.gohighlevel.com/snapshots",
+    "claim_supported": "The Account Snapshots screen used to clone a pre-built account setup into new sub-accounts.",
+    "forbidden_overclaims": "Do not imply snapshots are exclusive to any plan tier beyond what the screen shows."
+  },
+  {
+    "name": "reselling",
+    "url_or_app_area": "https://app.gohighlevel.com/reselling",
+    "claim_supported": "The Reselling screen where an agency marks up and rebills GHL services (phone, email, AI) to clients.",
+    "forbidden_overclaims": "Do not quote specific markup rates or margins from this screen."
+  },
+  {
+    "name": "whitelabel-company",
+    "url_or_app_area": "https://app.gohighlevel.com/settings/company",
+    "claim_supported": "Agency Company settings — where white-label branding (agency name, logo, custom domain) is configured.",
+    "forbidden_overclaims": "Agency name, relationship/ID numbers, and billing details must be reviewed/redacted before publish."
+  }
+]
