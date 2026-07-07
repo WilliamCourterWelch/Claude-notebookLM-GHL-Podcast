@@ -2,6 +2,12 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.8.0] - 2026-07-07
+### Added
+- **SaaS-mode setup spoke** under the agency pillar. `gohighlevel-saas-mode-setup-agency-guide` is a focused first-hand how-to: the plan tier that exposes SaaS Mode (Agency Pro + Enterprise, hedged/attributed), where the SaaS Configurator lives, building a plan on the Plans & pricing tab (monthly/annual price, feature toggles, trial + complimentary credits, Copy sale link), connecting Stripe, switching SaaS on per sub-account (incl. bulk activation + payment-method caveat), and the Cancellation/Downgrade/Security/Automatic Tax tabs worth configuring early. A real screenshot of the SaaS Configurator → Plans & pricing tab (`saas-configurator.png`). Targets the "how to set up saas mode in ghl" PAA long-tail — deliberately not the pillar's "saas mode / white-label" head terms.
+### For contributors
+- Caleb silo: first in-body link points UP to the pillar (`/category/agency-white-label-saas/`), with sibling links to the reselling, sub-accounts/snapshots, and white-label-setup spokes plus the pricing blog. 1 first-hand screenshot (`saas-configurator.png`, owner-attested 2026-07-07). Codex fact-check applied: 8 findings, hedged 6 P1/P2s (SaaS gated to Agency Pro AND Enterprise not Pro-only; Stripe requirement softened to in-account observation; Automatic Tax + cancellation-behavior wording softened to what the screenshot/sources support). build.py link-hygiene + verify.py gates green (0 orphans, 0 dead links). Deploy-gate: gbrain `globalhighlevel-seo-changelog` timeline logged.
+
 ## [0.2.7.0] - 2026-07-07
 ### Added
 - **Reselling & rebilling spoke** under the agency pillar. `gohighlevel-reselling-rebilling-agency-guide` is a focused first-hand guide: the reselling-vs-rebilling distinction, which plan unlocks markup (Unlimited rebills at cost, Agency Pro rebills with markup + full SaaS reselling), a real screenshot of the Reselling → Core Services screen (markup slider + Your Price/HighLevel Price/Your Profit margin builder), reselling usage-based marketplace apps (percentage vs fixed markup), letting clients self-cancel add-ons, and an "is reselling GoHighLevel legit?" answer. Targets the reselling/rebilling long-tail + reseller PAA — deliberately not the pillar's white-label/saas-mode head terms.
