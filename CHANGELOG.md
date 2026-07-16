@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.10.0] - 2026-07-16
+### Changed
+- **HIPAA spoke affiliate section** now states commissionability as confirmed — HighLevel runs a dedicated HIPAA campaign in the affiliate portal (verified first-hand in the owner's affiliate dashboard). Adds the insider caveat from the campaign's own instructions: it's a pop-up promotion active only a few times per year; confirm it's live in the HighLevel Affiliate Community and use the approved campaign link. The $118.80/mo figure is pinned to its source ("under the agreement's 40% add-on rate").
+
 ## [0.2.9.0] - 2026-07-16
 ### Added
 - **HIPAA compliance add-on spoke** under the Payments & Pricing silo. `gohighlevel-hipaa-compliance` answers the branded PAA cluster (is GHL HIPAA compliant / how much does it cost / how to enable): the $297/mo ($2,970/yr) add-on and what it includes (BAA, ePHI encryption, audit logging, enforced MFA — all vendor-attributed), the non-cancellation catch, per-plan combined cost table, who actually needs it (with the covered-entity caveat), the community price debate (51-vote ideas-board thread, linked + hedged), a BAA-before-real-patient-data warning at every CTA (dummy-data phrasing at the first), and an honestly-hedged affiliate-commission section (HIPAA is not named in the affiliate agreement — readers told to confirm in writing). Research vault + codex/claude third-voice passes in the globalhighlevel-system repo.

@@ -31,8 +31,8 @@
 - **Wednesday:** `weekly-content-builder.yml` — reads Sheet, builds gap pages in correct language
 
 ## Site Structure
-- 4 languages: English (default), Español (`/es/`), India (`/in/`), Arabic (`/ar/`, RTL)
-- 8 topic categories (separate from language — no mixing)
+- 3 languages: English (default), Español (`/es/`), India (`/in/`) — Arabic (`/ar/`) removed with the retired pipeline
+- 5 topic categories (separate from language — no mixing)
 - Nav: Topics dropdown + language picker (`English ▼`)
 - hreflang tags on every page
 - `categories.json`: `{languages: [...], topics: [...]}`
