@@ -2,6 +2,12 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.9.0] - 2026-07-16
+### Added
+- **HIPAA compliance add-on spoke** under the Payments & Pricing silo. `gohighlevel-hipaa-compliance` answers the branded PAA cluster (is GHL HIPAA compliant / how much does it cost / how to enable): the $297/mo ($2,970/yr) add-on and what it includes (BAA, ePHI encryption, audit logging, enforced MFA — all vendor-attributed), the non-cancellation catch, per-plan combined cost table, who actually needs it (with the covered-entity caveat), the community price debate (51-vote ideas-board thread, linked + hedged), a dummy-data-until-BAA warning at every CTA, and an honestly-hedged affiliate-commission section (HIPAA is not named in the affiliate agreement — readers told to confirm in writing). Research vault + codex/claude third-voice passes in the globalhighlevel-system repo.
+### Changed
+- **Pricing guide** gains a hub-down link to the HIPAA spoke at the end of Hidden Costs, plus an `updatedAt` (2026-07-16) so sitemap lastmod and Article dateModified reflect the edit.
+
 ## [0.2.8.0] - 2026-07-07
 ### Added
 - **SaaS-mode setup spoke** under the agency pillar. `gohighlevel-saas-mode-setup-agency-guide` is a focused first-hand how-to: the plan tier that exposes SaaS Mode (Agency Pro + Enterprise, hedged/attributed), where the SaaS Configurator lives, building a plan on the Plans & pricing tab (monthly/annual price, feature toggles, trial + complimentary credits, Copy sale link), connecting Stripe, switching SaaS on per sub-account (incl. bulk activation + payment-method caveat), and the Cancellation/Downgrade/Security/Automatic Tax tabs worth configuring early. A real screenshot of the SaaS Configurator → Plans & pricing tab (`saas-configurator.png`). Targets the "how to set up saas mode in ghl" PAA long-tail — deliberately not the pillar's "saas mode / white-label" head terms.
