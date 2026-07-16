@@ -4,9 +4,9 @@ All notable changes to globalhighlevel.com's static-site build are documented he
 
 ## [0.2.9.0] - 2026-07-16
 ### Added
-- **HIPAA compliance add-on spoke** under the Payments & Pricing silo. `gohighlevel-hipaa-compliance` answers the branded PAA cluster (is GHL HIPAA compliant / how much does it cost / how to enable): the $297/mo ($2,970/yr) add-on and what it includes (BAA, ePHI encryption, audit logging, enforced MFA — all vendor-attributed), the non-cancellation catch, per-plan combined cost table, who actually needs it (with the covered-entity caveat), the community price debate (51-vote ideas-board thread, linked + hedged), a dummy-data-until-BAA warning at every CTA, and an honestly-hedged affiliate-commission section (HIPAA is not named in the affiliate agreement — readers told to confirm in writing). Research vault + codex/claude third-voice passes in the globalhighlevel-system repo.
+- **HIPAA compliance add-on spoke** under the Payments & Pricing silo. `gohighlevel-hipaa-compliance` answers the branded PAA cluster (is GHL HIPAA compliant / how much does it cost / how to enable): the $297/mo ($2,970/yr) add-on and what it includes (BAA, ePHI encryption, audit logging, enforced MFA — all vendor-attributed), the non-cancellation catch, per-plan combined cost table, who actually needs it (with the covered-entity caveat), the community price debate (51-vote ideas-board thread, linked + hedged), a BAA-before-real-patient-data warning at every CTA (dummy-data phrasing at the first), and an honestly-hedged affiliate-commission section (HIPAA is not named in the affiliate agreement — readers told to confirm in writing). Research vault + codex/claude third-voice passes in the globalhighlevel-system repo.
 ### Changed
-- **Pricing guide** gains a hub-down link to the HIPAA spoke at the end of Hidden Costs, plus an `updatedAt` (2026-07-16) so sitemap lastmod and Article dateModified reflect the edit.
+- **Pricing guide** gains a hub-down link to the HIPAA spoke at the end of Hidden Costs, plus an `updatedAt` (2026-07-16) so sitemap lastmod reflects the edit (blog-post Article dateModified still derives from publishedAt in build.py — only category-pillar pages read updatedAt).
 
 ## [0.2.8.0] - 2026-07-07
 ### Added
