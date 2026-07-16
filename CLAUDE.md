@@ -1,6 +1,6 @@
 # Podcast Pipeline — GlobalHighLevel.com
 
-> ⚠️ **RETIRED (2026-06-11): the 25-hour content-generation pipeline is dead and was deleted from the repo.** The product that scraped GHL docs → NotebookLM → Transistor → auto-generated blogs (the `ghl-podcast-pipeline/` directory, VPS systemd service, blog generators 1-9, the scheduler) is gone and will not run again. Only the **static site** (`globalhighlevel-site/`, built by `build.py`, deployed via Cloudflare Pages) remains. The podcast-episode catalog the site renders (`published.json`, 158 episodes) was relocated to `globalhighlevel-site/data/published.json`. The sections below describing the live pipeline are historical — do NOT try to run, scp, or re-create it.
+> ⚠️ **RETIRED (2026-06-11): the 25-hour content-generation pipeline is dead and was deleted from the repo.** The product that scraped GHL docs → NotebookLM → Transistor → auto-generated blogs (the `ghl-podcast-pipeline/` directory, VPS systemd service, blog generators 1-9, the scheduler) is gone and will not run again. Only the **static site** (`globalhighlevel-site/`, built by `build.py`, deployed via Cloudflare Pages) remains. The podcast-episode catalog the site renders (`published.json`, 158 episodes) was relocated to `globalhighlevel-site/data/published.json`. The sections below describing the live pipeline are historical — do NOT try to run, scp, or re-create it. (One exception: the directory path was reused on 2026-07-12 for a single standalone script, `ghl-podcast-pipeline/scripts/verticals_measure.py` — see Trigger Surface below — not a pipeline revival.)
 
 ## Architecture
 - **VPS:** IONOS at 74.208.190.10, SSH user `root`, key `~/.ssh/ionos_ghl`, scripts at `/opt/ghl-pipeline/`
@@ -74,7 +74,7 @@ All GHL links must include `fp_ref=amplifi-technologies12`. Full rules in `globa
 ## Trigger Surface — BLOCKING (do not skip)
 
 **GitHub Actions is the canonical trigger surface for cloud automation.** All NEW recurring automation goes there. Do not create:
-- New `/schedule` (claude.ai routines) — surface is FROZEN. Existing 3 active routines remain (Verticals Measurement Daily, CEO Daily Narrative, Weekly SEO Report). Everything else is zombie or migrating.
+- New `/schedule` (claude.ai routines) — surface is FROZEN. Existing 3 active routines remain (Verticals Measurement Daily, CEO Daily Narrative, Weekly SEO Report). Everything else is zombie or migrating. Verticals Measurement Daily's script is committed at `ghl-podcast-pipeline/scripts/verticals_measure.py` (added 2026-07-12 so the routine stops rebuilding it every session — it's the only file in that directory and NOT a revival of the retired pipeline).
 - VPS cron jobs — VPS systemd is for content generation only (`ghl-podcast.service`, NotebookLM, scp deploys).
 - Mac local cron — Mac may be off; cloud-only.
 
