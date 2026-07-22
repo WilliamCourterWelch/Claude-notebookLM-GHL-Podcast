@@ -3,8 +3,9 @@ Allow: /
 # Attribution/conversion surfaces — kept out of organic SERPs so podcast/blog
 # click data stays clean. Parallel SEO blog pages rank for these queries instead.
 Disallow: /trial/
-Disallow: /coupon/
-Disallow: /start/
+# /start/ and /coupon/ removed 2026-07-22: both URLs 301 to the money page
+# (see _redirects); blocking them hid the redirects from crawlers and stranded
+# their link equity. Only /trial/ is still a real (attribution) page.
 
 Sitemap: https://globalhighlevel.com/sitemap.xml
 

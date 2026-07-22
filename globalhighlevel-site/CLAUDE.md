@@ -54,8 +54,8 @@
 
 **What they are:**
 - **`/trial/`** — podcast-description destination. Every episode description on Spotify/Apple points here.
-- **`/coupon/`** — promo-code / discount-hunter destination (also podcast + social use).
-- **`/start/`** — blog-article-embedded CTA destination (split from `/trial/` on 2026-04-15 for attribution).
+- **`/coupon/`** — RETIRED. Was the promo-code / discount-hunter destination (podcast + social use). No longer built; `_redirects` 301s it to `/blog/gohighlevel-free-trial-30-days-extended/`. Unblocked in robots.txt 2026-07-22 (Bill's call, same rationale as `/start/`) — do not re-add `Disallow: /coupon/`.
+- **`/start/`** — RETIRED. Was the blog-article-embedded CTA destination (split from `/trial/` on 2026-04-15). The page is no longer built (`build.py` skips it) and `_redirects` 301s it to `/blog/gohighlevel-free-trial-30-days-extended/`. Unblocked in robots.txt 2026-07-22 so crawlers can see the 301 — do not re-add `Disallow: /start/`.
 
 **Format (all three):**
 - Full content pages, ~1,500–2,000 words each
@@ -80,7 +80,7 @@
 The attribution URLs (`/trial/`, `/coupon/`, `/start/`) and the SEO blog are allowed to have overlapping content — different audiences, different funnels, different attribution. Edit them independently.
 
 **Do NOT:**
-- Unblock `/trial/`, `/coupon/`, or `/start/` in `robots.txt` — it breaks attribution
+- Unblock `/trial/` in `robots.txt` — it breaks attribution. (`/start/` and `/coupon/` are the exceptions: both retired + 301'd, deliberately unblocked 2026-07-22 so their link equity flows to the money page.)
 - Migrate their content to the blog pages — kills podcast-listener UX and the Extendly pitch
 - Thin them out to a fast redirect — loses the "teach before you sell" voice and Extendly conversion
 - Point internal cross-links to these paths for SEO reasons — always link to the `/blog/...` SEO page for content context, reserve attribution paths for owned-media CTAs only
