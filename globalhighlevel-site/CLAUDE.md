@@ -50,7 +50,7 @@
 
 ## /trial/, /coupon/, /start/ — Attribution URLs (NOT SEO landings)
 
-**Purpose:** These three paths are dedicated attribution/conversion pages for people who arrive from our owned media (podcast descriptions, blog CTAs, social). They are intentionally separated from organic SEO pages.
+**Purpose:** These three paths were dedicated attribution/conversion pages for people who arrive from our owned media (podcast descriptions, blog CTAs, social), intentionally separated from organic SEO pages. As of 2026-07-22 only `/trial/` is still a live page — `/start/` and `/coupon/` are retired 301s (see below).
 
 **What they are:**
 - **`/trial/`** — podcast-description destination. Every episode description on Spotify/Apple points here.
@@ -64,8 +64,8 @@
 - GA4 fires `cta_click` / `affiliate_click` event on every CTA press (before the outbound redirect)
 - Peter Attia voice: teach the "why 30 days not 14", who it's for, what's included, then affiliate
 
-**Why they're `Disallow`'d in `robots.txt`:**
-- Normal Googlebot is explicitly blocked from crawling these paths
+**Why `/trial/` is `Disallow`'d in `robots.txt`** (applied to all three until 2026-07-22; now `/trial/` only):
+- Normal Googlebot is explicitly blocked from crawling the path
 - AI crawlers (GPTBot, ClaudeBot, Google-Extended, PerplexityBot, anthropic-ai) ARE allowed
 - Reason: keep attribution clean — these URLs must NOT compete in SERPs with our organic blog pages, otherwise podcast-click data is polluted with organic-search clicks
 
