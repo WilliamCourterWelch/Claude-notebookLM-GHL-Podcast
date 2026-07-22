@@ -61,9 +61,18 @@ def test_hub_link_block():
     check("all variants capped -> returns '' (no fresh cliff)", build._hub_link_block("Sales", "sales", "p2") == "")
 
 
+def test_date_modified():
+    dm = build._date_modified
+    check("prefers updatedAt", dm({"updatedAt": "2026-07-22T00:00:00", "publishedAt": "2026-04-10T06:00:00"}) == "2026-07-22T00:00:00")
+    check("falls back to publishedAt when missing", dm({"publishedAt": "2026-04-10T06:00:00"}) == "2026-04-10T06:00:00")
+    check("empty updatedAt falls back", dm({"updatedAt": "", "publishedAt": "2026-04-10T06:00:00"}) == "2026-04-10T06:00:00")
+    check("uploadedAt last resort", dm({"uploadedAt": "2026-04-01T00:00:00"}) == "2026-04-01T00:00:00")
+
+
 def main():
     print("test_build_links.py")
-    for t in (test_anchor_cap, test_build_link_index_multiword_only, test_hub_link_block):
+    for t in (test_anchor_cap, test_build_link_index_multiword_only, test_hub_link_block,
+              test_date_modified):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0
