@@ -1607,7 +1607,7 @@ def build_post_page(post: dict, all_posts: list = None):
         "image": [_art_img],
         "inLanguage": post.get("language", "en"),
         "datePublished": post.get("publishedAt", post.get("uploadedAt", "")),
-        "dateModified": post.get("publishedAt", post.get("uploadedAt", "")),
+        "dateModified": post.get("updatedAt") or post.get("publishedAt", post.get("uploadedAt", "")),
         "author": {
             "@type": "Person",
             "name": "William Welch",
