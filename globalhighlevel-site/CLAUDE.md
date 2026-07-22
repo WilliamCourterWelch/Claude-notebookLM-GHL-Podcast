@@ -57,7 +57,7 @@
 - **`/coupon/`** — RETIRED. Was the promo-code / discount-hunter destination (podcast + social use). No longer built; `_redirects` 301s it to `/blog/gohighlevel-free-trial-30-days-extended/`. Unblocked in robots.txt 2026-07-22 (Bill's call, same rationale as `/start/`) — do not re-add `Disallow: /coupon/`.
 - **`/start/`** — RETIRED. Was the blog-article-embedded CTA destination (split from `/trial/` on 2026-04-15). The page is no longer built (`build.py` skips it) and `_redirects` 301s it to `/blog/gohighlevel-free-trial-30-days-extended/`. Unblocked in robots.txt 2026-07-22 so crawlers can see the 301 — do not re-add `Disallow: /start/`.
 
-**Format (all three):**
+**Format (describes `/trial/` today; historical for the retired `/start/` + `/coupon/`):**
 - Full content pages, ~1,500–2,000 words each
 - Pitch BOTH GHL primary affiliate AND Extendly secondary affiliate (education + trust before the click)
 - 7+ outbound affiliate links with `fp_ref=amplifi-technologies12` + UTM params
@@ -77,7 +77,7 @@
 
 `/coupon/` does NOT have a parallel SEO blog. Per Apr 21 redesign (commit `3788bf1`): the old `/blog/gohighlevel-promo-code-discount-2026-real-ways-to-save/` was deleted and `_redirects:18` 301s any inbound traffic to `/blog/gohighlevel-free-trial-30-days-extended/` (the trial blog is the canonical SEO destination for both trial and discount intent — they consolidated). Auto-deploy `aa23952` accidentally re-added the promo blog on the cliff day; cleaned up again 2026-05-07 in commit `3f8588e`.
 
-The attribution URLs (`/trial/`, `/coupon/`, `/start/`) and the SEO blog are allowed to have overlapping content — different audiences, different funnels, different attribution. Edit them independently.
+The live attribution URL (`/trial/` — historically also `/coupon/` and `/start/`) and the SEO blog are allowed to have overlapping content — different audiences, different funnels, different attribution. Edit them independently.
 
 **Do NOT:**
 - Unblock `/trial/` in `robots.txt` — it breaks attribution. (`/start/` and `/coupon/` are the exceptions: both retired + 301'd, deliberately unblocked 2026-07-22 so their link equity flows to the money page.)
@@ -92,7 +92,7 @@ The attribution URLs (`/trial/`, `/coupon/`, `/start/`) and the SEO blog are all
 - Podcast: "Go High Level" on Spotify
 - Podcast stats: 380+ followers
 - Top episode: "GoHighLevel Conversation AI Bot"
-- Content: 490+ published posts (English, India, Spanish)
+- Content: 27 published blog posts (English, India, Spanish — post-prune 2026-06; was 490+) + 158 podcast episodes
 - Offer: GoHighLevel 30-day FREE trial (double the standard 14-day trial)
 - GHL starts at $97/month
 - Affiliate link: https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12
