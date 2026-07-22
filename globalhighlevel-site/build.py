@@ -1435,6 +1435,12 @@ def faq_schema(html_content: str) -> str:
                           "mainEntity": entities}, ensure_ascii=False) + '</script>')
 
 
+def _date_modified(post: dict) -> str:
+    """Article dateModified: real edit date when known, else publish/upload date.
+    Empty-string updatedAt must fall through (or-chain, not .get default)."""
+    return post.get("updatedAt") or post.get("publishedAt", post.get("uploadedAt", ""))
+
+
 def build_post_page(post: dict, all_posts: list = None):
     slug        = post["slug"]
     title       = post.get("title", post.get("seoTitle", ""))
@@ -1607,7 +1613,7 @@ def build_post_page(post: dict, all_posts: list = None):
         "image": [_art_img],
         "inLanguage": post.get("language", "en"),
         "datePublished": post.get("publishedAt", post.get("uploadedAt", "")),
-        "dateModified": post.get("publishedAt", post.get("uploadedAt", "")),
+        "dateModified": _date_modified(post),
         "author": {
             "@type": "Person",
             "name": "William Welch",
@@ -2074,8 +2080,9 @@ def build_sitemap(posts: list[dict]):
     home_alts = _sitemap_alts("")
     urls = [f"  <url><loc>{_sitemap_loc(f'{SITE_URL}/')}</loc><lastmod>{build_date}</lastmod><changefreq>daily</changefreq><priority>1.0</priority>{home_alts}</url>"]
     # /trial/, /start/, /coupon/ are excluded from sitemap:
-    # - /trial/ and /start/ are noindex conversion surfaces (podcast/blog CTAs)
-    # - /coupon/ 301 redirects to /blog/gohighlevel-free-trial-30-days-extended/ (discount-consolidation 2026-04-21)
+    # - /trial/ is a noindex conversion surface (podcast CTA destination)
+    # - /start/ and /coupon/ are retired: both 301 to /blog/gohighlevel-free-trial-30-days-extended/
+    #   (unbuilt since April; robots-unblocked 2026-07-22 so crawlers can see the 301s)
     urls.append(f"  <url><loc>{_sitemap_loc(f'{SITE_URL}/services/')}</loc><lastmod>{build_date}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>")
     urls.append(f"  <url><loc>{_sitemap_loc(f'{SITE_URL}/about/')}</loc><lastmod>{build_date}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>")
     # Only list pages that were actually built. The 2026-06-03 prune emptied many

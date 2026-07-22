@@ -58,7 +58,7 @@
 - **VPS scripts sync via `scp`, not git pull.** Deploy: `scp -i ~/.ssh/ionos_ghl <file> root@74.208.190.10:/opt/ghl-pipeline/scripts/`
 - **public/ is gitignored.** Build output never tracked.
 - **28-day cooldown** on SEO optimizer and GSC topic flagging
-- **`/trial/`, `/coupon/`, `/start/` are ATTRIBUTION URLs, not SEO landings.** Full content pages (~1,900 words) that pitch both GHL + Extendly affiliates, GA4-tracked CTAs, intentionally `Disallow`'d in `robots.txt` so they don't cannibalize organic SERPs. Parallel SEO-indexable blog posts exist (`/blog/gohighlevel-free-trial-30-days-extended/` etc.). Do NOT unblock, thin out, or migrate their content. Full rules in `globalhighlevel-site/CLAUDE.md`.
+- **`/trial/` is an ATTRIBUTION URL, not an SEO landing.** Full content page (~1,900 words) that pitches both GHL + Extendly affiliates, GA4-tracked CTAs, intentionally `Disallow`'d in `robots.txt` so it doesn't cannibalize organic SERPs. A parallel SEO-indexable blog post exists (`/blog/gohighlevel-free-trial-30-days-extended/`). Do NOT unblock, thin out, or migrate its content. **`/start/` and `/coupon/` are RETIRED** (no longer built; `_redirects` 301s them to the money page) and were deliberately UNBLOCKED in robots.txt on 2026-07-22 so crawlers can see the 301s and **external** backlink equity flows (the internal `/start/` CTAs are nofollow and pass nothing — their fix is the Ship 2 anchor repoint, TODOS T5) — do NOT re-add their `Disallow` lines. Full rules in `globalhighlevel-site/CLAUDE.md`.
 
 ## Deploy Checklist — BLOCKING (do not skip)
 Before ANY `git push origin main` that touches SEO content (posts, redirects, build.py, meta rewrites):

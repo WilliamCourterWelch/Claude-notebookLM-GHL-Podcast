@@ -2,6 +2,14 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.10.1] - 2026-07-22
+### Fixed
+- **Search engines can finally see the money-page redirects.** Removed `Disallow: /start/` and `Disallow: /coupon/` from robots.txt — both URLs were retired in April and 301 to the trial money page, but the robots block meant crawlers could never fetch them to discover the redirect. This recovers **external** backlink equity pointing at those URLs (podcast/social-era links) and makes the 301s visible; the 33 internal `/start/` CTA links are all `rel=nofollow` and pass nothing either way — their equity is recovered by the Ship 2 anchor repoint (TODOS T5, stays P0). Only `/trial/` (a real attribution page) stays blocked. `/coupon/` inclusion was Bill's call 2026-07-22.
+- **Blog-post structured data now reports real modification dates.** Article JSON-LD `dateModified` prefers `updatedAt` (falling back to `publishedAt`), matching what category pillars already did — previously every blog post claimed it was never modified since publish.
+### Changed
+- **Money-page title + meta description rewritten** — title field 50 chars ("GoHighLevel 30-Day Free Trial & Promo Codes (2026)", was 78; renders 70 with the " | Global High Level" suffix, so the keyword payload now fits the ~60-char visible budget and only the brand suffix truncates — was losing keywords at 98 rendered), description 152 chars (was 214 and truncating mid-word). Body untouched. `updatedAt` bumped so sitemap lastmod signals the edit.
+- **CLAUDE.md attribution-URL doctrine updated**: `/start/` and `/coupon/` marked RETIRED with do-not-reblock notes; unblock prohibition now covers only `/trial/`.
+
 ## [0.2.10.0] - 2026-07-16
 ### Changed
 - **HIPAA spoke affiliate section** now states commissionability as confirmed — HighLevel runs a dedicated HIPAA campaign in the affiliate portal (verified first-hand in the owner's affiliate dashboard). Adds the insider caveat from the campaign's own instructions: it's a pop-up promotion active only a few times per year; confirm it's live in the HighLevel Affiliate Community and use the approved campaign link. The $118.80/mo figure is pinned to its source ("under the agreement's 40% add-on rate").
