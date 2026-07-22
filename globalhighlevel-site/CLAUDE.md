@@ -48,7 +48,7 @@
 - **Citation exception (added 2026-06-22):** *reference* links to `help.gohighlevel.com`, `ideas.gohighlevel.com`, `help.leadconnectorhq.com`, or `gohighlevel.com/post/...` (docs, the ideas/feature forum, changelog, blog posts) used as **sources/citations** are EXEMPT from `fp_ref` — they are evidence/EEAT references, not conversion CTAs, and `fp_ref` on a help-doc makes no sense. The rule applies to **conversion-intent** links (signup, pricing, trial, feature/sales pages). Every conversion link still MUST carry the affiliate link + `fp_ref`.
 - Spotify podcast link: `https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV`
 
-## /trial/, /coupon/, /start/ — Attribution URLs (NOT SEO landings)
+## /trial/ — Attribution URL (NOT an SEO landing) · /start/ + /coupon/ — RETIRED 301s
 
 **Purpose:** These three paths were dedicated attribution/conversion pages for people who arrive from our owned media (podcast descriptions, blog CTAs, social), intentionally separated from organic SEO pages. As of 2026-07-22 only `/trial/` is still a live page — `/start/` and `/coupon/` are retired 301s (see below).
 

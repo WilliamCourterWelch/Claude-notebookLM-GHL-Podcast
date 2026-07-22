@@ -32,15 +32,18 @@ and the audit would still pass if `/start` broke. (Eng review T6 + Codex 2026-07
 
 ### Delete dead build_trial_page()
 **Priority:** P1
-`build.py:2156` still calls `_build_affiliate_landing("start", "blog")`; one future
-call resurrects a static `/start/` page that shadows the 301 (static files win over
-`_redirects` per Cloudflare docs). (Eng review T7)
+`build.py:2156` still calls `_build_affiliate_landing("start", "blog")` and its
+docstring calls `/start/` a "full SEO-optimized page". Dead code with a misleading
+docstring — one innocent future call rebuilds a retired page. (Note: per current
+Cloudflare docs the 301 would still win over a static file — see T8 — so the risk
+is confusion + a stale crawlable artifact, not redirect shadowing.) (Eng review T7)
 
 ### Fix inverted Cloudflare precedence comments
 **Priority:** P1
-`build.py:3474-3477` and `:3368` claim redirects lose to static assets; Cloudflare
-docs say redirects are ALWAYS followed. Both comments assert the opposite of
-reality. (Eng review T8)
+`build.py:3368` and the `:3470-3477` block claim static files take precedence over
+`_redirects`; Cloudflare docs say redirects are ALWAYS followed. The comments
+assert the opposite of reality — this inverted model already leaked into an early
+draft of T7 above. (Eng review T8)
 
 ### Delete vestigial repo-root _redirects
 **Priority:** P1
@@ -91,4 +94,27 @@ money page, whose new title dropped "Discounts"; description still carries it.
 Watch discount-query impressions post-recrawl; revisit title if they sag.
 (Codex 2026-07-22)
 
+### Money-page rendered title is 70 chars with brand suffix
+**Priority:** P3
+`build.py` appends " | Global High Level" (20 chars) to every post title, so the
+50-char money-page title renders at 70 — keyword payload fits the ~60-char visible
+budget, brand suffix truncates in SERPs. If Google starts rewriting the title,
+consider suppressing the suffix for the money page (template change, pairs with T5).
+(Claude + Codex 2026-07-22)
+
+### /trial/ noindex is invisible behind its robots block
+**Priority:** P3
+`build.py:2562` sets noindex on `/trial/` but robots.txt blocks crawlers from ever
+reading it, so external podcast links can get `/trial/` indexed as "URL indexed
+without content" — polluting the attribution cleanliness the block protects. Check
+GSC coverage for `/trial/`; if indexed-without-content appears, decide between
+unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing)
+
 ## Completed
+
+### Ship 1 — Bing recovery cheap wins (eng review T1 + T2)
+**Completed:** v0.2.10.1 (2026-07-22)
+Removed `Disallow: /start/` + `/coupon/` (Bill-approved extension) from robots.txt;
+money-page title/meta rewrite with `updatedAt` bump; blog Article JSON-LD
+`dateModified` now prefers `updatedAt` (+ regression test in test_build_links.py);
+doctrine updated in both CLAUDE.md files.
