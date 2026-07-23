@@ -6,17 +6,18 @@ for the Bing-first recovery ship queue (eng review 2026-07-21, run
 
 ## Gates (Ship 2)
 
-### Add verify.py Check 4: robots-aware crawlability gate
+### Add robots-aware crawlability gate to verify.py (next free check number)
 **Priority:** P0
 Scoped-correct robots.txt parser that fails loudly on unknown directives; no gate
 currently knows robots.txt exists — that is how the `/start/` leak passed green for
-3 weeks. (Eng review T3)
+3 weeks. NOTE: "Check 4" was taken by the canon-invariants gate in v0.2.11.0 and
+Check 5 by redirect-shadowing — this lands as Check 6+. (Eng review T3)
 
 ### Regression test pinning the /start/ false-green case
 **Priority:** P0
 `scripts/test_verify_robots.py`: a link that resolves via `_redirects` while the
-target is robots-blocked must FAIL verify. Protects Check 4 from being silently
-weakened. (Eng review T4)
+target is robots-blocked must FAIL verify. Protects the robots gate (T3 above)
+from being silently weakened. (Eng review T4)
 
 
 ### Delete dead build_trial_page()
@@ -90,9 +91,10 @@ same firehose batch that caused the April demotion. (Eng review T11)
 Start with `how-to-connect-airtable-in-gohighlevel` (Bing pos 1.0). No redirects for
 these; external links SKIPPED per Bill 2026-07-21 (accepted known risk). (Eng review T12)
 
-### Submit rebuilt URLs via submit-bing.py / IndexNow after deploy
+### Submit rebuilt URLs via scripts/submit_indexnow.py after deploy
 **Priority:** P1
-(Eng review T14)
+The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
+`--sitemap`); this item is now just "run it after the rebuild deploy". (Eng review T14)
 
 ## Infra (Ship 4)
 

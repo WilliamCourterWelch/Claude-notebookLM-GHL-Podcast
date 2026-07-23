@@ -93,18 +93,23 @@ The canon link structure is enforced at render time by `build.py` and gated by
 `verify.py` — do not hand-wire internal links that fight it.
 
 **Link template (per blog post):**
-- **Link circle:** every post carries a prev/next nav within its language+topic
-  silo, wrapping at the ends so each silo is one closed loop. Pillars, sink
-  pages, and series/authority pages are excluded by construction.
+- **Link circle:** every post in a silo with 2+ members carries a prev/next nav
+  within its language+topic silo, wrapping at the ends so each silo is one
+  closed loop (singleton silos get no circle). Pillars, sink pages, and
+  series/authority pages are excluded by construction.
 - **Contextual injection is same-silo only** — no cross-language, no
   cross-topic. In-silo or not at all.
 - **Related cards rotate deterministically per post** (not first-three) and are
   suppressed entirely on sink pages.
 - **Sink airtightness:** the money page (`/blog/gohighlevel-free-trial-30-days-extended/`)
-  emits ZERO outbound internal links — no related cards, no followed
-  category-eyebrow link. Do not add outbound links to it.
-- **In-post conversion CTAs point at the money page directly**, `rel=nofollow`.
-  Trial-path conversion CTAs get `rel=nofollow` stamped at render time.
+  suppresses related cards, circle nav, and the followed category-eyebrow link,
+  and strips followed `/blog|/category` anchors from the body — so it emits no
+  outbound internal blog/category links. (The author box still links `/about/`;
+  generalizing the scan is an open TODO.) Do not add outbound links to it.
+- **Internal trial-path CTAs (formerly `/start/`) point at the money page
+  directly**, `rel=nofollow`. Direct-affiliate CTAs (cta3, TLDR) still go
+  straight to the affiliate URL. Trial-path conversion CTAs get `rel=nofollow`
+  stamped at render time.
 - **Anchor caps:** beyond 3 identical anchor→URL pairs sitewide (including
   anchors baked in stored post bodies and absolute same-site URLs), the link
   unwraps to plain text at render time — post JSON is never mutated.
