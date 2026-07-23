@@ -152,6 +152,14 @@ unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing
 
 ## Completed
 
+### Restore Batch 1 (Day 2 of full-restore sprint)
+**Completed:** v0.2.12.0 (2026-07-23)
+122 pages restored at original slugs (Bill-approved topics via 147-slug override
+file), 15 clone-twin 301s (1 held with Arabic), signup links rewritten to
+affiliate, every fp_ref anchor rendered nofollow-sponsored, sitemap parity gate
+(Check 6) + redirect dupe/dead-target gates (Check 5b/5c) added.
+
+
 ### Ship 2 (Day-1 restore sprint) — CTA repoint, audit doctrine, Cloudflare comments (T5, T6, T8)
 **Completed:** v0.2.11.0 (2026-07-23)
 T5 shipped in its D2-superseded form: in-post CTAs repoint to the money page
