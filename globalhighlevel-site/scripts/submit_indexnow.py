@@ -21,6 +21,7 @@ import argparse
 import json
 import re
 import sys
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -36,11 +37,23 @@ BATCH = 10000  # IndexNow per-POST limit
 def load_urls(args) -> list[str]:
     if args.urls:
         lines = [ln.strip() for ln in Path(args.urls).read_text().splitlines()]
-        urls = [ln if ln.startswith("http") else f"{SITE_URL}{ln}" for ln in lines if ln and not ln.startswith("#")]
+        urls = []
+        for ln in lines:
+            if not ln or ln.startswith("#"):
+                continue
+            # Only own-site URLs are valid: a bare "blog/x" line would silently
+            # become "https://globalhighlevel.comblog/x" and poison the batch.
+            if ln.startswith("/"):
+                urls.append(f"{SITE_URL}{ln}")
+            elif ln.startswith(f"{SITE_URL}/"):
+                urls.append(ln)
+            else:
+                sys.exit(f"ERROR: invalid URL line (must start with '/' or {SITE_URL}/): {ln!r}")
     else:
         if not SITEMAP.exists():
             sys.exit(f"ERROR: {SITEMAP} not found — run build.py first (or pass --urls FILE)")
-        urls = re.findall(r"<loc>(.*?)</loc>", SITEMAP.read_text())
+        from xml.sax.saxutils import unescape
+        urls = [unescape(u) for u in re.findall(r"<loc>(.*?)</loc>", SITEMAP.read_text(), re.S)]
     # dedupe, keep order
     seen, out = set(), []
     for u in urls:
@@ -66,6 +79,20 @@ def main() -> int:
     urls = load_urls(args)
     if not urls:
         sys.exit("ERROR: no URLs to submit")
+
+    # Preflight: IndexNow validates the key ASYNC — a 200/202 on submit says
+    # nothing about the key file being live. Submitting before /<key>.txt is
+    # deployed is a silent no-op at Bing (adversarial review 2026-07-23).
+    if not args.dry_run:
+        key_url = f"{SITE_URL}/{key}.txt"
+        try:
+            with urllib.request.urlopen(key_url, timeout=15) as kresp:
+                body = kresp.read().decode("utf-8", "replace").strip()
+            if body != key:
+                sys.exit(f"ERROR: {key_url} is live but serves the wrong key — fix the deploy first")
+        except Exception as e:
+            sys.exit(f"ERROR: key file {key_url} not reachable ({e}) — deploy it before submitting")
+
     print(f"IndexNow: {len(urls)} URLs -> {ENDPOINT} (host={HOST})")
 
     failed = 0
@@ -91,6 +118,9 @@ def main() -> int:
                 status = resp.status
         except urllib.error.HTTPError as e:
             status = e.code
+            detail = e.read().decode("utf-8", "replace")[:300]
+            if detail:
+                print(f"  response body: {detail}")
         except Exception as e:  # network failure is a loud failure, not a skip
             print(f"  FAIL batch {i // BATCH + 1}: {e}")
             failed += 1
