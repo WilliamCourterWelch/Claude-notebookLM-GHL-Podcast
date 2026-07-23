@@ -91,7 +91,12 @@ def main() -> int:
     if not args.dry_run:
         key_url = f"{SITE_URL}/{key}.txt"
         try:
-            with urllib.request.urlopen(key_url, timeout=15) as kresp:
+            # Cloudflare 403s python-urllib's default User-Agent — send a real one
+            # or the preflight false-negatives on a perfectly live key file
+            # (observed on first production run, 2026-07-23).
+            kreq = urllib.request.Request(
+                key_url, headers={"User-Agent": "Mozilla/5.0 (compatible; ghl-indexnow-submit)"})
+            with urllib.request.urlopen(kreq, timeout=15) as kresp:
                 body = kresp.read().decode("utf-8", "replace").strip()
             if body != key:
                 sys.exit(f"ERROR: {key_url} is live but serves the wrong key — fix the deploy first")

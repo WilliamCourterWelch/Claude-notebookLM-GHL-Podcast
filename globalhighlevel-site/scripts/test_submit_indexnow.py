@@ -142,7 +142,8 @@ def make_urlopen(key, batch_effect, calls):
     """urlopen fake: preflight (URL string) serves the right key; batch (Request
     object) is recorded and delegated to batch_effect(request)."""
     def fake_urlopen(url_or_req, timeout=None):
-        if isinstance(url_or_req, urllib.request.Request):
+        _url = url_or_req.full_url if isinstance(url_or_req, urllib.request.Request) else url_or_req
+        if "api.indexnow.org" in _url:
             calls.append(url_or_req)
             return batch_effect(url_or_req)
         return FakeResponse(200, key.encode("utf-8"))
@@ -186,7 +187,8 @@ def test_preflight_key_liveness():
     batch_calls = []
 
     def wrong_key_urlopen(url_or_req, timeout=None):
-        if isinstance(url_or_req, urllib.request.Request):
+        _url = url_or_req.full_url if isinstance(url_or_req, urllib.request.Request) else url_or_req
+        if "api.indexnow.org" in _url:
             batch_calls.append(url_or_req)
             return FakeResponse(200)
         return FakeResponse(200, b"not-the-key")
