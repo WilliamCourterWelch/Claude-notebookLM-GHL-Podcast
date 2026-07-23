@@ -27,7 +27,7 @@ def check(name, cond):
 def inbody_map(html):
     p = LinkParser()
     p.feed(html)
-    return {h: ib for h, _, ib in p.links}
+    return {h: ib for h, _, ib, _nf in p.links}
 
 
 def test_body_vs_chrome():

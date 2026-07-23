@@ -69,10 +69,111 @@ def test_date_modified():
     check("uploadedAt last resort", dm({"uploadedAt": "2026-04-01T00:00:00"}) == "2026-04-01T00:00:00")
 
 
+def _silo(topic, lang, n, pub_start=1):
+    """n synthetic circle-member posts in one lang+topic silo."""
+    return [{"slug": f"{topic}-{lang}-{i}", "title": f"{topic.title()} Guide {i}",
+             "language": lang, "topic": topic,
+             "publishedAt": f"2026-01-{pub_start + i:02d}T00:00:00"} for i in range(n)]
+
+
+def test_circle_neighbors():
+    posts = _silo("crm", "en", 4)
+    # walk the successor chain: must visit every member exactly once and wrap (closes)
+    seen, cur = [], posts[0]
+    for _ in range(4):
+        _, nxt = build.circle_neighbors(cur, posts)
+        seen.append(nxt["slug"])
+        cur = nxt
+    check("circle closes: successor chain is one full cycle", sorted(seen) == sorted(p["slug"] for p in posts))
+    check("chain returns to start", cur["slug"] == posts[0]["slug"])
+    prev, nxt = build.circle_neighbors(posts[0], posts)
+    check("prev of first wraps to last", prev["slug"] == posts[-1]["slug"])
+    check("deterministic", build.circle_neighbors(posts[2], posts) == build.circle_neighbors(posts[2], posts))
+
+
+def test_circle_edge_cases():
+    one = _silo("crm", "en", 1)
+    check("singleton silo -> no circle", build.circle_neighbors(one[0], one) == (None, None))
+    two = _silo("crm", "en", 2)
+    p, n = build.circle_neighbors(two[0], two)
+    check("2-post silo: prev is next (same neighbor)", p is n and n["slug"] == two[1]["slug"])
+    # sink + pillar are never circle members
+    posts = _silo("crm", "en", 3)
+    posts[1]["mvp_minimal_links"] = True
+    check("sink post excluded from membership", build.circle_neighbors(posts[1], posts) == (None, None))
+    _, nxt = build.circle_neighbors(posts[0], posts)
+    check("circle skips over the sink", nxt["slug"] == posts[2]["slug"])
+    posts2 = _silo("agency", "en", 3)
+    posts2[0]["isPillar"] = True
+    check("pillar excluded from membership", build.circle_neighbors(posts2[0], posts2) == (None, None))
+
+
+def test_circle_never_crosses_silo():
+    posts = _silo("crm", "en", 2) + _silo("payments", "en", 2) + _silo("crm", "es", 2)
+    ok = True
+    for p in posts:
+        prev, nxt = build.circle_neighbors(p, posts)
+        ok = ok and all(x is None or (x["topic"] == p["topic"] and x["language"] == p["language"])
+                        for x in (prev, nxt))
+    check("every neighbor stays same lang+topic across mixed silos", ok)
+
+
+def test_related_rotation_distributes():
+    posts = _silo("crm", "en", 10)
+    # with same[:n] every post picked the same 3; rotation must yield >3 distinct targets
+    targets = set()
+    for p in posts:
+        targets |= {r["slug"] for r in build.get_related(p, posts)}
+    check("related-card targets spread beyond the first 3 posts", len(targets) > 3)
+
+
+def test_inject_internal_links_same_silo_only():
+    build._ANCHOR_URL_COUNTS.clear()
+    html = ('<p>This is a long paragraph about payment providers setup that easily '
+            'clears the eighty character minimum for link injection to happen here.</p>')
+    me = {"slug": "me", "title": "Me", "language": "en", "topic": "crm"}
+    other_silo = {"slug": "other", "title": "Payment Providers Setup Guide",
+                  "language": "en", "topic": "payments", "html_content": "x"}
+    out = build.inject_internal_links(html, me, [me, other_silo])
+    check("cross-silo candidate never linked", "/blog/other/" not in out)
+    same_silo = dict(other_silo, topic="crm", slug="same")
+    build._ANCHOR_URL_COUNTS.clear()
+    out2 = build.inject_internal_links(html, me, [me, same_silo])
+    check("same-silo candidate IS linked", "/blog/same/" in out2)
+
+
+def test_cta_money_page():
+    check("MONEY_PAGE_URL is the trial post", build.MONEY_PAGE_URL == "/blog/gohighlevel-free-trial-30-days-extended/")
+
+
+def test_enforce_anchor_caps():
+    link = '<a href="/blog/target/">gohighlevel starter plan</a>'
+    build._ANCHOR_URL_COUNTS.clear()
+    outs = [build.enforce_anchor_caps(f"<p>{link}</p>") for _ in range(build.ANCHOR_URL_CAP + 2)]
+    kept = sum('href="/blog/target/"' in o for o in outs)
+    check(f"baked anchor kept exactly CAP({build.ANCHOR_URL_CAP})x sitewide", kept == build.ANCHOR_URL_CAP)
+    check("over-cap keeps visible text, drops link",
+          outs[-1] == "<p>gohighlevel starter plan</p>")
+    build._ANCHOR_URL_COUNTS.clear()
+    nf = '<p><a href="/blog/x/" rel="nofollow">try it free</a></p>'
+    check("nofollow CTA never unwrapped",
+          all(build.enforce_anchor_caps(nf) == nf for _ in range(5)))
+    build._ANCHOR_URL_COUNTS.clear()
+    es = '<p><a href="/es/trial/">empieza tu prueba gratis aquí →</a></p>'
+    check("attribution/conversion path never unwrapped (Spanish funnel intact)",
+          all(build.enforce_anchor_caps(es) == es for _ in range(5)))
+    build._ANCHOR_URL_COUNTS.clear()
+    ext = '<p><a href="https://example.com/">external</a></p>'
+    check("external link untouched", build.enforce_anchor_caps(ext) == ext)
+
+
 def main():
     print("test_build_links.py")
     for t in (test_anchor_cap, test_build_link_index_multiword_only, test_hub_link_block,
-              test_date_modified):
+              test_date_modified, test_circle_neighbors, test_circle_edge_cases,
+              test_circle_never_crosses_silo, test_related_rotation_distributes,
+              test_inject_internal_links_same_silo_only, test_cta_money_page,
+              test_enforce_anchor_caps):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

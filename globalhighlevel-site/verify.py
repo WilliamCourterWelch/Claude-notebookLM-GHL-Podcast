@@ -11,6 +11,11 @@ phase of the restructure must keep these green before /seo-deploy-gate.
   Check 2  No orphans    : every post with a live /blog/ page appears in >=1 listing.
   Check 3  No dead links : every internal href resolves to a generated page or a
                            _redirects rule (minus KNOWN_DANGLING, which T6 clears).
+  Check 4  Canon links   : Caleb-canon template invariants on built output —
+                           spoke->pillar link present, link circles close, no
+                           cross-silo/cross-language template links, and sink
+                           pages (mvp_minimal_links) emit ZERO outbound internal
+                           links (D3/D9, full-restore sprint 2026-07-23).
 
 Usage:
     cd globalhighlevel-site
@@ -186,13 +191,89 @@ def main() -> int:
     if new_dangling:
         fails.append(f"Check 3: {len(new_dangling)} new dangling internal links")
 
+    # --- Check 4: canon link invariants (D3, 2026-07-23) -------------------
+    # The Caleb-canon template structure must hold on the BUILT output:
+    #   a. spoke->pillar : every non-sink EN post with a built hub links UP to it
+    #   b. circle closes : each post's rendered circle-nav matches the computed
+    #                      prev/next; wraparound means the silo forms one cycle
+    #   c. no cross-silo : circle + related-card targets stay same-lang+same-topic
+    #   d. sink exclusion: mvp_minimal_links pages gain ZERO outbound internal
+    #                      links (no circle, no related cards, no hub link, no
+    #                      /blog|/category anchors in the post body)
+    print("\n=== Check 4: canon link invariants (spoke->pillar, circles, silo, sink) ===")
+    slug_meta = {p["slug"]: (build.post_lang(p), build.post_topic(p))
+                 for p in posts if p.get("slug")}
+    c4_fails: list[str] = []
+    for p in posts:
+        slug = p.get("slug")
+        if not slug:
+            continue
+        if build.is_series_post(p):
+            continue  # authority template: series nav is its cluster structure, not the circle
+        page = PUBLIC / build.post_output_rel(p) / "index.html"
+        if not page.exists():
+            continue
+        html = read(page)
+        is_sink = bool(p.get("mvp_minimal_links"))
+        is_pillar_blog = bool(p.get("isPillar")) and p.get("language", "en") == "en"
+        lang, topic = build.post_lang(p), build.post_topic(p)
+
+        if is_sink:
+            # d. sink exclusion — zero outbound internal links, in any template slot
+            if 'class="circle-nav"' in html or 'class="related-posts"' in html or 'class="hub-link"' in html:
+                c4_fails.append(f"sink {slug}: template block (circle/related/hub) present")
+            # slice body -> cta-end (nested divs make a </div> match under-scan)
+            b_start = html.find('class="post-body"')
+            b_end = html.find('class="cta-end"', b_start)
+            body = html[b_start:b_end] if b_start >= 0 and b_end > b_start else html
+            for m in re.finditer(r'<a\b([^>]*)>', body):
+                attrs = m.group(1)
+                href_m = re.search(r'href="(/(?:blog|category)/[^"]*)"', attrs)
+                if href_m and "nofollow" not in attrs:
+                    c4_fails.append(f"sink {slug}: followed internal link {href_m.group(1)} in body")
+            continue
+
+        # a. spoke->pillar (EN posts whose hub is built; eyebrow/hub-link carries it)
+        cat_slug = build.slugify(build.display_cat(topic) or "GoHighLevel Tutorials")
+        if lang == "en" and not is_pillar_blog and cat_slug in build.LIVE_CATEGORY_SLUGS:
+            if f'href="/category/{cat_slug}/"' not in html:
+                c4_fails.append(f"{slug}: no link to its hub /category/{cat_slug}/")
+
+        # b. circle closes — rendered nav matches the computed neighbors
+        prev_p, next_p = (None, None) if is_pillar_blog else build.circle_neighbors(p, posts)
+        if next_p is not None:
+            want_next = f'class="circle-next" href="{build.post_url(next_p)}"'
+            if want_next not in html:
+                c4_fails.append(f"{slug}: circle-next missing/wrong (want {build.post_url(next_p)})")
+            if prev_p is not next_p:
+                want_prev = f'class="circle-prev" href="{build.post_url(prev_p)}"'
+                if want_prev not in html:
+                    c4_fails.append(f"{slug}: circle-prev missing/wrong (want {build.post_url(prev_p)})")
+        elif 'class="circle-nav"' in html:
+            c4_fails.append(f"{slug}: unexpected circle-nav (singleton silo or excluded page)")
+
+        # c. no cross-silo/cross-language in template blocks (related cards + circle
+        # both render between the author box and the JSON-LD scripts — scan that zone)
+        starts = [i for i in (html.find('class="related-posts"'), html.find('class="circle-nav"')) if i >= 0]
+        if starts:
+            zone = html[min(starts):html.find('<script type="application/ld+json">')]
+            for tgt in re.findall(r'href="[^"]*?/blog/([^"/]+)/?"', zone):
+                meta = slug_meta.get(unquote(tgt))
+                if meta and meta != (lang, topic):
+                    c4_fails.append(f"{slug}: cross-silo template link -> {tgt} {meta} != {(lang, topic)}")
+    for msg in c4_fails[:20]:
+        print(f"    {msg}")
+    print("  ->", "PASS" if not c4_fails else f"FAIL ({len(c4_fails)} canon violations)")
+    if c4_fails:
+        fails.append(f"Check 4: {len(c4_fails)} canon link invariant violations")
+
     print("\n" + "=" * 52)
     if fails:
         print("VERIFY: FAIL")
         for f in fails:
             print("  -", f)
         return 1
-    print("VERIFY: PASS — 0 lang/slug mismatches, 0 contamination, 0 orphans, 0 new dead links")
+    print("VERIFY: PASS — 0 lang/slug mismatches, 0 contamination, 0 orphans, 0 new dead links, canon invariants hold")
     return 0
 
 

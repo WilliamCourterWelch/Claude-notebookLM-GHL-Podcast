@@ -45,6 +45,12 @@ def affiliate_for(lang: str) -> str:
     """Language-aware affiliate base URL. Spanish -> -es bootcamp; others -> default."""
     return AFFILIATE_ES if lang == "es" else AFFILIATE
 
+# The conversion sink: every in-post CTA points here directly (D2, 2026-07-23).
+# /start/ is retired — it 301s to this page, so routing CTAs through it added a
+# redirect hop for zero attribution gain. CTAs stay rel=nofollow (they pass
+# nothing); equity flows to the money page through the canon link structure.
+MONEY_PAGE_URL = "/blog/gohighlevel-free-trial-30-days-extended/"
+
 GA_ID        = "G-HYT0YKNGX2"
 CLARITY_ID   = "wkeq0t21ww"
 ACCENT       = "#f59e0b"   # amber
@@ -66,6 +72,12 @@ PILLAR_HUB_MAP = {}
 # on (anchor_text_lower, url); injected/hub links beyond ANCHOR_URL_CAP are dropped so
 # the footprint stays varied. Cleared at the start of each build().
 ANCHOR_URL_CAP = 3
+# Conversion/attribution paths: CTAs to these are funnel plumbing, not editorial
+# links — exempt from anchor doctrine (mirrored by audit_links.py EXEMPT_PREFIXES).
+# /trial is robots-disallowed attribution; the language variants are the localized
+# conversion landings baked into firehose-era bodies (161x in the Spanish set —
+# unwrapping those would amputate the Spanish funnel, not clean up SEO).
+ATTRIBUTION_PREFIXES = ("/trial", "/es/trial", "/ar/trial", "/in/trial")
 # P1.1: a category gets a built hub page only with >= this many posts (mirrors the
 # language-topic-page rule). audit_links.py mirrors this value (card_count < 2).
 MIN_HUB_POSTS = 2
@@ -271,7 +283,79 @@ def get_related(post: dict, all_posts: list, n: int = 3) -> list:
     # Caleb silo integrity: related cards stay IN-SILO (same topic) only. Never pad
     # with other-topic posts — that cross-links silos and leaks authority across topics.
     # Fewer related cards on a thin silo is correct; a cross-silo card is not.
+    # D3 (2026-07-23): rotate the window deterministically per slug. same[:n] made
+    # the first n posts in load order collect a card link from EVERY sibling — at
+    # 931 posts that is a mega-concentration on 3 arbitrary pages. Rotation spreads
+    # card inlinks evenly across the silo while staying deterministic per post.
+    if len(same) > n:
+        start = int(hashlib.md5(slug.encode()).hexdigest(), 16) % len(same)
+        same = same[start:] + same[:start]
     return same[:n]
+
+
+def enforce_anchor_caps(html: str) -> str:
+    """Render-time Caleb cap enforcement on anchors BAKED INTO stored html_content
+    (D3 + smoke-build finding, 2026-07-23). Firehose-era bodies carry hardcoded
+    editorial links repeating the same anchor->URL pair 40x+ sitewide — the
+    April-cliff fingerprint. D3 forbids body rewrites (restored JSON stays
+    git-identical), so the cap is enforced where the template renders: an in-body
+    internal FOLLOWED anchor beyond ANCHOR_URL_CAP is unwrapped to plain text.
+    Exempt (kept, uncounted): nofollow links and ATTRIBUTION_PREFIXES conversion
+    CTAs — mirror of audit_links.py's editorial-check exemptions."""
+    def _repl(m):
+        attrs, text = m.group(1), m.group(2)
+        href_m = re.search(r'href="([^"]+)"', attrs)
+        if not href_m:
+            return m.group(0)
+        href = href_m.group(1)
+        if not href.startswith("/") or "nofollow" in attrs:
+            return m.group(0)
+        url = href.split("#")[0].split("?")[0]
+        if any(url.rstrip("/").startswith(e) for e in ATTRIBUTION_PREFIXES):
+            return m.group(0)
+        anchor = re.sub(r"<[^>]+>", "", text)
+        if not anchor.strip() or _anchor_under_cap(anchor, url):
+            return m.group(0)
+        return text  # over cap: keep the visible text, drop the link
+    return re.sub(r'<a\b([^>]*)>(.*?)</a>', _repl, html, flags=re.S)
+
+
+def is_series_post(post: dict) -> bool:
+    """True for series/authority-template pages (built by build_authority_page).
+    MUST track the dispatch condition in main()'s post-page loop."""
+    return bool(post.get("is_series_hub")
+                or post.get("url_path", "").startswith("/es/para/")
+                or post.get("url_path", "").startswith("/for/"))
+
+
+def circle_members(post: dict, all_posts: list) -> list:
+    """The post's link-circle silo: same language + same topic, ordered by
+    publishedAt (slug tiebreak). Pillars are excluded (their home is the hub —
+    hub<->spoke links cover them), sink pages are excluded (mvp_minimal_links
+    pages emit NO outbound internal links, so they can't take a turn in a circle),
+    and series/authority pages are excluded (their cluster structure is the
+    auth-series-nav; putting them in a circle would leave a gap the series page
+    never links back across)."""
+    lang, topic = post_lang(post), post_topic(post)
+    members = [p for p in all_posts
+               if p.get("slug") and post_lang(p) == lang and post_topic(p) == topic
+               and not p.get("isPillar") and not p.get("mvp_minimal_links")
+               and not is_series_post(p)]
+    members.sort(key=lambda p: (p.get("publishedAt", p.get("uploadedAt", "")), p["slug"]))
+    return members
+
+
+def circle_neighbors(post: dict, all_posts: list) -> tuple:
+    """Caleb link circle (D3, 2026-07-23): prev/next within the silo, wrapping at
+    the ends so the circle CLOSES. Returns (prev, next) posts, or (None, None) when
+    the post isn't a circle member or the silo is a singleton."""
+    members = circle_members(post, all_posts)
+    slugs = [p["slug"] for p in members]
+    slug = post.get("slug")
+    if len(members) < 2 or slug not in slugs:
+        return None, None
+    i = slugs.index(slug)
+    return members[i - 1], members[(i + 1) % len(members)]
 
 
 def _build_link_index(all_posts: list, target_lang=None) -> list[tuple[str, str, str, list[str]]]:
@@ -329,19 +413,19 @@ def inject_internal_links(html: str, post: dict, all_posts: list, max_links: int
     target_lang = post_lang(post)
     link_index = _build_link_index(all_posts, target_lang=target_lang)
 
-    # Score candidates: same category gets a boost
+    # D3 canon (2026-07-23): candidates are SAME-TOPIC ONLY. The old score-tier
+    # fallback still admitted cross-silo links at score 1 — that leaks authority
+    # across silos (Caleb: silos never cross-link). In-silo or not at all.
     candidates = []
     for s, title, c, phrases, url in link_index:
-        if s == slug:
+        if s == slug or c != cat:
             continue
-        score = 2 if c == cat else 1
-        candidates.append((s, title, c, phrases, score, url))
+        candidates.append((s, title, c, phrases, url))
 
-    # Shuffle within score tiers so we don't always link the same posts
+    # Shuffle so we don't always link the same posts
     import random
     rng = random.Random(slug)  # deterministic per post
     rng.shuffle(candidates)
-    candidates.sort(key=lambda x: x[4], reverse=True)
 
     # Find paragraphs and inject links
     linked_slugs = set()
@@ -359,7 +443,7 @@ def inject_internal_links(html: str, post: dict, all_posts: list, max_links: int
             continue
 
         text_lower = text_only.lower()
-        for c_slug, c_title, c_cat, c_phrases, c_score, c_url in candidates:
+        for c_slug, c_title, c_cat, c_phrases, c_url in candidates:
             if c_slug in linked_slugs:
                 continue
             # Find the best matching phrase in this paragraph
@@ -849,6 +933,10 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .related-card:hover .r-title{{color:#fff;text-decoration:none}}
 .hub-link{{margin:36px 0 0;padding-top:20px;border-top:1px solid var(--border);font-size:.95rem;color:var(--text2)}}
 .hub-link a{{color:var(--amber);font-weight:600}}
+.circle-nav{{display:flex;justify-content:space-between;gap:16px;margin:36px 0 0;padding-top:20px;border-top:1px solid var(--border)}}
+.circle-nav a{{font-size:.9rem;font-weight:600;color:var(--text2);text-decoration:none;max-width:48%}}
+.circle-nav a:hover{{color:var(--amber)}}
+.circle-nav .circle-next{{margin-left:auto;text-align:right}}
 
 /* Pagination */
 .pagination{{display:flex;gap:8px;justify-content:center;margin-top:48px;flex-wrap:wrap}}
@@ -1469,6 +1557,9 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
+    # D3 render-time cap: firehose-era bodies carry hardcoded repeated anchors;
+    # cap them here (JSON untouched) before injection consumes the ledger.
+    html_content = enforce_anchor_caps(html_content)
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
@@ -1536,14 +1627,14 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── CTA #1 — Below byline (compact one-liner) ─────────────────────────────
     cta1 = f"""
-<p class="cta-byline">Follow along &mdash; <a href="/start/" rel="nofollow">get 30 days free &rarr;</a></p>"""
+<p class="cta-byline">Follow along &mdash; <a href="{MONEY_PAGE_URL}" rel="nofollow">get 30 days free &rarr;</a></p>"""
     if _tldr:
         cta1 = ""  # the TL;DR already gives the answer up top; drop the redundant one-liner
 
     # ── CTA #2 — Mid-article inline ───────────────────────────────────────────
     cta_mid = f"""
 <p class="cta-inline">This is built into GoHighLevel.
-<a href="/start/" rel="nofollow">Try it free for 30 days &rarr;</a></p>"""
+<a href="{MONEY_PAGE_URL}" rel="nofollow">Try it free for 30 days &rarr;</a></p>"""
     body_with_ctas = inject_inline_ctas(html_content, cta_mid)
 
     # ── CTA #3 — End of article box ───────────────────────────────────────────
@@ -1576,9 +1667,30 @@ def build_post_page(post: dict, all_posts: list = None):
   </div>
 </div>"""
 
+    # ── Link circle (D3 canon, 2026-07-23): prev/next within the silo ─────────
+    # Rendered OUTSIDE .post-body (template structure, not an editorial anchor).
+    # Suppressed on sink pages (mvp_minimal_links) and pillar /blog/ copies —
+    # circle_members() also excludes them, so no circle ever points AT a /blog/
+    # pillar copy or expects a sink page to link out.
+    circle_html = ""
+    if all_posts and not _suppress_links:
+        _prev, _next = circle_neighbors(post, all_posts)
+        if _next is not None:
+            _links = ""
+            if _prev is not _next:
+                _links += (f'<a class="circle-prev" href="{post_url(_prev)}">'
+                           f'&larr; {truncate(_prev.get("title", ""), 60)}</a>')
+            _links += (f'<a class="circle-next" href="{post_url(_next)}">'
+                       f'{truncate(_next.get("title", ""), 60)} &rarr;</a>')
+            circle_html = f"""
+<nav class="circle-nav" aria-label="More in {category}">{_links}</nav>"""
+
     # ── Related posts ──────────────────────────────────────────────────────────
+    # Sink pages (mvp_minimal_links) emit ZERO outbound internal links — that
+    # includes related cards, not just body links (sink doctrine 2026-06-25;
+    # made airtight 2026-07-23: the money page was still growing card links).
     related_html = ""
-    if all_posts:
+    if all_posts and not _suppress_links:
         related = get_related(post, all_posts)
         if related:
             cards = ""
@@ -1697,6 +1809,7 @@ def build_post_page(post: dict, all_posts: list = None):
   {share_html}
   {author_html}
   {related_html}
+  {circle_html}
 </div>
 <script type="application/ld+json">{article_schema}</script>
 <script type="application/ld+json">{breadcrumb_schema}</script>
@@ -1955,7 +2068,9 @@ def build_category_pages(posts: list[dict]):
             # list the spokes below it. Pillar html_content is self-contained
             # (its own ToC + CTA), so it is NOT sanitized (no template TOC/CTA here).
             p_title = pillar.get("title", cat)
-            p_body  = pillar.get("html_content", "")
+            # Hub pillar bodies render with a .post-body and share the site-wide
+            # anchor ledger — cap them like post bodies (D3 render-time cap).
+            p_body  = enforce_anchor_caps(pillar.get("html_content", ""))
             more_html = (f'''
 <div class="container">
   <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>
@@ -3358,6 +3473,13 @@ def main():
     IMAGES_SRC = BASE_DIR / "images"
     if IMAGES_SRC.exists():
         shutil.copytree(IMAGES_SRC, PUBLIC_DIR / "images")
+    # IndexNow key file (D4, 2026-07-23): hosted at /<key>.txt so scripts/submit_indexnow.py
+    # can push recrawl notifications to Bing per deploy. Key lives in indexnow-key.txt (source).
+    INDEXNOW_SRC = BASE_DIR / "indexnow-key.txt"
+    if INDEXNOW_SRC.exists():
+        _inkey = INDEXNOW_SRC.read_text().strip()
+        if _inkey:
+            (PUBLIC_DIR / f"{_inkey}.txt").write_text(_inkey, encoding="utf-8")
 
     global CATEGORIES, LANGUAGES, LIVE_CATEGORY_SLUGS, LIVE_LANG_CODES, BUILT_PAGE_PATHS, LIVE_POST_SLUGS, PILLAR_HUB_MAP
     CATEGORIES, LANGUAGES = load_categories()
@@ -3436,8 +3558,7 @@ def main():
         # EN hub pillars render on their /category/ hub, not as a /blog/ page (it 301s there).
         if p.get("isPillar") and p.get("language", "en") == "en":
             continue
-        is_series = p.get("is_series_hub") or p.get("url_path", "").startswith("/es/para/") or p.get("url_path", "").startswith("/for/")
-        if is_series:
+        if is_series_post(p):
             build_authority_page(p, all_posts=merged)
             authority_count += 1
         else:
