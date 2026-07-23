@@ -361,6 +361,26 @@ def is_series_post(post: dict) -> bool:
                 or post.get("url_path", "").startswith("/for/"))
 
 
+def nofollow_affiliate_links(html: str) -> str:
+    """Render-time rel hygiene for PAID links (codex P2, 2026-07-23): any anchor
+    whose href carries fp_ref= is an affiliate link and must be nofollow —
+    Google's paid-link policy. Firehose bodies carry followed affiliate anchors;
+    template CTAs already do this. JSON stays untouched (D3)."""
+    def _repl(m):
+        attrs = m.group(1)
+        if "fp_ref=" not in attrs:
+            return m.group(0)
+        rel_m = re.search(r'rel="([^"]*)"', attrs)
+        if rel_m:
+            if "nofollow" in rel_m.group(1).split():
+                return m.group(0)
+            return f'<a{attrs.replace(rel_m.group(0), f_rel(rel_m.group(1)))}>' 
+        return f'<a{attrs} rel="nofollow sponsored">'
+    def f_rel(existing):
+        return f'rel="{existing} nofollow sponsored"'
+    return re.sub(r'<a\b([^>]*)>', _repl, html)
+
+
 def circle_members(post: dict, all_posts: list) -> list:
     """The post's link-circle silo: same language + same topic, ordered by
     publishedAt (slug tiebreak). Pillars are excluded (their home is the hub —
@@ -1448,6 +1468,7 @@ def build_authority_page(post: dict, all_posts: list = None):
     # Sanitize + cap baked anchors + inject internal links (same as blog template —
     # auth bodies share the site-wide anchor ledger; codex 2026-07-23)
     html_content = sanitize_content(html_content)
+    html_content = nofollow_affiliate_links(html_content)
     html_content = enforce_anchor_caps(html_content)
     if all_posts:
         html_content = inject_internal_links(html_content, post, all_posts, max_links=4)
@@ -1595,6 +1616,7 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
+    html_content = nofollow_affiliate_links(html_content)
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
