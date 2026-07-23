@@ -164,6 +164,17 @@ def normalize_affiliate_links(html, language):
         href_plain = href.replace("&amp;", "&")
         parts = urlsplit(href_plain)
         host = parts.netloc.lower().split(":")[0]
+        if host == "app.gohighlevel.com":
+            # Direct product signup/login links pay NOBODY. Bill-approved
+            # 2026-07-23: rewrite to the canonical affiliate link (same treatment
+            # for /signup and bare app links — both are lost commissions).
+            path = BOOTCAMP_PATH_ES if language == "es" else BOOTCAMP_PATH
+            canonical = f"{BOOTCAMP_DOMAIN}{path}?" + urlencode([
+                ("fp_ref", AFFILIATE_REF), ("utm_source", UTM_SOURCE), ("utm_medium", UTM_MEDIUM)])
+            rewrites += 1
+            if was_escaped:
+                canonical = canonical.replace("&", "&amp;")
+            return f"href={quote}{canonical}{quote}"
         if host == "gohighlevel.com" or host.endswith(".gohighlevel.com"):
             params = dict(parse_qsl(parts.query, keep_blank_values=True))
             if "fp_ref" not in params:

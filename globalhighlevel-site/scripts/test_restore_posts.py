@@ -345,6 +345,14 @@ def test_cli_deploy_date_validation():
               proc.returncode == 2 and "deploy-date" in proc.stderr)
 
 
+def test_signup_rewrite():
+    html = '<a href="https://app.gohighlevel.com/signup">Sign up</a> <a href="https://app.gohighlevel.com">app</a> <a href="https://developers.gohighlevel.com/docs">docs</a>'
+    out, n, flagged = restore_posts.normalize_affiliate_links(html, "en")
+    check("app signup rewritten to affiliate", "fp_ref=amplifi-technologies12" in out and "app.gohighlevel.com" not in out)
+    check("two app links rewritten", n == 2)
+    check("developers docs link untouched + not counted", "developers.gohighlevel.com/docs" in out)
+
+
 def test_topic_overrides():
     raw = json.dumps({"slug": "s1", "topic": "AI & Automation", "publishedAt": "2026-01-01",
                       "html_content": "<p>x</p>"}, ensure_ascii=False)
