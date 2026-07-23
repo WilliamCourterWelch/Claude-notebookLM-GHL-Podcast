@@ -315,9 +315,31 @@ def main() -> int:
     shadowed = sorted(h for h in redirects if h in pages)
     for h in shadowed[:10]:
         print(f"    shadowed: {h}")
-    print("  ->", "PASS" if not shadowed else f"FAIL ({len(shadowed)} built pages shadowed by redirects)")
-    if shadowed:
-        fails.append(f"Check 5: {len(shadowed)} built pages unreachable behind _redirects rules")
+    # 5b: duplicate sources — Cloudflare is first-match-wins, so a second rule
+    # with the same source silently never fires (batch-1 review, 2026-07-23)
+    rf_lines = [ln.strip() for ln in read(rf).splitlines()
+                if ln.strip() and not ln.strip().startswith("#")] if rf.exists() else []
+    srcs = [ln.split()[0] for ln in rf_lines]
+    dupes = sorted({x for x in srcs if srcs.count(x) > 1})
+    for d in dupes[:10]:
+        print(f"    duplicate source (first-match shadows the rest): {d}")
+    # 5c: every /blog/-targeted rule must land on a built page or another rule —
+    # a permanent 301 into a 404 is worse than the 404 (batch-1 review, 2026-07-23)
+    dead_targets = []
+    for ln in rf_lines:
+        parts = ln.split()
+        if len(parts) >= 2 and parts[1].startswith("/blog/"):
+            tgt = parts[1]
+            variants = {tgt, tgt.rstrip("/"), tgt.rstrip("/") + "/"}
+            if not (variants & pages) and not (variants & set(srcs)):
+                dead_targets.append(f"{parts[0]} -> {tgt}")
+    for d in dead_targets[:10]:
+        print(f"    301 into 404: {d}")
+    _c5_bad = len(shadowed) + len(dupes) + len(dead_targets)
+    print("  ->", "PASS" if not _c5_bad else
+          f"FAIL ({len(shadowed)} shadowed, {len(dupes)} duplicate sources, {len(dead_targets)} dead 301 targets)")
+    if _c5_bad:
+        fails.append(f"Check 5: {_c5_bad} redirect defects (shadowed/duplicate/dead-target)")
 
     print("\n" + "=" * 52)
     if fails:

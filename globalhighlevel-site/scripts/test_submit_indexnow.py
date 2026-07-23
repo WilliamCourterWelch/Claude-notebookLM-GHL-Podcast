@@ -201,6 +201,32 @@ def test_preflight_key_liveness():
     check("no batch submitted after failed preflight", batch_calls == [])
 
 
+def test_preflight_user_agent():
+    # Cloudflare 403s python-urllib's default UA (observed live 2026-07-23):
+    # the key preflight must arrive as a Request carrying a real User-Agent.
+    # Guards against reverting to urlopen(key_url) — which would pass every
+    # other test here but false-negative in production.
+    key = sin.KEY_FILE.read_text().strip()
+    preflight_calls = []
+
+    def recording_urlopen(url_or_req, timeout=None):
+        _url = url_or_req.full_url if isinstance(url_or_req, urllib.request.Request) else url_or_req
+        if "api.indexnow.org" in _url:
+            return FakeResponse(200)
+        preflight_calls.append(url_or_req)
+        return FakeResponse(200, key.encode("utf-8"))
+
+    rc = run_main_patched(recording_urlopen)
+    check("preflight run exits 0", rc == 0)
+    check("preflight made exactly one key-file request", len(preflight_calls) == 1)
+    req = preflight_calls[0] if preflight_calls else None
+    is_request = isinstance(req, urllib.request.Request)
+    check("preflight sent a Request object (not a bare URL string)", is_request)
+    ua = req.get_header("User-agent", "") if is_request else ""
+    check("preflight User-Agent set and not python-urllib default",
+          bool(ua) and not ua.lower().startswith("python-urllib"))
+
+
 def test_dry_run_cli():
     with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
         f.write("/blog/a/\n/blog/b/\n")
@@ -224,7 +250,8 @@ def main():
     print("test_submit_indexnow.py")
     for t in (test_load_urls_file, test_load_urls_sitemap,
               test_load_urls_rejects_bad_lines, test_key_plumbing,
-              test_batch_loop, test_preflight_key_liveness, test_dry_run_cli):
+              test_batch_loop, test_preflight_key_liveness,
+              test_preflight_user_agent, test_dry_run_cli):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

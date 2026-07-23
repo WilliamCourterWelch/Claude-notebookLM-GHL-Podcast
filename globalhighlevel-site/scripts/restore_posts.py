@@ -29,7 +29,9 @@ Rules enforced here, in order, per slug:
      preserved, all other params dropped). gohighlevel.com hrefs WITHOUT fp_ref,
      and hrefs to known affiliate-network domains (firstpromoter, shareasale,
      partnerstack, bit.ly), are NOT modified — they are flagged in the report
-     for human review.
+     for human review. EXCEPTION (Bill-approved 2026-07-23): app.gohighlevel.com
+     hrefs (incl. /signup) ARE rewritten to the canonical affiliate link — a
+     direct product link pays nobody.
   6. --dry-run writes NOTHING (no posts, no report file); the report JSON is
      printed to stdout instead.
 
@@ -147,9 +149,10 @@ def resolve_topic(slug, post, audit_row, overrides=None):
 
 
 def normalize_affiliate_links(html, language):
-    """Rewrite recognized gohighlevel.com fp_ref hrefs to the canonical bootcamp
-    link; flag (untouched) bare gohighlevel.com hrefs and affiliate-network
-    domains. Returns (new_html, rewrite_count, flagged_hrefs)."""
+    """Rewrite recognized gohighlevel.com fp_ref hrefs AND all app.gohighlevel.com
+    hrefs (Bill-approved 2026-07-23) to the canonical bootcamp link; flag
+    (untouched) other bare gohighlevel.com hrefs and affiliate-network domains.
+    Returns (new_html, rewrite_count, flagged_hrefs)."""
     rewrites = 0
     flagged = []
 
@@ -352,7 +355,11 @@ def main(argv=None):
 
     overrides = None
     if args.topic_overrides:
-        overrides = json.loads(Path(args.topic_overrides).read_text(encoding="utf-8"))
+        try:
+            overrides = json.loads(Path(args.topic_overrides).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"FATAL: cannot read topic overrides {args.topic_overrides}: {exc}", file=sys.stderr)
+            return 2
         bad = [t for t in set(overrides.values()) if t not in NEW_TOPICS]
         if bad:
             print(f"FATAL: override file names unknown topic(s): {bad}", file=sys.stderr)
