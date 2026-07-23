@@ -9,5 +9,9 @@
   "transistorEpisodeId": "5932caac",
   "publishedAt": "2026-04-25T23:59:20.918198",
   "topic": "AI Receptionist & Lead Capture",
-  "updatedAt": "2026-07-23T06:00:00.000000"
+  "updatedAt": "2026-07-23T06:00:00.000000",
+  "translations": {
+    "en": "master-voice-ai-agents-dashboard-gohighlevel-call-analytics",
+    "en-IN": "master-voice-ai-agents-dashboard-gohighlevel-india"
+  }
 }

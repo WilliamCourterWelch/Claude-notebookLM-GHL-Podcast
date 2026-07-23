@@ -122,7 +122,8 @@ def main() -> int:
         req = urllib.request.Request(
             ENDPOINT,
             data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json; charset=utf-8"},
+            headers={"Content-Type": "application/json; charset=utf-8",
+                     "User-Agent": PREFLIGHT_UA},
             method="POST",
         )
         try:

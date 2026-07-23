@@ -245,6 +245,7 @@ def run_restore(slugs, deploy_date, dry_run=False, audit=None, overrides=None):
         "errors": [],
         "flagged": [],
         "affiliate_rewrites": {},
+        "overrides_applied": 0,
     }
 
     for slug in slugs:
@@ -267,6 +268,8 @@ def run_restore(slugs, deploy_date, dry_run=False, audit=None, overrides=None):
             continue
         try:
             text, rewrites, flagged = restore_post(raw, slug, deploy_date, audit.get(slug), overrides)
+            if overrides and slug in overrides:
+                report["overrides_applied"] += 1
         except TopicMappingError as exc:
             # fail loudly: no file written for this slug, run stops (caller exits
             # nonzero). Attach the partial report — files restored BEFORE the bad

@@ -7,5 +7,9 @@
   "language": "en-IN",
   "publishedAt": "2026-04-26T01:41:52.398905",
   "topic": "AI Receptionist & Lead Capture",
-  "updatedAt": "2026-07-23T06:00:00.000000"
+  "updatedAt": "2026-07-23T06:00:00.000000",
+  "translations": {
+    "en": "master-voice-ai-agents-dashboard-gohighlevel-call-analytics",
+    "en-IN": "master-voice-ai-agents-dashboard-gohighlevel-india"
+  }
 }

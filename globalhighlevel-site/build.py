@@ -2262,6 +2262,12 @@ def build_sitemap(posts: list[dict]):
                     alts = _sitemap_alts(f'/category/{c["slug"]}/')
                     urls.append(f'  <url><loc>{_sitemap_loc(SITE_URL + prefix + "/category/" + c["slug"] + "/")}</loc><lastmod>{build_date}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority>{alts}</url>')
     for p in posts:
+        # Never advertise a URL that isn't a built page: an EN hub pillar's /blog/
+        # URL 301s to its /category/ hub (already in the sitemap via the category
+        # loop) — submitting the redirecting URL to IndexNow/Bing wastes the
+        # submission on a 301 (red-team 2026-07-23).
+        if not (PUBLIC_DIR / post_output_rel(p) / "index.html").exists():
+            continue
         # Prefer an explicit updatedAt (real content edit) over publishedAt so a
         # rebuilt post signals freshness instead of its original publish date.
         date = (p.get("updatedAt") or p.get("publishedAt") or p.get("uploadedAt") or "")[:10]

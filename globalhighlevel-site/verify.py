@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """verify.py — phase gate for the language x topic restructure.
 
-Runs against the built public/ output and asserts six invariants (Checks 0-5).
+Runs against the built public/ output and asserts seven invariants (Checks 0-6).
 Each later phase of the restructure must keep these green before /seo-deploy-gate.
 
   Check 0  Lang vs slug  : a post's `language` field must not contradict a specific
@@ -16,7 +16,10 @@ Each later phase of the restructure must keep these green before /seo-deploy-gat
                            cross-silo/cross-language template links, and sink
                            pages (mvp_minimal_links) emit ZERO outbound internal
                            links (D3/D9, full-restore sprint 2026-07-23).
-  Check 5  Redirect shadow : no _redirects rule may shadow a built page.
+  Check 5  Redirect shadow : no _redirects rule may shadow a built page, no
+                           duplicate sources, no /blog/ 301 into a 404.
+  Check 6  Sitemap parity : every sitemap <loc> is a built page and never a
+                           redirect source.
 
 Usage:
     cd globalhighlevel-site
@@ -340,6 +343,33 @@ def main() -> int:
           f"FAIL ({len(shadowed)} shadowed, {len(dupes)} duplicate sources, {len(dead_targets)} dead 301 targets)")
     if _c5_bad:
         fails.append(f"Check 5: {_c5_bad} redirect defects (shadowed/duplicate/dead-target)")
+
+    # --- Check 6: sitemap <-> built parity ---------------------------------
+    # Every sitemap <loc> must be a built page (or deployed root file) and must
+    # NOT be a _redirects source — the hole that let 5 pillar 301-URLs ship to
+    # IndexNow (red-team 2026-07-23).
+    print("\n=== Check 6: sitemap advertises only built, non-redirected pages ===")
+    sm = PUBLIC / "sitemap.xml"
+    sm_bad = []
+    if sm.exists():
+        locs = re.findall(r"<loc>(.*?)</loc>", read(sm))
+        src_set = set(srcs)
+        for loc in locs:
+            path = loc.replace(build.SITE_URL, "") or "/"
+            variants = {path, path.rstrip("/"), path.rstrip("/") + "/"}
+            if not (variants & pages):
+                sm_bad.append(f"not built: {path}")
+            elif variants & src_set:
+                sm_bad.append(f"redirect source in sitemap: {path}")
+        print(f"  sitemap locs: {len(locs)} | defects: {len(sm_bad)}")
+        for b in sm_bad[:10]:
+            print(f"    {b}")
+    else:
+        sm_bad.append("sitemap.xml missing from build output")
+        print("  sitemap.xml MISSING")
+    print("  ->", "PASS" if not sm_bad else f"FAIL ({len(sm_bad)} sitemap defects)")
+    if sm_bad:
+        fails.append(f"Check 6: {len(sm_bad)} sitemap defects")
 
     print("\n" + "=" * 52)
     if fails:
