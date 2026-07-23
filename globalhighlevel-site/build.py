@@ -368,17 +368,24 @@ def nofollow_affiliate_links(html: str) -> str:
     template CTAs already do this. JSON stays untouched (D3)."""
     def _repl(m):
         attrs = m.group(1)
-        if "fp_ref=" not in attrs:
+        # guard: an embedded ">" inside an attribute value truncates the tag
+        # match (unbalanced quotes) — leave the anchor alone rather than corrupt
+        # it; the site-wide verify gate still catches any followed paid link
+        if attrs.count('"') % 2 == 1 or attrs.count("'") % 2 == 1:
             return m.group(0)
-        rel_m = re.search(r'rel="([^"]*)"', attrs)
+        href_m = re.search(r'''href\s*=\s*("[^"]*"|'[^']*')''', attrs, re.I)
+        if not href_m or "fp_ref=" not in href_m.group(1):
+            return m.group(0)
+        rel_m = re.search(r'''rel\s*=\s*("[^"]*"|'[^']*')''', attrs, re.I)
         if rel_m:
-            if "nofollow" in rel_m.group(1).split():
+            tokens = rel_m.group(1).strip("\"'").split()
+            if "nofollow" in tokens:
                 return m.group(0)
-            return f'<a{attrs.replace(rel_m.group(0), f_rel(rel_m.group(1)))}>' 
+            new_tokens = tokens + [t for t in ("nofollow", "sponsored") if t not in tokens]
+            new_rel = 'rel="' + " ".join(new_tokens) + '"'
+            return f'<a{attrs.replace(rel_m.group(0), new_rel)}>'
         return f'<a{attrs} rel="nofollow sponsored">'
-    def f_rel(existing):
-        return f'rel="{existing} nofollow sponsored"'
-    return re.sub(r'<a\b([^>]*)>', _repl, html)
+    return re.sub(r'<a\b([^>]*)>', _repl, html, flags=re.I)
 
 
 def circle_members(post: dict, all_posts: list) -> list:
@@ -2136,7 +2143,7 @@ def build_category_pages(posts: list[dict]):
             p_title = pillar.get("title", cat)
             # Hub pillar bodies render with a .post-body and share the site-wide
             # anchor ledger — cap them like post bodies (D3 render-time cap).
-            p_body  = enforce_anchor_caps(pillar.get("html_content", ""))
+            p_body  = enforce_anchor_caps(nofollow_affiliate_links(pillar.get("html_content", "")))
             more_html = (f'''
 <div class="container">
   <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>

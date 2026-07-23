@@ -367,9 +367,39 @@ def main() -> int:
     else:
         sm_bad.append("sitemap.xml missing from build output")
         print("  sitemap.xml MISSING")
-    print("  ->", "PASS" if not sm_bad else f"FAIL ({len(sm_bad)} sitemap defects)")
+    # 6b reverse direction: every built non-pillar post must be IN the sitemap
+    # (the exists()-skip in build_sitemap must only ever drop pillar 301-URLs —
+    # a silent build failure must not silently shrink the sitemap)
+    if sm.exists():
+        loc_paths = {l.replace(build.SITE_URL, "").rstrip("/") + "/" for l in locs}
+        for p_ in posts:
+            if p_.get("isPillar") and p_.get("language", "en") == "en":
+                continue
+            u = build.post_url(p_)
+            if (PUBLIC / build.post_output_rel(p_) / "index.html").exists() and u not in loc_paths:
+                sm_bad.append(f"built post missing from sitemap: {u}")
+    # 6c: ZERO followed paid links sitewide — catches every rel-bug variant
+    # (single-quoted rel, duplicate rel attr, uppercase <A) that the render
+    # pass could miss (adversarial 2026-07-23)
+    followed_paid = []
+    for f_ in PUBLIC.rglob("index.html"):
+        html_ = read(f_)
+        for m_ in re.finditer(r'<a\b([^>]*)>', html_, re.I):
+            attrs_ = m_.group(1)
+            hm = re.search(r"href\s*=\s*(\"[^\"]*\"|'[^']*')", attrs_, re.I)
+            if not hm or "fp_ref=" not in hm.group(1):
+                continue
+            rm = re.search(r"rel\s*=\s*(\"[^\"]*\"|'[^']*')", attrs_, re.I)
+            if not rm or "nofollow" not in rm.group(1).strip("\"'").split():
+                followed_paid.append(str(f_.relative_to(PUBLIC)))
+                break
+    for fp_ in followed_paid[:10]:
+        print(f"    followed paid link on: {fp_}")
+    if followed_paid:
+        sm_bad.extend(f"followed fp_ref anchor: {x}" for x in followed_paid)
+    print("  ->", "PASS" if not sm_bad else f"FAIL ({len(sm_bad)} sitemap/paid-link defects)")
     if sm_bad:
-        fails.append(f"Check 6: {len(sm_bad)} sitemap defects")
+        fails.append(f"Check 6: {len(sm_bad)} sitemap/paid-link defects")
 
     print("\n" + "=" * 52)
     if fails:

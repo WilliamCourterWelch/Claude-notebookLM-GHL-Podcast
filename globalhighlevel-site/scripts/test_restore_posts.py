@@ -406,6 +406,7 @@ def test_cli_topic_overrides():
                               rdir, extra_args=["--topic-overrides", str(ov)])
         check("CLI: run with overrides exits 0", rc == 0)
         check("CLI: both slugs restored", report and sorted(report["restored"]) == ["s1", "s2"])
+        check("overrides_applied counts consumed overrides", report["overrides_applied"] == 1)
 
 
 def main():
@@ -417,7 +418,7 @@ def main():
               test_bad_json_blob, test_cli_deploy_date_validation,
               test_signup_rewrite,
         test_signup_rewrite_es_and_escaped, test_topic_overrides,
-              test_signup_rewrite_es_and_escaped, test_cli_topic_overrides):
+        test_cli_topic_overrides):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0
