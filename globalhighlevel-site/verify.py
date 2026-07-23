@@ -382,17 +382,27 @@ def main() -> int:
     # (single-quoted rel, duplicate rel attr, uppercase <A) that the render
     # pass could miss (adversarial 2026-07-23)
     followed_paid = []
+    from html.parser import HTMLParser
+
+    class _PaidLinkScan(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.hit = False
+        def handle_starttag(self, tag, attrs):
+            if tag != "a" or self.hit:
+                return
+            d = dict(attrs)
+            href = d.get("href") or ""
+            if "fp_ref=" in href:
+                rel = (d.get("rel") or "").split()
+                if "nofollow" not in rel:
+                    self.hit = True
+
     for f_ in PUBLIC.rglob("index.html"):
-        html_ = read(f_)
-        for m_ in re.finditer(r'<a\b([^>]*)>', html_, re.I):
-            attrs_ = m_.group(1)
-            hm = re.search(r"href\s*=\s*(\"[^\"]*\"|'[^']*')", attrs_, re.I)
-            if not hm or "fp_ref=" not in hm.group(1):
-                continue
-            rm = re.search(r"rel\s*=\s*(\"[^\"]*\"|'[^']*')", attrs_, re.I)
-            if not rm or "nofollow" not in rm.group(1).strip("\"'").split():
-                followed_paid.append(str(f_.relative_to(PUBLIC)))
-                break
+        sc = _PaidLinkScan()
+        sc.feed(read(f_))
+        if sc.hit:
+            followed_paid.append(str(f_.relative_to(PUBLIC)))
     for fp_ in followed_paid[:10]:
         print(f"    followed paid link on: {fp_}")
     if followed_paid:
