@@ -127,8 +127,17 @@ def load_audit():
     return {row["slug"]: row for row in rows}
 
 
-def resolve_topic(slug, post, audit_row):
-    """Map the old topic to the current 5-topic taxonomy. Unknown -> raise."""
+def resolve_topic(slug, post, audit_row, overrides=None):
+    """Map the old topic to the current 5-topic taxonomy. Unknown -> raise.
+
+    A per-slug override (from the Bill-approved assignment sheet) beats the
+    generic 8->5 map — the sheet is the human-reviewed source of truth, the map
+    is only its default. Overrides must still name a current topic."""
+    if overrides and slug in overrides:
+        t = overrides[slug]
+        if t in NEW_TOPICS:
+            return t
+        raise TopicMappingError(slug, t)
     topic = post.get("topic") or (audit_row or {}).get("topic")
     if topic in TOPIC_MAP:
         return TOPIC_MAP[topic]
@@ -181,14 +190,14 @@ def normalize_affiliate_links(html, language):
     return HREF_RE.sub(_sub, html), rewrites, flagged
 
 
-def restore_post(raw_json, slug, deploy_date, audit_row):
+def restore_post(raw_json, slug, deploy_date, audit_row, overrides=None):
     """Transform one pruned post's raw JSON into restore-ready serialized text.
 
     Returns (serialized_text, rewrite_count, flagged_hrefs).
     Raises TopicMappingError on an unmappable topic.
     """
     post = json.loads(raw_json)  # dict preserves the file's key order
-    new_topic = resolve_topic(slug, post, audit_row)
+    new_topic = resolve_topic(slug, post, audit_row, overrides)
 
     html = post.get("html_content", "")
     new_html, rewrites, flagged = normalize_affiliate_links(html, post.get("language"))
@@ -209,7 +218,7 @@ def default_report_path(deploy_date):
     return (DATA_DIR / name) if DATA_DIR.is_dir() else (REPO_ROOT / name)
 
 
-def run_restore(slugs, deploy_date, dry_run=False, audit=None):
+def run_restore(slugs, deploy_date, dry_run=False, audit=None, overrides=None):
     """Restore each slug per the doctrine above. Returns the report dict.
 
     Raises TopicMappingError (fail-loud, stop-the-run) on an unmappable topic.
@@ -243,7 +252,7 @@ def run_restore(slugs, deploy_date, dry_run=False, audit=None):
             report["errors"].append({"slug": slug, "error": "not found in git at prune parent"})
             continue
         try:
-            text, rewrites, flagged = restore_post(raw, slug, deploy_date, audit.get(slug))
+            text, rewrites, flagged = restore_post(raw, slug, deploy_date, audit.get(slug), overrides)
         except TopicMappingError as exc:
             # fail loudly: no file written for this slug, run stops (caller exits
             # nonzero). Attach the partial report — files restored BEFORE the bad
@@ -305,6 +314,8 @@ def main(argv=None):
     ap.add_argument("--deploy-date", required=True, metavar="YYYY-MM-DD")
     ap.add_argument("--dry-run", action="store_true", help="write nothing; print report to stdout")
     ap.add_argument("--report", metavar="PATH", help="report path (default: data/restore-report-<date>.json)")
+    ap.add_argument("--topic-overrides", metavar="FILE",
+                    help="JSON {slug: topic} from the approved assignment sheet; beats the 8->5 map")
     args = ap.parse_args(argv)
 
     if not DEPLOY_DATE_RE.match(args.deploy_date):
@@ -328,8 +339,18 @@ def main(argv=None):
         lines = Path(args.slugs).read_text(encoding="utf-8").splitlines()
         slugs = [ln.strip() for ln in lines if ln.strip()]
 
+    overrides = None
+    if args.topic_overrides:
+        overrides = json.loads(Path(args.topic_overrides).read_text(encoding="utf-8"))
+        bad = [t for t in set(overrides.values()) if t not in NEW_TOPICS]
+        if bad:
+            print(f"FATAL: override file names unknown topic(s): {bad}", file=sys.stderr)
+            return 2
+        print(f"topic overrides loaded: {len(overrides)} slugs")
+
     try:
-        report = run_restore(slugs, args.deploy_date, dry_run=args.dry_run, audit=audit)
+        report = run_restore(slugs, args.deploy_date, dry_run=args.dry_run, audit=audit,
+                             overrides=overrides)
     except TopicMappingError as exc:
         print(f"FATAL: slug {exc.slug!r} has unmappable topic {exc.topic!r} — "
               f"no current hub for it; nothing written for that slug, run stopped.",

@@ -345,6 +345,22 @@ def test_cli_deploy_date_validation():
               proc.returncode == 2 and "deploy-date" in proc.stderr)
 
 
+def test_topic_overrides():
+    raw = json.dumps({"slug": "s1", "topic": "AI & Automation", "publishedAt": "2026-01-01",
+                      "html_content": "<p>x</p>"}, ensure_ascii=False)
+    text, _, _ = restore_posts.restore_post(raw, "s1", "2026-07-24", None,
+                                            overrides={"s1": "Payments & Pricing"})
+    check("override beats the 8->5 map", json.loads(text)["topic"] == "Payments & Pricing")
+    text2, _, _ = restore_posts.restore_post(raw, "s1", "2026-07-24", None, overrides={"other": "CRM & Communication"})
+    check("non-matching override falls through to map",
+          json.loads(text2)["topic"] == "AI Receptionist & Lead Capture")
+    try:
+        restore_posts.restore_post(raw, "s1", "2026-07-24", None, overrides={"s1": "Bogus Hub"})
+        check("bogus override topic raises", False)
+    except restore_posts.TopicMappingError:
+        check("bogus override topic raises", True)
+
+
 def main():
     print("test_restore_posts.py")
     for t in (test_topic_mapping, test_collision_skip, test_stamps,
