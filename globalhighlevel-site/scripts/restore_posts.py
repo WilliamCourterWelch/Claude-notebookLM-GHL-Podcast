@@ -310,13 +310,15 @@ def main(argv=None):
     if not DEPLOY_DATE_RE.match(args.deploy_date):
         ap.error(f"--deploy-date must be YYYY-MM-DD, got {args.deploy_date!r}")
 
-    # Preflight: the prune commit's parent must be reachable — a shallow clone
-    # would otherwise error on EVERY slug one by one (adversarial review 2026-07-23).
-    probe = subprocess.run(["git", "cat-file", "-e", f"{PRUNE_COMMIT}^{{commit}}"],
+    # Preflight: probe the prune commit's PARENT — that's the tree every slug is
+    # read from. A shallow clone can hold the prune commit but not its parent,
+    # which would pass a prune-commit-only probe and then error on every slug
+    # (adversarial review + codex P2, 2026-07-23).
+    probe = subprocess.run(["git", "cat-file", "-e", f"{PRUNE_COMMIT}^^{{commit}}"],
                            cwd=REPO_ROOT, capture_output=True)
     if probe.returncode != 0:
-        print(f"FATAL: prune commit {PRUNE_COMMIT[:12]} not reachable in this clone "
-              f"(shallow checkout?) — cannot restore.", file=sys.stderr)
+        print(f"FATAL: parent of prune commit {PRUNE_COMMIT[:12]} not reachable in "
+              f"this clone (shallow checkout?) — cannot restore.", file=sys.stderr)
         return 2
 
     audit = load_audit()

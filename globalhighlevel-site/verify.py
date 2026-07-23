@@ -259,11 +259,17 @@ def main() -> int:
                     c4_fails.append(f"sink {slug}: followed internal link {href_m.group(1)} in body")
             continue
 
-        # a. spoke->pillar (EN posts whose hub is built; eyebrow/hub-link carries it)
+        # a. spoke->pillar (EN posts whose hub is built; eyebrow/hub-link carries it).
+        # Scope to the post's own template zones — the header/footer nav links every
+        # hub on every page, so a whole-document search passes vacuously even if the
+        # eyebrow/hub-link disappeared (codex P2, 2026-07-23).
         cat_slug = build.slugify(build.display_cat(topic) or "GoHighLevel Tutorials")
         if lang == "en" and not is_pillar_blog and cat_slug in build.LIVE_CATEGORY_SLUGS:
-            if f'href="/category/{cat_slug}/"' not in html:
-                c4_fails.append(f"{slug}: no link to its hub /category/{cat_slug}/")
+            eb_m = re.search(r'class="post-eyebrow[^"]*">(.*?)</div>', html, re.S)
+            hub_m = re.search(r'class="hub-link".*?</p>', html, re.S)
+            zones = (eb_m.group(1) if eb_m else "") + (hub_m.group(0) if hub_m else "")
+            if f'href="/category/{cat_slug}/"' not in zones:
+                c4_fails.append(f"{slug}: no eyebrow/hub-link to its hub /category/{cat_slug}/")
 
         # b. circle closes — rendered nav matches the computed neighbors
         prev_p, next_p = (None, None) if is_pillar_blog else build.circle_neighbors(p, posts)
