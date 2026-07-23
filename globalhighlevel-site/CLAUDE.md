@@ -87,12 +87,57 @@ The live attribution URL (`/trial/` — historically also `/coupon/` and `/start
 
 **When editing:** if you rewrite one, consider whether the parallel SEO blog post needs the same update (e.g., new FAQ entry, updated pricing). They're independent artifacts serving different audiences, but fact drift between them is confusing.
 
+## Internal Link Doctrine & Build Gates (canon since v0.2.11.0)
+
+The canon link structure is enforced at render time by `build.py` and gated by
+`verify.py` — do not hand-wire internal links that fight it.
+
+**Link template (per blog post):**
+- **Link circle:** every post carries a prev/next nav within its language+topic
+  silo, wrapping at the ends so each silo is one closed loop. Pillars, sink
+  pages, and series/authority pages are excluded by construction.
+- **Contextual injection is same-silo only** — no cross-language, no
+  cross-topic. In-silo or not at all.
+- **Related cards rotate deterministically per post** (not first-three) and are
+  suppressed entirely on sink pages.
+- **Sink airtightness:** the money page (`/blog/gohighlevel-free-trial-30-days-extended/`)
+  emits ZERO outbound internal links — no related cards, no followed
+  category-eyebrow link. Do not add outbound links to it.
+- **In-post conversion CTAs point at the money page directly**, `rel=nofollow`.
+  Trial-path conversion CTAs get `rel=nofollow` stamped at render time.
+- **Anchor caps:** beyond 3 identical anchor→URL pairs sitewide (including
+  anchors baked in stored post bodies and absolute same-site URLs), the link
+  unwraps to plain text at render time — post JSON is never mutated.
+
+**Gates (all must pass before deploy):**
+- `verify.py` Check 4 — canon invariants on built output: every spoke links up
+  to its hub, circles close exactly as computed, template links never cross
+  language or topic silos, sinks emit zero outbound internal links.
+- `verify.py` Check 5 — no `_redirects` rule may shadow a built page (on
+  Cloudflare Pages a redirect ALWAYS beats a static file). The build prunes
+  shadowing rules and prints the pruned sources.
+- `scripts/audit_links.py` — `/start` + `/coupon` are no longer audit-exempt;
+  nofollow links are exempt from anchor doctrine by `rel` attribute; exemption
+  prefixes are imported from `build.py` (single source of truth) and matched on
+  path-segment boundaries.
+
+**Restore + recrawl tooling (Day-1 sprint, v0.2.11.0):**
+- `scripts/restore_posts.py --slugs FILE|--all --deploy-date YYYY-MM-DD
+  [--dry-run] [--report PATH]` — restores pruned posts from git history at
+  their original slugs; never overwrites a newer page; maps old 8-topic
+  taxonomy onto the current 5 hubs; normalizes affiliate hrefs to the current
+  `fp_ref`; writes atomically; exits nonzero on any slug error.
+- `scripts/submit_indexnow.py --urls FILE|--sitemap [--dry-run]` — pushes URL
+  batches to Bing via IndexNow. The key lives in `indexnow-key.txt` and is
+  hosted at `/<key>.txt`; the script verifies the key file is live before
+  submitting and fails loudly on any non-2xx.
+
 ## Verified Facts (use ONLY these — invent nothing)
 - Site: GlobalHighLevel.com — free GHL tutorials
 - Podcast: "Go High Level" on Spotify
 - Podcast stats: 380+ followers
 - Top episode: "GoHighLevel Conversation AI Bot"
-- Content: 27 published blog posts (English, India, Spanish — post-prune 2026-06; was 490+) + 158 podcast episodes
+- Content: 27 published blog posts (English, India, Spanish — post-prune 2026-06; was 490+) + 158 podcast episodes. NOTE: the full-restore sprint (v0.2.11.0 tooling) is bringing the 931 pruned posts back — re-verify this count before citing it.
 - Offer: GoHighLevel 30-day FREE trial (double the standard 14-day trial)
 - GHL starts at $97/month
 - Affiliate link: https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12
