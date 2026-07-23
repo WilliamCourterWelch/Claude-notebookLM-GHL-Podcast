@@ -74,6 +74,22 @@ remains. Make it print loudly or fail. (Adversarial 2026-07-23)
 A baked followed link to /, /about/ or /es/... in a sink body would escape both.
 Money page body has none today. Generalize both scans. (Adversarial 2026-07-23)
 
+### In-prose contextual links for top spokes (eng review D12)
+**Priority:** P2
+Caleb canon: "links should be contextual, placed within relevant sections of text."
+Circle + hub links are template-placed; weave contextual in-body links into the
+~30 highest-value restored spokes (desktop-app, MCP, Agent Studio cluster) 2-3
+weeks post-sprint, choosing pages from pull-bing.py recrawl data (only spokes
+that reattached). Mirrors globalhighlevel-system/TODOS.md. Depends on: sprint
+complete + recrawl data.
+
+### Cross-silo body-link audit (eng review D11)
+**Priority:** P2
+Scan restored html_content for internal links crossing topic silos; retarget
+within-silo or unlink. Firehose bodies predate the no-cross-link rule; render-time
+anchor caps bound the worst repetition but don't fix silo leakage. Mirrors
+globalhighlevel-system/TODOS.md. Depends on: sprint complete, topics final.
+
 ## Content rebuild (Ship 3)
 
 ### Fresh Bing pull + commit URL lists
