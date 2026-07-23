@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
-"""Tests for submit_indexnow.py (URL loading, key plumbing, dry-run CLI).
+"""Tests for submit_indexnow.py (URL loading, key plumbing, batch loop, dry-run CLI).
 
 Run: python3 scripts/test_submit_indexnow.py
 Exits 0 if all pass, 1 otherwise. NEVER hits the real IndexNow API: unit checks
-cover load_urls, and the end-to-end invocation uses --dry-run (which returns
+cover load_urls, the batch-loop tests monkeypatch urllib.request.urlopen inside
+submit_indexnow, and the end-to-end invocation uses --dry-run (which returns
 before any request is built).
 """
 import argparse
+import io
+import json
 import subprocess
 import sys
 import tempfile
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # scripts/
@@ -84,6 +89,116 @@ def test_key_plumbing():
         print("  skip build key-copy checks (no public/ — run build.py first)")
 
 
+def test_load_urls_rejects_bad_lines():
+    # a bare "blog/x" would silently become SITE_URLblog/x; an off-site URL would
+    # poison the batch — both must fail loudly, not be submitted.
+    for bad in ("blog/x", "https://other.com/y"):
+        with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+            f.write(f"{bad}\n")
+            path = f.name
+        try:
+            sin.load_urls(argparse.Namespace(urls=path, sitemap=False))
+            check(f"invalid line {bad!r} raises SystemExit", False)
+        except SystemExit as exc:
+            check(f"invalid line {bad!r} raises SystemExit", "invalid URL line" in str(exc))
+        finally:
+            Path(path).unlink()
+
+
+class FakeResponse:
+    """Context-manager stand-in for urlopen's response."""
+
+    def __init__(self, status=200, body=b""):
+        self.status = status
+        self._body = body
+
+    def read(self):
+        return self._body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+def run_main_patched(urlopen, urls_lines=("/blog/a/", "/blog/b/")):
+    """Call sin.main() in-process with --urls FILE and urlopen monkeypatched."""
+    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+        f.write("\n".join(urls_lines) + "\n")
+        path = f.name
+    saved_urlopen, saved_argv = sin.urllib.request.urlopen, sys.argv
+    sin.urllib.request.urlopen = urlopen
+    sys.argv = ["submit_indexnow.py", "--urls", path]
+    try:
+        return sin.main()
+    finally:
+        sin.urllib.request.urlopen = saved_urlopen
+        sys.argv = saved_argv
+        Path(path).unlink()
+
+
+def make_urlopen(key, batch_effect, calls):
+    """urlopen fake: preflight (URL string) serves the right key; batch (Request
+    object) is recorded and delegated to batch_effect(request)."""
+    def fake_urlopen(url_or_req, timeout=None):
+        if isinstance(url_or_req, urllib.request.Request):
+            calls.append(url_or_req)
+            return batch_effect(url_or_req)
+        return FakeResponse(200, key.encode("utf-8"))
+    return fake_urlopen
+
+
+def test_batch_loop():
+    key = sin.KEY_FILE.read_text().strip()
+
+    # all batches 200 -> exit 0; payload has the documented IndexNow shape
+    calls = []
+    rc = run_main_patched(make_urlopen(key, lambda req: FakeResponse(200), calls))
+    check("all-200 run returns 0", rc == 0)
+    check("exactly one batch POSTed (2 URLs, batch=10000)", len(calls) == 1)
+    payload = json.loads(calls[0].data.decode("utf-8")) if calls else {}
+    check("payload host matches", payload.get("host") == sin.HOST)
+    check("payload key matches the key file", payload.get("key") == key)
+    check("payload keyLocation is SITE_URL/<key>.txt",
+          payload.get("keyLocation") == f"{sin.SITE_URL}/{key}.txt")
+    check("payload urlList carries the submitted URLs",
+          payload.get("urlList") == [f"{sin.SITE_URL}/blog/a/", f"{sin.SITE_URL}/blog/b/"])
+
+    # HTTPError 429 on the batch POST -> loud failure, exit 1
+    def raise_429(req):
+        raise urllib.error.HTTPError(sin.ENDPOINT, 429, "Too Many Requests",
+                                     {}, io.BytesIO(b"slow \x1bdown"))
+    calls = []
+    rc = run_main_patched(make_urlopen(key, raise_429, calls))
+    check("HTTPError 429 returns 1", rc == 1)
+
+    # network failure (URLError) -> loud failure, exit 1
+    def raise_neterr(req):
+        raise urllib.error.URLError("connection refused")
+    calls = []
+    rc = run_main_patched(make_urlopen(key, raise_neterr, calls))
+    check("URLError/network exception returns 1", rc == 1)
+
+
+def test_preflight_key_liveness():
+    # the hosted key file serving the WRONG key must abort before any submit
+    batch_calls = []
+
+    def wrong_key_urlopen(url_or_req, timeout=None):
+        if isinstance(url_or_req, urllib.request.Request):
+            batch_calls.append(url_or_req)
+            return FakeResponse(200)
+        return FakeResponse(200, b"not-the-key")
+
+    try:
+        run_main_patched(wrong_key_urlopen)
+        check("wrong hosted key -> SystemExit", False)
+    except SystemExit as exc:
+        check("wrong hosted key -> SystemExit", "wrong key" in str(exc))
+    check("no batch submitted after failed preflight", batch_calls == [])
+
+
 def test_dry_run_cli():
     with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
         f.write("/blog/a/\n/blog/b/\n")
@@ -105,8 +220,9 @@ def test_dry_run_cli():
 
 def main():
     print("test_submit_indexnow.py")
-    for t in (test_load_urls_file, test_load_urls_sitemap, test_key_plumbing,
-              test_dry_run_cli):
+    for t in (test_load_urls_file, test_load_urls_sitemap,
+              test_load_urls_rejects_bad_lines, test_key_plumbing,
+              test_batch_loop, test_preflight_key_liveness, test_dry_run_cli):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

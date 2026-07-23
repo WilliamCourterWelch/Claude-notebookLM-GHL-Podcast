@@ -200,6 +200,29 @@ def test_enforce_anchor_caps_edges():
     check("href-less <a> untouched", build.enforce_anchor_caps(noh) == noh)
 
 
+def test_enforce_anchor_caps_absolute():
+    # absolute own-site hrefs count as internal — same cap as root-relative
+    build._ANCHOR_URL_COUNTS.clear()
+    absl = f'<p><a href="{build.SITE_URL}/blog/t/">same anchor here</a></p>'
+    outs = [build.enforce_anchor_caps(absl) for _ in range(build.ANCHOR_URL_CAP + 1)]
+    kept = sum("/blog/t/" in o for o in outs)
+    check(f"absolute own-site anchor kept exactly CAP({build.ANCHOR_URL_CAP})x",
+          kept == build.ANCHOR_URL_CAP)
+    check("absolute own-site anchor over cap unwrapped to plain text",
+          outs[-1] == "<p>same anchor here</p>")
+    # mixed absolute + relative forms share ONE ledger counter
+    build._ANCHOR_URL_COUNTS.clear()
+    rel = '<p><a href="/blog/t/">same anchor here</a></p>'
+    mixed = [build.enforce_anchor_caps(absl),
+             build.enforce_anchor_caps(absl),
+             build.enforce_anchor_caps(rel),
+             build.enforce_anchor_caps(rel)]
+    check("mixed forms: 2 absolute + 1 relative kept (shared counter)",
+          all("/blog/t/" in o for o in mixed[:3]))
+    check("mixed forms: 4th occurrence unwrapped (shared counter over cap)",
+          mixed[3] == "<p>same anchor here</p>")
+
+
 def test_cta_money_page():
     check("MONEY_PAGE_URL is the trial post", build.MONEY_PAGE_URL == "/blog/gohighlevel-free-trial-30-days-extended/")
 
@@ -239,8 +262,8 @@ def main():
               test_circle_never_crosses_silo, test_related_rotation_distributes,
               test_inject_internal_links_same_silo_only, test_is_series_post,
               test_circle_excludes_series, test_get_related_edges,
-              test_enforce_anchor_caps_edges, test_cta_money_page,
-              test_enforce_anchor_caps):
+              test_enforce_anchor_caps_edges, test_enforce_anchor_caps_absolute,
+              test_cta_money_page, test_enforce_anchor_caps):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

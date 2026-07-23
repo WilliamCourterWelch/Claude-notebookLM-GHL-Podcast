@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """verify.py — phase gate for the language x topic restructure.
 
-Runs against the built public/ output and asserts three invariants. Each later
-phase of the restructure must keep these green before /seo-deploy-gate.
+Runs against the built public/ output and asserts six invariants (Checks 0-5).
+Each later phase of the restructure must keep these green before /seo-deploy-gate.
 
   Check 0  Lang vs slug  : a post's `language` field must not contradict a specific
                            slug marker (catches a migration that wrote the wrong
@@ -16,6 +16,7 @@ phase of the restructure must keep these green before /seo-deploy-gate.
                            cross-silo/cross-language template links, and sink
                            pages (mvp_minimal_links) emit ZERO outbound internal
                            links (D3/D9, full-restore sprint 2026-07-23).
+  Check 5  Redirect shadow : no _redirects rule may shadow a built page.
 
 Usage:
     cd globalhighlevel-site
@@ -58,10 +59,9 @@ def blog_slugs(html: str) -> set[str]:
 
 def internal_hrefs(html: str) -> set[str]:
     """Root-relative hrefs PLUS absolute same-site hrefs (normalized to relative)
-    — an absolute https://globalhighlevel.com/... dead link is just as dead
-    (codex 2026-07-23)."""
+    — an absolute same-site dead link is just as dead (codex 2026-07-23)."""
     rel = set(re.findall(r'href="(/[^"#?]*)"', html))
-    abs_ = set(re.findall(r'href="https://globalhighlevel\.com(/[^"#?]*)"', html))
+    abs_ = set(re.findall(r'href="' + re.escape(build.SITE_URL) + r'(/[^"#?]*)"', html))
     return rel | abs_
 
 
@@ -209,21 +209,6 @@ def main() -> int:
     if new_dangling:
         fails.append(f"Check 3: {len(new_dangling)} new dangling internal links")
 
-    # --- Check 5: no _redirects rule shadows a built page ------------------
-    # Cloudflare Pages follows _redirects BEFORE serving static files, so a rule
-    # whose source is a built page makes that page live-unreachable. 158 of the
-    # 931 restore slugs had prune-era 301 rules — build.py prunes them from the
-    # deployed copy; this gate proves the prune worked (red-team 2026-07-23).
-    print("\n=== Check 5: no _redirects rule shadows a built page ===")
-    # every source variant that resolves to a built page OR deployed root file —
-    # including "/" itself (a root rule would shadow the homepage)
-    shadowed = sorted(h for h in redirects if h in pages)
-    for h in shadowed[:10]:
-        print(f"    shadowed: {h}")
-    print("  ->", "PASS" if not shadowed else f"FAIL ({len(shadowed)} built pages shadowed by redirects)")
-    if shadowed:
-        fails.append(f"Check 5: {len(shadowed)} built pages unreachable behind _redirects rules")
-
     # --- Check 4: canon link invariants (D3, 2026-07-23) -------------------
     # The Caleb-canon template structure must hold on the BUILT output:
     #   a. spoke->pillar : every non-sink EN post with a built hub links UP to it
@@ -267,7 +252,7 @@ def main() -> int:
             for m in re.finditer(r'<a\b([^>]*)>', body):
                 attrs = m.group(1)
                 href_m = re.search(
-                    r'href="(?:https://globalhighlevel\.com)?(/(?:blog|category)/[^"]*)"', attrs)
+                    r'href="(?:' + re.escape(build.SITE_URL) + r')?(/(?:blog|category)/[^"]*)"', attrs)
                 rel_m = re.search(r'rel="([^"]*)"', attrs)
                 followed = not (rel_m and "nofollow" in rel_m.group(1).split())
                 if href_m and followed:
@@ -311,6 +296,22 @@ def main() -> int:
     print("  ->", "PASS" if not c4_fails else f"FAIL ({len(c4_fails)} canon violations)")
     if c4_fails:
         fails.append(f"Check 4: {len(c4_fails)} canon link invariant violations")
+
+    # --- Check 5: no _redirects rule shadows a built page ------------------
+    # Cloudflare Pages follows _redirects BEFORE serving static files, so a rule
+    # whose source is a built page makes that page live-unreachable. 158 of the
+    # 931 restore slugs had prune-era 301 rules — build.py prunes them from the
+    # deployed copy; this gate proves the prune worked (red-team 2026-07-23).
+    # (`redirects` and `pages` are the locals built in Check 3's section.)
+    print("\n=== Check 5: no _redirects rule shadows a built page ===")
+    # every source variant that resolves to a built page OR deployed root file —
+    # including "/" itself (a root rule would shadow the homepage)
+    shadowed = sorted(h for h in redirects if h in pages)
+    for h in shadowed[:10]:
+        print(f"    shadowed: {h}")
+    print("  ->", "PASS" if not shadowed else f"FAIL ({len(shadowed)} built pages shadowed by redirects)")
+    if shadowed:
+        fails.append(f"Check 5: {len(shadowed)} built pages unreachable behind _redirects rules")
 
     print("\n" + "=" * 52)
     if fails:

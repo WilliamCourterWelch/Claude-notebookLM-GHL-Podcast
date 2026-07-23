@@ -75,6 +75,11 @@ def main() -> int:
     key = KEY_FILE.read_text().strip() if KEY_FILE.exists() else ""
     if not key:
         sys.exit(f"ERROR: {KEY_FILE} missing or empty — generate the key first")
+    # The key doubles as a URL path segment — validate against the IndexNow spec
+    # (8-128 chars of [a-zA-Z0-9-]), mirroring build.py's check on the same file.
+    if not re.fullmatch(r"[A-Za-z0-9-]{8,128}", key):
+        sys.exit(f"ERROR: {KEY_FILE} is not a valid IndexNow key "
+                 f"(8-128 chars of [A-Za-z0-9-]): {key!r}")
 
     urls = load_urls(args)
     if not urls:
@@ -119,6 +124,8 @@ def main() -> int:
         except urllib.error.HTTPError as e:
             status = e.code
             detail = e.read().decode("utf-8", "replace")[:300]
+            # strip control chars so a hostile/garbled body can't mangle the terminal
+            detail = re.sub(r"[\x00-\x1f\x7f]", "", detail)
             if detail:
                 print(f"  response body: {detail}")
         except Exception as e:  # network failure is a loud failure, not a skip

@@ -27,9 +27,7 @@ import sys, re
 from pathlib import Path
 from html.parser import HTMLParser
 
-CAP = 3              # MUST track build.py ANCHOR_URL_CAP (builder drops >CAP; gate fails on >CAP)
 ORPHAN_TARGET = 3
-MIN_HUB_CARDS = 2    # MUST track build.py MIN_HUB_POSTS (a built hub has >= this many cards)
 PUBLIC = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent / "public"
 # Conversion/attribution paths: /trial is the robots-disallowed attribution page;
 # the language variants are the localized conversion landings hardcoded in
@@ -39,6 +37,10 @@ PUBLIC = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().pa
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from build import ATTRIBUTION_PREFIXES as EXEMPT_PREFIXES  # noqa: E402
 from build import is_attribution_path  # noqa: E402  (segment-boundary matcher)
+# Single source of truth: builder drops >CAP, gate fails on >CAP; a built hub has
+# >= MIN_HUB_CARDS cards. Importing (not mirroring) means they can't desynchronize.
+from build import ANCHOR_URL_CAP as CAP, MIN_HUB_POSTS as MIN_HUB_CARDS  # noqa: E402
+from build import SITE_URL  # noqa: E402
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input",
         "link", "meta", "param", "source", "track", "wbr"}
 BODY_WRAPPERS = ("post-body", "post-content")  # article-prose containers
@@ -112,7 +114,7 @@ def page_path_exists(href: str) -> bool:
     # Absolute same-site URLs are internal too — normalize before checking, so a
     # restored body's https://globalhighlevel.com/blog/dead/ link can't bypass
     # the 404 gate (codex 2026-07-23).
-    p = href.replace("https://globalhighlevel.com", "").split("#")[0].split("?")[0] or "/"
+    p = href.replace(SITE_URL, "").split("#")[0].split("?")[0] or "/"
     if not p.startswith("/"):
         return True
     if is_attribution_path(p):
@@ -151,15 +153,15 @@ def main():
                 continue
             # internal 404 — ANY zone, followed or not (a broken nofollow CTA still
             # 404s). Absolute same-site hrefs count as internal (codex 2026-07-23).
-            if (href.startswith("/") or href.startswith("https://globalhighlevel.com")) \
+            if (href.startswith("/") or href.startswith(SITE_URL)) \
                     and not page_path_exists(href):
                 internal_404.append((href, page))
             # editorial checks — post-body only, internal, non-attribution, FOLLOWED
             # (nofollow conversion CTAs pass no equity — exempt from anchor doctrine)
-            is_internal = href.startswith("/") or href.startswith("https://globalhighlevel.com")
+            is_internal = href.startswith("/") or href.startswith(SITE_URL)
             if not (in_body and is_internal) or nofollow:
                 continue
-            url = href.replace("https://globalhighlevel.com", "").split("#")[0].split("?")[0]
+            url = href.replace(SITE_URL, "").split("#")[0].split("?")[0]
             if is_attribution(url):
                 continue
             if not anchor:

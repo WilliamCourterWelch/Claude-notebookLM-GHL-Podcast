@@ -176,6 +176,122 @@ def test_affiliate():
           {"slug": "s2", "href": "https://bit.ly/3xyz"} in report["flagged"])
 
 
+def test_affiliate_escaped_amp():
+    # Firehose bodies HTML-escape the query separator. parse_qsl on the raw value
+    # would read "amp;utm_campaign" and drop campaign tracking (codex 2026-07-23).
+    html = ('<a href="https://www.gohighlevel.com/x?fp_ref=old&amp;'
+            'utm_campaign=spring">go</a>')
+    new_html, rewrites, flagged = rp.normalize_affiliate_links(html, "en")
+    check("escaped &amp; href: utm_campaign survives the rewrite",
+          "utm_campaign=spring" in new_html)
+    check("escaped &amp; href: output re-escaped with &amp;",
+          "&amp;" in new_html and "?fp_ref=amplifi-technologies12&amp;" in new_html)
+    check("escaped &amp; href: raw '&' never emitted into the attribute",
+          "&utm_" not in new_html)
+    check("escaped &amp; href: counted as one rewrite", rewrites == 1)
+    # an escaped no-fp_ref gohighlevel href is flagged in UNescaped form
+    html2 = '<a href="https://www.gohighlevel.com/pricing?a=1&amp;b=2">bare</a>'
+    new_html2, rewrites2, flagged2 = rp.normalize_affiliate_links(html2, "en")
+    check("escaped no-fp_ref href untouched", new_html2 == html2 and rewrites2 == 0)
+    check("escaped no-fp_ref href flagged with UNescaped form",
+          flagged2 == ["https://www.gohighlevel.com/pricing?a=1&b=2"])
+
+
+def test_slug_blocklist():
+    bad_slugs = ["../evil", "a/b", "", "  pad "]
+
+    def run(tmp):
+        report = rp.run_restore(bad_slugs + ["ok-slug"], "2026-07-24", audit={})
+        return report, sorted(x.name for x in tmp.iterdir())
+    report, files = with_env([make_post(slug="ok-slug")], run)
+    check("4 invalid slugs recorded as errors",
+          len(report["errors"]) == 4
+          and all("invalid slug" in e["error"] for e in report["errors"]))
+    check("only ok-slug restored", report["restored"] == ["ok-slug"])
+    check("no stray files written", files == ["ok-slug.json"])
+
+    # blocklist, not ASCII allowlist: real restore slugs carry accented chars
+    def run_accent(tmp):
+        return rp.run_restore(["prospección-x"], "2026-07-24", audit={})
+    report2 = with_env([make_post(slug="prospección-x")], run_accent)
+    check("accented slug NOT rejected (restores fine)",
+          report2["restored"] == ["prospección-x"] and report2["errors"] == [])
+
+
+class FakeGitPreflight:
+    """Stand-in for restore_posts' subprocess module: `git cat-file -e` succeeds."""
+
+    class _Proc:
+        returncode = 0
+        stdout = ""
+        stderr = ""
+
+    @staticmethod
+    def run(*a, **kw):
+        return FakeGitPreflight._Proc()
+
+
+def run_main(posts, slugs, tmp_report_dir):
+    """Call rp.main() in-process, fully hermetic (fake git, temp posts dir)."""
+    saved = (rp.read_post_from_git, rp.POSTS_DIR, rp.load_audit, rp.subprocess)
+    report_path = Path(tmp_report_dir) / "report.json"
+    slug_file = Path(tmp_report_dir) / "slugs.txt"
+    slug_file.write_text("\n".join(slugs) + "\n", encoding="utf-8")
+    with tempfile.TemporaryDirectory() as tmp:
+        rp.read_post_from_git = FakeGit(posts)
+        rp.POSTS_DIR = Path(tmp)
+        rp.load_audit = lambda: {}
+        rp.subprocess = FakeGitPreflight
+        try:
+            rc = rp.main(["--slugs", str(slug_file), "--deploy-date", "2026-07-24",
+                          "--report", str(report_path)])
+        finally:
+            rp.read_post_from_git, rp.POSTS_DIR, rp.load_audit, rp.subprocess = saved
+    report = json.loads(report_path.read_text()) if report_path.exists() else None
+    return rc, report
+
+
+def test_main_exit_codes():
+    # errored slug -> exit 1, report file records the error
+    with tempfile.TemporaryDirectory() as rdir:
+        rc, report = run_main([make_post(slug="s1")], ["s1", "not-in-git"], rdir)
+        check("errored slug: main returns 1", rc == 1)
+        check("errored slug: report file records the error",
+              report is not None and len(report["errors"]) == 1
+              and report["errors"][0]["slug"] == "not-in-git")
+        check("errored slug: good slug still restored", report and report["restored"] == ["s1"])
+
+    # TopicMappingError mid-run -> exit 2, partial report with aborted_at
+    with tempfile.TemporaryDirectory() as rdir:
+        posts = [make_post(slug="s1"), make_post(slug="s2", topic="Nonsense Topic")]
+        rc, report = run_main(posts, ["s1", "s2"], rdir)
+        check("unmappable topic mid-run: main returns 2", rc == 2)
+        check("unmappable topic: partial report file exists with aborted_at",
+              report is not None and report.get("aborted_at", {}).get("slug") == "s2")
+        check("unmappable topic: partial report keeps earlier restores",
+              report and report["restored"] == ["s1"])
+
+
+def test_affiliate_canon_matches_assemble_spoke():
+    # restore_posts' canonical URL constants and assemble_spoke's AFFILIATE_DEFAULT
+    # must describe the SAME link (modulo utm param order) — two canons would let
+    # a restore rewrite hrefs away from what new spokes ship with.
+    from urllib.parse import parse_qsl, urlsplit
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))  # globalhighlevel-site/
+    import assemble_spoke  # import-safe: main() is __main__-guarded
+    ours = urlsplit(f"{rp.BOOTCAMP_DOMAIN}{rp.BOOTCAMP_PATH}"
+                    f"?fp_ref={rp.AFFILIATE_REF}&utm_source={rp.UTM_SOURCE}"
+                    f"&utm_medium={rp.UTM_MEDIUM}")
+    theirs = urlsplit(assemble_spoke.AFFILIATE_DEFAULT)
+    check("affiliate canon: scheme+host match",
+          (ours.scheme, ours.netloc) == (theirs.scheme, theirs.netloc))
+    check("affiliate canon: path is /highlevel-bootcamp",
+          ours.path == theirs.path == "/highlevel-bootcamp")
+    ours_q, theirs_q = dict(parse_qsl(ours.query)), dict(parse_qsl(theirs.query))
+    check("affiliate canon: fp_ref matches", ours_q.get("fp_ref") == theirs_q.get("fp_ref"))
+    check("affiliate canon: query params identical modulo order", ours_q == theirs_q)
+
+
 def test_idempotency():
     def run(tmp):
         first = rp.run_restore(["s1"], "2026-07-24", audit={})
@@ -232,7 +348,9 @@ def test_cli_deploy_date_validation():
 def main():
     print("test_restore_posts.py")
     for t in (test_topic_mapping, test_collision_skip, test_stamps,
-              test_affiliate, test_idempotency, test_dry_run_and_errors,
+              test_affiliate, test_affiliate_escaped_amp, test_slug_blocklist,
+              test_main_exit_codes, test_affiliate_canon_matches_assemble_spoke,
+              test_idempotency, test_dry_run_and_errors,
               test_bad_json_blob, test_cli_deploy_date_validation):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
