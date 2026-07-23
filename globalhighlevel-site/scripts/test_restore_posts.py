@@ -204,10 +204,36 @@ def test_dry_run_and_errors():
           report["counts"]["restored"] == 1 and report["counts"]["errors"] == 1)
 
 
+def test_bad_json_blob():
+    # A corrupt git blob is recorded as an error and the run CONTINUES (unlike an
+    # unmappable topic, which fails loudly) — and no file is written for it.
+    def run(tmp):
+        rp.read_post_from_git.blobs["bad"] = "{this is not json"
+        report = rp.run_restore(["bad", "s1"], "2026-07-24", audit={})
+        return report, sorted(x.name for x in tmp.iterdir())
+    report, files = with_env([make_post()], run)
+    check("bad JSON blob recorded as error",
+          len(report["errors"]) == 1 and report["errors"][0]["slug"] == "bad"
+          and "bad JSON" in report["errors"][0]["error"])
+    check("run continued past bad blob (good slug restored)", report["restored"] == ["s1"])
+    check("no file written for the bad blob", files == ["s1.json"])
+
+
+def test_cli_deploy_date_validation():
+    import subprocess
+    script = str(Path(__file__).resolve().parent / "restore_posts.py")
+    for bad in ("2026-7-4", "24-07-2026", "tomorrow"):
+        proc = subprocess.run([sys.executable, script, "--slugs", "/dev/null",
+                               "--deploy-date", bad], capture_output=True, text=True)
+        check(f"--deploy-date {bad!r} rejected (exit 2, nothing run)",
+              proc.returncode == 2 and "deploy-date" in proc.stderr)
+
+
 def main():
     print("test_restore_posts.py")
     for t in (test_topic_mapping, test_collision_skip, test_stamps,
-              test_affiliate, test_idempotency, test_dry_run_and_errors):
+              test_affiliate, test_idempotency, test_dry_run_and_errors,
+              test_bad_json_blob, test_cli_deploy_date_validation):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

@@ -45,6 +45,7 @@ Run tests: python3 scripts/test_restore_posts.py
 """
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -146,12 +147,18 @@ def normalize_affiliate_links(html, language):
     def _sub(match):
         nonlocal rewrites
         quote, href = match.group(1), match.group(2)
-        parts = urlsplit(href)
+        # Firehose bodies HTML-escape the query separator (&amp;). parse_qsl on
+        # the raw attribute value would read the next key as "amp;utm_campaign"
+        # and silently DROP campaign tracking (codex 2026-07-23). Unescape for
+        # parsing; re-escape the rewritten URL iff the original was escaped.
+        was_escaped = "&amp;" in href
+        href_plain = href.replace("&amp;", "&")
+        parts = urlsplit(href_plain)
         host = parts.netloc.lower().split(":")[0]
         if host == "gohighlevel.com" or host.endswith(".gohighlevel.com"):
             params = dict(parse_qsl(parts.query, keep_blank_values=True))
             if "fp_ref" not in params:
-                flagged.append(href)
+                flagged.append(href_plain)
                 return match.group(0)
             path = BOOTCAMP_PATH_ES if language == "es" else BOOTCAMP_PATH
             pairs = [
@@ -162,11 +169,13 @@ def normalize_affiliate_links(html, language):
             if "utm_campaign" in params:
                 pairs.append(("utm_campaign", params["utm_campaign"]))
             canonical = f"{BOOTCAMP_DOMAIN}{path}?{urlencode(pairs)}"
-            if canonical != href:
+            if canonical != href_plain:
                 rewrites += 1
+            if was_escaped:
+                canonical = canonical.replace("&", "&amp;")
             return f"href={quote}{canonical}{quote}"
         if any(pat in host for pat in FLAG_DOMAIN_PATTERNS):
-            flagged.append(href)
+            flagged.append(href_plain)
         return match.group(0)
 
     return HREF_RE.sub(_sub, html), rewrites, flagged
@@ -216,6 +225,15 @@ def run_restore(slugs, deploy_date, dry_run=False, audit=None):
     }
 
     for slug in slugs:
+        # Slugs come from a file/audit JSON and become both a git ref and a
+        # filesystem path — reject path separators and traversal so a stray
+        # "../" or "/" can never address outside posts/ (hardening, review
+        # 2026-07-23). Blocklist, not ASCII allowlist: 2 of the 931 real slugs
+        # carry accented characters (prospección-..., ...-membresía-...).
+        if (not slug or ".." in slug
+                or any(c in slug for c in "/\\") or slug != slug.strip()):
+            report["errors"].append({"slug": slug, "error": "invalid slug (path separator/traversal)"})
+            continue
         dest = POSTS_DIR / f"{slug}.json"
         if dest.exists():
             report["skipped_collision"].append(slug)
@@ -226,13 +244,24 @@ def run_restore(slugs, deploy_date, dry_run=False, audit=None):
             continue
         try:
             text, rewrites, flagged = restore_post(raw, slug, deploy_date, audit.get(slug))
-        except TopicMappingError:
-            raise  # fail loudly: no file written, run stops (caller exits nonzero)
+        except TopicMappingError as exc:
+            # fail loudly: no file written for this slug, run stops (caller exits
+            # nonzero). Attach the partial report — files restored BEFORE the bad
+            # slug are already on disk and their flagged-href data would otherwise
+            # be lost with no manifest (red-team 2026-07-23).
+            report["aborted_at"] = {"slug": slug, "topic": exc.topic}
+            exc.report = report
+            raise
         except (json.JSONDecodeError, ValueError) as exc:
-            report["errors"].append({"slug": slug, "error": f"bad JSON in git blob: {exc}"})
+            report["errors"].append({"slug": slug, "error": f"unparseable git blob (bad JSON or URL): {exc}"})
             continue
         if not dry_run:
-            dest.write_text(text, encoding="utf-8")
+            # Atomic write: a crash mid-write would leave truncated JSON that the
+            # collision rule then protects forever and build.load_posts silently
+            # drops — permanent invisible post loss (adversarial review 2026-07-23).
+            tmp = dest.with_suffix(".json.tmp")
+            tmp.write_text(text, encoding="utf-8")
+            os.replace(tmp, dest)
         report["restored"].append(slug)
         if rewrites:
             report["affiliate_rewrites"][slug] = rewrites
@@ -281,6 +310,15 @@ def main(argv=None):
     if not DEPLOY_DATE_RE.match(args.deploy_date):
         ap.error(f"--deploy-date must be YYYY-MM-DD, got {args.deploy_date!r}")
 
+    # Preflight: the prune commit's parent must be reachable — a shallow clone
+    # would otherwise error on EVERY slug one by one (adversarial review 2026-07-23).
+    probe = subprocess.run(["git", "cat-file", "-e", f"{PRUNE_COMMIT}^{{commit}}"],
+                           cwd=REPO_ROOT, capture_output=True)
+    if probe.returncode != 0:
+        print(f"FATAL: prune commit {PRUNE_COMMIT[:12]} not reachable in this clone "
+              f"(shallow checkout?) — cannot restore.", file=sys.stderr)
+        return 2
+
     audit = load_audit()
     if args.all:
         slugs = list(audit.keys())
@@ -294,6 +332,12 @@ def main(argv=None):
         print(f"FATAL: slug {exc.slug!r} has unmappable topic {exc.topic!r} — "
               f"no current hub for it; nothing written for that slug, run stopped.",
               file=sys.stderr)
+        partial = getattr(exc, "report", None)
+        if partial is not None and not args.dry_run:
+            report_path = Path(args.report) if args.report else default_report_path(args.deploy_date)
+            report_path.write_text(json.dumps(partial, indent=2, ensure_ascii=False) + "\n",
+                                   encoding="utf-8")
+            print(f"partial report written (aborted run): {report_path}", file=sys.stderr)
         return 2
 
     print_summary(report, args.dry_run)
@@ -305,6 +349,12 @@ def main(argv=None):
         report_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
                                encoding="utf-8")
         print(f"\nreport written: {report_path}")
+    if report["errors"]:
+        # A restore with errors must not chain silently into build/deploy — a
+        # shallow clone errors on EVERY slug and would otherwise exit 0 having
+        # restored nothing (adversarial review 2026-07-23).
+        print(f"EXIT 1: {len(report['errors'])} slug(s) errored — see report", file=sys.stderr)
+        return 1
     return 0
 
 
