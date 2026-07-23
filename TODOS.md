@@ -6,29 +6,19 @@ for the Bing-first recovery ship queue (eng review 2026-07-21, run
 
 ## Gates (Ship 2)
 
-### Add verify.py Check 4: robots-aware crawlability gate
+### Add robots-aware crawlability gate to verify.py (next free check number)
 **Priority:** P0
 Scoped-correct robots.txt parser that fails loudly on unknown directives; no gate
 currently knows robots.txt exists — that is how the `/start/` leak passed green for
-3 weeks. (Eng review T3)
+3 weeks. NOTE: "Check 4" was taken by the canon-invariants gate in v0.2.11.0 and
+Check 5 by redirect-shadowing — this lands as Check 6+. (Eng review T3)
 
 ### Regression test pinning the /start/ false-green case
 **Priority:** P0
 `scripts/test_verify_robots.py`: a link that resolves via `_redirects` while the
-target is robots-blocked must FAIL verify. Protects Check 4 from being silently
-weakened. (Eng review T4)
+target is robots-blocked must FAIL verify. Protects the robots gate (T3 above)
+from being silently weakened. (Eng review T4)
 
-### Vary CTA anchor text per article
-**Priority:** P0
-The ~33 sitewide `/start/` CTA links must become varied-anchor editorial links to
-the money page; identical anchors collide with `audit_links.py` CAP=3 and
-`build.py` ANCHOR_URL_CAP silently drops extras. (Eng review T5)
-
-### Update audit_links.py doctrine for retired /start (+ /coupon)
-**Priority:** P0
-Drop `/start` from `EXEMPT_PREFIXES` and fix comments still calling it
-"robots-disallowed" — as of v0.2.10.1 `/start/` and `/coupon/` are crawlable 301s,
-and the audit would still pass if `/start` broke. (Eng review T6 + Codex 2026-07-22)
 
 ### Delete dead build_trial_page()
 **Priority:** P1
@@ -38,18 +28,51 @@ docstring — one innocent future call rebuilds a retired page. (Note: per curre
 Cloudflare docs the 301 would still win over a static file — see T8 — so the risk
 is confusion + a stale crawlable artifact, not redirect shadowing.) (Eng review T7)
 
-### Fix inverted Cloudflare precedence comments
-**Priority:** P1
-`build.py:3368` and the `:3470-3477` block claim static files take precedence over
-`_redirects`; Cloudflare docs say redirects are ALWAYS followed. The comments
-assert the opposite of reality — this inverted model already leaked into an early
-draft of T7 above. (Eng review T8)
 
 ### Delete vestigial repo-root _redirects
 **Priority:** P1
 Root `_redirects` still claims `/start` is a live landing page; the deployed file is
 `globalhighlevel-site/_redirects` (build.py:3347). Also confirm the Cloudflare Pages
 output dir in the dashboard. (Eng review T9)
+
+## Full-restore sprint follow-ups (from Day-1 reviews, 2026-07-23)
+
+### Arabic disposition before Day-3 batch
+**Priority:** P0
+19 restored posts are lang=ar with NO listing surface (no /ar/ hub in
+categories.json) -> verify Check 2 fails; their bodies carry absolute
+https://globalhighlevel.com/ar/trial/ CTAs that 404 (now visible to Check 3).
+Bill decides: add an /ar hub, hold the 19 back, or 301 them into EN/ES clones;
+either way add an /ar/trial* redirect. (Red-team 2026-07-23)
+
+### Precompute silo map for circle/related/inject (perf at 2k+ posts)
+**Priority:** P2
+circle_members/get_related rescan all_posts per post (O(n^2 log n), ~2.5s combined
+at 958, fine today, ~2min at 10k) and _build_link_index is rebuilt per post. One
+{(lang,topic): sorted members} map per build fixes all three. (Perf specialist 2026-07-23)
+
+### Batch git reads in restore_posts.py
+**Priority:** P3
+931 sequential `git show` spawns ~10-30s; `git cat-file --batch` would do one.
+One-off migration cost, acceptable. (Perf specialist 2026-07-23)
+
+### verify.py Check 4 fail-detection self-tests
+**Priority:** P2
+Check 4 passes on real output but nothing proves it FIRES on violations (the 4a
+vacuous-gate bug shipped exactly because of this). Synthetic-violation harness:
+build a page missing its hub link / wrong circle / cross-silo card, assert FAIL.
+(Testing specialist 2026-07-23)
+
+### build.load_posts swallows unparseable JSON silently
+**Priority:** P2
+`except Exception: pass` drops a corrupt post from the site with no trace; the
+restore now writes atomically so the main vector is closed, but the swallow
+remains. Make it print loudly or fail. (Adversarial 2026-07-23)
+
+### Sink strip + Check 4d cover only /blog|/category hrefs
+**Priority:** P3
+A baked followed link to /, /about/ or /es/... in a sink body would escape both.
+Money page body has none today. Generalize both scans. (Adversarial 2026-07-23)
 
 ## Content rebuild (Ship 3)
 
@@ -68,9 +91,10 @@ same firehose batch that caused the April demotion. (Eng review T11)
 Start with `how-to-connect-airtable-in-gohighlevel` (Bing pos 1.0). No redirects for
 these; external links SKIPPED per Bill 2026-07-21 (accepted known risk). (Eng review T12)
 
-### Submit rebuilt URLs via submit-bing.py / IndexNow after deploy
+### Submit rebuilt URLs via scripts/submit_indexnow.py after deploy
 **Priority:** P1
-(Eng review T14)
+The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
+`--sitemap`); this item is now just "run it after the rebuild deploy". (Eng review T14)
 
 ## Infra (Ship 4)
 
@@ -111,6 +135,18 @@ GSC coverage for `/trial/`; if indexed-without-content appears, decide between
 unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing)
 
 ## Completed
+
+### Ship 2 (Day-1 restore sprint) — CTA repoint, audit doctrine, Cloudflare comments (T5, T6, T8)
+**Completed:** v0.2.11.0 (2026-07-23)
+T5 shipped in its D2-superseded form: in-post CTAs repoint to the money page
+DIRECTLY, staying rel=nofollow (sprint eng review D2 overrode the varied-anchor
+editorial plan; internal equity flows via the canon link structure instead), with
+render-time anchor caps (`enforce_anchor_caps`) killing identical-anchor cliffs
+from firehose bodies. T6: `/start`+`/coupon` no longer audit-exempt; nofollow links
+exempt by rel; prefixes imported from build.py with segment-boundary matching.
+T8: both inverted Cloudflare-precedence comments corrected; the build now PRUNES
+_redirects rules that shadow built pages (158 restore slugs were shadowed) and
+verify.py Check 5 gates it.
 
 ### Ship 1 — Bing recovery cheap wins (eng review T1 + T2)
 **Completed:** v0.2.10.1 (2026-07-22)

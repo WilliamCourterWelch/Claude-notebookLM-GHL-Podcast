@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """verify.py — phase gate for the language x topic restructure.
 
-Runs against the built public/ output and asserts three invariants. Each later
-phase of the restructure must keep these green before /seo-deploy-gate.
+Runs against the built public/ output and asserts six invariants (Checks 0-5).
+Each later phase of the restructure must keep these green before /seo-deploy-gate.
 
   Check 0  Lang vs slug  : a post's `language` field must not contradict a specific
                            slug marker (catches a migration that wrote the wrong
@@ -11,6 +11,12 @@ phase of the restructure must keep these green before /seo-deploy-gate.
   Check 2  No orphans    : every post with a live /blog/ page appears in >=1 listing.
   Check 3  No dead links : every internal href resolves to a generated page or a
                            _redirects rule (minus KNOWN_DANGLING, which T6 clears).
+  Check 4  Canon links   : Caleb-canon template invariants on built output —
+                           spoke->pillar link present, link circles close, no
+                           cross-silo/cross-language template links, and sink
+                           pages (mvp_minimal_links) emit ZERO outbound internal
+                           links (D3/D9, full-restore sprint 2026-07-23).
+  Check 5  Redirect shadow : no _redirects rule may shadow a built page.
 
 Usage:
     cd globalhighlevel-site
@@ -52,7 +58,11 @@ def blog_slugs(html: str) -> set[str]:
 
 
 def internal_hrefs(html: str) -> set[str]:
-    return set(re.findall(r'href="(/[^"#?]*)"', html))
+    """Root-relative hrefs PLUS absolute same-site hrefs (normalized to relative)
+    — an absolute same-site dead link is just as dead (codex 2026-07-23)."""
+    rel = set(re.findall(r'href="(/[^"#?]*)"', html))
+    abs_ = set(re.findall(r'href="' + re.escape(build.SITE_URL) + r'(/[^"#?]*)"', html))
+    return rel | abs_
 
 
 def norm(h: str) -> str:
@@ -64,7 +74,18 @@ def main() -> int:
         print(f"ERROR: {PUBLIC} not found — run `python3 build.py` first.")
         return 1
 
-    posts = build.load_posts()
+    # Verify against the SAME dicts the build rendered from — merge_data can add
+    # episode fields (publishedAt fallbacks etc.) that change circle ordering, so
+    # raw load_posts() could compute different neighbors than the build did
+    # (red-team 2026-07-23).
+    posts = build.merge_data(build.load_posts(), build.load_published())
+    # Check 4 reads build's module globals, which only build.main() populates.
+    # Load them here or the spoke->pillar check silently never fires (the
+    # `cat_slug in LIVE_CATEGORY_SLUGS` gate would test against an empty set —
+    # review finding 2026-07-23). Live hubs come from the BUILT output, which is
+    # what this gate verifies anyway.
+    build.CATEGORIES, build.LANGUAGES = build.load_categories()
+    build.LIVE_CATEGORY_SLUGS = {p.parent.name for p in (PUBLIC / "category").glob("*/index.html")}
     lang_by_slug = {p["slug"]: build.post_lang(p) for p in posts if p.get("slug")}
     all_slugs = set(lang_by_slug)
     fails: list[str] = []
@@ -174,6 +195,8 @@ def main() -> int:
 
     dangling: dict[str, int] = {}
     for f in PUBLIC.rglob("*.html"):
+        if f.name == "404.html":
+            continue  # error page: its self-referential canonical is /404 by design
         for h in internal_hrefs(read(f)):
             if not resolves(h):
                 dangling[norm(h)] = dangling.get(norm(h), 0) + 1
@@ -186,13 +209,123 @@ def main() -> int:
     if new_dangling:
         fails.append(f"Check 3: {len(new_dangling)} new dangling internal links")
 
+    # --- Check 4: canon link invariants (D3, 2026-07-23) -------------------
+    # The Caleb-canon template structure must hold on the BUILT output:
+    #   a. spoke->pillar : every non-sink EN post with a built hub links UP to it
+    #   b. circle closes : each post's rendered circle-nav matches the computed
+    #                      prev/next; wraparound means the silo forms one cycle
+    #   c. no cross-silo : circle + related-card targets stay same-lang+same-topic
+    #   d. sink exclusion: mvp_minimal_links pages gain ZERO outbound internal
+    #                      links (no circle, no related cards, no hub link, no
+    #                      /blog|/category anchors in the post body)
+    print("\n=== Check 4: canon link invariants (spoke->pillar, circles, silo, sink) ===")
+    slug_meta = {p["slug"]: (build.post_lang(p), build.post_topic(p))
+                 for p in posts if p.get("slug")}
+    c4_fails: list[str] = []
+    for p in posts:
+        slug = p.get("slug")
+        if not slug:
+            continue
+        if build.is_series_post(p):
+            continue  # authority template: series nav is its cluster structure, not the circle
+        page = PUBLIC / build.post_output_rel(p) / "index.html"
+        if not page.exists():
+            continue
+        html = read(page)
+        is_sink = bool(p.get("mvp_minimal_links"))
+        is_pillar_blog = bool(p.get("isPillar")) and p.get("language", "en") == "en"
+        lang, topic = build.post_lang(p), build.post_topic(p)
+
+        if is_sink:
+            # d. sink exclusion — zero outbound internal links, in any template slot
+            if 'class="circle-nav"' in html or 'class="related-posts"' in html or 'class="hub-link"' in html:
+                c4_fails.append(f"sink {slug}: template block (circle/related/hub) present")
+            # the category eyebrow must be plain text on a sink (it was the last
+            # followed outbound leak — red-team 2026-07-23)
+            eb = re.search(r'class="post-eyebrow[^"]*">(.*?)</div>', html, re.S)
+            if eb and "<a " in eb.group(1):
+                c4_fails.append(f"sink {slug}: followed eyebrow link present")
+            # slice body -> cta-end (nested divs make a </div> match under-scan)
+            b_start = html.find('class="post-body"')
+            b_end = html.find('class="cta-end"', b_start)
+            body = html[b_start:b_end] if b_start >= 0 and b_end > b_start else html
+            for m in re.finditer(r'<a\b([^>]*)>', body):
+                attrs = m.group(1)
+                href_m = re.search(
+                    r'href="(?:' + re.escape(build.SITE_URL) + r')?(/(?:blog|category)/[^"]*)"', attrs)
+                rel_m = re.search(r'rel="([^"]*)"', attrs)
+                followed = not (rel_m and "nofollow" in rel_m.group(1).split())
+                if href_m and followed:
+                    c4_fails.append(f"sink {slug}: followed internal link {href_m.group(1)} in body")
+            continue
+
+        # a. spoke->pillar (EN posts whose hub is built; eyebrow/hub-link carries it).
+        # Scope to the post's own template zones — the header/footer nav links every
+        # hub on every page, so a whole-document search passes vacuously even if the
+        # eyebrow/hub-link disappeared (codex P2, 2026-07-23).
+        cat_slug = build.slugify(build.display_cat(topic) or "GoHighLevel Tutorials")
+        if lang == "en" and not is_pillar_blog and cat_slug in build.LIVE_CATEGORY_SLUGS:
+            eb_m = re.search(r'class="post-eyebrow[^"]*">(.*?)</div>', html, re.S)
+            hub_m = re.search(r'class="hub-link".*?</p>', html, re.S)
+            zones = (eb_m.group(1) if eb_m else "") + (hub_m.group(0) if hub_m else "")
+            if f'href="/category/{cat_slug}/"' not in zones:
+                c4_fails.append(f"{slug}: no eyebrow/hub-link to its hub /category/{cat_slug}/")
+
+        # b. circle closes — rendered nav matches the computed neighbors
+        prev_p, next_p = (None, None) if is_pillar_blog else build.circle_neighbors(p, posts)
+        if next_p is not None:
+            want_next = f'class="circle-next" href="{build.post_url(next_p)}"'
+            if want_next not in html:
+                c4_fails.append(f"{slug}: circle-next missing/wrong (want {build.post_url(next_p)})")
+            if prev_p is not next_p:
+                want_prev = f'class="circle-prev" href="{build.post_url(prev_p)}"'
+                if want_prev not in html:
+                    c4_fails.append(f"{slug}: circle-prev missing/wrong (want {build.post_url(prev_p)})")
+        elif 'class="circle-nav"' in html:
+            c4_fails.append(f"{slug}: unexpected circle-nav (singleton silo or excluded page)")
+
+        # c. no cross-silo/cross-language in template blocks (related cards + circle
+        # both render between the author box and the JSON-LD scripts — scan that zone)
+        starts = [i for i in (html.find('class="related-posts"'), html.find('class="circle-nav"')) if i >= 0]
+        if starts:
+            # search for the JSON-LD terminator AFTER the block start — the head
+            # carries a WebSite schema that would otherwise end the slice before
+            # it begins, silently emptying this check (codex P2, 2026-07-23)
+            zone_end = html.find('<script type="application/ld+json">', min(starts))
+            zone = html[min(starts):zone_end if zone_end > 0 else len(html)]
+            for tgt in re.findall(r'href="[^"]*?/blog/([^"/]+)/?"', zone):
+                meta = slug_meta.get(unquote(tgt))
+                if meta and meta != (lang, topic):
+                    c4_fails.append(f"{slug}: cross-silo template link -> {tgt} {meta} != {(lang, topic)}")
+    for msg in c4_fails[:20]:
+        print(f"    {msg}")
+    print("  ->", "PASS" if not c4_fails else f"FAIL ({len(c4_fails)} canon violations)")
+    if c4_fails:
+        fails.append(f"Check 4: {len(c4_fails)} canon link invariant violations")
+
+    # --- Check 5: no _redirects rule shadows a built page ------------------
+    # Cloudflare Pages follows _redirects BEFORE serving static files, so a rule
+    # whose source is a built page makes that page live-unreachable. 158 of the
+    # 931 restore slugs had prune-era 301 rules — build.py prunes them from the
+    # deployed copy; this gate proves the prune worked (red-team 2026-07-23).
+    # (`redirects` and `pages` are the locals built in Check 3's section.)
+    print("\n=== Check 5: no _redirects rule shadows a built page ===")
+    # every source variant that resolves to a built page OR deployed root file —
+    # including "/" itself (a root rule would shadow the homepage)
+    shadowed = sorted(h for h in redirects if h in pages)
+    for h in shadowed[:10]:
+        print(f"    shadowed: {h}")
+    print("  ->", "PASS" if not shadowed else f"FAIL ({len(shadowed)} built pages shadowed by redirects)")
+    if shadowed:
+        fails.append(f"Check 5: {len(shadowed)} built pages unreachable behind _redirects rules")
+
     print("\n" + "=" * 52)
     if fails:
         print("VERIFY: FAIL")
         for f in fails:
             print("  -", f)
         return 1
-    print("VERIFY: PASS — 0 lang/slug mismatches, 0 contamination, 0 orphans, 0 new dead links")
+    print("VERIFY: PASS — 0 lang/slug mismatches, 0 contamination, 0 orphans, 0 new dead links, canon invariants hold")
     return 0
 
 

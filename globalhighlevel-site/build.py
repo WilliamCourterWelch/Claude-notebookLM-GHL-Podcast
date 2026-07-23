@@ -45,6 +45,12 @@ def affiliate_for(lang: str) -> str:
     """Language-aware affiliate base URL. Spanish -> -es bootcamp; others -> default."""
     return AFFILIATE_ES if lang == "es" else AFFILIATE
 
+# The conversion sink: every in-post CTA points here directly (D2, 2026-07-23).
+# /start/ is retired — it 301s to this page, so routing CTAs through it added a
+# redirect hop for zero attribution gain. CTAs stay rel=nofollow (they pass
+# nothing); equity flows to the money page through the canon link structure.
+MONEY_PAGE_URL = "/blog/gohighlevel-free-trial-30-days-extended/"
+
 GA_ID        = "G-HYT0YKNGX2"
 CLARITY_ID   = "wkeq0t21ww"
 ACCENT       = "#f59e0b"   # amber
@@ -66,6 +72,21 @@ PILLAR_HUB_MAP = {}
 # on (anchor_text_lower, url); injected/hub links beyond ANCHOR_URL_CAP are dropped so
 # the footprint stays varied. Cleared at the start of each build().
 ANCHOR_URL_CAP = 3
+# Conversion/attribution paths: CTAs to these are funnel plumbing, not editorial
+# links — exempt from anchor doctrine (mirrored by audit_links.py EXEMPT_PREFIXES).
+# /trial is robots-disallowed attribution; the language variants are the localized
+# conversion landings baked into firehose-era bodies (161x in the Spanish set —
+# unwrapping those would amputate the Spanish funnel, not clean up SEO).
+ATTRIBUTION_PREFIXES = ("/trial", "/es/trial", "/ar/trial", "/in/trial")
+
+
+def is_attribution_path(url: str) -> bool:
+    """Segment-boundary match against ATTRIBUTION_PREFIXES: /trial and /trial/x
+    match, /trial-broken and /trialfoo do NOT (a typo'd path must fail the 404
+    gate, not hide behind the exemption — codex 2026-07-23). Shared with
+    audit_links.py so builder and audit agree."""
+    u = url.rstrip("/")
+    return any(u == p or u.startswith(p + "/") for p in ATTRIBUTION_PREFIXES)
 # P1.1: a category gets a built hub page only with >= this many posts (mirrors the
 # language-topic-page rule). audit_links.py mirrors this value (card_count < 2).
 MIN_HUB_POSTS = 2
@@ -85,7 +106,13 @@ def _cat_link_html(cat: str, css_class: str, extra_style: str = "") -> str:
     return f'<span class="{css_class}"{style}>{cat}</span>'
 
 def _anchor_under_cap(anchor: str, url: str) -> bool:
-    """True if (anchor,url) is still under the site-wide cap; registers the use on True."""
+    """True if (anchor,url) is still under the site-wide cap; registers the use on True.
+
+    Keys on the FINAL rendered URL: write() rewrites pillar /blog/ hrefs to their
+    /category/ hub, so counting the pre-rewrite URL would let two ledger keys
+    merge into one post-rewrite pair exceeding the cap that audit_links then
+    blocks with no builder-side remedy (adversarial review 2026-07-23)."""
+    url = PILLAR_HUB_MAP.get(url, url)
     key = (" ".join(anchor.lower().split()), url)
     if _ANCHOR_URL_COUNTS.get(key, 0) >= ANCHOR_URL_CAP:
         return False
@@ -271,7 +298,97 @@ def get_related(post: dict, all_posts: list, n: int = 3) -> list:
     # Caleb silo integrity: related cards stay IN-SILO (same topic) only. Never pad
     # with other-topic posts — that cross-links silos and leaks authority across topics.
     # Fewer related cards on a thin silo is correct; a cross-silo card is not.
+    # D3 (2026-07-23): rotate the window deterministically per slug. same[:n] made
+    # the first n posts in load order collect a card link from EVERY sibling — at
+    # 931 posts that is a mega-concentration on 3 arbitrary pages. Rotation spreads
+    # card inlinks evenly across the silo while staying deterministic per post.
+    if len(same) > n:
+        start = int(hashlib.md5(slug.encode()).hexdigest(), 16) % len(same)
+        same = same[start:] + same[:start]
     return same[:n]
+
+
+def enforce_anchor_caps(html: str) -> str:
+    """Render-time Caleb cap enforcement on anchors BAKED INTO stored html_content
+    (D3 + smoke-build finding, 2026-07-23). Firehose-era bodies carry hardcoded
+    editorial links repeating the same anchor->URL pair 40x+ sitewide — the
+    April-cliff fingerprint. D3 forbids body rewrites (restored JSON stays
+    git-identical), so the cap is enforced where the template renders: an in-body
+    internal FOLLOWED anchor beyond ANCHOR_URL_CAP is unwrapped to plain text.
+    Exempt (kept, uncounted): nofollow links and ATTRIBUTION_PREFIXES conversion
+    CTAs — mirror of audit_links.py's editorial-check exemptions (which imports
+    ATTRIBUTION_PREFIXES from here). Absolute https://globalhighlevel.com hrefs
+    count as internal, same as the audit.
+
+    SIDE EFFECT: consumes slots in the site-wide _ANCHOR_URL_COUNTS ledger via
+    _anchor_under_cap(). Call order matters — run it once per body, before
+    inject_internal_links, in build order. Calling it twice on the same html
+    double-counts (tests clear the ledger between calls for this reason)."""
+    def _repl(m):
+        attrs, text = m.group(1), m.group(2)
+        href_m = re.search(r'href="([^"]+)"', attrs)
+        if not href_m:
+            return m.group(0)
+        href = href_m.group(1).replace(SITE_URL, "") or "/"
+        rel_m = re.search(r'rel="([^"]*)"', attrs)
+        if not href.startswith("/") or (rel_m and "nofollow" in rel_m.group(1).split()):
+            return m.group(0)
+        url = href.split("#")[0].split("?")[0]
+        if is_attribution_path(url):
+            # Conversion CTA: keep the link (funnel intact) but stamp rel=nofollow.
+            # Only /trial/ is robots-blocked; /es/trial/ etc. are crawlable, and the
+            # firehose bodies repeat the same CTA anchor 160x — a followed identical-
+            # anchor footprint is the April-cliff fingerprint (red-team 2026-07-23).
+            # CTAs pass nothing by doctrine (D2), so nofollow loses no equity.
+            if rel_m:
+                new_attrs = attrs.replace(rel_m.group(0), f'rel="{rel_m.group(1)} nofollow"')
+            else:
+                new_attrs = attrs + ' rel="nofollow"'
+            return f"<a{new_attrs}>{text}</a>"
+        anchor = re.sub(r"<[^>]+>", "", text)
+        if not anchor.strip() or _anchor_under_cap(anchor, url):
+            return m.group(0)
+        return text  # over cap: keep the visible text, drop the link
+    return re.sub(r'<a\b([^>]*)>(.*?)</a>', _repl, html, flags=re.S)
+
+
+def is_series_post(post: dict) -> bool:
+    """True for series/authority-template pages (built by build_authority_page).
+    Single source of truth: main()'s post-page loop and verify.py Check 4 both
+    dispatch through this function."""
+    return bool(post.get("is_series_hub")
+                or post.get("url_path", "").startswith("/es/para/")
+                or post.get("url_path", "").startswith("/for/"))
+
+
+def circle_members(post: dict, all_posts: list) -> list:
+    """The post's link-circle silo: same language + same topic, ordered by
+    publishedAt (slug tiebreak). Pillars are excluded (their home is the hub —
+    hub<->spoke links cover them), sink pages are excluded (mvp_minimal_links
+    pages emit NO outbound internal links, so they can't take a turn in a circle),
+    and series/authority pages are excluded (their cluster structure is the
+    auth-series-nav; putting them in a circle would leave a gap the series page
+    never links back across)."""
+    lang, topic = post_lang(post), post_topic(post)
+    members = [p for p in all_posts
+               if p.get("slug") and post_lang(p) == lang and post_topic(p) == topic
+               and not p.get("isPillar") and not p.get("mvp_minimal_links")
+               and not is_series_post(p)]
+    members.sort(key=lambda p: (p.get("publishedAt", p.get("uploadedAt", "")), p["slug"]))
+    return members
+
+
+def circle_neighbors(post: dict, all_posts: list) -> tuple:
+    """Caleb link circle (D3, 2026-07-23): prev/next within the silo, wrapping at
+    the ends so the circle CLOSES. Returns (prev, next) posts, or (None, None) when
+    the post isn't a circle member or the silo is a singleton."""
+    members = circle_members(post, all_posts)
+    slugs = [p["slug"] for p in members]
+    slug = post.get("slug")
+    if len(members) < 2 or slug not in slugs:
+        return None, None
+    i = slugs.index(slug)
+    return members[i - 1], members[(i + 1) % len(members)]
 
 
 def _build_link_index(all_posts: list, target_lang=None) -> list[tuple[str, str, str, list[str]]]:
@@ -329,19 +446,19 @@ def inject_internal_links(html: str, post: dict, all_posts: list, max_links: int
     target_lang = post_lang(post)
     link_index = _build_link_index(all_posts, target_lang=target_lang)
 
-    # Score candidates: same category gets a boost
+    # D3 canon (2026-07-23): candidates are SAME-TOPIC ONLY. The old score-tier
+    # fallback still admitted cross-silo links at score 1 — that leaks authority
+    # across silos (Caleb: silos never cross-link). In-silo or not at all.
     candidates = []
     for s, title, c, phrases, url in link_index:
-        if s == slug:
+        if s == slug or c != cat:
             continue
-        score = 2 if c == cat else 1
-        candidates.append((s, title, c, phrases, score, url))
+        candidates.append((s, title, c, phrases, url))
 
-    # Shuffle within score tiers so we don't always link the same posts
+    # Shuffle so we don't always link the same posts
     import random
     rng = random.Random(slug)  # deterministic per post
     rng.shuffle(candidates)
-    candidates.sort(key=lambda x: x[4], reverse=True)
 
     # Find paragraphs and inject links
     linked_slugs = set()
@@ -359,7 +476,7 @@ def inject_internal_links(html: str, post: dict, all_posts: list, max_links: int
             continue
 
         text_lower = text_only.lower()
-        for c_slug, c_title, c_cat, c_phrases, c_score, c_url in candidates:
+        for c_slug, c_title, c_cat, c_phrases, c_url in candidates:
             if c_slug in linked_slugs:
                 continue
             # Find the best matching phrase in this paragraph
@@ -849,6 +966,10 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .related-card:hover .r-title{{color:#fff;text-decoration:none}}
 .hub-link{{margin:36px 0 0;padding-top:20px;border-top:1px solid var(--border);font-size:.95rem;color:var(--text2)}}
 .hub-link a{{color:var(--amber);font-weight:600}}
+.circle-nav{{display:flex;justify-content:space-between;gap:16px;margin:36px 0 0;padding-top:20px;border-top:1px solid var(--border)}}
+.circle-nav a{{font-size:.9rem;font-weight:600;color:var(--text2);text-decoration:none;max-width:48%}}
+.circle-nav a:hover{{color:var(--amber)}}
+.circle-nav .circle-next{{margin-left:auto;text-align:right}}
 
 /* Pagination */
 .pagination{{display:flex;gap:8px;justify-content:center;margin-top:48px;flex-wrap:wrap}}
@@ -1324,8 +1445,10 @@ def build_authority_page(post: dict, all_posts: list = None):
     vertical = post.get("vertical", "")
     series_part = post.get("series_part", 0)
 
-    # Sanitize + inject internal links (same as blog template)
+    # Sanitize + cap baked anchors + inject internal links (same as blog template —
+    # auth bodies share the site-wide anchor ledger; codex 2026-07-23)
     html_content = sanitize_content(html_content)
+    html_content = enforce_anchor_caps(html_content)
     if all_posts:
         html_content = inject_internal_links(html_content, post, all_posts, max_links=4)
 
@@ -1454,8 +1577,11 @@ def build_post_page(post: dict, all_posts: list = None):
     # Caleb first-link rule: breadcrumb crumbs are non-followed text so they don't spend
     # a link-share on Home/category from every page. The category still gets one followed
     # link via the eyebrow (below); BreadcrumbList JSON-LD carries the hierarchy for Google.
+    # Sink pages (mvp_minimal_links) get a plain-text eyebrow — the followed eyebrow
+    # link was the last outbound leak in the sink invariant (red-team 2026-07-23).
     cat_bc      = f'<span>{category}</span>'
-    cat_eyebrow = f'<a href="/category/{cat_slug}/" style="color:var(--amber);text-decoration:none">{category}</a>' if _cat_built else f'<span style="color:var(--amber)">{category}</span>'
+    _eyebrow_link_ok = _cat_built and not post.get("mvp_minimal_links")
+    cat_eyebrow = f'<a href="/category/{cat_slug}/" style="color:var(--amber);text-decoration:none">{category}</a>' if _eyebrow_link_ok else f'<span style="color:var(--amber)">{category}</span>'
     date_str    = fmt_date(post.get("publishedAt", post.get("uploadedAt", "")))
     html_content = post.get("html_content", "")
     aff         = affiliate_for(post.get("language", "en"))
@@ -1479,15 +1605,24 @@ def build_post_page(post: dict, all_posts: list = None):
     # hub, so strip its internal editorial links to avoid double-counting them site-wide.
     _pillar_blog = bool(post.get("isPillar")) and post.get("language", "en") == "en"
     _suppress_links = _mvp_minimal or _pillar_blog
+    if not _suppress_links:
+        # D3 render-time cap: firehose-era bodies carry hardcoded repeated anchors;
+        # cap them here (JSON untouched) before injection consumes the ledger.
+        # Skipped for suppressed pages — their strip (below) removes these links
+        # anyway, and counting them would burn ledger slots for links that never
+        # render (red-team 2026-07-23).
+        html_content = enforce_anchor_caps(html_content)
     if all_posts and not _suppress_links:
         html_content = inject_internal_links(html_content, post, all_posts)
     # P1.2: editorial in-body link up to the category hub (only when the hub is built).
     if _cat_built and not _suppress_links:
         html_content += _hub_link_block(category, cat_slug, slug)
     if _suppress_links:
-        # strip hard-coded internal /blog/ and /category/ anchors (keep the visible text)
-        html_content = re.sub(r'<a\b[^>]*\bhref="(?:/blog/|/category/)[^"]*"[^>]*>(.*?)</a>',
-                              r'\1', html_content, flags=re.S)
+        # strip hard-coded internal /blog/ and /category/ anchors, absolute or
+        # relative (keep the visible text)
+        html_content = re.sub(
+            r'<a\b[^>]*\bhref="(?:' + re.escape(SITE_URL) + r')?(?:/blog/|/category/)[^"]*"[^>]*>(.*?)</a>',
+            r'\1', html_content, flags=re.S)
 
     # ── Podcast section ───────────────────────────────────────────────────────
     if episode_id:
@@ -1536,14 +1671,14 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── CTA #1 — Below byline (compact one-liner) ─────────────────────────────
     cta1 = f"""
-<p class="cta-byline">Follow along &mdash; <a href="/start/" rel="nofollow">get 30 days free &rarr;</a></p>"""
+<p class="cta-byline">Follow along &mdash; <a href="{MONEY_PAGE_URL}" rel="nofollow">get 30 days free &rarr;</a></p>"""
     if _tldr:
         cta1 = ""  # the TL;DR already gives the answer up top; drop the redundant one-liner
 
     # ── CTA #2 — Mid-article inline ───────────────────────────────────────────
     cta_mid = f"""
 <p class="cta-inline">This is built into GoHighLevel.
-<a href="/start/" rel="nofollow">Try it free for 30 days &rarr;</a></p>"""
+<a href="{MONEY_PAGE_URL}" rel="nofollow">Try it free for 30 days &rarr;</a></p>"""
     body_with_ctas = inject_inline_ctas(html_content, cta_mid)
 
     # ── CTA #3 — End of article box ───────────────────────────────────────────
@@ -1576,9 +1711,30 @@ def build_post_page(post: dict, all_posts: list = None):
   </div>
 </div>"""
 
+    # ── Link circle (D3 canon, 2026-07-23): prev/next within the silo ─────────
+    # Rendered OUTSIDE .post-body (template structure, not an editorial anchor).
+    # Suppressed on sink pages (mvp_minimal_links) and pillar /blog/ copies —
+    # circle_members() also excludes them, so no circle ever points AT a /blog/
+    # pillar copy or expects a sink page to link out.
+    circle_html = ""
+    if all_posts and not _suppress_links:
+        _prev, _next = circle_neighbors(post, all_posts)
+        if _next is not None:
+            _links = ""
+            if _prev is not _next:
+                _links += (f'<a class="circle-prev" href="{post_url(_prev)}">'
+                           f'&larr; {truncate(_prev.get("title", ""), 60)}</a>')
+            _links += (f'<a class="circle-next" href="{post_url(_next)}">'
+                       f'{truncate(_next.get("title", ""), 60)} &rarr;</a>')
+            circle_html = f"""
+<nav class="circle-nav" aria-label="More in {category}">{_links}</nav>"""
+
     # ── Related posts ──────────────────────────────────────────────────────────
+    # Sink pages (mvp_minimal_links) emit ZERO outbound internal links — that
+    # includes related cards, not just body links (sink doctrine 2026-06-25;
+    # made airtight 2026-07-23: the money page was still growing card links).
     related_html = ""
-    if all_posts:
+    if all_posts and not _suppress_links:
         related = get_related(post, all_posts)
         if related:
             cards = ""
@@ -1697,6 +1853,7 @@ def build_post_page(post: dict, all_posts: list = None):
   {share_html}
   {author_html}
   {related_html}
+  {circle_html}
 </div>
 <script type="application/ld+json">{article_schema}</script>
 <script type="application/ld+json">{breadcrumb_schema}</script>
@@ -1955,7 +2112,9 @@ def build_category_pages(posts: list[dict]):
             # list the spokes below it. Pillar html_content is self-contained
             # (its own ToC + CTA), so it is NOT sanitized (no template TOC/CTA here).
             p_title = pillar.get("title", cat)
-            p_body  = pillar.get("html_content", "")
+            # Hub pillar bodies render with a .post-body and share the site-wide
+            # anchor ledger — cap them like post bodies (D3 render-time cap).
+            p_body  = enforce_anchor_caps(pillar.get("html_content", ""))
             more_html = (f'''
 <div class="container">
   <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>
@@ -3358,6 +3517,18 @@ def main():
     IMAGES_SRC = BASE_DIR / "images"
     if IMAGES_SRC.exists():
         shutil.copytree(IMAGES_SRC, PUBLIC_DIR / "images")
+    # IndexNow key file (D4, 2026-07-23): hosted at /<key>.txt so scripts/submit_indexnow.py
+    # can push recrawl notifications to Bing per deploy. Key lives in indexnow-key.txt (source).
+    INDEXNOW_SRC = BASE_DIR / "indexnow-key.txt"
+    if INDEXNOW_SRC.exists():
+        _inkey = INDEXNOW_SRC.read_text().strip()
+        # The key doubles as the output FILENAME — validate against the IndexNow
+        # spec (8-128 chars of [a-zA-Z0-9-]) so a corrupt key file can't write
+        # outside public/ or publish a malformed key page. Fail loudly.
+        if _inkey and not re.fullmatch(r"[A-Za-z0-9-]{8,128}", _inkey):
+            raise SystemExit(f"indexnow-key.txt is not a valid IndexNow key: {_inkey!r}")
+        if _inkey:
+            (PUBLIC_DIR / f"{_inkey}.txt").write_text(_inkey, encoding="utf-8")
 
     global CATEGORIES, LANGUAGES, LIVE_CATEGORY_SLUGS, LIVE_LANG_CODES, BUILT_PAGE_PATHS, LIVE_POST_SLUGS, PILLAR_HUB_MAP
     CATEGORIES, LANGUAGES = load_categories()
@@ -3372,8 +3543,10 @@ def main():
         for p in merged
         if p.get("isPillar") and p.get("language", "en") == "en" and p.get("slug")
     }
-    # 301 the old /blog/ pillar URLs to their hubs (the /blog/ page is not built, so
-    # the redirect fires — static files would otherwise take precedence on Pages).
+    # 301 the old /blog/ pillar URLs to their hubs. The /blog/ page is not built —
+    # per Cloudflare docs redirects ALWAYS beat static files (T8), so an existing
+    # page here would be shadowed, not the other way around; not building it also
+    # keeps the end-of-build shadow-prune from dropping this deliberate rule.
     if PILLAR_HUB_MAP:
         with open(PUBLIC_DIR / "_redirects", "a", encoding="utf-8") as _rf:
             _rf.write("\n# hub pillars: /blog/ copy 301s to the /category/ hub (2026-07-03)\n")
@@ -3436,8 +3609,7 @@ def main():
         # EN hub pillars render on their /category/ hub, not as a /blog/ page (it 301s there).
         if p.get("isPillar") and p.get("language", "en") == "en":
             continue
-        is_series = p.get("is_series_hub") or p.get("url_path", "").startswith("/es/para/") or p.get("url_path", "").startswith("/for/")
-        if is_series:
+        if is_series_post(p):
             build_authority_page(p, all_posts=merged)
             authority_count += 1
         else:
@@ -3476,8 +3648,9 @@ def main():
     # Landing pages
     # /trial/ stays as podcast conversion page (noindex). /start/ and /coupon/ are
     # NOT built — they 301 redirect to the master blog post via _redirects (discount
-    # consolidation 2026-04-21). Static files would take precedence over _redirects
-    # on Cloudflare Pages, so we skip building them entirely.
+    # consolidation 2026-04-21). Cloudflare Pages follows _redirects BEFORE static
+    # files (T8 correction 2026-07-22), so the rule would win anyway — we skip
+    # building them so the end-of-build shadow-prune never drops these rules.
     print("\nBuilding trial page...")
     _build_affiliate_landing("trial", "podcast")
     for lang_cfg in LOCALIZED_LANDING_LANGS:
@@ -3506,6 +3679,35 @@ def main():
         if len(LANG_META_VIOLATIONS) > 20:
             print(f"   … and {len(LANG_META_VIOLATIONS) - 20} more")
         sys.exit(1)
+
+    # Cloudflare Pages: a _redirects rule ALWAYS beats a static file (eng review
+    # T8 — the comments claiming otherwise were the inverted ones). A rule whose
+    # source is a page we just built makes that page unreachable — fatal for the
+    # restore sprint: 158 of the 931 restore slugs still had prune-era 301 rules
+    # (red-team 2026-07-23). Drop every shadowing rule from the DEPLOYED copy;
+    # the source _redirects file keeps its history untouched.
+    _rf_path = PUBLIC_DIR / "_redirects"
+    if _rf_path.exists():
+        _kept, _dropped = [], []
+        for _ln in _rf_path.read_text(encoding="utf-8").splitlines():
+            _s = _ln.strip()
+            _src = _s.split()[0] if _s and not _s.startswith("#") else None
+            _rel = _src.strip("/") if _src else ""
+            # shadowing = source resolves to a built page dir OR a deployed file
+            # (sitemap.xml, the IndexNow key) — both are unreachable behind a rule
+            if _rel and ((PUBLIC_DIR / _rel / "index.html").exists()
+                         or (PUBLIC_DIR / _rel).is_file()):
+                _dropped.append(_src)
+                continue
+            _kept.append(_ln)
+        if _dropped:
+            _rf_path.write_text("\n".join(_kept) + "\n", encoding="utf-8")
+            print(f"  ⚠ dropped {len(_dropped)} _redirects rule(s) shadowing built pages "
+                  f"(Cloudflare: redirects beat static files)")
+            for _d in _dropped[:10]:
+                print(f"      dropped: {_d}")
+            if len(_dropped) > 10:
+                print(f"      … and {len(_dropped) - 10} more")
 
     print(f"\n✅ Build complete — {len(merged)} posts, {total_pages} index pages\n")
 

@@ -27,7 +27,7 @@ def check(name, cond):
 def inbody_map(html):
     p = LinkParser()
     p.feed(html)
-    return {h: ib for h, _, ib in p.links}
+    return {h: ib for h, _, ib, _nf in p.links}
 
 
 def test_body_vs_chrome():
@@ -131,12 +131,61 @@ def test_main_internal_404_fails():
     check("internal link to unbuilt page -> main() == 1", run_main_on(build) == 1)
 
 
+def test_nofollow_flag_parse():
+    p = LinkParser()
+    p.feed('<div class="post-body">'
+           '<a href="/a/" rel="nofollow">plain nofollow anchor</a>'
+           '<a href="/b/" rel="nofollow noopener">multi token rel anchor</a>'
+           '<a href="/c/">followed editorial anchor</a></div>')
+    nf = {h: n for h, _, _, n in p.links}
+    check("rel=nofollow parsed as nofollow", nf.get("/a/") is True)
+    check("rel='nofollow noopener' parsed as nofollow (token split)", nf.get("/b/") is True)
+    check("no rel attr -> followed", nf.get("/c/") is False)
+
+
+def test_nofollow_exempt_from_cliff_but_404_checked():
+    # 2026-07-23 doctrine: nofollow CTAs pass no equity -> exempt from the anchor
+    # cliff; but a broken nofollow CTA still 404s, so the 404 gate must still fire.
+    cta = '<a href="/blog/t/" rel="nofollow">repeated conversion cta anchor</a>'
+    def build_cliff(root):
+        _page(root, "blog/t", '<div class="post-body"><p>target</p></div>')
+        for i in range(al.CAP + 2):
+            _page(root, f"blog/p{i}", f'<div class="post-body"><p>{cta}</p></div>')
+    check(f"nofollow anchor repeated CAP+2x -> main() == 0 (exempt from cliff)",
+          run_main_on(build_cliff) == 0)
+    def build_404(root):
+        _page(root, "blog/a", '<div class="post-body"><p>'
+                              '<a href="/blog/ghost/" rel="nofollow">broken nofollow cta link</a></p></div>')
+    check("nofollow link to unbuilt page -> main() == 1 (404 still checked)",
+          run_main_on(build_404) == 1)
+
+
+def test_retired_and_current_exempt_prefixes():
+    # /start + /coupon retired to crawlable 301s (v0.2.10.1) — the audit must SEE
+    # them break now; the /trial family stays exempt (attribution / conversion).
+    check("/start no longer in EXEMPT_PREFIXES", "/start" not in al.EXEMPT_PREFIXES)
+    check("/coupon no longer in EXEMPT_PREFIXES", "/coupon" not in al.EXEMPT_PREFIXES)
+    def build_start(root):
+        _page(root, "blog/a", '<div class="post-body"><p>'
+                              '<a href="/start/">get thirty days free</a></p></div>')
+    check("followed /start/ link with no built page -> main() == 1 (retired exemption)",
+          run_main_on(build_start) == 1)
+    es = '<a href="/es/trial/">empieza tu prueba gratis</a>'
+    def build_es_trial(root):
+        for i in range(al.CAP + 2):
+            _page(root, f"blog/p{i}", f'<div class="post-body"><p>{es}</p></div>')
+    check("followed /es/trial/ anchor repeated CAP+2x, unbuilt -> main() == 0 (exempt)",
+          run_main_on(build_es_trial) == 0)
+
+
 def main():
     print("test_audit_links.py")
     for t in (test_body_vs_chrome, test_fail_closed_stray_close, test_void_and_nested,
               test_wrapper_exact_token, test_page_path_exists, test_main_clean_passes,
               test_main_thin_hub_fails, test_main_anchor_cliff_boundary,
-              test_main_internal_404_fails):
+              test_main_internal_404_fails, test_nofollow_flag_parse,
+              test_nofollow_exempt_from_cliff_but_404_checked,
+              test_retired_and_current_exempt_prefixes):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

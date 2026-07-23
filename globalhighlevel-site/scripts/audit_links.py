@@ -5,10 +5,15 @@ Parses the BUILT public/ tree and enforces the Caleb non-local internal-link rul
 that verify.py does not cover. Run AFTER build.py, BEFORE deploy.
 
 Scope of the EDITORIAL checks (1,2,5): only links inside the article prose
-(`<div class="post-body">`), excluding conversion CTAs to the robots-disallowed
-attribution paths (/trial,/coupon,/start). That is exactly the set Caleb's authority
-doctrine cares about — breadcrumb, author box, related/listing cards, nav and footer
-are navigational chrome (siblings of .post-body), not editorial links.
+(`<div class="post-body">`), excluding (a) conversion CTAs to the robots-disallowed
+attribution path (/trial) and (b) any rel=nofollow link — nofollow CTAs pass no
+equity, so they can't form a manipulative-anchor footprint; the cliff rule shapes
+FOLLOWED equity only. (Doctrine updated 2026-07-23: /start and /coupon are RETIRED
+crawlable 301s as of v0.2.10.1 — no longer exempt paths. The in-post CTAs now point
+at the money page directly with rel=nofollow, which exemption (b) covers.) That is
+exactly the set Caleb's authority doctrine cares about — breadcrumb, author box,
+related/listing cards, nav and footer are navigational chrome (siblings of
+.post-body), not editorial links.
 
 FAILS (exit 1):
   1. anchor cliff   — same editorial anchor->URL pair repeated > CAP times
@@ -22,11 +27,20 @@ import sys, re
 from pathlib import Path
 from html.parser import HTMLParser
 
-CAP = 3              # MUST track build.py ANCHOR_URL_CAP (builder drops >CAP; gate fails on >CAP)
 ORPHAN_TARGET = 3
-MIN_HUB_CARDS = 2    # MUST track build.py MIN_HUB_POSTS (a built hub has >= this many cards)
 PUBLIC = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent / "public"
-EXEMPT_PREFIXES = ("/trial", "/coupon", "/start")  # robots-disallowed attribution / conversion CTAs
+# Conversion/attribution paths: /trial is the robots-disallowed attribution page;
+# the language variants are the localized conversion landings hardcoded in
+# firehose-era bodies. Imported from build.py so builder exemptions and audit
+# exemptions can never desynchronize. /start + /coupon were retired to crawlable
+# 301s (v0.2.10.1) — no longer exempt; if they break, the audit must SEE it.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from build import ATTRIBUTION_PREFIXES as EXEMPT_PREFIXES  # noqa: E402
+from build import is_attribution_path  # noqa: E402  (segment-boundary matcher)
+# Single source of truth: builder drops >CAP, gate fails on >CAP; a built hub has
+# >= MIN_HUB_CARDS cards. Importing (not mirroring) means they can't desynchronize.
+from build import ANCHOR_URL_CAP as CAP, MIN_HUB_POSTS as MIN_HUB_CARDS  # noqa: E402
+from build import SITE_URL  # noqa: E402
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input",
         "link", "meta", "param", "source", "track", "wbr"}
 BODY_WRAPPERS = ("post-body", "post-content")  # article-prose containers
@@ -46,10 +60,11 @@ class LinkParser(HTMLParser):
         super().__init__()
         self.stack = []                 # list of (tagname, is_body_wrapper)
         self.body_count = 0             # open .post-body/.post-content ancestors
-        self.links = []                 # (href, anchor, in_body: bool)
+        self.links = []                 # (href, anchor, in_body: bool, nofollow: bool)
         self._href = None
         self._buf = ""
         self._link_in_body = False
+        self._link_nofollow = False
         self.card_count = 0
         self.has_body = False           # True if page has a post-body (a pillar-backed hub)
 
@@ -64,6 +79,7 @@ class LinkParser(HTMLParser):
         if tag == "a" and a.get("href"):
             self._href = a["href"]
             self._link_in_body = self.body_count > 0
+            self._link_nofollow = "nofollow" in (a.get("rel") or "").split()
             self._buf = ""
         if tag not in VOID:
             is_body = self._is_body_wrapper(attrs)
@@ -74,7 +90,8 @@ class LinkParser(HTMLParser):
 
     def handle_endtag(self, tag):
         if tag == "a" and self._href is not None:
-            self.links.append((self._href, " ".join(self._buf.split()), self._link_in_body))
+            self.links.append((self._href, " ".join(self._buf.split()),
+                               self._link_in_body, self._link_nofollow))
             self._href = None
         if tag in VOID:
             return
@@ -94,17 +111,20 @@ class LinkParser(HTMLParser):
 
 
 def page_path_exists(href: str) -> bool:
-    p = href.split("#")[0].split("?")[0]
+    # Absolute same-site URLs are internal too — normalize before checking, so a
+    # restored body's https://globalhighlevel.com/blog/dead/ link can't bypass
+    # the 404 gate (codex 2026-07-23).
+    p = href.replace(SITE_URL, "").split("#")[0].split("?")[0] or "/"
     if not p.startswith("/"):
         return True
-    if any(p.rstrip("/").startswith(e) for e in EXEMPT_PREFIXES):
+    if is_attribution_path(p):
         return True
     rel = p.strip("/")
     return bool((PUBLIC / rel / "index.html").exists() or (PUBLIC / rel).is_file() or p == "/")
 
 
 def is_attribution(url: str) -> bool:
-    return any(url.rstrip("/").startswith(e) for e in EXEMPT_PREFIXES)
+    return is_attribution_path(url)
 
 
 def main():
@@ -128,17 +148,20 @@ def main():
         if "/category/" in page and p.card_count < MIN_HUB_CARDS and not p.has_body:
             thin_hubs.append((page, p.card_count))
 
-        for href, anchor, in_body in p.links:
+        for href, anchor, in_body, nofollow in p.links:
             if href.startswith(("#", "mailto:", "tel:")):
                 continue
-            # internal 404 — ANY zone
-            if href.startswith("/") and not page_path_exists(href):
+            # internal 404 — ANY zone, followed or not (a broken nofollow CTA still
+            # 404s). Absolute same-site hrefs count as internal (codex 2026-07-23).
+            if (href.startswith("/") or href.startswith(SITE_URL)) \
+                    and not page_path_exists(href):
                 internal_404.append((href, page))
-            # editorial checks — post-body only, internal, non-attribution
-            is_internal = href.startswith("/") or href.startswith("https://globalhighlevel.com")
-            if not (in_body and is_internal):
+            # editorial checks — post-body only, internal, non-attribution, FOLLOWED
+            # (nofollow conversion CTAs pass no equity — exempt from anchor doctrine)
+            is_internal = href.startswith("/") or href.startswith(SITE_URL)
+            if not (in_body and is_internal) or nofollow:
                 continue
-            url = href.replace("https://globalhighlevel.com", "").split("#")[0].split("?")[0]
+            url = href.replace(SITE_URL, "").split("#")[0].split("?")[0]
             if is_attribution(url):
                 continue
             if not anchor:

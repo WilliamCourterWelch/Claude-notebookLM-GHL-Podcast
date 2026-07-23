@@ -2,6 +2,26 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.11.0] - 2026-07-23
+### Added
+- **Link circle (Caleb canon)** — every blog post now carries a prev/next nav within its language+topic silo, wrapping at the ends so each silo forms one closed loop. Pillars, sink pages, and series/authority pages stay out of circles by construction. This is the canon link structure the 931-post restore lands into.
+- **Restore tooling for the 931 pruned posts** (`scripts/restore_posts.py` + tests): checks each post out of git history at its original slug; never overwrites an existing newer page (collision rule); maps the old 8-topic taxonomy onto the current 5 hubs, aborting loudly (with a partial report) on anything unmappable; stamps `updatedAt` to the deploy date while leaving `publishedAt` untouched; writes atomically; exits nonzero if any slug errored so a broken restore can never chain into a deploy. Every affiliate href is normalized to the current `fp_ref` tag — HTML-escaped `&amp;` URLs handled, `utm_campaign` preserved, unrecognized patterns flagged to a report and never guessed.
+- **IndexNow recrawl channel** — hosted key file at `/<key>.txt` (spec-validated at build time) plus `scripts/submit_indexnow.py` to push URL batches to Bing per deploy. It verifies the key file is live before submitting and any non-2xx fails loudly.
+- **verify.py Check 4 (canon invariants)** on built output: every spoke links up to its hub, circles close exactly as computed, template links never cross language or topic silos, sink pages emit zero outbound internal links. **Check 5:** no `_redirects` rule may shadow a built page.
+- 20+ new test functions across five suites (circle edges, series exclusion, anchor-cap edges, nofollow parsing, restore error paths, IndexNow URL handling).
+### Changed
+- **In-post CTAs point at the money page directly** (`/blog/gohighlevel-free-trial-30-days-extended/`) instead of routing through the retired `/start/` 301 — one less hop, still `rel=nofollow` (TODOS T5 in its D2-superseded form).
+- **Contextual link injection is same-silo only** — the cross-topic fallback is gone; in-silo or not at all.
+- **Related cards rotate deterministically per post** instead of always picking the first three silo siblings — at 958 posts the old behavior would have concentrated hundreds of card links on three arbitrary pages.
+- **3 zero-click snippet rewrites** (payment-providers, sub-accounts, sms-compliance): titles and descriptions rebuilt on the reduce-spam-calls model — concrete benefit up front, a reason to click preserved.
+- **Trial-path conversion CTAs get `rel=nofollow` stamped at render time** — localized trial pages are crawlable and firehose bodies repeat one CTA anchor 160×; a followed identical-anchor footprint is the April-cliff fingerprint. The links (and the Spanish funnel) keep working.
+- **Anchor caps now apply to anchors baked inside stored post bodies** (`enforce_anchor_caps`, render-time, JSON untouched): beyond 3 identical anchor→URL pairs sitewide the link unwraps to plain text. Covers absolute same-site URLs, authority-page bodies, and counts against post-rewrite pillar hub URLs.
+### Fixed
+- **158 restore-target URLs were shadowed by prune-era `_redirects` rules** — on Cloudflare Pages a redirect always beats a static file, so restored pages would have been live-unreachable while being submitted to Bing. The build now prunes any rule whose source is a built page or deployed file (318 rules at full scale, sources printed) and Check 5 gates it. The two inverted precedence comments (TODOS T8) are corrected.
+- **The money page (sink) was still growing outbound links** — related cards and the followed category-eyebrow link are now suppressed on sink pages.
+- **Dead-link gates were blind to absolute same-site URLs** (`https://globalhighlevel.com/...`) — verify.py and audit_links.py now normalize and check them (this immediately surfaced the dead `/ar/trial/` CTAs in the Arabic restore set).
+- **audit_links doctrine** (TODOS T6): retired `/start`+`/coupon` no longer exempt; nofollow links exempt from anchor doctrine by rel attribute; exemption prefixes imported from build.py (single source of truth) and matched on path-segment boundaries so `/trial-anything` can't hide behind `/trial`.
+
 ## [0.2.10.1] - 2026-07-22
 ### Fixed
 - **Search engines can finally see the money-page redirects.** Removed `Disallow: /start/` and `Disallow: /coupon/` from robots.txt — both URLs were retired in April and 301 to the trial money page, but the robots block meant crawlers could never fetch them to discover the redirect. This recovers **external** backlink equity pointing at those URLs (podcast/social-era links) and makes the 301s visible; the 33 internal `/start/` CTA links are all `rel=nofollow` and pass nothing either way — their equity is recovered by the Ship 2 anchor repoint (TODOS T5, stays P0). Only `/trial/` (a real attribution page) stays blocked. `/coupon/` inclusion was Bill's call 2026-07-22.
