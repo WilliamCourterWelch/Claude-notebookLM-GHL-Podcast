@@ -57,7 +57,12 @@ def blog_slugs(html: str) -> set[str]:
 
 
 def internal_hrefs(html: str) -> set[str]:
-    return set(re.findall(r'href="(/[^"#?]*)"', html))
+    """Root-relative hrefs PLUS absolute same-site hrefs (normalized to relative)
+    — an absolute https://globalhighlevel.com/... dead link is just as dead
+    (codex 2026-07-23)."""
+    rel = set(re.findall(r'href="(/[^"#?]*)"', html))
+    abs_ = set(re.findall(r'href="https://globalhighlevel\.com(/[^"#?]*)"', html))
+    return rel | abs_
 
 
 def norm(h: str) -> str:
@@ -69,7 +74,18 @@ def main() -> int:
         print(f"ERROR: {PUBLIC} not found — run `python3 build.py` first.")
         return 1
 
-    posts = build.load_posts()
+    # Verify against the SAME dicts the build rendered from — merge_data can add
+    # episode fields (publishedAt fallbacks etc.) that change circle ordering, so
+    # raw load_posts() could compute different neighbors than the build did
+    # (red-team 2026-07-23).
+    posts = build.merge_data(build.load_posts(), build.load_published())
+    # Check 4 reads build's module globals, which only build.main() populates.
+    # Load them here or the spoke->pillar check silently never fires (the
+    # `cat_slug in LIVE_CATEGORY_SLUGS` gate would test against an empty set —
+    # review finding 2026-07-23). Live hubs come from the BUILT output, which is
+    # what this gate verifies anyway.
+    build.CATEGORIES, build.LANGUAGES = build.load_categories()
+    build.LIVE_CATEGORY_SLUGS = {p.parent.name for p in (PUBLIC / "category").glob("*/index.html")}
     lang_by_slug = {p["slug"]: build.post_lang(p) for p in posts if p.get("slug")}
     all_slugs = set(lang_by_slug)
     fails: list[str] = []
@@ -179,6 +195,8 @@ def main() -> int:
 
     dangling: dict[str, int] = {}
     for f in PUBLIC.rglob("*.html"):
+        if f.name == "404.html":
+            continue  # error page: its self-referential canonical is /404 by design
         for h in internal_hrefs(read(f)):
             if not resolves(h):
                 dangling[norm(h)] = dangling.get(norm(h), 0) + 1
@@ -190,6 +208,21 @@ def main() -> int:
     print("  ->", "PASS" if not new_dangling else f"FAIL ({len(new_dangling)} new dead links)")
     if new_dangling:
         fails.append(f"Check 3: {len(new_dangling)} new dangling internal links")
+
+    # --- Check 5: no _redirects rule shadows a built page ------------------
+    # Cloudflare Pages follows _redirects BEFORE serving static files, so a rule
+    # whose source is a built page makes that page live-unreachable. 158 of the
+    # 931 restore slugs had prune-era 301 rules — build.py prunes them from the
+    # deployed copy; this gate proves the prune worked (red-team 2026-07-23).
+    print("\n=== Check 5: no _redirects rule shadows a built page ===")
+    # every source variant that resolves to a built page OR deployed root file —
+    # including "/" itself (a root rule would shadow the homepage)
+    shadowed = sorted(h for h in redirects if h in pages)
+    for h in shadowed[:10]:
+        print(f"    shadowed: {h}")
+    print("  ->", "PASS" if not shadowed else f"FAIL ({len(shadowed)} built pages shadowed by redirects)")
+    if shadowed:
+        fails.append(f"Check 5: {len(shadowed)} built pages unreachable behind _redirects rules")
 
     # --- Check 4: canon link invariants (D3, 2026-07-23) -------------------
     # The Caleb-canon template structure must hold on the BUILT output:
@@ -222,14 +255,22 @@ def main() -> int:
             # d. sink exclusion — zero outbound internal links, in any template slot
             if 'class="circle-nav"' in html or 'class="related-posts"' in html or 'class="hub-link"' in html:
                 c4_fails.append(f"sink {slug}: template block (circle/related/hub) present")
+            # the category eyebrow must be plain text on a sink (it was the last
+            # followed outbound leak — red-team 2026-07-23)
+            eb = re.search(r'class="post-eyebrow[^"]*">(.*?)</div>', html, re.S)
+            if eb and "<a " in eb.group(1):
+                c4_fails.append(f"sink {slug}: followed eyebrow link present")
             # slice body -> cta-end (nested divs make a </div> match under-scan)
             b_start = html.find('class="post-body"')
             b_end = html.find('class="cta-end"', b_start)
             body = html[b_start:b_end] if b_start >= 0 and b_end > b_start else html
             for m in re.finditer(r'<a\b([^>]*)>', body):
                 attrs = m.group(1)
-                href_m = re.search(r'href="(/(?:blog|category)/[^"]*)"', attrs)
-                if href_m and "nofollow" not in attrs:
+                href_m = re.search(
+                    r'href="(?:https://globalhighlevel\.com)?(/(?:blog|category)/[^"]*)"', attrs)
+                rel_m = re.search(r'rel="([^"]*)"', attrs)
+                followed = not (rel_m and "nofollow" in rel_m.group(1).split())
+                if href_m and followed:
                     c4_fails.append(f"sink {slug}: followed internal link {href_m.group(1)} in body")
             continue
 
@@ -256,7 +297,11 @@ def main() -> int:
         # both render between the author box and the JSON-LD scripts — scan that zone)
         starts = [i for i in (html.find('class="related-posts"'), html.find('class="circle-nav"')) if i >= 0]
         if starts:
-            zone = html[min(starts):html.find('<script type="application/ld+json">')]
+            # search for the JSON-LD terminator AFTER the block start — the head
+            # carries a WebSite schema that would otherwise end the slice before
+            # it begins, silently emptying this check (codex P2, 2026-07-23)
+            zone_end = html.find('<script type="application/ld+json">', min(starts))
+            zone = html[min(starts):zone_end if zone_end > 0 else len(html)]
             for tgt in re.findall(r'href="[^"]*?/blog/([^"/]+)/?"', zone):
                 meta = slug_meta.get(unquote(tgt))
                 if meta and meta != (lang, topic):

@@ -142,6 +142,64 @@ def test_inject_internal_links_same_silo_only():
     check("same-silo candidate IS linked", "/blog/same/" in out2)
 
 
+def test_is_series_post():
+    check("is_series_hub flag -> series", build.is_series_post({"is_series_hub": True}) is True)
+    check("/es/para/ url_path -> series", build.is_series_post({"url_path": "/es/para/agencias/"}) is True)
+    check("/for/ url_path -> series", build.is_series_post({"url_path": "/for/coaches/"}) is True)
+    check("plain post -> not series", build.is_series_post({"slug": "x"}) is False)
+    check("/blog/ url_path -> not series", build.is_series_post({"url_path": "/blog/x/"}) is False)
+
+
+def test_circle_excludes_series():
+    posts = _silo("crm", "en", 3)
+    posts[1]["url_path"] = "/for/agencies/"  # series/authority page
+    check("series post excluded from membership", build.circle_neighbors(posts[1], posts) == (None, None))
+    _, nxt = build.circle_neighbors(posts[0], posts)
+    check("circle skips over the series post", nxt["slug"] == posts[2]["slug"])
+    posts2 = _silo("agency", "en", 3)
+    posts2[1]["is_series_hub"] = True
+    check("is_series_hub post excluded from membership",
+          build.circle_neighbors(posts2[1], posts2) == (None, None))
+
+
+def test_get_related_edges():
+    # silo of exactly n+1: rotation path not taken, every sibling returned
+    three = _silo("crm", "en", 3)
+    rel = build.get_related(three[0], three)
+    check("small silo (<=n siblings): all siblings returned",
+          {r["slug"] for r in rel} == {three[1]["slug"], three[2]["slug"]})
+    # deterministic per slug
+    ten = _silo("crm", "en", 10)
+    check("get_related deterministic per slug",
+          build.get_related(ten[4], ten) == build.get_related(ten[4], ten))
+    # rotation never leaves the silo (lang + topic)
+    mixed = _silo("crm", "en", 6) + _silo("crm", "es", 4) + _silo("payments", "en", 4)
+    ok = all(r["language"] == "en" and r["topic"] == "crm"
+             for p in mixed[:6] for r in build.get_related(p, mixed))
+    check("rotated related cards stay same lang+topic", ok)
+
+
+def test_enforce_anchor_caps_edges():
+    # query/fragment strip: variants share the cap counter with the clean URL
+    build._ANCHOR_URL_COUNTS.clear()
+    plain = '<p><a href="/blog/t/">same anchor here</a></p>'
+    for _ in range(build.ANCHOR_URL_CAP):
+        build.enforce_anchor_caps(plain)
+    q = build.enforce_anchor_caps('<p><a href="/blog/t/?utm=1">same anchor here</a></p>')
+    f = build.enforce_anchor_caps('<p><a href="/blog/t/#frag">same anchor here</a></p>')
+    check("?query variant shares counter (unwrapped over cap)", q == "<p>same anchor here</p>")
+    check("#fragment variant shares counter (unwrapped over cap)", f == "<p>same anchor here</p>")
+    # empty visible anchor (image-only link): kept, never counted
+    build._ANCHOR_URL_COUNTS.clear()
+    img = '<p><a href="/blog/e/"><img src="x.png"></a></p>'
+    check("image-only (empty-text) anchor never unwrapped",
+          all(build.enforce_anchor_caps(img) == img for _ in range(build.ANCHOR_URL_CAP + 2)))
+    # anchor tag without href: untouched
+    build._ANCHOR_URL_COUNTS.clear()
+    noh = '<p><a name="jump">in-page target</a></p>'
+    check("href-less <a> untouched", build.enforce_anchor_caps(noh) == noh)
+
+
 def test_cta_money_page():
     check("MONEY_PAGE_URL is the trial post", build.MONEY_PAGE_URL == "/blog/gohighlevel-free-trial-30-days-extended/")
 
@@ -160,8 +218,15 @@ def test_enforce_anchor_caps():
           all(build.enforce_anchor_caps(nf) == nf for _ in range(5)))
     build._ANCHOR_URL_COUNTS.clear()
     es = '<p><a href="/es/trial/">empieza tu prueba gratis aquí →</a></p>'
+    es_out = build.enforce_anchor_caps(es)
     check("attribution/conversion path never unwrapped (Spanish funnel intact)",
-          all(build.enforce_anchor_caps(es) == es for _ in range(5)))
+          all('href="/es/trial/"' in build.enforce_anchor_caps(es) for _ in range(5)))
+    check("attribution CTA gains rel=nofollow (no followed 160x-anchor footprint)",
+          'rel="nofollow"' in es_out)
+    build._ANCHOR_URL_COUNTS.clear()
+    es_rel = '<p><a href="/es/trial/" rel="noopener">cta</a></p>'
+    check("attribution CTA with existing rel gets nofollow appended",
+          'rel="noopener nofollow"' in build.enforce_anchor_caps(es_rel))
     build._ANCHOR_URL_COUNTS.clear()
     ext = '<p><a href="https://example.com/">external</a></p>'
     check("external link untouched", build.enforce_anchor_caps(ext) == ext)
@@ -172,7 +237,9 @@ def main():
     for t in (test_anchor_cap, test_build_link_index_multiword_only, test_hub_link_block,
               test_date_modified, test_circle_neighbors, test_circle_edge_cases,
               test_circle_never_crosses_silo, test_related_rotation_distributes,
-              test_inject_internal_links_same_silo_only, test_cta_money_page,
+              test_inject_internal_links_same_silo_only, test_is_series_post,
+              test_circle_excludes_series, test_get_related_edges,
+              test_enforce_anchor_caps_edges, test_cta_money_page,
               test_enforce_anchor_caps):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")

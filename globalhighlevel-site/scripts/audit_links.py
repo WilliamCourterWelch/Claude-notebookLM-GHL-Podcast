@@ -31,11 +31,14 @@ CAP = 3              # MUST track build.py ANCHOR_URL_CAP (builder drops >CAP; g
 ORPHAN_TARGET = 3
 MIN_HUB_CARDS = 2    # MUST track build.py MIN_HUB_POSTS (a built hub has >= this many cards)
 PUBLIC = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent / "public"
-# Conversion/attribution paths (MUST track build.py ATTRIBUTION_PREFIXES): /trial is
-# the robots-disallowed attribution page; the language variants are the localized
-# conversion landings hardcoded in firehose-era bodies. /start + /coupon were retired
-# to crawlable 301s (v0.2.10.1) — no longer exempt; if they break, the audit must SEE it.
-EXEMPT_PREFIXES = ("/trial", "/es/trial", "/ar/trial", "/in/trial")
+# Conversion/attribution paths: /trial is the robots-disallowed attribution page;
+# the language variants are the localized conversion landings hardcoded in
+# firehose-era bodies. Imported from build.py so builder exemptions and audit
+# exemptions can never desynchronize. /start + /coupon were retired to crawlable
+# 301s (v0.2.10.1) — no longer exempt; if they break, the audit must SEE it.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from build import ATTRIBUTION_PREFIXES as EXEMPT_PREFIXES  # noqa: E402
+from build import is_attribution_path  # noqa: E402  (segment-boundary matcher)
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input",
         "link", "meta", "param", "source", "track", "wbr"}
 BODY_WRAPPERS = ("post-body", "post-content")  # article-prose containers
@@ -106,17 +109,20 @@ class LinkParser(HTMLParser):
 
 
 def page_path_exists(href: str) -> bool:
-    p = href.split("#")[0].split("?")[0]
+    # Absolute same-site URLs are internal too — normalize before checking, so a
+    # restored body's https://globalhighlevel.com/blog/dead/ link can't bypass
+    # the 404 gate (codex 2026-07-23).
+    p = href.replace("https://globalhighlevel.com", "").split("#")[0].split("?")[0] or "/"
     if not p.startswith("/"):
         return True
-    if any(p.rstrip("/").startswith(e) for e in EXEMPT_PREFIXES):
+    if is_attribution_path(p):
         return True
     rel = p.strip("/")
     return bool((PUBLIC / rel / "index.html").exists() or (PUBLIC / rel).is_file() or p == "/")
 
 
 def is_attribution(url: str) -> bool:
-    return any(url.rstrip("/").startswith(e) for e in EXEMPT_PREFIXES)
+    return is_attribution_path(url)
 
 
 def main():
@@ -143,8 +149,10 @@ def main():
         for href, anchor, in_body, nofollow in p.links:
             if href.startswith(("#", "mailto:", "tel:")):
                 continue
-            # internal 404 — ANY zone, followed or not (a broken nofollow CTA still 404s)
-            if href.startswith("/") and not page_path_exists(href):
+            # internal 404 — ANY zone, followed or not (a broken nofollow CTA still
+            # 404s). Absolute same-site hrefs count as internal (codex 2026-07-23).
+            if (href.startswith("/") or href.startswith("https://globalhighlevel.com")) \
+                    and not page_path_exists(href):
                 internal_404.append((href, page))
             # editorial checks — post-body only, internal, non-attribution, FOLLOWED
             # (nofollow conversion CTAs pass no equity — exempt from anchor doctrine)
