@@ -38,7 +38,11 @@ Rules enforced here, in order, per slug:
 Usage:
   python3 scripts/restore_posts.py --slugs slugs.txt --deploy-date 2026-07-24
   python3 scripts/restore_posts.py --all --deploy-date 2026-07-24 [--dry-run]
-                                   [--report PATH]
+                                   [--report PATH] [--topic-overrides FILE]
+
+--topic-overrides takes a {slug: topic} JSON (the approved assignment sheet);
+overrides win over the taxonomy mapping, unknown topics are fatal, and the
+report counts consumed overrides (overrides_applied).
 
 Report default: globalhighlevel-site/data/restore-report-<deploy-date>.json
 (falls back to the repo root if data/ does not exist).
