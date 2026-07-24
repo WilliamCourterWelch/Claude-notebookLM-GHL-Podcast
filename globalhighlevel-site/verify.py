@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """verify.py — phase gate for the language x topic restructure.
 
-Runs against the built public/ output and asserts six invariants (Checks 0-5).
+Runs against the built public/ output and asserts seven invariants (Checks 0-6).
 Each later phase of the restructure must keep these green before /seo-deploy-gate.
 
   Check 0  Lang vs slug  : a post's `language` field must not contradict a specific
@@ -16,7 +16,10 @@ Each later phase of the restructure must keep these green before /seo-deploy-gat
                            cross-silo/cross-language template links, and sink
                            pages (mvp_minimal_links) emit ZERO outbound internal
                            links (D3/D9, full-restore sprint 2026-07-23).
-  Check 5  Redirect shadow : no _redirects rule may shadow a built page.
+  Check 5  Redirect shadow : no _redirects rule may shadow a built page, no
+                           duplicate sources, no /blog/ 301 into a 404.
+  Check 6  Sitemap parity : every sitemap <loc> is a built page and never a
+                           redirect source.
 
 Usage:
     cd globalhighlevel-site
@@ -315,9 +318,98 @@ def main() -> int:
     shadowed = sorted(h for h in redirects if h in pages)
     for h in shadowed[:10]:
         print(f"    shadowed: {h}")
-    print("  ->", "PASS" if not shadowed else f"FAIL ({len(shadowed)} built pages shadowed by redirects)")
-    if shadowed:
-        fails.append(f"Check 5: {len(shadowed)} built pages unreachable behind _redirects rules")
+    # 5b: duplicate sources — Cloudflare is first-match-wins, so a second rule
+    # with the same source silently never fires (batch-1 review, 2026-07-23)
+    rf_lines = [ln.strip() for ln in read(rf).splitlines()
+                if ln.strip() and not ln.strip().startswith("#")] if rf.exists() else []
+    srcs = [ln.split()[0] for ln in rf_lines]
+    dupes = sorted({x for x in srcs if srcs.count(x) > 1})
+    for d in dupes[:10]:
+        print(f"    duplicate source (first-match shadows the rest): {d}")
+    # 5c: every /blog/-targeted rule must land on a built page or another rule —
+    # a permanent 301 into a 404 is worse than the 404 (batch-1 review, 2026-07-23)
+    dead_targets = []
+    for ln in rf_lines:
+        parts = ln.split()
+        if len(parts) >= 2 and parts[1].startswith("/blog/"):
+            tgt = parts[1]
+            variants = {tgt, tgt.rstrip("/"), tgt.rstrip("/") + "/"}
+            if not (variants & pages) and not (variants & set(srcs)):
+                dead_targets.append(f"{parts[0]} -> {tgt}")
+    for d in dead_targets[:10]:
+        print(f"    301 into 404: {d}")
+    _c5_bad = len(shadowed) + len(dupes) + len(dead_targets)
+    print("  ->", "PASS" if not _c5_bad else
+          f"FAIL ({len(shadowed)} shadowed, {len(dupes)} duplicate sources, {len(dead_targets)} dead 301 targets)")
+    if _c5_bad:
+        fails.append(f"Check 5: {_c5_bad} redirect defects (shadowed/duplicate/dead-target)")
+
+    # --- Check 6: sitemap <-> built parity ---------------------------------
+    # Every sitemap <loc> must be a built page (or deployed root file) and must
+    # NOT be a _redirects source — the hole that let 5 pillar 301-URLs ship to
+    # IndexNow (red-team 2026-07-23).
+    print("\n=== Check 6: sitemap advertises only built, non-redirected pages ===")
+    sm = PUBLIC / "sitemap.xml"
+    sm_bad = []
+    if sm.exists():
+        locs = re.findall(r"<loc>(.*?)</loc>", read(sm))
+        src_set = set(srcs)
+        for loc in locs:
+            path = loc.replace(build.SITE_URL, "") or "/"
+            variants = {path, path.rstrip("/"), path.rstrip("/") + "/"}
+            if not (variants & pages):
+                sm_bad.append(f"not built: {path}")
+            elif variants & src_set:
+                sm_bad.append(f"redirect source in sitemap: {path}")
+        print(f"  sitemap locs: {len(locs)} | defects: {len(sm_bad)}")
+        for b in sm_bad[:10]:
+            print(f"    {b}")
+    else:
+        sm_bad.append("sitemap.xml missing from build output")
+        print("  sitemap.xml MISSING")
+    # 6b reverse direction: every built non-pillar post must be IN the sitemap
+    # (the exists()-skip in build_sitemap must only ever drop pillar 301-URLs —
+    # a silent build failure must not silently shrink the sitemap)
+    if sm.exists():
+        loc_paths = {l.replace(build.SITE_URL, "").rstrip("/") + "/" for l in locs}
+        for p_ in posts:
+            if p_.get("isPillar") and p_.get("language", "en") == "en":
+                continue
+            u = build.post_url(p_)
+            if (PUBLIC / build.post_output_rel(p_) / "index.html").exists() and u not in loc_paths:
+                sm_bad.append(f"built post missing from sitemap: {u}")
+    # 6c: ZERO followed paid links sitewide — catches every rel-bug variant
+    # (single-quoted rel, duplicate rel attr, uppercase <A) that the render
+    # pass could miss (adversarial 2026-07-23)
+    followed_paid = []
+    from html.parser import HTMLParser
+
+    class _PaidLinkScan(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.hit = False
+        def handle_starttag(self, tag, attrs):
+            if tag != "a" or self.hit:
+                return
+            d = dict(attrs)
+            href = d.get("href") or ""
+            if "fp_ref=" in href:
+                rel = (d.get("rel") or "").split()
+                if "nofollow" not in rel:
+                    self.hit = True
+
+    for f_ in PUBLIC.rglob("index.html"):
+        sc = _PaidLinkScan()
+        sc.feed(read(f_))
+        if sc.hit:
+            followed_paid.append(str(f_.relative_to(PUBLIC)))
+    for fp_ in followed_paid[:10]:
+        print(f"    followed paid link on: {fp_}")
+    if followed_paid:
+        sm_bad.extend(f"followed fp_ref anchor: {x}" for x in followed_paid)
+    print("  ->", "PASS" if not sm_bad else f"FAIL ({len(sm_bad)} sitemap/paid-link defects)")
+    if sm_bad:
+        fails.append(f"Check 6: {len(sm_bad)} sitemap/paid-link defects")
 
     print("\n" + "=" * 52)
     if fails:

@@ -361,6 +361,33 @@ def is_series_post(post: dict) -> bool:
                 or post.get("url_path", "").startswith("/for/"))
 
 
+def nofollow_affiliate_links(html: str) -> str:
+    """Render-time rel hygiene for PAID links (codex P2, 2026-07-23): any anchor
+    whose href carries fp_ref= is an affiliate link and must be nofollow —
+    Google's paid-link policy. Firehose bodies carry followed affiliate anchors;
+    template CTAs already do this. JSON stays untouched (D3)."""
+    def _repl(m):
+        attrs = m.group(1)
+        # guard: an embedded ">" inside an attribute value truncates the tag
+        # match (unbalanced quotes) — leave the anchor alone rather than corrupt
+        # it; the site-wide verify gate still catches any followed paid link
+        if attrs.count('"') % 2 == 1 or attrs.count("'") % 2 == 1:
+            return m.group(0)
+        href_m = re.search(r'''href\s*=\s*("[^"]*"|'[^']*')''', attrs, re.I)
+        if not href_m or "fp_ref=" not in href_m.group(1):
+            return m.group(0)
+        rel_m = re.search(r'''rel\s*=\s*("[^"]*"|'[^']*')''', attrs, re.I)
+        if rel_m:
+            tokens = rel_m.group(1).strip("\"'").split()
+            if "nofollow" in tokens:
+                return m.group(0)
+            new_tokens = tokens + [t for t in ("nofollow", "sponsored") if t not in tokens]
+            new_rel = 'rel="' + " ".join(new_tokens) + '"'
+            return f'<a{attrs.replace(rel_m.group(0), new_rel)}>'
+        return f'<a{attrs} rel="nofollow sponsored">'
+    return re.sub(r'<a\b([^>]*)>', _repl, html, flags=re.I)
+
+
 def circle_members(post: dict, all_posts: list) -> list:
     """The post's link-circle silo: same language + same topic, ordered by
     publishedAt (slug tiebreak). Pillars are excluded (their home is the hub —
@@ -1448,6 +1475,7 @@ def build_authority_page(post: dict, all_posts: list = None):
     # Sanitize + cap baked anchors + inject internal links (same as blog template —
     # auth bodies share the site-wide anchor ledger; codex 2026-07-23)
     html_content = sanitize_content(html_content)
+    html_content = nofollow_affiliate_links(html_content)
     html_content = enforce_anchor_caps(html_content)
     if all_posts:
         html_content = inject_internal_links(html_content, post, all_posts, max_links=4)
@@ -1595,6 +1623,7 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
+    html_content = nofollow_affiliate_links(html_content)
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
@@ -2114,7 +2143,7 @@ def build_category_pages(posts: list[dict]):
             p_title = pillar.get("title", cat)
             # Hub pillar bodies render with a .post-body and share the site-wide
             # anchor ledger — cap them like post bodies (D3 render-time cap).
-            p_body  = enforce_anchor_caps(pillar.get("html_content", ""))
+            p_body  = enforce_anchor_caps(nofollow_affiliate_links(pillar.get("html_content", "")))
             more_html = (f'''
 <div class="container">
   <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>
@@ -2262,6 +2291,12 @@ def build_sitemap(posts: list[dict]):
                     alts = _sitemap_alts(f'/category/{c["slug"]}/')
                     urls.append(f'  <url><loc>{_sitemap_loc(SITE_URL + prefix + "/category/" + c["slug"] + "/")}</loc><lastmod>{build_date}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority>{alts}</url>')
     for p in posts:
+        # Never advertise a URL that isn't a built page: an EN hub pillar's /blog/
+        # URL 301s to its /category/ hub (already in the sitemap via the category
+        # loop) — submitting the redirecting URL to IndexNow/Bing wastes the
+        # submission on a 301 (red-team 2026-07-23).
+        if not (PUBLIC_DIR / post_output_rel(p) / "index.html").exists():
+            continue
         # Prefer an explicit updatedAt (real content edit) over publishedAt so a
         # rebuilt post signals freshness instead of its original publish date.
         date = (p.get("updatedAt") or p.get("publishedAt") or p.get("uploadedAt") or "")[:10]

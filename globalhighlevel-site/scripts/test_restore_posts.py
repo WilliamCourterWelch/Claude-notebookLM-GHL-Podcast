@@ -231,7 +231,7 @@ class FakeGitPreflight:
         return FakeGitPreflight._Proc()
 
 
-def run_main(posts, slugs, tmp_report_dir):
+def run_main(posts, slugs, tmp_report_dir, extra_args=()):
     """Call rp.main() in-process, fully hermetic (fake git, temp posts dir)."""
     saved = (rp.read_post_from_git, rp.POSTS_DIR, rp.load_audit, rp.subprocess)
     report_path = Path(tmp_report_dir) / "report.json"
@@ -244,7 +244,7 @@ def run_main(posts, slugs, tmp_report_dir):
         rp.subprocess = FakeGitPreflight
         try:
             rc = rp.main(["--slugs", str(slug_file), "--deploy-date", "2026-07-24",
-                          "--report", str(report_path)])
+                          "--report", str(report_path), *extra_args])
         finally:
             rp.read_post_from_git, rp.POSTS_DIR, rp.load_audit, rp.subprocess = saved
     report = json.loads(report_path.read_text()) if report_path.exists() else None
@@ -345,13 +345,80 @@ def test_cli_deploy_date_validation():
               proc.returncode == 2 and "deploy-date" in proc.stderr)
 
 
+def test_signup_rewrite():
+    html = '<a href="https://app.gohighlevel.com/signup">Sign up</a> <a href="https://app.gohighlevel.com">app</a> <a href="https://developers.gohighlevel.com/docs">docs</a>'
+    out, n, flagged = rp.normalize_affiliate_links(html, "en")
+    check("app signup rewritten to affiliate", "fp_ref=amplifi-technologies12" in out and "app.gohighlevel.com" not in out)
+    check("two app links rewritten", n == 2)
+    check("developers docs link untouched + not counted", "developers.gohighlevel.com/docs" in out)
+
+
+def test_topic_overrides():
+    raw = json.dumps({"slug": "s1", "topic": "AI & Automation", "publishedAt": "2026-01-01",
+                      "html_content": "<p>x</p>"}, ensure_ascii=False)
+    text, _, _ = rp.restore_post(raw, "s1", "2026-07-24", None,
+                                 overrides={"s1": "Payments & Pricing"})
+    check("override beats the 8->5 map", json.loads(text)["topic"] == "Payments & Pricing")
+    text2, _, _ = rp.restore_post(raw, "s1", "2026-07-24", None, overrides={"other": "CRM & Communication"})
+    check("non-matching override falls through to map",
+          json.loads(text2)["topic"] == "AI Receptionist & Lead Capture")
+    try:
+        rp.restore_post(raw, "s1", "2026-07-24", None, overrides={"s1": "Bogus Hub"})
+        check("bogus override topic raises", False)
+    except rp.TopicMappingError:
+        check("bogus override topic raises", True)
+
+
+def test_signup_rewrite_es_and_escaped():
+    # es-language posts must get the -es bootcamp path on app-link rewrites
+    out_es, n_es, _ = rp.normalize_affiliate_links(
+        '<a href="https://app.gohighlevel.com/signup">alta</a>', "es")
+    check("es app link rewritten to -es bootcamp path",
+          rp.BOOTCAMP_PATH_ES in out_es and "app.gohighlevel.com" not in out_es)
+    check("es app rewrite counted", n_es == 1)
+
+    # firehose-escaped app href: output must re-escape & (no raw '&' in attribute)
+    out_amp, n_amp, _ = rp.normalize_affiliate_links(
+        '<a href="https://app.gohighlevel.com/signup?src=x&amp;y=1">go</a>', "en")
+    attr = out_amp.split('href="', 1)[1].split('"', 1)[0]
+    check("escaped app href: output re-escaped with &amp;", "&amp;" in attr)
+    check("escaped app href: raw '&' never emitted into the attribute",
+          "&" not in attr.replace("&amp;", ""))
+    check("escaped app href counted as one rewrite", n_amp == 1)
+
+
+def test_cli_topic_overrides():
+    # bad topic in the override file -> exit 2 BEFORE anything is restored
+    with tempfile.TemporaryDirectory() as rdir:
+        ov = Path(rdir) / "overrides.json"
+        ov.write_text(json.dumps({"s1": "Not A Real Hub"}), encoding="utf-8")
+        rc, report = run_main([make_post(slug="s1")], ["s1"],
+                              rdir, extra_args=["--topic-overrides", str(ov)])
+        check("CLI: bogus override topic -> exit 2", rc == 2)
+        check("CLI: bogus override file -> nothing restored (no report written)",
+              report is None)
+
+    # good override file -> override applied end-to-end through main()
+    with tempfile.TemporaryDirectory() as rdir:
+        ov = Path(rdir) / "overrides.json"
+        ov.write_text(json.dumps({"s1": "Payments & Pricing"}), encoding="utf-8")
+        rc, report = run_main([make_post(slug="s1"), make_post(slug="s2")], ["s1", "s2"],
+                              rdir, extra_args=["--topic-overrides", str(ov)])
+        check("CLI: run with overrides exits 0", rc == 0)
+        check("CLI: both slugs restored", report and sorted(report["restored"]) == ["s1", "s2"])
+        check("overrides_applied counts consumed overrides", report["overrides_applied"] == 1)
+
+
 def main():
     print("test_restore_posts.py")
     for t in (test_topic_mapping, test_collision_skip, test_stamps,
               test_affiliate, test_affiliate_escaped_amp, test_slug_blocklist,
               test_main_exit_codes, test_affiliate_canon_matches_assemble_spoke,
               test_idempotency, test_dry_run_and_errors,
-              test_bad_json_blob, test_cli_deploy_date_validation):
+              test_bad_json_blob, test_cli_deploy_date_validation,
+              test_signup_rewrite,
+        test_signup_rewrite_es_and_escaped, test_topic_overrides,
+        test_cli_topic_overrides):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

@@ -44,6 +44,7 @@
 - This includes: pricing pages, feature pages, sign-up pages, help links — ANYTHING on gohighlevel.com
 - NEVER link to `gohighlevel.com/pricing` or any GHL URL without `fp_ref=amplifi-technologies12`
 - All affiliate links: `target="_blank" rel="nofollow noopener"`
+- **Render-time backstop (v0.2.12.0):** `build.py` (`nofollow_affiliate_links`) runs over stored post bodies and stamps `rel="nofollow sponsored"` on any `fp_ref=` anchor that lacks `nofollow` (anchors already carrying `nofollow` are left as-is; template CTAs render their own `nofollow noopener`). Stored JSON untouched. Firehose-era bodies carried followed paid links (Google paid-link policy risk); the guaranteed invariant is **zero followed affiliate anchors sitewide**. Author-written rel attributes are still expected — the pass is the backstop, not the norm.
 - **No placeholder `#` links** — if the real URL isn't known, link to `/category/gohighlevel-tutorials/` or `/`
 - **Citation exception (added 2026-06-22):** *reference* links to `help.gohighlevel.com`, `ideas.gohighlevel.com`, `help.leadconnectorhq.com`, or `gohighlevel.com/post/...` (docs, the ideas/feature forum, changelog, blog posts) used as **sources/citations** are EXEMPT from `fp_ref` — they are evidence/EEAT references, not conversion CTAs, and `fp_ref` on a help-doc makes no sense. The rule applies to **conversion-intent** links (signup, pricing, trial, feature/sales pages). Every conversion link still MUST carry the affiliate link + `fp_ref`.
 - Spotify podcast link: `https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV`
@@ -118,20 +119,31 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - `verify.py` Check 4 — canon invariants on built output: every spoke links up
   to its hub, circles close exactly as computed, template links never cross
   language or topic silos, sinks emit zero outbound internal links.
-- `verify.py` Check 5 — no `_redirects` rule may shadow a built page (on
-  Cloudflare Pages a redirect ALWAYS beats a static file). The build prunes
-  shadowing rules and prints the pruned sources.
+- `verify.py` Check 5 — redirect defects: no `_redirects` rule may shadow a
+  built page (on Cloudflare Pages a redirect ALWAYS beats a static file — the
+  build prunes shadowing rules and prints the pruned sources); no duplicate
+  redirect sources (first-match-wins means a dupe silently shadows the later
+  rule — 5b, v0.2.12.0); no `/blog/` 301 may land on a non-built page (dead
+  target — 5c, v0.2.12.0).
+- `verify.py` Check 6 (v0.2.12.0) — sitemap parity: every sitemap `<loc>` must
+  be a built page and never a redirect source. The build excludes pillar
+  `/blog/` URLs that 301 to their hubs from the sitemap, so IndexNow
+  submissions only carry real pages.
 - `scripts/audit_links.py` — `/start` + `/coupon` are no longer audit-exempt;
   nofollow links are exempt from anchor doctrine by `rel` attribute; exemption
   prefixes are imported from `build.py` (single source of truth) and matched on
   path-segment boundaries.
 
-**Restore + recrawl tooling (Day-1 sprint, v0.2.11.0):**
+**Restore + recrawl tooling (full-restore sprint, v0.2.11.0+):**
 - `scripts/restore_posts.py --slugs FILE|--all --deploy-date YYYY-MM-DD
-  [--dry-run] [--report PATH]` — restores pruned posts from git history at
-  their original slugs; never overwrites a newer page; maps old 8-topic
-  taxonomy onto the current 5 hubs; normalizes affiliate hrefs to the current
-  `fp_ref`; writes atomically; exits nonzero on any slug error.
+  [--dry-run] [--report PATH] [--topic-overrides FILE]` — restores pruned
+  posts from git history at their original slugs; never overwrites a newer
+  page; maps old 8-topic taxonomy onto the current 5 hubs; normalizes
+  affiliate hrefs to the current `fp_ref`; writes atomically; exits nonzero on
+  any slug error. `--topic-overrides` takes a `{slug: topic}` JSON (the
+  Bill-approved assignment sheet) that wins over the taxonomy mapping —
+  unknown topics are fatal, and the report counts how many overrides were
+  consumed (`overrides_applied`).
 - `scripts/submit_indexnow.py --urls FILE|--sitemap [--dry-run]` — pushes URL
   batches to Bing via IndexNow. The key lives in `indexnow-key.txt` and is
   hosted at `/<key>.txt`; the script verifies the key file is live before
@@ -142,7 +154,7 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - Podcast: "Go High Level" on Spotify
 - Podcast stats: 380+ followers
 - Top episode: "GoHighLevel Conversation AI Bot"
-- Content: 27 published blog posts (English, India, Spanish — post-prune 2026-06; was 490+) + 158 podcast episodes. NOTE: the full-restore sprint (v0.2.11.0 tooling) is bringing the 931 pruned posts back — re-verify this count before citing it.
+- Content: 149 published blog posts (English, India, Spanish; was 27 post-prune 2026-06, +122 in Restore Batch 1, v0.2.12.0 on 2026-07-23) + 158 podcast episodes. NOTE: the full-restore sprint is still bringing the remaining pruned posts back batch by batch — re-verify this count (`ls posts/*.json | wc -l`) before citing it.
 - Offer: GoHighLevel 30-day FREE trial (double the standard 14-day trial)
 - GHL starts at $97/month
 - Affiliate link: https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12

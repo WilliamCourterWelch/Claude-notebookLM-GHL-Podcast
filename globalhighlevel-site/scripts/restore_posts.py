@@ -29,14 +29,20 @@ Rules enforced here, in order, per slug:
      preserved, all other params dropped). gohighlevel.com hrefs WITHOUT fp_ref,
      and hrefs to known affiliate-network domains (firstpromoter, shareasale,
      partnerstack, bit.ly), are NOT modified — they are flagged in the report
-     for human review.
+     for human review. EXCEPTION (Bill-approved 2026-07-23): app.gohighlevel.com
+     hrefs (incl. /signup) ARE rewritten to the canonical affiliate link — a
+     direct product link pays nobody.
   6. --dry-run writes NOTHING (no posts, no report file); the report JSON is
      printed to stdout instead.
 
 Usage:
   python3 scripts/restore_posts.py --slugs slugs.txt --deploy-date 2026-07-24
   python3 scripts/restore_posts.py --all --deploy-date 2026-07-24 [--dry-run]
-                                   [--report PATH]
+                                   [--report PATH] [--topic-overrides FILE]
+
+--topic-overrides takes a {slug: topic} JSON (the approved assignment sheet);
+overrides win over the taxonomy mapping, unknown topics are fatal, and the
+report counts consumed overrides (overrides_applied).
 
 Report default: globalhighlevel-site/data/restore-report-<deploy-date>.json
 (falls back to the repo root if data/ does not exist).
@@ -127,8 +133,17 @@ def load_audit():
     return {row["slug"]: row for row in rows}
 
 
-def resolve_topic(slug, post, audit_row):
-    """Map the old topic to the current 5-topic taxonomy. Unknown -> raise."""
+def resolve_topic(slug, post, audit_row, overrides=None):
+    """Map the old topic to the current 5-topic taxonomy. Unknown -> raise.
+
+    A per-slug override (from the Bill-approved assignment sheet) beats the
+    generic 8->5 map — the sheet is the human-reviewed source of truth, the map
+    is only its default. Overrides must still name a current topic."""
+    if overrides and slug in overrides:
+        t = overrides[slug]
+        if t in NEW_TOPICS:
+            return t
+        raise TopicMappingError(slug, t)
     topic = post.get("topic") or (audit_row or {}).get("topic")
     if topic in TOPIC_MAP:
         return TOPIC_MAP[topic]
@@ -138,9 +153,10 @@ def resolve_topic(slug, post, audit_row):
 
 
 def normalize_affiliate_links(html, language):
-    """Rewrite recognized gohighlevel.com fp_ref hrefs to the canonical bootcamp
-    link; flag (untouched) bare gohighlevel.com hrefs and affiliate-network
-    domains. Returns (new_html, rewrite_count, flagged_hrefs)."""
+    """Rewrite recognized gohighlevel.com fp_ref hrefs AND all app.gohighlevel.com
+    hrefs (Bill-approved 2026-07-23) to the canonical bootcamp link; flag
+    (untouched) other bare gohighlevel.com hrefs and affiliate-network domains.
+    Returns (new_html, rewrite_count, flagged_hrefs)."""
     rewrites = 0
     flagged = []
 
@@ -155,6 +171,17 @@ def normalize_affiliate_links(html, language):
         href_plain = href.replace("&amp;", "&")
         parts = urlsplit(href_plain)
         host = parts.netloc.lower().split(":")[0]
+        if host == "app.gohighlevel.com":
+            # Direct product signup/login links pay NOBODY. Bill-approved
+            # 2026-07-23: rewrite to the canonical affiliate link (same treatment
+            # for /signup and bare app links — both are lost commissions).
+            path = BOOTCAMP_PATH_ES if language == "es" else BOOTCAMP_PATH
+            canonical = f"{BOOTCAMP_DOMAIN}{path}?" + urlencode([
+                ("fp_ref", AFFILIATE_REF), ("utm_source", UTM_SOURCE), ("utm_medium", UTM_MEDIUM)])
+            rewrites += 1
+            if was_escaped:
+                canonical = canonical.replace("&", "&amp;")
+            return f"href={quote}{canonical}{quote}"
         if host == "gohighlevel.com" or host.endswith(".gohighlevel.com"):
             params = dict(parse_qsl(parts.query, keep_blank_values=True))
             if "fp_ref" not in params:
@@ -181,14 +208,14 @@ def normalize_affiliate_links(html, language):
     return HREF_RE.sub(_sub, html), rewrites, flagged
 
 
-def restore_post(raw_json, slug, deploy_date, audit_row):
+def restore_post(raw_json, slug, deploy_date, audit_row, overrides=None):
     """Transform one pruned post's raw JSON into restore-ready serialized text.
 
     Returns (serialized_text, rewrite_count, flagged_hrefs).
     Raises TopicMappingError on an unmappable topic.
     """
     post = json.loads(raw_json)  # dict preserves the file's key order
-    new_topic = resolve_topic(slug, post, audit_row)
+    new_topic = resolve_topic(slug, post, audit_row, overrides)
 
     html = post.get("html_content", "")
     new_html, rewrites, flagged = normalize_affiliate_links(html, post.get("language"))
@@ -209,7 +236,7 @@ def default_report_path(deploy_date):
     return (DATA_DIR / name) if DATA_DIR.is_dir() else (REPO_ROOT / name)
 
 
-def run_restore(slugs, deploy_date, dry_run=False, audit=None):
+def run_restore(slugs, deploy_date, dry_run=False, audit=None, overrides=None):
     """Restore each slug per the doctrine above. Returns the report dict.
 
     Raises TopicMappingError (fail-loud, stop-the-run) on an unmappable topic.
@@ -222,6 +249,7 @@ def run_restore(slugs, deploy_date, dry_run=False, audit=None):
         "errors": [],
         "flagged": [],
         "affiliate_rewrites": {},
+        "overrides_applied": 0,
     }
 
     for slug in slugs:
@@ -243,7 +271,9 @@ def run_restore(slugs, deploy_date, dry_run=False, audit=None):
             report["errors"].append({"slug": slug, "error": "not found in git at prune parent"})
             continue
         try:
-            text, rewrites, flagged = restore_post(raw, slug, deploy_date, audit.get(slug))
+            text, rewrites, flagged = restore_post(raw, slug, deploy_date, audit.get(slug), overrides)
+            if overrides and slug in overrides:
+                report["overrides_applied"] += 1
         except TopicMappingError as exc:
             # fail loudly: no file written for this slug, run stops (caller exits
             # nonzero). Attach the partial report — files restored BEFORE the bad
@@ -305,6 +335,8 @@ def main(argv=None):
     ap.add_argument("--deploy-date", required=True, metavar="YYYY-MM-DD")
     ap.add_argument("--dry-run", action="store_true", help="write nothing; print report to stdout")
     ap.add_argument("--report", metavar="PATH", help="report path (default: data/restore-report-<date>.json)")
+    ap.add_argument("--topic-overrides", metavar="FILE",
+                    help="JSON {slug: topic} from the approved assignment sheet; beats the 8->5 map")
     args = ap.parse_args(argv)
 
     if not DEPLOY_DATE_RE.match(args.deploy_date):
@@ -328,8 +360,22 @@ def main(argv=None):
         lines = Path(args.slugs).read_text(encoding="utf-8").splitlines()
         slugs = [ln.strip() for ln in lines if ln.strip()]
 
+    overrides = None
+    if args.topic_overrides:
+        try:
+            overrides = json.loads(Path(args.topic_overrides).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"FATAL: cannot read topic overrides {args.topic_overrides}: {exc}", file=sys.stderr)
+            return 2
+        bad = [t for t in set(overrides.values()) if t not in NEW_TOPICS]
+        if bad:
+            print(f"FATAL: override file names unknown topic(s): {bad}", file=sys.stderr)
+            return 2
+        print(f"topic overrides loaded: {len(overrides)} slugs")
+
     try:
-        report = run_restore(slugs, args.deploy_date, dry_run=args.dry_run, audit=audit)
+        report = run_restore(slugs, args.deploy_date, dry_run=args.dry_run, audit=audit,
+                             overrides=overrides)
     except TopicMappingError as exc:
         print(f"FATAL: slug {exc.slug!r} has unmappable topic {exc.topic!r} — "
               f"no current hub for it; nothing written for that slug, run stopped.",

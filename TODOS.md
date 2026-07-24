@@ -10,8 +10,9 @@ for the Bing-first recovery ship queue (eng review 2026-07-21, run
 **Priority:** P0
 Scoped-correct robots.txt parser that fails loudly on unknown directives; no gate
 currently knows robots.txt exists — that is how the `/start/` leak passed green for
-3 weeks. NOTE: "Check 4" was taken by the canon-invariants gate in v0.2.11.0 and
-Check 5 by redirect-shadowing — this lands as Check 6+. (Eng review T3)
+3 weeks. NOTE: "Check 4" was taken by the canon-invariants gate in v0.2.11.0,
+Check 5 by redirect-shadowing, and Check 6 by sitemap parity in v0.2.12.0 —
+this lands as Check 7+. (Eng review T3)
 
 ### Regression test pinning the /start/ false-green case
 **Priority:** P0
@@ -22,7 +23,7 @@ from being silently weakened. (Eng review T4)
 
 ### Delete dead build_trial_page()
 **Priority:** P1
-`build.py:2156` still calls `_build_affiliate_landing("start", "blog")` and its
+`build.py` `build_trial_page()` (~line 2355) still calls `_build_affiliate_landing("start", "blog")` and its
 docstring calls `/start/` a "full SEO-optimized page". Dead code with a misleading
 docstring — one innocent future call rebuilds a retired page. (Note: per current
 Cloudflare docs the 301 would still win over a static file — see T8 — so the risk
@@ -32,14 +33,15 @@ is confusion + a stale crawlable artifact, not redirect shadowing.) (Eng review 
 ### Delete vestigial repo-root _redirects
 **Priority:** P1
 Root `_redirects` still claims `/start` is a live landing page; the deployed file is
-`globalhighlevel-site/_redirects` (build.py:3347). Also confirm the Cloudflare Pages
+`globalhighlevel-site/_redirects` (build.py deploy copy, ~line 3543). Also confirm the Cloudflare Pages
 output dir in the dashboard. (Eng review T9)
 
 ## Full-restore sprint follow-ups (from Day-1 reviews, 2026-07-23)
 
 ### Arabic disposition before Day-3 batch
 **Priority:** P0
-19 restored posts are lang=ar with NO listing surface (no /ar/ hub in
+19 posts in the full restore set are lang=ar (held out of Batch 1, so none are
+live yet) with NO listing surface (no /ar/ hub in
 categories.json) -> verify Check 2 fails; their bodies carry absolute
 https://globalhighlevel.com/ar/trial/ CTAs that 404 (now visible to Check 3).
 Bill decides: add an /ar hub, hold the 19 back, or 301 them into EN/ES clones;
@@ -73,6 +75,22 @@ remains. Make it print loudly or fail. (Adversarial 2026-07-23)
 **Priority:** P3
 A baked followed link to /, /about/ or /es/... in a sink body would escape both.
 Money page body has none today. Generalize both scans. (Adversarial 2026-07-23)
+
+### In-prose contextual links for top spokes (eng review D12)
+**Priority:** P2
+Caleb canon: "links should be contextual, placed within relevant sections of text."
+Circle + hub links are template-placed; weave contextual in-body links into the
+~30 highest-value restored spokes (desktop-app, MCP, Agent Studio cluster) 2-3
+weeks post-sprint, choosing pages from pull-bing.py recrawl data (only spokes
+that reattached). Mirrors globalhighlevel-system/TODOS.md. Depends on: sprint
+complete + recrawl data.
+
+### Cross-silo body-link audit (eng review D11)
+**Priority:** P2
+Scan restored html_content for internal links crossing topic silos; retarget
+within-silo or unlink. Firehose bodies predate the no-cross-link rule; render-time
+anchor caps bound the worst repetition but don't fix silo leakage. Mirrors
+globalhighlevel-system/TODOS.md. Depends on: sprint complete, topics final.
 
 ## Content rebuild (Ship 3)
 
@@ -128,13 +146,22 @@ consider suppressing the suffix for the money page (template change, pairs with 
 
 ### /trial/ noindex is invisible behind its robots block
 **Priority:** P3
-`build.py:2562` sets noindex on `/trial/` but robots.txt blocks crawlers from ever
+`build.py` sets noindex on `/trial/` (`_build_affiliate_landing`, ~line 2756) but robots.txt blocks crawlers from ever
 reading it, so external podcast links can get `/trial/` indexed as "URL indexed
 without content" — polluting the attribution cleanliness the block protects. Check
 GSC coverage for `/trial/`; if indexed-without-content appears, decide between
 unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing)
 
 ## Completed
+
+### Restore Batch 1 (Day 2 of full-restore sprint)
+**Completed:** v0.2.12.0 (2026-07-23)
+122 pages restored at original slugs (Bill-approved topics via 147-slug override
+file), 15 clone-twin 301s (1 held with Arabic), signup links rewritten to
+affiliate, zero followed fp_ref anchors sitewide (nofollow-sponsored stamped at
+render where missing), sitemap parity gate
+(Check 6) + redirect dupe/dead-target gates (Check 5b/5c) added.
+
 
 ### Ship 2 (Day-1 restore sprint) — CTA repoint, audit doctrine, Cloudflare comments (T5, T6, T8)
 **Completed:** v0.2.11.0 (2026-07-23)

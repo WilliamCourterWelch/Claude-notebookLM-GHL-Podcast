@@ -2,6 +2,17 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.12.0] - 2026-07-23
+### Added
+- **RESTORE BATCH 1 — 122 pages live again at their original slugs.** The revenue core of the 931 pruned pages: the AI-cited landings ChatGPT/Copilot link to, the Bing top-5 rankers, and the top-clicked cluster (desktop app, MCP, voice agents, Agent Studio). Restored byte-faithful from git history except: topic stamped per the Bill-approved assignment sheet (147 title-audit corrections applied via per-slug overrides), `updatedAt` set to the deploy date, and every affiliate link normalized to the current `fp_ref` tag — 322 links across 111 posts, including former `app.gohighlevel.com` signup links that paid nobody (Bill-approved rewrite).
+- **15 clone twins consolidated as 301s** to their canonical pages (one pair held with the 5 Arabic pages pending the /ar decision). Pre-existing rules that would have shadowed the new redirects (Cloudflare is first-match-wins) were removed.
+- **Two new build gates**: verify.py Check 5 now also fails on duplicate redirect sources and on any `/blog/` 301 that lands on a 404; Check 6 requires every sitemap URL to be a built page and never a redirect source.
+### Fixed
+- **Every affiliate anchor now renders `rel="nofollow sponsored"`** — firehose-era bodies carried followed paid links (Google paid-link policy risk). Render-time pass; stored JSON untouched. Site-wide count of followed affiliate anchors: 0.
+- **The sitemap advertised 5 pillar `/blog/` URLs that 301 to their hubs** — excluded now, so IndexNow submissions only carry real pages.
+- **The en/en-IN voice-AI dashboard pair shared an identical title with no hreflang** — reciprocal translations maps added so search engines see them as locale variants, not duplicates.
+- IndexNow submitter sends a real User-Agent on the POST as well as the preflight; restore report counts how many sheet overrides were consumed.
+
 ## [0.2.11.0] - 2026-07-23
 ### Added
 - **Link circle (Caleb canon)** — every blog post now carries a prev/next nav within its language+topic silo, wrapping at the ends so each silo forms one closed loop. Pillars, sink pages, and series/authority pages stay out of circles by construction. This is the canon link structure the 931-post restore lands into.

@@ -255,6 +255,18 @@ def test_enforce_anchor_caps():
     check("external link untouched", build.enforce_anchor_caps(ext) == ext)
 
 
+def test_nofollow_affiliate_links():
+    f = build.nofollow_affiliate_links
+    bare = '<p><a href="https://www.gohighlevel.com/x?fp_ref=amplifi-technologies12">go</a></p>'
+    check("bare affiliate anchor gains nofollow sponsored", 'rel="nofollow sponsored"' in f(bare))
+    has = '<p><a href="https://x.com/?fp_ref=a" rel="noopener">go</a></p>'
+    check("existing rel gets nofollow appended", 'rel="noopener nofollow sponsored"' in f(has))
+    ok = '<p><a href="https://x.com/?fp_ref=a" rel="nofollow noopener">go</a></p>'
+    check("already-nofollow untouched", f(ok) == ok)
+    plain = '<p><a href="/blog/x/">internal</a></p>'
+    check("non-affiliate anchor untouched", f(plain) == plain)
+
+
 def main():
     print("test_build_links.py")
     for t in (test_anchor_cap, test_build_link_index_multiword_only, test_hub_link_block,
@@ -263,7 +275,8 @@ def main():
               test_inject_internal_links_same_silo_only, test_is_series_post,
               test_circle_excludes_series, test_get_related_edges,
               test_enforce_anchor_caps_edges, test_enforce_anchor_caps_absolute,
-              test_cta_money_page, test_enforce_anchor_caps):
+              test_cta_money_page, test_enforce_anchor_caps,
+              test_nofollow_affiliate_links):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0
