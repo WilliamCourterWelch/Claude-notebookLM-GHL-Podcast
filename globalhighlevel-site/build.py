@@ -40,6 +40,13 @@ AFFILIATE    = os.getenv("GHL_AFFILIATE_LINK", "https://www.gohighlevel.com/high
 # attribution, Spanish landing page). fp_ref tracks by param, not by slug, so
 # attribution is unchanged — only the language of the destination changes.
 AFFILIATE_ES = AFFILIATE.replace("/highlevel-bootcamp?", "/highlevel-bootcamp-es?")
+# Guard rails (cross-model review 2026-07-27): localize_trial_hrefs appends
+# &utm_campaign=... and derives the Spanish URL by string replace — both break
+# SILENTLY (lost fp_ref = lost commissions; es routed to the EN page) if the
+# GHL_AFFILIATE_LINK override changes shape. Fail the build loudly instead.
+assert "?" in AFFILIATE and "fp_ref=" in AFFILIATE, "AFFILIATE must carry a query string with fp_ref"
+assert "utm_campaign=" not in AFFILIATE, "AFFILIATE must not pre-bake utm_campaign (passes append their own)"
+assert AFFILIATE_ES != AFFILIATE, "AFFILIATE_ES derivation no-opped — check the bootcamp path in AFFILIATE"
 
 def affiliate_for(lang: str) -> str:
     """Language-aware affiliate base URL. Spanish -> -es bootcamp; others -> default."""
@@ -449,15 +456,40 @@ _TRIAL_CLAIM_FIXES = (
 
 
 def localize_trial_hrefs(html: str, lang_code: str) -> str:
-    """Point in-body /trial CTA links at the language's own landing.
-    Currently ar-only (Bill-approved Pack A, 2026-07-27); the es (75 posts) and
-    en (17 posts) cohorts are a pending attribution-policy call in TODOS."""
-    if lang_code != "ar":
-        return html
+    """Route in-body /trial CTA links per the reader's language (Bill-decided
+    2026-07-27: "direct to affiliate, in the user's language"):
+      en/en-IN -> the English affiliate page, es -> the Spanish affiliate page
+      (highlevel-bootcamp-es, tracker verified paying 2026-07-27), ar -> the
+      /ar/trial/ landing (GHL has no Arabic page; 26-variant sweep, all 404).
+    Direct hrefs carry fp_ref so nofollow_affiliate_links (which runs AFTER
+    this pass) stamps them rel="nofollow sponsored" automatically. The
+    utm_campaign=blog-trial-{lang} tag splits the affiliate-portal clicks by
+    language. /trial itself stays live for the podcast spoken URL — bodies
+    just stop linking it."""
+    def _direct(campaign_lang: str) -> str:
+        base = AFFILIATE_ES if campaign_lang == "es" else AFFILIATE
+        return f'{base}&utm_campaign=blog-trial-{campaign_lang}'
+
+    # 1. Bare /trial hrefs route by the POST's language (ar keeps its landing —
+    #    the only possible Arabic step; everything else goes direct).
+    post_target = '/ar/trial/' if lang_code == "ar" else _direct(
+        "es" if lang_code == "es" else ("in" if lang_code == "en-IN" else "en"))
     for variant in ('href="https://globalhighlevel.com/trial/"',
                     'href="https://globalhighlevel.com/trial"',
                     'href="/trial/"', 'href="/trial"'):
-        html = html.replace(variant, 'href="/ar/trial/"')
+        html = html.replace(variant, f'href="{post_target}"')
+    # 2. Language-prefixed trial hrefs route by the TARGET's language (found in
+    #    202 es anchors the /trial-only sweep missed — review F1 2026-07-27).
+    #    /ar/trial/ is deliberately NOT rewritten.
+    for prefix, campaign_lang in (("/es/trial", "es"), ("/in/trial", "in")):
+        for variant in (f'href="https://globalhighlevel.com{prefix}/"',
+                        f'href="https://globalhighlevel.com{prefix}"',
+                        f'href="{prefix}/"', f'href="{prefix}"'):
+            html = html.replace(variant, f'href="{_direct(campaign_lang)}"')
+    # 3. Known-bad typo'd domain (dead third-party host, no fp_ref — every
+    #    click a lost commission; review F7 2026-07-27).
+    html = html.replace('href="https://goingHighLevel.com/free-trial"',
+                        f'href="{_direct("es")}"')
     return html
 
 
@@ -2274,7 +2306,7 @@ def build_category_pages(posts: list[dict]):
             p_title = pillar.get("title", cat)
             # Hub pillar bodies render with a .post-body and share the site-wide
             # anchor ledger — cap them like post bodies (D3 render-time cap).
-            p_body  = enforce_anchor_caps(nofollow_affiliate_links(correct_trial_claims(pillar.get("html_content", ""))))
+            p_body  = enforce_anchor_caps(nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(pillar.get("html_content", ""), post_lang(pillar)))))
             more_html = (f'''
 <div class="container">
   <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>

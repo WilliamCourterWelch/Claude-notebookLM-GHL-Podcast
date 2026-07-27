@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.2.0] - 2026-07-27
+### Changed
+- **In-body trial CTAs now go straight to the affiliate page, in the reader's language** (Bill-decided): Spanish trial links — both bare `/trial` AND the 202-anchor `/es/trial/` cohort the first sweep missed (review catch) — go direct to `highlevel-bootcamp-es` (FirstPromoter tracker verified paying); English and India links go to the English bootcamp page; Arabic keeps `/ar/trial/` because GHL has no Arabic page (26-variant sweep, all 404). Campaign tags `blog-trial-{en|es|in}` split the affiliate portal by language, every direct anchor is `rel="nofollow sponsored"` (320 verified), and one typo'd dead-domain trial link (goingHighLevel.com — every click a lost commission) was rewritten. Zero in-body links to any trial landing remain outside Arabic; `/trial` itself stays live for the podcast's spoken URL. Build now fails loudly if the affiliate URL constants ever lose their query string or the Spanish derivation no-ops (cross-model review guard).
+
 ## [0.3.1.0] - 2026-07-27
 ### Fixed
 - **RTL logo**: the brand's two spans reordered to "HighLevelGlobal" on every Arabic page — the logo anchor now pins `dir="ltr"` (canary catch).
