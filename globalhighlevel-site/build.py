@@ -385,6 +385,12 @@ _TRIAL_CLAIM_FIXES = (
     ("No Credit Card Required", "Just a ~$1 Card Verification"),
     ("No Credit Card Needed", "Just a ~$1 Card Verification"),
     ("no credit card needed", "just a ~$1 card verification (no subscription charge)"),
+    # English variants (codex P2, 2026-07-27)
+    ("No credit card is required", "A card is needed for a ~$1 verification only — no charge"),
+    ("no credit card is required", "a card is needed for a ~$1 verification only — no charge"),
+    ("No credit card, ", "Just a ~$1 card verification, "),
+    ("no credit card, ", "just a ~$1 card verification, "),
+    ("no credit card)", "just a ~$1 card verification)"),
     # Spanish
     ("Sin tarjeta de crédito requerida", "Solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
     ("sin tarjeta de crédito requerida", "solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
@@ -392,6 +398,16 @@ _TRIAL_CLAIM_FIXES = (
     ("sin necesidad de tarjeta de crédito", "solo una verificación de tarjeta de ~$1"),
     ("Sin tarjeta de crédito", "Solo una verificación de tarjeta de ~$1"),
     ("sin tarjeta de crédito", "solo una verificación de tarjeta de ~$1"),
+    ("Sin tarjeta, ", "Solo verificación de tarjeta de ~$1, "),
+    ("sin tarjeta, ", "solo verificación de tarjeta de ~$1, "),
+    ("sin tarjeta)", "solo verificación de tarjeta de ~$1)"),
+    # bare catch-alls LAST — every remaining rendered occurrence is a trial-offer
+    # claim (enumerated 2026-07-27); question-forms ("...no credit card?") are
+    # intentionally untouched, the paired answers carry the correction
+    ("Sin tarjeta", "Solo verificación de tarjeta de ~$1"),
+    ("sin tarjeta", "solo verificación de tarjeta de ~$1"),
+    ("No credit card", "Just a ~$1 card verification"),
+    ("no credit card", "just a ~$1 card verification"),
 )
 
 
