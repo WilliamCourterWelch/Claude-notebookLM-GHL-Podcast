@@ -411,6 +411,19 @@ _TRIAL_CLAIM_FIXES = (
 )
 
 
+def localize_trial_hrefs(html: str, lang_code: str) -> str:
+    """Point in-body /trial CTA links at the language's own landing.
+    Currently ar-only (Bill-approved Pack A, 2026-07-27); the es (75 posts) and
+    en (17 posts) cohorts are a pending attribution-policy call in TODOS."""
+    if lang_code != "ar":
+        return html
+    for variant in ('href="https://globalhighlevel.com/trial/"',
+                    'href="https://globalhighlevel.com/trial"',
+                    'href="/trial/"', 'href="/trial"'):
+        html = html.replace(variant, 'href="/ar/trial/"')
+    return html
+
+
 def correct_trial_claims(html: str) -> str:
     """Rewrite the known false no-card boilerplate to the card-verification
     truth at render time. Exact ordered replacements only — anything the table
@@ -1325,7 +1338,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
 <body>
 <nav>
   <div class="nav-inner">
-    <a href="/" class="logo">Global<span class="logo-amber">HighLevel</span></a>
+    <a href="/" class="logo" dir="ltr">Global<span class="logo-amber">HighLevel</span></a>
     <div class="nav-links">
       <a href="{_guides_href}" class="nav-link">{_guides_label}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" class="nav-link" target="_blank" rel="noopener">Podcast</a>
@@ -1549,7 +1562,7 @@ def build_authority_page(post: dict, all_posts: list = None):
     # Sanitize + cap baked anchors + inject internal links (same as blog template —
     # auth bodies share the site-wide anchor ledger; codex 2026-07-23)
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(correct_trial_claims(html_content))
+    html_content = nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post))))
     html_content = enforce_anchor_caps(html_content)
     if all_posts:
         html_content = inject_internal_links(html_content, post, all_posts, max_links=4)
@@ -1622,7 +1635,7 @@ def build_authority_page(post: dict, all_posts: list = None):
 <footer class="auth-footer">
   <div class="auth-footer-inner">
     <span>© 2026 GlobalHighLevel. Este sitio participa en el programa de afiliados de GoHighLevel.</span>
-    <span><a href="/about/">Acerca</a> · <a href="/">Home</a></span>
+    <span><a href="/about/">Acerca</a> · <a href="/">Inicio</a></span>
   </div>
 </footer>
 
@@ -1697,7 +1710,7 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(correct_trial_claims(html_content))
+    html_content = nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post))))
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
@@ -1934,18 +1947,28 @@ def build_post_page(post: dict, all_posts: list = None):
 })();
 </script>"""
 
+    # Localized post chrome (canary catch 2026-07-27: ar pages carried English
+    # breadcrumb/byline/read-time). en-IN stays English by design.
+    lang_code = post_lang(post)
+    _home_label = {"es": "Inicio", "ar": "الرئيسية"}.get(lang_code, "Home")
+    _by_label = {"es": "Por William Welch", "ar": "بقلم ويليام ويلش"}.get(lang_code, "By William Welch")
+    _rtime_local = rtime
+    if lang_code == "es":
+        _rtime_local = rtime.replace("min read", "min de lectura")
+    elif lang_code == "ar":
+        _rtime_local = rtime.replace(" min read", " دقائق قراءة")
     body = f"""
 <div id="reading-progress"></div>
 <div class="post-container">
   <div class="post-breadcrumb fade-1">
-    <span>Home</span><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
+    <span>{_home_label}</span><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
   </div>
   <div class="post-eyebrow fade-1">{cat_eyebrow}</div>
   <h1 class="post-title fade-2">{title}</h1>
   <div class="post-byline fade-3">
-    <span>By William Welch</span>
+    <span>{_by_label}</span>
     {"<span class='sep'>&middot;</span><span>" + date_str + "</span>" if date_str else ""}
-    <span class="sep">&middot;</span><span>{rtime}</span>
+    <span class="sep">&middot;</span><span>{_rtime_local}</span>
   </div>
   {tldr_html}
   {cta1}

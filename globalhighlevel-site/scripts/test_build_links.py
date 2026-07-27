@@ -337,6 +337,23 @@ def test_correct_trial_claims():
     check("pass is idempotent", f(f(en)) == f(en))
 
 
+def test_logo_ltr_on_rtl_pages():
+    out = build.base_html(title="t", description="d", canonical=f"{build.SITE_URL}/x/",
+                          body="<p>x</p>", lang="ar", text_dir="rtl")
+    check("logo anchor pins dir=ltr (RTL must not reorder brand spans)",
+          'class="logo" dir="ltr"' in out)
+
+
+def test_localize_trial_hrefs():
+    f = build.localize_trial_hrefs
+    ar = '<p><a href="https://globalhighlevel.com/trial/">جرب</a> <a href="/trial/">x</a></p>'
+    out = f(ar, "ar")
+    check("ar bodies: /trial CTAs rewritten to /ar/trial/",
+          out.count('href="/ar/trial/"') == 2 and "globalhighlevel.com/trial" not in out)
+    check("es bodies untouched (pending policy call)", f(ar, "es") == ar)
+    check("en bodies untouched", f(ar, "en") == ar)
+
+
 def main():
     print("test_build_links.py")
     for t in (test_anchor_cap, test_build_link_index_multiword_only, test_hub_link_block,
@@ -348,7 +365,8 @@ def main():
               test_cta_money_page, test_enforce_anchor_caps,
               test_nofollow_affiliate_links, test_post_lang_markers,
               test_localized_landing_configs, test_rtl_rendering,
-              test_attribution_prefixes_protected, test_correct_trial_claims):
+              test_attribution_prefixes_protected, test_correct_trial_claims,
+              test_logo_ltr_on_rtl_pages, test_localize_trial_hrefs):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0
