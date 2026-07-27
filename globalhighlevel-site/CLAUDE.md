@@ -162,12 +162,21 @@ The canon link structure is enforced at render time by `build.py` and gated by
   en-IN stays English by design. Add a dict entry when adding a language.
 - **Render passes on post bodies** (JSON stays byte-faithful, D3):
   `correct_trial_claims()` rewrites false no-card boilerplate to the ~$1
-  card-verification truth, and `localize_trial_hrefs()` routes in-body /trial
+  card-verification truth; `localize_trial_hrefs()` routes in-body /trial
   CTAs direct to the language-matched affiliate page (Bill-decided
   v0.3.2.0): en/en-IN → `highlevel-bootcamp`, es → `highlevel-bootcamp-es`
   (FirstPromoter tracker verified identical to EN), ar → `/ar/trial/` (GHL
-  has no Arabic page). Direct links carry `utm_campaign=blog-trial-{en|es}`
-  and get `rel="nofollow sponsored"` from the downstream paid-link pass.
+  has no Arabic page), tags `utm_campaign=blog-trial-{en|es|in}`, downstream
+  paid-link pass stamps `rel="nofollow sponsored"`;
+  `unwrap_cross_silo_links()` enforces the Caleb Critical Rule strictly
+  (Bill-decided v0.3.3.0) — any body link crossing a topic/language silo is
+  unwrapped (words stay, link goes), EXCEPT links to `FUNNEL_SINK_SLUGS`
+  (money + pricing pages), which are conversion links, not topical ones;
+  `inject_pillar_link()` weaves ONE in-prose link per post to the
+  language-correct silo hub where a MULTI-WORD topic keyword naturally
+  occurs (single-word anchors are banned by the audit gate; no natural
+  phrase → no link — the eyebrow covers structure regardless; non-EN hubs
+  guarded by the min_posts=2 bucket rule so no dead links).
 - **Localized trial landings:** `build.py`'s `LOCALIZED_LANDING_LANGS` builds
   `/{lang}/trial/` for es, in, and ar (Arabic copy native-reader reviewed,
   5 MSA corrections, v0.3.0.0). Only the `/trial/` variants are built —
