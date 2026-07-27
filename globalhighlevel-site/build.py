@@ -201,10 +201,12 @@ def inject_inline_ctas(html: str, cta_mid: str) -> str:
     mid = h2_positions[n // 2]
     return html[:mid] + cta_mid + html[mid:]
 
-# Slug-pattern markers for language inference. 470 of 946 posts have no
-# explicit `language` field; these markers catch ~160 of those by slug stem.
-# Conservative list — only unambiguous markers. T2.1 (body-text langdetect)
-# will catch the remaining ~310.
+# Slug-pattern markers for language inference. All current posts carry an
+# explicit `language` field, so this table's live role is the mistag backstop:
+# post_lang() falls back to these markers for a future post whose field is
+# missing, and verify Check 0 fails the build on a marker/field mismatch
+# instead of letting the post leak into the wrong language's hubs.
+# Conservative list — only unambiguous markers, substring-matched on the slug.
 _LANG_SLUG_MARKERS = (
     # 2026-05-23: dropped "whatsapp" — it is a product feature, not a geo signal,
     # and misclassified genuine English posts (e.g. how-to-manage-whatsapp-settings)
@@ -1305,10 +1307,10 @@ def load_posts() -> list[dict]:
     for f in sorted(POSTS_DIR.glob("*.json")):
         try:
             data = json.loads(f.read_text())
-            if data.get("slug") and data.get("html_content"):
-                posts.append(data)
-        except Exception:
-            pass
+        except Exception as e:
+            raise SystemExit(f"FATAL: unparseable post JSON {f.name}: {e}")
+        if data.get("slug") and data.get("html_content"):
+            posts.append(data)
     return posts
 
 def load_published() -> list[dict]:
@@ -1890,8 +1892,8 @@ def build_post_page(post: dict, all_posts: list = None):
 {faq_ld}
 {progress_js}"""
 
-    post_lang = post.get("language", "en")
-    post_lang_config = next((l for l in LANGUAGES if l["code"] == post_lang), None)
+    lang_code = post_lang(post)
+    post_lang_config = next((l for l in LANGUAGES if l["code"] == lang_code), None)
     post_dir = post_lang_config.get("dir", "ltr") if post_lang_config else "ltr"
 
     hreflang_override = _build_post_hreflang_tags(post.get("translations") or {})
@@ -1901,7 +1903,7 @@ def build_post_page(post: dict, all_posts: list = None):
         description=truncate(description, 160),
         canonical=canonical,
         body=body,
-        lang=post_lang,
+        lang=lang_code,
         text_dir=post_dir,
         hreflang_override=hreflang_override,
         disable_hreflang_fallback=True,
@@ -2203,7 +2205,8 @@ def build_category_pages(posts: list[dict]):
             title=page_title,
             description=page_desc,
             canonical=canonical,
-            body=body
+            body=body,
+            hreflang_path=f"/category/{cat_slug}/"
         )
         write(PUBLIC_DIR / "category" / cat_slug / "index.html", html)
 
@@ -2502,6 +2505,7 @@ def _build_localized_affiliate_landing(lang_cfg: dict, slug: str, campaign: str)
         lang=lang,
         text_dir=direction,
         noindex=True,  # localized /{lang}/trial/ and /{lang}/start/ are conversion surfaces too
+        disable_hreflang_fallback=True,
     )
     write(PUBLIC_DIR / lang / slug / "index.html", html)
 
@@ -2784,6 +2788,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
         canonical=canonical,
         body=body,
         noindex=True,  # /trial/ and /start/ are conversion surfaces, not search pages
+        disable_hreflang_fallback=True,
     )
     write(PUBLIC_DIR / slug / "index.html", html)
 
@@ -3471,6 +3476,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
             "en": "Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide. Step-by-step help.",
             "es": "Tutoriales y guías gratuitas de GoHighLevel en español. Aprende a configurar, automatizar y escalar tu agencia paso a paso.",
             "en-IN": "Free GoHighLevel tutorials and guides for Indian agencies. UPI payments, WhatsApp automation, and agency growth — step by step.",
+            "ar": "دروس وأدلة GoHighLevel مجانية بالعربية. تعلّم الإعداد والأتمتة وتنمية وكالتك خطوة بخطوة.",
         }
         hub_desc = hub_descriptions.get(lang_code, f"Free GoHighLevel tutorials and guides in {lang_name}.")
         canonical = f"{SITE_URL}{prefix}/" if page == 1 else f"{SITE_URL}{prefix}/page/{page}/"

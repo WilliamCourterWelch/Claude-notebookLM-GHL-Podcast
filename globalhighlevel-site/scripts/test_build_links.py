@@ -267,6 +267,57 @@ def test_nofollow_affiliate_links():
     check("non-affiliate anchor untouched", f(plain) == plain)
 
 
+def test_post_lang_markers():
+    f = build.post_lang
+    check("explicit language field wins over slug markers",
+          f({"language": "en", "slug": "gohighlevel-arabic-guide"}) == "en")
+    check("slug marker 'arabic' infers ar", f({"slug": "gohighlevel-crm-arabic-guide"}) == "ar")
+    check("slug marker 'mena' infers ar", f({"slug": "gohighlevel-mena-agencies"}) == "ar")
+    check("slug marker 'india' infers en-IN", f({"slug": "gohighlevel-india-payments"}) == "en-IN")
+    check("slug marker 'espanol' infers es", f({"slug": "gohighlevel-espanol-tutorial"}) == "es")
+    check("unmarked slug falls back to en", f({"slug": "gohighlevel-pricing-guide"}) == "en")
+    # documents current substring semantics: no live slug may contain a marker
+    # as an accidental substring ('mena' in 'phenomena') without tripping this
+    check("no live post slug accidentally matches a marker for the wrong language",
+          all(f(post) == (post.get("language") or "en")
+              for post in build.load_posts() if post.get("language")))
+
+
+def test_localized_landing_configs():
+    import json
+    cats = json.loads((Path(__file__).resolve().parent.parent / "categories.json").read_text())
+    langs = {l["prefix"]: l for l in cats["languages"] if l.get("prefix")}
+    required = ("code", "prefix", "dir", "title", "desc", "h1", "subh", "cta",
+                "value_props", "faq_h", "faq", "footer_cta")
+    for cfg in build.LOCALIZED_LANDING_LANGS:
+        missing = [k for k in required if k not in cfg]
+        check(f"landing config {cfg.get('code')} has all required keys", not missing)
+        lang = langs.get(cfg["prefix"])
+        check(f"landing prefix {cfg['prefix']} exists in categories.json languages", lang is not None)
+        if lang:
+            check(f"landing dir matches categories.json for {cfg['prefix']}",
+                  cfg["dir"] == lang.get("dir", "ltr"))
+
+
+def test_rtl_rendering():
+    out = build.base_html(title="t", description="d", canonical=f"{build.SITE_URL}/x/",
+                          body="<p>x</p>", lang="ar", text_dir="rtl")
+    check("ar page renders <html lang=\"ar\" dir=\"rtl\">", '<html lang="ar" dir="rtl">' in out)
+    out_es = build.base_html(title="t", description="d", canonical=f"{build.SITE_URL}/x/",
+                             body="<p>x</p>", lang="es", text_dir="ltr")
+    check("es page has no dir=rtl attribute", 'dir="rtl"' not in out_es)
+
+
+def test_attribution_prefixes_protected():
+    for prefix in build.ATTRIBUTION_PREFIXES:
+        path = prefix + "/"
+        check(f"{path} is an attribution path", build.is_attribution_path(path))
+        build._ANCHOR_URL_COUNTS.clear()
+        html = "".join(f'<p><a href="{path}">start trial</a></p>' for _ in range(build.ANCHOR_URL_CAP + 2))
+        out = build.enforce_anchor_caps(html)
+        check(f"{path} anchors never unwrapped by anchor cap", out.count(f'href="{path}"') == build.ANCHOR_URL_CAP + 2)
+
+
 def main():
     print("test_build_links.py")
     for t in (test_anchor_cap, test_build_link_index_multiword_only, test_hub_link_block,
@@ -276,7 +327,9 @@ def main():
               test_circle_excludes_series, test_get_related_edges,
               test_enforce_anchor_caps_edges, test_enforce_anchor_caps_absolute,
               test_cta_money_page, test_enforce_anchor_caps,
-              test_nofollow_affiliate_links):
+              test_nofollow_affiliate_links, test_post_lang_markers,
+              test_localized_landing_configs, test_rtl_rendering,
+              test_attribution_prefixes_protected):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0
