@@ -253,16 +253,73 @@ def main() -> int:
     #   d. sink exclusion: mvp_minimal_links pages gain ZERO outbound internal
     #                      links (no circle, no related cards, no hub link, no
     #                      /blog|/category anchors in the post body)
+    #   e. body silo scan : followed internal post links in the BODY prose are
+    #                      same-silo, funnel-sink, or series-nav — the unwrap
+    #                      pass is fail-open, this is the alarm (D13)
     print("\n=== Check 4: canon link invariants (spoke->pillar, circles, silo, sink) ===")
     slug_meta = {p["slug"]: (build.post_lang(p), build.post_topic(p))
                  for p in posts if p.get("slug")}
+    # e. body-zone silo scan needs URL-keyed metadata: custom-url_path posts
+    #    (/es/para/..., /es/mercadopago-gohighlevel/) are invisible to slug
+    #    lookups — the bypass that hid 15 cross-silo links (D13, 2026-07-27).
+    url_meta = {build.post_url(p): (p["slug"], (build.post_lang(p), build.post_topic(p)))
+                for p in posts if p.get("slug")}
     c4_fails: list[str] = []
+    _c4e_scanned = [0]  # zones actually scanned — 0 at the end means the alarm is dead
+
+    def _c4e_scan(label: str, page_html: str, lang: str, topic: str, src_url: str,
+                  end_marker: str, body_class: str = 'class="post-body'):
+        """Check 4e body-zone scanner. Tolerant of class-token variants
+        ('class="post-body fade-3"'), loud when the zone is missing or
+        unterminated (codex P2: the alarm must not silently empty itself)."""
+        b_start = page_html.find(body_class)
+        if b_start < 0:
+            c4_fails.append(f"{label}: 4e body zone MISSING ({body_class} not found)")
+            return
+        b_end = page_html.find(end_marker, b_start)
+        if b_end < 0:
+            b_end = page_html.find('<script type="application/ld+json">', b_start)
+        if b_end < 0:
+            c4_fails.append(f"{label}: 4e body zone UNTERMINATED (no {end_marker} / JSON-LD after post-body)")
+            return
+        body = page_html[b_start:b_end]
+        _c4e_scanned[0] += 1
+        for m in re.finditer(r'<a\b([^>]*)>', body):
+            attrs = m.group(1)
+            href_m = re.search(
+                r'href="(?:' + re.escape(build.SITE_URL) + r')?(/[^"]+?)"', attrs)
+            if not href_m:
+                continue
+            rel_m = re.search(r'rel="([^"]*)"', attrs)
+            if rel_m and "nofollow" in rel_m.group(1).split():
+                continue
+            tgt_url = unquote(href_m.group(1)).split("?")[0].split("#")[0]
+            if not tgt_url.endswith("/"):
+                tgt_url += "/"
+            t_meta = url_meta.get(tgt_url)
+            if t_meta is None:
+                continue  # not a post page (hub, landing, asset)
+            t_slug, t_silo = t_meta
+            if t_slug in build.FUNNEL_SINK_SLUGS or t_silo == (lang, topic):
+                continue
+            if build._series_nav_exempt(src_url, tgt_url, url_meta):
+                continue
+            c4_fails.append(f"{label}: cross-silo BODY link -> {tgt_url} {t_silo} != {(lang, topic)}")
     for p in posts:
         slug = p.get("slug")
         if not slug:
             continue
         if build.is_series_post(p):
-            continue  # authority template: series nav is its cluster structure, not the circle
+            # authority template: series nav is its cluster structure, not the
+            # circle — skip circle checks, but its body STILL goes through the
+            # unwrap pass, so the 4e alarm must cover it (codex P2 re-review).
+            auth_page = PUBLIC / build.post_output_rel(p) / "index.html"
+            if auth_page.exists():
+                _c4e_scan(f"authority {slug}", read(auth_page),
+                          build.post_lang(p), build.post_topic(p), build.post_url(p),
+                          end_marker='<script type="application/ld+json">',
+                          body_class='class="auth-body')
+            continue
         page = PUBLIC / build.post_output_rel(p) / "index.html"
         if not page.exists():
             continue
@@ -332,9 +389,37 @@ def main() -> int:
                 meta = slug_meta.get(unquote(tgt))
                 if meta and meta != (lang, topic):
                     c4_fails.append(f"{slug}: cross-silo template link -> {tgt} {meta} != {(lang, topic)}")
+
+        # e. body-zone silo scan (D13, 2026-07-27): the unwrap pass is fail-open
+        # (empty map -> silent no-op), so the BUILT body prose is the ground
+        # truth. Any followed internal post link in the body must be same-silo,
+        # a funnel sink, or series navigation. This catches both a silently
+        # disabled unwrap AND link shapes the unwrap regex can't see.
+        # Fail-loud (codex P2): a missing/unterminated body zone is itself a
+        # failure — an emptied slice must never silently pass the alarm.
+        _c4e_scan(slug, html, lang, topic, build.post_url(p),
+                  end_marker='class="cta-end"')
+    # e (continued): EN hub pillars render their body on the /category/ page,
+    # NOT at /blog/ — the per-post loop never sees them. This was the exact
+    # render site the unwrap pass itself missed (codex P1, 2026-07-27), so the
+    # alarm must cover it too.
+    for p in posts:
+        if not (p.get("isPillar") and p.get("language", "en") == "en" and p.get("slug")):
+            continue
+        _cat = build.display_cat(build.post_topic(p))
+        _cs = build.slugify(_cat or "")
+        hub_page = PUBLIC / "category" / _cs / "index.html"
+        if not _cs or not hub_page.exists():
+            continue
+        _c4e_scan(f"hub-pillar {p['slug']} (/category/{_cs}/)", read(hub_page),
+                  build.post_lang(p), build.post_topic(p), build.post_url(p),
+                  end_marker='class="cards-grid"')
+    if _c4e_scanned[0] == 0:
+        c4_fails.append("Check 4e scanned ZERO body zones — the silo alarm is dead (template class drift?)")
     for msg in c4_fails[:20]:
         print(f"    {msg}")
     print("  ->", "PASS" if not c4_fails else f"FAIL ({len(c4_fails)} canon violations)")
+    print(f"    (4e: {_c4e_scanned[0]} body zones scanned)")
     if c4_fails:
         fails.append(f"Check 4: {len(c4_fails)} canon link invariant violations")
 
