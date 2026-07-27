@@ -2,6 +2,14 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.0.0] - 2026-07-27
+### Added
+- **THE 931 RESTORE IS COMPLETE.** Batch 3 (final): 619 pages live again at their original slugs — the long tail plus every previously-held Arabic page. All 931 pruned URLs now resolve: 877 as live pages, 54 as 301s into their clone canonicals. 1,126 affiliate links normalized in this batch alone (2,900+ across the sprint), zero errors, zero collisions across all three batches.
+- **Arabic section launched (Bill-approved).** New `/ar/` hub with full right-to-left rendering, Arabic category pages, and a native-Arabic trial landing at `/ar/trial/` — the ~15 Arabic CTAs baked into restored bodies now land on a real conversion page instead of a 404. Copy reviewed native-reader-grade (5 MSA corrections applied); Arabic slug markers added to the language gate so a future mistagged Arabic post fails the build instead of leaking into English hubs.
+- **32 more clone twins consolidated as 301s**, including the pair held since batch 1 for its Arabic canonical.
+### Changed
+- Site grows 285 → 904 posts; sitemap 923 URLs, all gates green at full scale (language, silo, canon-link, redirect, sitemap-parity, paid-link checks).
+
 ## [0.2.13.0] - 2026-07-27
 ### Added
 - **RESTORE BATCH 2 — 136 pages live again at their original slugs.** The tier A/B remainder of the 931, including the two email-deliverability pages that AI assistants kept visiting twice a day while dead (promoted from batch 3 on GA4 evidence). Same doctrine as batch 1: byte-faithful from git history, Bill-approved topics via the override sheet (20 corrections consumed), 396 affiliate links normalized to the fp_ref tag, updatedAt stamped.

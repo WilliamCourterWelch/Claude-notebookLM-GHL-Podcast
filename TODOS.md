@@ -38,14 +38,6 @@ output dir in the dashboard. (Eng review T9)
 
 ## Full-restore sprint follow-ups (from Day-1 reviews, 2026-07-23)
 
-### Arabic disposition before Day-3 batch
-**Priority:** P0
-19 posts in the full restore set are lang=ar (held out of Batch 1, so none are
-live yet) with NO listing surface (no /ar/ hub in
-categories.json) -> verify Check 2 fails; their bodies carry absolute
-https://globalhighlevel.com/ar/trial/ CTAs that 404 (now visible to Check 3).
-Bill decides: add an /ar hub, hold the 19 back, or 301 them into EN/ES clones;
-either way add an /ar/trial* redirect. (Red-team 2026-07-23)
 
 ### Precompute silo map for circle/related/inject (perf at 2k+ posts)
 **Priority:** P2
@@ -153,6 +145,13 @@ GSC coverage for `/trial/`; if indexed-without-content appears, decide between
 unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing)
 
 ## Completed
+
+### Restore Batch 3 (FINAL) + /ar section — SPRINT COMPLETE
+**Completed:** v0.3.0.0 (2026-07-27)
+619 pages restored; /ar hub + RTL + Arabic trial landing (Bill: build the AR
+section); all 931 accounted: 877 live + 54 twin 301s. Arabic disposition
+resolved (option a). 904 posts live.
+
 
 ### Restore Batch 2
 **Completed:** (2026-07-27)
