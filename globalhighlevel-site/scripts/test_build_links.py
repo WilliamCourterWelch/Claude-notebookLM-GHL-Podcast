@@ -318,6 +318,25 @@ def test_attribution_prefixes_protected():
         check(f"{path} anchors never unwrapped by anchor cap", out.count(f'href="{path}"') == build.ANCHOR_URL_CAP + 2)
 
 
+def test_correct_trial_claims():
+    f = build.correct_trial_claims
+    en = "<p>Try it — No credit card required. Cancel anytime.</p>"
+    check("en 'No credit card required' rewritten to card-verification truth",
+          "~$1 card verification" in f(en) and "No credit card required" not in f(en))
+    en2 = "<p>No credit card. No commitment.</p>"
+    check("en staccato FAQ answer rewritten", f(en2) == "<p>Just a ~$1 card verification. No commitment.</p>")
+    es = "<p>Empieza gratis — Sin tarjeta de crédito requerida.</p>"
+    check("es claim rewritten", "verificación de tarjeta" in f(es) and "Sin tarjeta" not in f(es))
+    ar = "<p>جرّب مجاناً — بدون بطاقة ائتمان.</p>"
+    check("ar claim rewritten", "تحقق رمزي" in f(ar) and "بدون بطاقة" not in f(ar))
+    ar_faq = "<p>لا. GoHighLevel توفر 30 يوماً مجاناً بدون بطاقة ائتمان.</p>"
+    out = f(ar_faq)
+    check("ar FAQ opener flipped to truthful yes", out.startswith("<p>نعم،") and "بدون بطاقة" not in out)
+    clean = "<p>The card on file is charged $97/month after the trial.</p>"
+    check("truthful copy untouched", f(clean) == clean)
+    check("pass is idempotent", f(f(en)) == f(en))
+
+
 def main():
     print("test_build_links.py")
     for t in (test_anchor_cap, test_build_link_index_multiword_only, test_hub_link_block,
@@ -329,7 +348,7 @@ def main():
               test_cta_money_page, test_enforce_anchor_caps,
               test_nofollow_affiliate_links, test_post_lang_markers,
               test_localized_landing_configs, test_rtl_rendering,
-              test_attribution_prefixes_protected):
+              test_attribution_prefixes_protected, test_correct_trial_claims):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

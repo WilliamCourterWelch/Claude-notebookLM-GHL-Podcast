@@ -364,6 +364,47 @@ def is_series_post(post: dict) -> bool:
                 or post.get("url_path", "").startswith("/for/"))
 
 
+# Ordered exact-phrase corrections for the false "no credit card" trial claim
+# (review D3, Bill-approved 2026-07-27). The restored firehose bodies predate
+# the trial-copy correction — a card IS required (~$1 verification hold,
+# auto-released, no subscription charge). Render-time pass, same posture as
+# nofollow_affiliate_links: rendered HTML tells the truth, JSON stays
+# byte-faithful (D3 doctrine). Specific multi-sentence rules run before the
+# generic phrase rules so FAQ answers stay grammatical.
+_TRIAL_CLAIM_FIXES = (
+    # Arabic FAQ opener: "لا. GoHighLevel توفر ٣٠ يوماً مجاناً بدون بطاقة ائتمان"
+    ("لا. GoHighLevel توفر 30 يوماً مجاناً بدون بطاقة ائتمان",
+     "نعم، تلزم بطاقة للتحقق فقط (نحو 1$ يُلغى تلقائياً). GoHighLevel توفر 30 يوماً مجاناً"),
+    ("بدون بطاقة ائتمان", "مع تحقق رمزي من البطاقة (نحو 1$ يُلغى تلقائياً)"),
+    ("بدون بطاقة", "مع تحقق رمزي من البطاقة"),
+    # English FAQ/CTA staccato: "No credit card. No commitment."
+    ("No credit card. ", "Just a ~$1 card verification. "),
+    ("No credit card required", "Just a ~$1 card verification (no subscription charge)"),
+    ("no credit card required", "just a ~$1 card verification (no subscription charge)"),
+    ("No credit card needed", "Just a ~$1 card verification (no subscription charge)"),
+    ("No Credit Card Required", "Just a ~$1 Card Verification"),
+    ("No Credit Card Needed", "Just a ~$1 Card Verification"),
+    ("no credit card needed", "just a ~$1 card verification (no subscription charge)"),
+    # Spanish
+    ("Sin tarjeta de crédito requerida", "Solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
+    ("sin tarjeta de crédito requerida", "solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
+    ("Sin necesidad de tarjeta de crédito", "Solo una verificación de tarjeta de ~$1"),
+    ("sin necesidad de tarjeta de crédito", "solo una verificación de tarjeta de ~$1"),
+    ("Sin tarjeta de crédito", "Solo una verificación de tarjeta de ~$1"),
+    ("sin tarjeta de crédito", "solo una verificación de tarjeta de ~$1"),
+)
+
+
+def correct_trial_claims(html: str) -> str:
+    """Rewrite the known false no-card boilerplate to the card-verification
+    truth at render time. Exact ordered replacements only — anything the table
+    does not cover is left alone (long tail tracked in TODOS)."""
+    for old, new in _TRIAL_CLAIM_FIXES:
+        if old in html:
+            html = html.replace(old, new)
+    return html
+
+
 def nofollow_affiliate_links(html: str) -> str:
     """Render-time rel hygiene for PAID links (codex P2, 2026-07-23): any anchor
     whose href carries fp_ref= is an affiliate link and must be nofollow —
@@ -1475,7 +1516,7 @@ def build_authority_page(post: dict, all_posts: list = None):
     """
     slug = post["slug"]
     title = post.get("title", "")
-    description = post.get("description", post.get("meta_description", ""))
+    description = correct_trial_claims(post.get("description", post.get("meta_description", "")))
     html_content = post.get("html_content", "")
     date_str = fmt_date(post.get("publishedAt", ""))
     rtime = read_time(html_content)
@@ -1492,7 +1533,7 @@ def build_authority_page(post: dict, all_posts: list = None):
     # Sanitize + cap baked anchors + inject internal links (same as blog template —
     # auth bodies share the site-wide anchor ledger; codex 2026-07-23)
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(html_content)
+    html_content = nofollow_affiliate_links(correct_trial_claims(html_content))
     html_content = enforce_anchor_caps(html_content)
     if all_posts:
         html_content = inject_internal_links(html_content, post, all_posts, max_links=4)
@@ -1612,7 +1653,7 @@ def _date_modified(post: dict) -> str:
 def build_post_page(post: dict, all_posts: list = None):
     slug        = post["slug"]
     title       = post.get("title", post.get("seoTitle", ""))
-    description = post.get("description", post.get("seoDescription", post.get("meta_description", "")))
+    description = correct_trial_claims(post.get("description", post.get("seoDescription", post.get("meta_description", ""))))
     category    = display_cat(post_topic(post)) or "GoHighLevel Tutorials"
     cat_slug    = slugify(category)
     # Only link the category if its page was actually built. Post-prune some topics
@@ -1640,7 +1681,7 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(html_content)
+    html_content = nofollow_affiliate_links(correct_trial_claims(html_content))
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
@@ -2160,7 +2201,7 @@ def build_category_pages(posts: list[dict]):
             p_title = pillar.get("title", cat)
             # Hub pillar bodies render with a .post-body and share the site-wide
             # anchor ledger — cap them like post bodies (D3 render-time cap).
-            p_body  = enforce_anchor_caps(nofollow_affiliate_links(pillar.get("html_content", "")))
+            p_body  = enforce_anchor_caps(nofollow_affiliate_links(correct_trial_claims(pillar.get("html_content", ""))))
             more_html = (f'''
 <div class="container">
   <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>
