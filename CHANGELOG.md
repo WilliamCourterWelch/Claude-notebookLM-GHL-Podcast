@@ -7,6 +7,15 @@ All notable changes to globalhighlevel.com's static-site build are documented he
 - **THE 931 RESTORE IS COMPLETE.** Batch 3 (final): 619 pages live again at their original slugs — the long tail plus every previously-held Arabic page. All 931 pruned URLs now resolve: 877 as live pages, 54 as 301s into their clone canonicals. 1,126 affiliate links normalized in this batch alone (2,900+ across the sprint), zero errors, zero collisions across all three batches.
 - **Arabic section launched (Bill-approved).** New `/ar/` hub with full right-to-left rendering, Arabic category pages, and a native-Arabic trial landing at `/ar/trial/` — the ~15 Arabic CTAs baked into restored bodies now land on a real conversion page instead of a 404. Copy reviewed native-reader-grade (5 MSA corrections applied); Arabic slug markers added to the language gate so a future mistagged Arabic post fails the build instead of leaking into English hubs.
 - **32 more clone twins consolidated as 301s**, including the pair held since batch 1 for its Arabic canonical.
+### Fixed (pre-landing review — 5 specialists + Claude/Codex adversarial + red team)
+- **False "no credit card" claims corrected at render time** across ~873 restored bodies + meta descriptions (en/es/ar) — rendered pages now state the ~$1 card-verification truth; post JSON stays byte-faithful (D3).
+- **5 twin 301s flipped to clean canonicals** (3 EN→India, 1 EN→Arabic, 1 ES→"-1" suffix were inverted vs batch-2 policy); 54/54 twins verified pointing at canonicals.
+- **Nav language picker now renders** — every page links all other live languages (was a hardcoded EN/ES toggle; /ar and /in were unreachable from the nav); Guides/CTA labels localized for Arabic.
+- **Arabic hreflang made reciprocal** (6 sibling posts in the pricing/trial clusters) and the 2 Arabic money pages got native Arabic titles/meta.
+- **hreflang correctness**: root /category/ pages self-reference (was homepage set), trial landings and 404 emit none (noindex surfaces).
+- **Gates hardened**: Check 0b (body script must agree with language field, both directions), Check 5d (no redirect chains), Check 5e (no silently shadow-pruned source rules — 304 stale lines cleaned); corrupt post JSON now fails the build loudly.
+- llms.txt grouped into labeled per-language sections (Arabic was nearly absent); /ar/trial attribution corrected to `ar-blog` (no Arabic podcast exists).
+
 ### Changed
 - Site grows 285 → 904 posts; sitemap 923 URLs, all gates green at full scale (language, silo, canon-link, redirect, sitemap-parity, paid-link checks).
 

@@ -124,6 +124,38 @@ def main() -> int:
     if contradictions:
         fails.append(f"Check 0: {len(contradictions)} posts whose language field contradicts their slug marker")
 
+    # --- Check 0b: body script must agree with the language field ----------
+    # Slug markers only see slugs, so an Arabic post with an unmarked slug (or
+    # an Arabic body stamped `en`) sails through Check 0 — the exact leak the
+    # gate exists to prevent. Arabic is trivially detectable from script
+    # (U+0600–U+06FF), so check both directions on the body, and require the
+    # ar posts' title+description to be Arabic too (the SERP surface)
+    # (adversarial + codex + red-team consensus, 2026-07-27).
+    print("\n=== Check 0b: body script agrees with language field ===")
+    import re as _re
+    _AR_RE = _re.compile(r"[\u0600-\u06FF]")
+    script_fails = []
+    for post in posts:
+        slug = post.get("slug", "")
+        lang = build.post_lang(post)
+        body = post.get("html_content", "")
+        ar_chars = len(_AR_RE.findall(body))
+        ratio = ar_chars / max(1, len(body))
+        if lang == "ar":
+            if ratio < 0.05:
+                script_fails.append(f"{slug}: language=ar but body is only {ratio:.1%} Arabic script")
+            if not _AR_RE.search(post.get("title", "")):
+                script_fails.append(f"{slug}: language=ar but title has no Arabic script")
+            if not _AR_RE.search(post.get("description", post.get("seoDescription", ""))):
+                script_fails.append(f"{slug}: language=ar but description has no Arabic script")
+        elif ratio > 0.05:
+            script_fails.append(f"{slug}: language={lang!r} but body is {ratio:.1%} Arabic script")
+    for msg in script_fails[:10]:
+        print(f"    {msg}")
+    print("  ->", "PASS" if not script_fails else f"FAIL ({len(script_fails)} script/language mismatches)")
+    if script_fails:
+        fails.append(f"Check 0b: {len(script_fails)} body-script/language mismatches")
+
     # --- Check 1: root /category/ pages English-only -----------------------
     print("=== Check 1: root /category/ pages are English-only ===")
     contam = 0
@@ -338,11 +370,42 @@ def main() -> int:
                 dead_targets.append(f"{parts[0]} -> {tgt}")
     for d in dead_targets[:10]:
         print(f"    301 into 404: {d}")
-    _c5_bad = len(shadowed) + len(dupes) + len(dead_targets)
+    # 5d: no redirect chains — Cloudflare is single-pass, so a rule whose
+    # target is itself a rule source costs a real second 301 (adversarial
+    # review 2026-07-27). Checked on the DEPLOYED rule set.
+    chains = []
+    _src_set = set(srcs)
+    for ln in rf_lines:
+        parts = ln.split()
+        if len(parts) >= 2:
+            tgt = parts[1]
+            for v in {tgt, tgt.rstrip("/"), tgt.rstrip("/") + "/"}:
+                if v in _src_set:
+                    chains.append(f"{parts[0]} -> {tgt} (target is itself a rule source)")
+                    break
+    for c in chains[:10]:
+        print(f"    chain: {c}")
+    # 5e: source-file hygiene — a rule in the SOURCE _redirects whose source is
+    # a built page gets silently shadow-pruned at deploy; that dormant rule
+    # resurrects (possibly as a chain) the moment the page is removed again.
+    # The source file must describe production: no silently-pruned rules
+    # (adversarial review 2026-07-27; 304 stale lines cleaned same day).
+    _src_file = PUBLIC.parent / "_redirects"
+    stale_src = []
+    if _src_file.exists():
+        for ln in read(_src_file).splitlines():
+            t = ln.strip()
+            if t and not t.startswith("#") and len(t.split()) >= 2:
+                h = t.split()[0]
+                if h in pages:
+                    stale_src.append(h)
+    for h in stale_src[:10]:
+        print(f"    stale source rule (shadow-pruned at deploy): {h}")
+    _c5_bad = len(shadowed) + len(dupes) + len(dead_targets) + len(chains) + len(stale_src)
     print("  ->", "PASS" if not _c5_bad else
-          f"FAIL ({len(shadowed)} shadowed, {len(dupes)} duplicate sources, {len(dead_targets)} dead 301 targets)")
+          f"FAIL ({len(shadowed)} shadowed, {len(dupes)} duplicate sources, {len(dead_targets)} dead 301 targets, {len(chains)} chains, {len(stale_src)} stale source rules)")
     if _c5_bad:
-        fails.append(f"Check 5: {_c5_bad} redirect defects (shadowed/duplicate/dead-target)")
+        fails.append(f"Check 5: {_c5_bad} redirect defects (shadowed/duplicate/dead-target/chain/stale-source)")
 
     # --- Check 6: sitemap <-> built parity ---------------------------------
     # Every sitemap <loc> must be a built page (or deployed root file) and must

@@ -118,15 +118,14 @@ The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
 
 ## Content hygiene
 
-### Restored firehose bodies reintroduce "no credit card" claims at scale
-**Priority:** P2
-A rough grep finds ~867 of 904 posts (en/es/in/ar) matching no-credit-card-style
-strings ("no credit card", "sin tarjeta", "بدون بطاقة") — restored bodies predate
-the trial-copy correction (a card IS required: ~$1 verification hold). The trial
-landings and money page state the card requirement correctly; the in-body CTA
-boilerplate contradicts them. Refine the scan to separate false claims from
-legitimate hedged copy, then decide render-time rewrite vs batch body edit.
-(Codex doc review 2026-07-27)
+### Refine trial-claim render pass long tail
+**Priority:** P3
+v0.3.0.0 pre-landing review shipped `correct_trial_claims()` — a render-time
+exact-phrase pass that rewrites the known no-card boilerplate (en/es/ar, bodies
++ meta descriptions) to the ~$1 card-verification truth; rendered residual is 0
+across 904 pages. Remaining: periodically re-run the residual scan for phrase
+variants the table doesn't cover (e.g. new imports), and consider a Devanagari
+(Hindi) variant if one ever appears. (Codex review 2026-07-27, resolved same day)
 
 ### About-page copy in build.py is stale post-restore
 **Priority:** P2
@@ -166,6 +165,22 @@ reading it, so external podcast links can get `/trial/` indexed as "URL indexed
 without content" — polluting the attribution cleanliness the block protects. Check
 GSC coverage for `/trial/`; if indexed-without-content appears, decide between
 unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing)
+
+### Review backlog (v0.3.0.0 pre-landing, all P3)
+**Priority:** P3
+- Language config duplicated: `LOCALIZED_LANDING_LANGS` repeats prefix/dir that
+  categories.json declares (guarded by test_localized_landing_configs; resolve
+  by lookup or keep the test). (maintainability 2026-07-27)
+- site CLAUDE.md says "never hardcode ltr" but build.py:1512's bespoke ES
+  vertical template hardcodes dir="ltr" (harmless, es is LTR). (maintainability)
+- Arabic pages still carry minor English chrome: "Home" breadcrumb, byline,
+  "min read". Nav/CTA/guides ARE localized as of v0.3.0.0. (adversarial)
+- 2 posts hold dead translations.en pointers to a nonexistent promo-code slug
+  (gohighlevel-coupons-hindi-india-guide, codigo-promocional-gohighlevel-2026-
+  descuentos-reales) — gated out of output, cosmetic. (adversarial)
+- One restored ar body CTAs absolute https://globalhighlevel.com/trial (EN
+  podcast-attribution surface) — pollutes the podcast/blog click split; rewrite
+  to /ar/trial/ render-time if it matters. (red-team)
 
 ## Completed
 
