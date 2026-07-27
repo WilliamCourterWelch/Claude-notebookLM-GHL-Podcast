@@ -154,6 +154,13 @@ unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing
 
 ## Completed
 
+### Restore Batch 2
+**Completed:** (2026-07-27)
+136 tier-A/B pages restored (incl. GA4-promoted RFC-5322 pair — canonical as
+page, india twin as 301 per clone policy), 13 twin 301s, all 8 old-taxonomy hub
+redirects now correct (4 added, 1 target fixed). 285 posts live.
+
+
 ### Restore Batch 1 (Day 2 of full-restore sprint)
 **Completed:** v0.2.12.0 (2026-07-23)
 122 pages restored at original slugs (Bill-approved topics via 147-slug override
