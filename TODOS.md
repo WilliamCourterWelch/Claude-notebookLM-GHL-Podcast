@@ -226,7 +226,10 @@ the paragraph-eligibility/splice machinery — and inject_internal_links still
 carries the lowercased-copy indexing + bare '<p' split that 0.3.3.0 fixed in
 inject_pillar_link (adversarial: identical latent bugs). Fix both when
 extracting. Also derive FUNNEL_SINK_SLUGS' money slug from a shared constant
-(one more silent-drift site today).
+(one more silent-drift site today). Codex advisory residuals (0.3.3.0, both
+0-instance in corpus): a shared tolerant href extractor (single-quote/uppercase/
+protocol-relative links invisible to unwrap + Check 4e), and explicit series
+metadata instead of _series_nav_exempt's common-directory inference.
 
 ### Pillar-link build-order churn + anchor diversity (adversarial, watch)
 **Priority:** P3 — watch-mode, revisit with real SERP data
