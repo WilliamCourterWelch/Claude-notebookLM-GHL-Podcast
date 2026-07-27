@@ -2320,19 +2320,32 @@ def build_llms_txt(posts: list[dict]):
     what this site is about and lists all available content.
     Standard: https://llmstxt.org
     """
-    post_lines = ""
-    for p in posts[:200]:  # cap at 200 most recent
+    # Group by language so AI models see a labeled, per-language list instead
+    # of a mixed-language firehose. Per-language caps keep the file bounded
+    # while guaranteeing every language section (incl. the small /ar set) is
+    # represented (red-team 2026-07-27).
+    _LLMS_CAPS = {"en": 150, "es": 60, "en-IN": 60, "ar": 30}
+    _LLMS_HEADINGS = {"en": "Tutorials (English)", "es": "Tutoriales (Español)",
+                      "en-IN": "Tutorials (India)", "ar": "دروس (العربية)"}
+    by_lang: dict[str, list[str]] = {}
+    for p in posts:
         title = p.get("title", p.get("seoTitle", ""))
         slug  = p.get("slug", "")
         desc  = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 120)
         if title and slug:
-            post_lines += f"- [{title}]({SITE_URL}/blog/{slug}/): {desc}\n"
+            code = post_lang(p)
+            if len(by_lang.setdefault(code, [])) < _LLMS_CAPS.get(code, 30):
+                by_lang[code].append(f"- [{title}]({SITE_URL}/blog/{slug}/): {desc}")
+    post_lines = ""
+    for code in ("en", "es", "en-IN", "ar"):
+        if by_lang.get(code):
+            post_lines += f"### {_LLMS_HEADINGS.get(code, code)}\n\n" + "\n".join(by_lang[code]) + "\n\n"
 
     content = f"""# GlobalHighLevel.com
 
 > Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide.
 
-GlobalHighLevel.com is a free resource covering GoHighLevel (GHL) — an all-in-one CRM, marketing automation, and funnel platform used by digital marketing agencies globally. Every tutorial on this site also has a corresponding podcast episode on Spotify ("Go High Level", {SITE_URL}).
+GlobalHighLevel.com is a free resource covering GoHighLevel (GHL) — an all-in-one CRM, marketing automation, and funnel platform used by digital marketing agencies globally. Content is available in English, Spanish (/es/), Indian English (/in/), and Arabic (/ar/). The companion podcast "Go High Level" is on Spotify.
 
 ## About
 
@@ -3348,7 +3361,8 @@ def build_404():
   <p style="color:var(--text3);margin-bottom:32px">The page you're looking for doesn't exist.</p>
   <a href="/" class="btn-amber">Go Home</a>
 </div>"""
-    html = base_html("404 — Page Not Found | Global High Level", "Page not found.", f"{SITE_URL}/404", body)
+    html = base_html("404 — Page Not Found | Global High Level", "Page not found.", f"{SITE_URL}/404", body,
+                     noindex=True, disable_hreflang_fallback=True)
     write(PUBLIC_DIR / "404.html", html)
 
 
