@@ -268,13 +268,13 @@ def main() -> int:
     _c4e_scanned = [0]  # zones actually scanned — 0 at the end means the alarm is dead
 
     def _c4e_scan(label: str, page_html: str, lang: str, topic: str, src_url: str,
-                  end_marker: str):
+                  end_marker: str, body_class: str = 'class="post-body'):
         """Check 4e body-zone scanner. Tolerant of class-token variants
         ('class="post-body fade-3"'), loud when the zone is missing or
         unterminated (codex P2: the alarm must not silently empty itself)."""
-        b_start = page_html.find('class="post-body')
+        b_start = page_html.find(body_class)
         if b_start < 0:
-            c4_fails.append(f"{label}: 4e body zone MISSING (post-body class not found)")
+            c4_fails.append(f"{label}: 4e body zone MISSING ({body_class} not found)")
             return
         b_end = page_html.find(end_marker, b_start)
         if b_end < 0:
@@ -310,7 +310,16 @@ def main() -> int:
         if not slug:
             continue
         if build.is_series_post(p):
-            continue  # authority template: series nav is its cluster structure, not the circle
+            # authority template: series nav is its cluster structure, not the
+            # circle — skip circle checks, but its body STILL goes through the
+            # unwrap pass, so the 4e alarm must cover it (codex P2 re-review).
+            auth_page = PUBLIC / build.post_output_rel(p) / "index.html"
+            if auth_page.exists():
+                _c4e_scan(f"authority {slug}", read(auth_page),
+                          build.post_lang(p), build.post_topic(p), build.post_url(p),
+                          end_marker='<script type="application/ld+json">',
+                          body_class='class="auth-body')
+            continue
         page = PUBLIC / build.post_output_rel(p) / "index.html"
         if not page.exists():
             continue
