@@ -162,9 +162,12 @@ The canon link structure is enforced at render time by `build.py` and gated by
   en-IN stays English by design. Add a dict entry when adding a language.
 - **Render passes on post bodies** (JSON stays byte-faithful, D3):
   `correct_trial_claims()` rewrites false no-card boilerplate to the ~$1
-  card-verification truth, and `localize_trial_hrefs()` points ar bodies'
-  in-body /trial CTAs at `/ar/trial/` (es/en cohorts are a pending policy
-  call — see TODOS).
+  card-verification truth, and `localize_trial_hrefs()` routes in-body /trial
+  CTAs direct to the language-matched affiliate page (Bill-decided
+  v0.3.2.0): en/en-IN → `highlevel-bootcamp`, es → `highlevel-bootcamp-es`
+  (FirstPromoter tracker verified identical to EN), ar → `/ar/trial/` (GHL
+  has no Arabic page). Direct links carry `utm_campaign=blog-trial-{en|es}`
+  and get `rel="nofollow sponsored"` from the downstream paid-link pass.
 - **Localized trial landings:** `build.py`'s `LOCALIZED_LANDING_LANGS` builds
   `/{lang}/trial/` for es, in, and ar (Arabic copy native-reader reviewed,
   5 MSA corrections, v0.3.0.0). Only the `/trial/` variants are built —
@@ -189,6 +192,7 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - Offer: GoHighLevel 30-day FREE trial (double the standard 14-day trial)
 - GHL starts at $97/month
 - Affiliate link: https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12
+- Spanish affiliate link: https://www.gohighlevel.com/highlevel-bootcamp-es?fp_ref=amplifi-technologies12 (the ONLY localized GHL affiliate page — 26-variant sweep 2026-07-27, all others 404; tracker verified identical to EN)
 - Do NOT hardcode stream counts or follower numbers — they change. Check analytics if needed.
 
 ## DO NOT invent:
