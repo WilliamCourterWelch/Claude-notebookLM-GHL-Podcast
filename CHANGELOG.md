@@ -2,6 +2,13 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.2.13.0] - 2026-07-27
+### Added
+- **RESTORE BATCH 2 — 136 pages live again at their original slugs.** The tier A/B remainder of the 931, including the two email-deliverability pages that AI assistants kept visiting twice a day while dead (promoted from batch 3 on GA4 evidence). Same doctrine as batch 1: byte-faithful from git history, Bill-approved topics via the override sheet (20 corrections consumed), 396 affiliate links normalized to the fp_ref tag, updatedAt stamped.
+- **13 more clone twins consolidated as 301s** to their canonical pages. Running total: 258 of the 931 URLs resolving (258 = 122 + 136 pages) plus 28 twin redirects.
+### Fixed
+- **The four missing old-taxonomy hub redirects** (analytics-reporting, email-deliverability, sms-messaging, phone-voice) now 301 to their mapped new hubs — closes the GA4-flagged 404s on old category URLs; and the pre-existing agency-platform rule now points at the correct hub per the approved topic mapping (was sites-funnels-reputation).
+
 ## [0.2.12.0] - 2026-07-23
 ### Added
 - **RESTORE BATCH 1 — 122 pages live again at their original slugs.** The revenue core of the 931 pruned pages: the AI-cited landings ChatGPT/Copilot link to, the Bing top-5 rankers, and the top-clicked cluster (desktop app, MCP, voice agents, Agent Studio). Restored byte-faithful from git history except: topic stamped per the Bill-approved assignment sheet (147 title-audit corrections applied via per-slug overrides), `updatedAt` set to the deploy date, and every affiliate link normalized to the current `fp_ref` tag — 322 links across 111 posts, including former `app.gohighlevel.com` signup links that paid nobody (Bill-approved rewrite).
