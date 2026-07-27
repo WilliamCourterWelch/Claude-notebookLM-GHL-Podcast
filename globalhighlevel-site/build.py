@@ -161,6 +161,43 @@ def fmt_date(iso: str) -> str:
     except Exception:
         return ""
 
+# Chrome localization (v0.3.1.0 review catches): month names + read-time per
+# language, shared by the post/authority/hub-card templates. en-IN stays
+# English by design.
+_MONTHS = {
+    "es": {"January": "enero", "February": "febrero", "March": "marzo", "April": "abril",
+           "May": "mayo", "June": "junio", "July": "julio", "August": "agosto",
+           "September": "septiembre", "October": "octubre", "November": "noviembre", "December": "diciembre"},
+    "ar": {"January": "يناير", "February": "فبراير", "March": "مارس", "April": "أبريل",
+           "May": "مايو", "June": "يونيو", "July": "يوليو", "August": "أغسطس",
+           "September": "سبتمبر", "October": "أكتوبر", "November": "نوفمبر", "December": "ديسمبر"},
+}
+
+def localize_date(date_str: str, lang_code: str) -> str:
+    months = _MONTHS.get(lang_code)
+    if not months or not date_str:
+        return date_str
+    for en, native in months.items():
+        if date_str.startswith(en):
+            return date_str.replace(en, native, 1)
+    return date_str
+
+def localize_rtime(rtime: str, lang_code: str) -> str:
+    if lang_code == "es":
+        return rtime.replace("min read", "min de lectura")
+    if lang_code == "ar" and rtime.endswith(" min read"):
+        try:
+            mins = int(rtime.split()[0])
+        except ValueError:
+            return rtime
+        # Arabic count grammar: 1 دقيقة, 2 دقيقتان, 3-10 دقائق, 11+ دقيقة
+        if mins == 1: noun = "دقيقة"
+        elif mins == 2: noun = "دقيقتان"
+        elif 3 <= mins <= 10: noun = "دقائق"
+        else: noun = "دقيقة"
+        return f"{mins} {noun} قراءة"
+    return rtime
+
 def truncate(text: str, n: int = 160) -> str:
     return text[:n].rsplit(" ", 1)[0] + "…" if len(text) > n else text
 
@@ -409,6 +446,19 @@ _TRIAL_CLAIM_FIXES = (
     ("No credit card", "Just a ~$1 card verification"),
     ("no credit card", "just a ~$1 card verification"),
 )
+
+
+def localize_trial_hrefs(html: str, lang_code: str) -> str:
+    """Point in-body /trial CTA links at the language's own landing.
+    Currently ar-only (Bill-approved Pack A, 2026-07-27); the es (75 posts) and
+    en (17 posts) cohorts are a pending attribution-policy call in TODOS."""
+    if lang_code != "ar":
+        return html
+    for variant in ('href="https://globalhighlevel.com/trial/"',
+                    'href="https://globalhighlevel.com/trial"',
+                    'href="/trial/"', 'href="/trial"'):
+        html = html.replace(variant, 'href="/ar/trial/"')
+    return html
 
 
 def correct_trial_claims(html: str) -> str:
@@ -1325,7 +1375,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
 <body>
 <nav>
   <div class="nav-inner">
-    <a href="/" class="logo">Global<span class="logo-amber">HighLevel</span></a>
+    <a href="/" class="logo" dir="ltr">Global<span class="logo-amber">HighLevel</span></a>
     <div class="nav-links">
       <a href="{_guides_href}" class="nav-link">{_guides_label}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" class="nav-link" target="_blank" rel="noopener">Podcast</a>
@@ -1348,7 +1398,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
   <div class="footer-inner">
     <div class="footer-top">
       <div>
-        <div class="footer-logo">Global<span>HighLevel</span></div>
+        <div class="footer-logo" dir="ltr">Global<span>HighLevel</span></div>
         <p class="footer-desc">Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide.</p>
         <p class="footer-disclaimer">Affiliate disclosure: Some links on this site are affiliate links. If you sign up through our link, we may earn a commission at no extra cost to you. Not affiliated with GoHighLevel LLC.</p>
       </div>
@@ -1549,7 +1599,7 @@ def build_authority_page(post: dict, all_posts: list = None):
     # Sanitize + cap baked anchors + inject internal links (same as blog template —
     # auth bodies share the site-wide anchor ledger; codex 2026-07-23)
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(correct_trial_claims(html_content))
+    html_content = nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post))))
     html_content = enforce_anchor_caps(html_content)
     if all_posts:
         html_content = inject_internal_links(html_content, post, all_posts, max_links=4)
@@ -1612,7 +1662,7 @@ def build_authority_page(post: dict, all_posts: list = None):
 <main class="auth-main">
   {f'<div class="auth-series-label">{series_label}</div>' if series_label else ''}
   <h1 class="auth-title">{title}</h1>
-  <div class="auth-byline">Por William Welch{' · ' + date_str if date_str else ''} · {rtime}</div>
+  <div class="auth-byline">Por William Welch{' · ' + localize_date(date_str, post_lang(post)) if date_str else ''} · {localize_rtime(rtime, post_lang(post))}</div>
   <article class="auth-body">
     {html_content}
   </article>
@@ -1622,7 +1672,7 @@ def build_authority_page(post: dict, all_posts: list = None):
 <footer class="auth-footer">
   <div class="auth-footer-inner">
     <span>© 2026 GlobalHighLevel. Este sitio participa en el programa de afiliados de GoHighLevel.</span>
-    <span><a href="/about/">Acerca</a> · <a href="/">Home</a></span>
+    <span><a href="/about/">Acerca</a> · <a href="/">Inicio</a></span>
   </div>
 </footer>
 
@@ -1697,7 +1747,7 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(correct_trial_claims(html_content))
+    html_content = nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post))))
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
@@ -1934,18 +1984,25 @@ def build_post_page(post: dict, all_posts: list = None):
 })();
 </script>"""
 
+    # Localized post chrome (canary catch 2026-07-27: ar pages carried English
+    # breadcrumb/byline/read-time). en-IN stays English by design.
+    lang_code = post_lang(post)
+    _home_label = {"es": "Inicio", "ar": "الرئيسية"}.get(lang_code, "Home")
+    _by_label = {"es": "Por William Welch", "ar": "بقلم ويليام ويلش"}.get(lang_code, "By William Welch")
+    _rtime_local = localize_rtime(rtime, lang_code)
+    date_str = localize_date(date_str, lang_code)
     body = f"""
 <div id="reading-progress"></div>
 <div class="post-container">
   <div class="post-breadcrumb fade-1">
-    <span>Home</span><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
+    <span>{_home_label}</span><span class="bc-sep">&rsaquo;</span>{cat_bc}<span class="bc-sep">&rsaquo;</span><span>{truncate(title, 50)}</span>
   </div>
   <div class="post-eyebrow fade-1">{cat_eyebrow}</div>
   <h1 class="post-title fade-2">{title}</h1>
   <div class="post-byline fade-3">
-    <span>By William Welch</span>
+    <span>{_by_label}</span>
     {"<span class='sep'>&middot;</span><span>" + date_str + "</span>" if date_str else ""}
-    <span class="sep">&middot;</span><span>{rtime}</span>
+    <span class="sep">&middot;</span><span>{_rtime_local}</span>
   </div>
   {tldr_html}
   {cta1}
@@ -3499,7 +3556,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
   {cat_html}
   <h2 class="card-title"><a href="{post_url(p)}">{title}</a></h2>
   <p class="card-excerpt">{desc}</p>
-  <div class="card-meta"><span>{date_str}</span>{"<span class='meta-sep'>&middot;</span><span>" + rtime + "</span>" if date_str else ""}</div>
+  <div class="card-meta"><span>{localize_date(date_str, lang_code)}</span>{"<span class='meta-sep'>&middot;</span><span>" + localize_rtime(rtime, lang_code) + "</span>" if date_str else ""}</div>
 </article>"""
 
         # Pagination
@@ -3618,7 +3675,7 @@ def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: 
 <article class="card">
   <h2 class="card-title"><a href="{post_url(p)}">{title}</a></h2>
   <p class="card-excerpt">{desc}</p>
-  <div class="card-meta"><span>{date_str}</span>{"<span class='meta-sep'>&middot;</span><span>" + rtime + "</span>" if date_str else ""}</div>
+  <div class="card-meta"><span>{localize_date(date_str, lang_code)}</span>{"<span class='meta-sep'>&middot;</span><span>" + localize_rtime(rtime, lang_code) + "</span>" if date_str else ""}</div>
 </article>"""
 
         body = f"""

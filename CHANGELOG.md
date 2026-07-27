@@ -2,6 +2,14 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.1.0] - 2026-07-27
+### Fixed
+- **RTL logo**: the brand's two spans reordered to "HighLevelGlobal" on every Arabic page — the logo anchor now pins `dir="ltr"` (canary catch).
+- **Post chrome localized for Spanish and Arabic**: breadcrumb Home → Inicio / الرئيسية, byline, and read-time ("min de lectura" / "دقائق قراءة"); the Spanish vertical template's stray English "Home" is now "Inicio". India English stays English by design.
+- **Arabic bodies' in-body /trial CTAs now point at /ar/trial/** (`localize_trial_hrefs()` render pass, JSON untouched) — 3 posts were sending Arabic readers to the English podcast-attribution landing. The larger es (75) / en (17) /trial cohort is a pending policy call, tracked in TODOS.
+- Dropped dead `translations.en` pointers from 2 coupon posts (target is a twin 301; pointing at its canonical would have created a non-reciprocal hreflang cluster).
+- 2 new tests: logo LTR pin on RTL pages, trial-href localization scope.
+
 ## [0.3.0.0] - 2026-07-27
 ### Added
 - **THE 931 RESTORE IS COMPLETE.** Batch 3 (final): 619 pages live again at their original slugs — the long tail plus every previously-held Arabic page. All 931 pruned URLs now resolve: 877 as live pages, 54 as 301s into their clone canonicals. 1,126 affiliate links normalized in this batch alone (2,900+ across the sprint), zero errors, zero collisions across all three batches.

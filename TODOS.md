@@ -182,6 +182,41 @@ unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing
   podcast-attribution surface) — pollutes the podcast/blog click split; rewrite
   to /ar/trial/ render-time if it matters. (red-team)
 
+### /trial CTA cohort: 75 es + 17 en posts link the podcast-attribution surface
+**Priority:** P2
+95 restored bodies carry in-body CTAs to /trial (the PODCAST-attribution
+landing): es 75, en 17, ar 3. The ar 3 were rewritten to /ar/trial/ render-time
+in the arabic-polish ship. Pending Bill policy call for the rest: rewrite es
+posts to /es/trial/ (native landing, but its GA4 campaign still says
+es-podcast), and decide whether en posts should keep /trial or point at the
+money page per the D2 pattern. (Pack A recon 2026-07-27)
+
+### Caleb-canon contextual links (D11 + D12, post-sprint plan items)
+**Priority:** P2
+D11: audit restored bodies for organic cross-silo links that violate the
+never-cross-silos rule. D12: hand-weave contextual in-prose links into
+reattached spokes (template hub/circle links shipped; prose-woven links are
+the remaining Caleb-doctrine gap Bill flagged mid-sprint). Needs a scoping
+conversation first — prose edits touch the byte-faithful doctrine.
+(Sprint plan 2026-07-22; logged per Bill 2026-07-27)
+
+### Arabic/i18n polish backlog (v0.3.1.0 review, all P3)
+**Priority:** P3
+- English chrome blocks on ar pages (CTAs "Ready to try this?", trailing arrows,
+  podcast/share/author boxes) render in RTL bidi context — wrap intentionally-
+  English blocks in dir="ltr" containers or extend label dicts. (adversarial)
+- Breadcrumb JSON-LD still hardcodes "Home" on es/ar posts (visual breadcrumb
+  is localized; the schema.org name is not). (codex)
+- Consolidate chrome labels into one CHROME_LABELS map — labels now live in
+  the post-renderer dicts + localize_date/localize_rtime + authority footer.
+  (maintainability)
+- localize_trial_hrefs() is exact-match by design (single-quote/query-string
+  variants unhandled; zero exist in corpus — verified). Revisit if the es/en
+  cohort rewrite ships. (codex)
+- Confirm the es↔en-IN coupon hreflang pair (codigo-promocional ↔
+  coupons-hindi) are genuine content equivalents — codex flags the cluster as
+  possibly false; both about promo codes, symmetric, pre-existing. (codex)
+
 ## Completed
 
 ### Restore Batch 3 (FINAL) + /ar section — SPRINT COMPLETE
