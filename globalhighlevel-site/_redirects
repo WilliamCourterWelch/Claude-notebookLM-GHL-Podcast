@@ -64,8 +64,8 @@
 /blog/audit-logs-gohighlevel-india-guide/ /in/ 301
 /blog/audit-logs-gohighlevel-rastrear-cambios-cuenta /es/ 301
 /blog/audit-logs-gohighlevel-rastrear-cambios-cuenta/ /es/ 301
-/blog/automate-facebook-comments-gohighlevel-india-lead-capture /in/ 301
-/blog/automate-facebook-comments-gohighlevel-india-lead-capture/ /in/ 301
+/blog/automate-facebook-comments-gohighlevel-india-lead-capture /blog/automate-facebook-comments-gohighlevel-lead-capture/ 301
+/blog/automate-facebook-comments-gohighlevel-india-lead-capture/ /blog/automate-facebook-comments-gohighlevel-lead-capture/ 301
 /blog/automate-instagram-comments-gohighlevel-india /in/ 301
 /blog/automate-instagram-comments-gohighlevel-india/ /in/ 301
 /blog/automatiza-atencion-cliente-whatsapp-workflows-ghl /blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/ 301
@@ -210,8 +210,8 @@
 /blog/emitir-certificados-gohighlevel-automatizar-credenciales/ /blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/ 301
 /blog/enable-2fa-gohighlevel-secure-indian-agency /in/ 301
 /blog/enable-2fa-gohighlevel-secure-indian-agency/ /in/ 301
-/blog/enable-3d-secure-payments-gohighlevel-india-reduce-fraud /in/ 301
-/blog/enable-3d-secure-payments-gohighlevel-india-reduce-fraud/ /in/ 301
+/blog/enable-3d-secure-payments-gohighlevel-india-reduce-fraud /blog/how-to-enable-3d-secure-payments-gohighlevel-reduce-fraud/ 301
+/blog/enable-3d-secure-payments-gohighlevel-india-reduce-fraud/ /blog/how-to-enable-3d-secure-payments-gohighlevel-reduce-fraud/ 301
 /blog/facebook-ads-gohighlevel-indian-agencies /in/ 301
 /blog/facebook-ads-gohighlevel-indian-agencies/ /in/ 301
 /blog/facebook-instagram-messaging-gohighlevel-india-agencies /in/ 301
@@ -290,12 +290,12 @@
 /blog/ghl-workflows-mercadopago-automatiza-pagos-clientes/ /blog/gohighlevel-latam-pagos-agencias/ 301
 /blog/ghl-workflows-real-estate-agents-india-lead-follow-up-automation /in/ 301
 /blog/ghl-workflows-real-estate-agents-india-lead-follow-up-automation/ /in/ 301
-/blog/go-high-level-agencias-latinoamerica-2024 /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
-/blog/go-high-level-agencias-latinoamerica-2024/ /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
+/blog/go-high-level-agencias-latinoamerica-2024 /blog/go-high-level-agencias-latinoamerica-2026/ 301
+/blog/go-high-level-agencias-latinoamerica-2024/ /blog/go-high-level-agencias-latinoamerica-2026/ 301
 /blog/go-high-level-agencias-latinoamerica-2026 /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
 /blog/go-high-level-agencias-latinoamerica-2026/ /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
-/blog/go-high-level-agencias-latinoamerica-2026-1 /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
-/blog/go-high-level-agencias-latinoamerica-2026-1/ /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
+/blog/go-high-level-agencias-latinoamerica-2026-1 /blog/go-high-level-agencias-latinoamerica-2026/ 301
+/blog/go-high-level-agencias-latinoamerica-2026-1/ /blog/go-high-level-agencias-latinoamerica-2026/ 301
 /blog/gohighlevel-5-automatizaciones-transformar-negocio /blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/ 301
 /blog/gohighlevel-5-automatizaciones-transformar-negocio/ /blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/ 301
 /blog/gohighlevel-abandoned-cart-recovery-indian-ecommerce /in/ 301
@@ -367,8 +367,8 @@
 /blog/guia-completa-gohighlevel-que-es-como-usar-agencia-digital/ /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
 /blog/que-es-gohighlevel-guia-completa-agencias-2026 /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
 /blog/que-es-gohighlevel-guia-completa-agencias-2026/ /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
-/blog/que-es-gohighlevel-ghl-plataforma-automatizacion-agencias-latinoamerica /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
-/blog/que-es-gohighlevel-ghl-plataforma-automatizacion-agencias-latinoamerica/ /blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/ 301
+/blog/que-es-gohighlevel-ghl-plataforma-automatizacion-agencias-latinoamerica /blog/que-es-gohighlevel-plataforma-automatizacion-agencias-latinoamerica/ 301
+/blog/que-es-gohighlevel-ghl-plataforma-automatizacion-agencias-latinoamerica/ /blog/que-es-gohighlevel-plataforma-automatizacion-agencias-latinoamerica/ 301
 
 # Category slug renames 2026-06-25 (relabel into cluster categories) — old slugs were live/indexed
 /category/payments-commerce /category/payments-pricing/ 301
