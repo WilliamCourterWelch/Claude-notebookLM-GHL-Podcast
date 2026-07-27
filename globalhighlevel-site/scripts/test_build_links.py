@@ -346,18 +346,32 @@ def test_logo_ltr_on_rtl_pages():
 
 def test_localize_trial_hrefs():
     f = build.localize_trial_hrefs
-    ar = '<p><a href="https://globalhighlevel.com/trial/">جرب</a> <a href="/trial/">x</a></p>'
-    out = f(ar, "ar")
-    check("ar bodies: /trial CTAs rewritten to /ar/trial/",
-          out.count('href="/ar/trial/"') == 2 and "globalhighlevel.com/trial" not in out)
-    # the no-trailing-slash absolute form is the ONLY variant in the 3 real ar posts
+    body = '<p><a href="https://globalhighlevel.com/trial/">go</a> <a href="/trial/">x</a></p>'
+    out_ar = f(body, "ar")
+    check("ar bodies: /trial CTAs -> /ar/trial/ (only possible Arabic step)",
+          out_ar.count('href="/ar/trial/"') == 2 and "globalhighlevel.com/trial" not in out_ar)
+    out_es = f(body, "es")
+    check("es bodies: direct to Spanish affiliate page",
+          out_es.count("highlevel-bootcamp-es?fp_ref=") == 2)
+    check("es links carry the blog-trial-es campaign tag",
+          out_es.count("utm_campaign=blog-trial-es") == 2)
+    out_en = f(body, "en")
+    check("en bodies: direct to English affiliate page",
+          out_en.count("highlevel-bootcamp?fp_ref=") == 2 and "bootcamp-es" not in out_en)
+    check("en links carry the blog-trial-en campaign tag",
+          out_en.count("utm_campaign=blog-trial-en") == 2)
+    out_in = f(body, "en-IN")
+    check("en-IN bodies route like English", "highlevel-bootcamp?fp_ref=" in out_in and "blog-trial-en" in out_in)
     noslash = '<a href="https://globalhighlevel.com/trial">x</a>'
-    check("no-trailing-slash absolute variant rewritten", 'href="/ar/trial/"' in f(noslash, "ar"))
-    check("pass is idempotent", f(f(ar, "ar"), "ar") == f(ar, "ar"))
-    check("es bodies untouched (pending policy call)", f(ar, "es") == ar)
-    check("en bodies untouched", f(ar, "en") == ar)
-    safe = '<a href="/trial-something/">x</a>'
-    check("does not touch /trial-prefixed other paths", f(safe, "ar") == safe)
+    check("no-trailing-slash absolute variant rewritten", "fp_ref=" in f(noslash, "en"))
+    for lc in ("ar", "es", "en"):
+        check(f"pass is idempotent ({lc})", f(f(body, lc), lc) == f(body, lc))
+    safe = '<p><a href="/trial-something/">x</a></p>'
+    check("does not touch /trial-prefixed other paths", f(safe, "es") == safe)
+    # nofollow interplay: the direct affiliate href must gain rel=nofollow sponsored downstream
+    chained = build.nofollow_affiliate_links(f(body, "es"))
+    check("direct affiliate links get rel=nofollow sponsored via the downstream pass",
+          chained.count('rel="nofollow sponsored"') == 2)
 
 
 def test_chrome_localization():

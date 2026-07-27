@@ -449,15 +449,24 @@ _TRIAL_CLAIM_FIXES = (
 
 
 def localize_trial_hrefs(html: str, lang_code: str) -> str:
-    """Point in-body /trial CTA links at the language's own landing.
-    Currently ar-only (Bill-approved Pack A, 2026-07-27); the es (75 posts) and
-    en (17 posts) cohorts are a pending attribution-policy call in TODOS."""
-    if lang_code != "ar":
-        return html
+    """Route in-body /trial CTA links per the reader's language (Bill-decided
+    2026-07-27: "direct to affiliate, in the user's language"):
+      en/en-IN -> the English affiliate page, es -> the Spanish affiliate page
+      (highlevel-bootcamp-es, tracker verified paying 2026-07-27), ar -> the
+      /ar/trial/ landing (GHL has no Arabic page; 26-variant sweep, all 404).
+    Direct hrefs carry fp_ref so nofollow_affiliate_links (which runs AFTER
+    this pass) stamps them rel="nofollow sponsored" automatically. The
+    utm_campaign=blog-trial-{lang} tag splits the affiliate-portal clicks by
+    language. /trial itself stays live for the podcast spoken URL — bodies
+    just stop linking it."""
+    if lang_code == "ar":
+        target = '/ar/trial/'
+    else:
+        target = f"{affiliate_for(lang_code)}&utm_campaign=blog-trial-{'es' if lang_code == 'es' else 'en'}"
     for variant in ('href="https://globalhighlevel.com/trial/"',
                     'href="https://globalhighlevel.com/trial"',
                     'href="/trial/"', 'href="/trial"'):
-        html = html.replace(variant, 'href="/ar/trial/"')
+        html = html.replace(variant, f'href="{target}"')
     return html
 
 
