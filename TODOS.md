@@ -45,7 +45,7 @@ output dir in the dashboard. (Eng review T9)
 ### Precompute silo map for circle/related/inject (perf at 2k+ posts)
 **Priority:** P2
 circle_members/get_related rescan all_posts per post (O(n^2 log n), ~2.5s combined
-at 958, fine today, ~2min at 10k) and _build_link_index is rebuilt per post. One
+at ~950-post scale — site landed at 904 in v0.3.0.0 — fine today, ~2min at 10k) and _build_link_index is rebuilt per post. One
 {(lang,topic): sorted members} map per build fixes all three. (Perf specialist 2026-07-23)
 
 ### Batch git reads in restore_posts.py
@@ -117,6 +117,23 @@ The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
 `functions/_middleware.js`. Lowest value — only if slack. (Eng review T13)
 
 ## Content hygiene
+
+### Restored firehose bodies reintroduce "no credit card" claims at scale
+**Priority:** P2
+A rough grep finds ~867 of 904 posts (en/es/in/ar) matching no-credit-card-style
+strings ("no credit card", "sin tarjeta", "بدون بطاقة") — restored bodies predate
+the trial-copy correction (a card IS required: ~$1 verification hold). The trial
+landings and money page state the card requirement correctly; the in-body CTA
+boilerplate contradicts them. Refine the scan to separate false claims from
+legitimate hedged copy, then decide render-time rewrite vs batch body edit.
+(Codex doc review 2026-07-27)
+
+### About-page copy in build.py is stale post-restore
+**Priority:** P2
+`build.py` about-page body (~line 3267, 3311) still says "300+ tutorials", "10
+content categories", and "India, Latin America" — site is now 904 posts, 5 topics,
+and 4 languages including Arabic. Copy lives in code, so it was out of scope for
+the docs pass. (Codex doc review 2026-07-27)
 
 ### Confirm /es/start 301 target (pricing guide vs restored Spanish trial post)
 **Priority:** P3

@@ -157,7 +157,14 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - **Localized trial landings:** `build.py`'s `LOCALIZED_LANDING_LANGS` builds
   `/{lang}/trial/` for es, in, and ar (Arabic copy native-reader reviewed,
   5 MSA corrections, v0.3.0.0). Only the `/trial/` variants are built —
-  `/start/` variants stay retired 301s in `_redirects`.
+  `/es/start` and `/in/start` stay retired 301s in `_redirects`; `/ar/start`
+  never existed publicly and has no rule (don't add one).
+- **Language hubs + category pages build themselves:** `/ar/` and
+  `/ar/category/<topic>/` come from the standard language-hub loop
+  (`build_language_topic_pages`, `min_posts=2`) — any language-topic bucket
+  with 2+ posts gets a category page, singleton buckets get none. No
+  Arabic-specific page code exists; growing a bucket past 1 post creates its
+  category page automatically.
 - **Language gate:** `_LANG_SLUG_MARKERS` in `build.py` carries Arabic markers
   (`arabic`, `mena`) so a future mistagged Arabic post fails the build instead
   of leaking into English hubs.
