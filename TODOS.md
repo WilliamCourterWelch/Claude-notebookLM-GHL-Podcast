@@ -23,11 +23,14 @@ from being silently weakened. (Eng review T4)
 
 ### Delete dead build_trial_page()
 **Priority:** P1
-`build.py` `build_trial_page()` (~line 2355) still calls `_build_affiliate_landing("start", "blog")` and its
+`build.py` `build_trial_page()` (~line 2358) still calls `_build_affiliate_landing("start", "blog")` and its
 docstring calls `/start/` a "full SEO-optimized page". Dead code with a misleading
-docstring — one innocent future call rebuilds a retired page. (Note: per current
-Cloudflare docs the 301 would still win over a static file — see T8 — so the risk
-is confusion + a stale crawlable artifact, not redirect shadowing.) (Eng review T7)
+docstring — one innocent future call rebuilds a retired page. Blast radius grew in
+v0.3.0.0: the function also loops `LOCALIZED_LANDING_LANGS` (now es/in/ar), so an
+accidental call would rebuild retired `/{lang}/start/` pages in all four languages.
+(Note: per current Cloudflare docs the 301 would still win over a static file — see
+T8 — so the risk is confusion + a stale crawlable artifact, not redirect shadowing.)
+(Eng review T7)
 
 
 ### Delete vestigial repo-root _redirects
@@ -115,11 +118,14 @@ The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
 
 ## Content hygiene
 
-### Prune or restore dead translation pointers in money-page JSON
-**Priority:** P2
-`translations` maps es/en-IN to two posts that don't exist in `posts/`; build fails
-soft (drops hreflang). Also confirm `/es/start` 301 target (pricing guide, not a
-Spanish trial post) is intentional. (Adversarial review 2026-07-22)
+### Confirm /es/start 301 target (pricing guide vs restored Spanish trial post)
+**Priority:** P3
+The dead-pointer half of this item resolved itself in v0.3.0.0: both money-page
+`translations` targets (es + en-IN) were restored in Batch 3, so hreflang emits
+again. Remaining: `/es/start` 301s to the pricing guide while the restored Spanish
+trial post (`gohighlevel-prueba-gratis-30-dias-como-empezar`) now exists — confirm
+that target is still intentional or repoint. (Adversarial review 2026-07-22;
+updated 2026-07-27)
 
 ### Discount-intent coverage check on money page
 **Priority:** P3
@@ -154,7 +160,7 @@ resolved (option a). 904 posts live.
 
 
 ### Restore Batch 2
-**Completed:** (2026-07-27)
+**Completed:** v0.2.13.0 (2026-07-27)
 136 tier-A/B pages restored (incl. GA4-promoted RFC-5322 pair — canonical as
 page, india twin as 301 per clone policy), 13 twin 301s, all 8 old-taxonomy hub
 redirects now correct (4 added, 1 target fixed). 285 posts live.
