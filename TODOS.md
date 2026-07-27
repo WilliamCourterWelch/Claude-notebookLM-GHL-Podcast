@@ -179,15 +179,6 @@ unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing
   (gohighlevel-coupons-hindi-india-guide, codigo-promocional-gohighlevel-2026-
   descuentos-reales) — gated out of output, cosmetic. (adversarial)
 
-### Caleb-canon contextual links (D11 + D12, post-sprint plan items)
-**Priority:** P2
-D11: audit restored bodies for organic cross-silo links that violate the
-never-cross-silos rule. D12: hand-weave contextual in-prose links into
-reattached spokes (template hub/circle links shipped; prose-woven links are
-the remaining Caleb-doctrine gap Bill flagged mid-sprint). Needs a scoping
-conversation first — prose edits touch the byte-faithful doctrine.
-(Sprint plan 2026-07-22; logged per Bill 2026-07-27)
-
 ### Arabic/i18n polish backlog (v0.3.1.0 review, all P3)
 **Priority:** P3
 - English chrome blocks on ar pages (CTAs "Ready to try this?", trailing arrows,
@@ -206,6 +197,19 @@ conversation first — prose edits touch the byte-faithful doctrine.
   possibly false; both about promo codes, symmetric, pre-existing. (codex)
 
 ## Completed
+
+### Spanish topic keywords for better es pillar-link coverage
+**Priority:** P3
+inject_pillar_link() wove only 7 es links (vs 138 en) because categories.json
+keywords are mostly English words. Adding Spanish multi-word keyword lists per
+topic would lift es contextual coverage. (Pack B ship 2026-07-27)
+
+### Pack B: Caleb-canon linking (D11 strict + D12 contextual) — DECIDED & SHIPPED
+**Completed:** v0.3.3.0 (2026-07-27)
+D11: cross-silo body links unwrapped render-time (24 LATAM links; funnel
+exempt; 0 remain rendered). D12: 168 in-prose pillar links woven (66 distinct
+multi-word anchors). Bill's calls: strict unwrap + mechanical render pass.
+
 
 ### Trial CTAs direct-to-affiliate per language — DECIDED & SHIPPED
 **Completed:** v0.3.2.0 (2026-07-27)
