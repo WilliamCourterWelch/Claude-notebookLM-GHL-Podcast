@@ -79,6 +79,10 @@ PILLAR_HUB_MAP = {}
 # on (anchor_text_lower, url); injected/hub links beyond ANCHOR_URL_CAP are dropped so
 # the footprint stays varied. Cleared at the start of each build().
 ANCHOR_URL_CAP = 3
+# A language+topic bucket needs this many posts before its hub page is built.
+# Shared by build_language_topic_pages, main()'s BUILT_PAGE_PATHS precompute,
+# and inject_pillar_link's bucket guard — one value, three consumers.
+MIN_LANG_TOPIC_POSTS = 2
 # Conversion/attribution paths: CTAs to these are funnel plumbing, not editorial
 # links — exempt from anchor doctrine (mirrored by audit_links.py EXEMPT_PREFIXES).
 # /trial is robots-disallowed attribution; the language variants are the localized
@@ -692,26 +696,79 @@ FUNNEL_SINK_SLUGS = {
 # slug -> (lang, topic), populated in main() before post rendering.
 _SILO_BY_SLUG: dict = {}
 
+# canonical URL -> (slug, lang, topic) for EVERY post, including custom
+# url_path posts (/es/para/..., /es/mercadopago-gohighlevel/) that the
+# /blog/-shaped regex can never see (adversarial review 2026-07-27:
+# 15 cross-silo links rode this bypass while the CHANGELOG claimed zero).
+_SILO_BY_URL: dict = {}
 
-def unwrap_cross_silo_links(html: str, post: dict, silo_map: dict = None) -> str:
-    """Caleb Critical Rule at render time (D11, Bill-decided strict 2026-07-27):
-    an in-body link to a post in a DIFFERENT silo (language+topic) is unwrapped
-    — the words stay, the link goes. Funnel sinks are exempt (they are the
-    business, not topical links). JSON stays byte-faithful (D3)."""
+
+def _series_nav_exempt(src_url: str, tgt_url: str, url_map: dict) -> bool:
+    """Caleb link-circles are cluster structure, not cross-silo leaks: a series
+    hub and its parts link each other even when parts carry their own topic
+    labels. Exempt parent<->child (path nesting) and sibling parts under the
+    same series hub (their common directory is itself a post URL)."""
+    if src_url.startswith(tgt_url) or tgt_url.startswith(src_url):
+        return True
+    common = os.path.commonprefix([src_url, tgt_url])
+    common = common[:common.rfind("/") + 1]
+    return common in url_map
+
+# Render-pass outcome counters, reset + printed by main(). A regression to 0
+# unwraps/injections must be visible in build output, not only in the CHANGELOG
+# (adversarial review 2026-07-27: every silent-return branch green-builds).
+_RENDER_PASS_COUNTS = {"unwrapped": 0, "pillar_links": 0}
+
+
+def unwrap_cross_silo_links(html: str, post: dict, silo_map: dict = None,
+                            url_map: dict = None) -> str:
+    """Caleb Critical Rule at render time (D11, Bill-decided strict 2026-07-27;
+    scope extended to custom-URL posts at D13, 2026-07-27): an in-body link to
+    a post in a DIFFERENT silo (language+topic) is unwrapped — the words stay,
+    the link goes. Exempt: funnel sinks (they are the business, not topical
+    links) and series-navigation links (link circles are cluster structure).
+    JSON stays byte-faithful (D3)."""
     silo_map = silo_map if silo_map is not None else _SILO_BY_SLUG
     if not silo_map:
         return html
+    url_map = url_map if url_map is not None else _SILO_BY_URL
     src = (post_lang(post), post_topic(post))
+    src_url = post_url(post)
 
     def _repl(m):
         tgt = m.group(1)
         if tgt in FUNNEL_SINK_SLUGS or tgt not in silo_map or silo_map[tgt] == src:
             return m.group(0)
+        _RENDER_PASS_COUNTS["unwrapped"] += 1
         return m.group(2)  # keep inner text, drop the anchor
 
-    return re.sub(
-        r'<a\b[^>]*href="(?:https://globalhighlevel\.com)?/blog/([a-z0-9\-]+)/?"[^>]*>(.*?)</a>',
+    html = re.sub(
+        r'<a\b[^>]*href="(?:https://globalhighlevel\.com)?/blog/([a-z0-9\-]+)/?(?:[?#][^"]*)?"[^>]*>(.*?)</a>',
         _repl, html, flags=re.DOTALL)
+
+    if not url_map:
+        return html
+
+    def _repl_url(m):
+        tgt_url = m.group(1).split("?")[0].split("#")[0]
+        if not tgt_url.endswith("/"):
+            tgt_url += "/"
+        if tgt_url.startswith("/blog/"):
+            return m.group(0)  # slug pass above already adjudicated these
+        meta = url_map.get(tgt_url)
+        if meta is None:
+            return m.group(0)  # not a post page (hub, landing, asset) — keep
+        tgt_slug, tgt_silo = meta
+        if tgt_slug in FUNNEL_SINK_SLUGS or tgt_silo == src:
+            return m.group(0)
+        if _series_nav_exempt(src_url, tgt_url, url_map):
+            return m.group(0)
+        _RENDER_PASS_COUNTS["unwrapped"] += 1
+        return m.group(2)
+
+    return re.sub(
+        r'<a\b[^>]*href="(?:https://globalhighlevel\.com)?(/[^"]+?)"[^>]*>(.*?)</a>',
+        _repl_url, html, flags=re.DOTALL)
 
 
 def inject_pillar_link(html: str, post: dict, all_posts: list = None) -> str:
@@ -734,9 +791,9 @@ def inject_pillar_link(html: str, post: dict, all_posts: list = None) -> str:
         prefix = (lang_cfg or {}).get("prefix", "")
         if not prefix or not all_posts:
             return html
-        # replicate build_language_topic_pages' min_posts=2 rule
+        # replicate build_language_topic_pages' min_posts rule
         bucket = sum(1 for q in all_posts if post_lang(q) == lang and post_topic(q) == cat)
-        if bucket < 2:
+        if bucket < MIN_LANG_TOPIC_POSTS:
             return html
         hub_url = f"{prefix}/category/{cat_slug}/"
     if f'href="{hub_url}"' in html:
@@ -750,26 +807,37 @@ def inject_pillar_link(html: str, post: dict, all_posts: list = None) -> str:
     import random
     rng = random.Random(post.get("slug", ""))
     rng.shuffle(keywords)  # rotate anchors across posts so the sitewide cap spreads
-    parts = re.split(r'(<p[^>]*>.*?</p>)', html, flags=re.DOTALL)
+    # <p(?:\s|>): a bare '<p' prefix also matches <pre> blocks, and re.split
+    # chunks that AREN'T captured paragraphs can still start with '<pre' — both
+    # would let the keyword search inject inside code (adversarial 2026-07-27).
+    parts = re.split(r'(<p(?:\s[^>]*)?>.*?</p>)', html, flags=re.DOTALL)
     for i, part in enumerate(parts):
-        if not part.startswith('<p'):
+        if not re.match(r'<p(?:\s|>)', part):
             continue
         text_only = re.sub(r'<[^>]+>', '', part)
         if len(text_only) < 80 or '<a ' in part:
             continue
-        low = part.lower()
         for kw in keywords:
-            idx = low.find(kw)
-            if idx < 0:
-                continue
-            before = part[:idx]
-            if before.count('<') > before.count('>'):
-                continue
-            original = part[idx:idx + len(kw)]
-            if not _anchor_under_cap(original, hub_url):
-                continue
-            parts[i] = part[:idx] + f'<a href="{hub_url}">{original}</a>' + part[idx + len(kw):]
-            return "".join(parts)
+            # Word-boundary + case-insensitive search on the ORIGINAL string:
+            # lowercased-copy indexing desyncs on chars whose lower() changes
+            # length (İ), and a bare find() anchors mid-word ("smart list"
+            # inside "Smart Lists") — 20 live instances before this guard.
+            # (?:e?s)? — prose mostly uses plurals ("AI agents", "smart lists");
+            # anchor the WHOLE word rather than splitting it mid-plural. Longer
+            # suffixes ("listings") still fail the boundary and are skipped.
+            # finditer, not search: the first occurrence may fail the boundary
+            # or tag guards while a later one in the same paragraph is clean.
+            for kw_m in re.finditer(r'(?<!\w)' + re.escape(kw) + r'(?:e?s)?(?!\w)', part, re.IGNORECASE):
+                idx = kw_m.start()
+                before = part[:idx]
+                if before.count('<') > before.count('>'):
+                    continue
+                original = kw_m.group(0)
+                if not _anchor_under_cap(original, hub_url):
+                    break  # cap is per (anchor,url); other occurrences same key
+                parts[i] = part[:idx] + f'<a href="{hub_url}">{original}</a>' + part[idx + len(original):]
+                _RENDER_PASS_COUNTS["pillar_links"] += 1
+                return "".join(parts)
     return html
 
 
@@ -2404,7 +2472,11 @@ def build_category_pages(posts: list[dict]):
             p_title = pillar.get("title", cat)
             # Hub pillar bodies render with a .post-body and share the site-wide
             # anchor ledger — cap them like post bodies (D3 render-time cap).
-            p_body  = enforce_anchor_caps(nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(pillar.get("html_content", ""), post_lang(pillar)))))
+            # Same body-pass order as build_post_page: unwrap cross-silo links
+            # BEFORE the cap so they never burn ledger slots. This was the one
+            # body-render site missing the D11 unwrap (review 2026-07-27 —
+            # the CRM pillar's SaaS Mode link survived here).
+            p_body  = enforce_anchor_caps(unwrap_cross_silo_links(nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(pillar.get("html_content", ""), post_lang(pillar)))), pillar))
             more_html = (f'''
 <div class="container">
   <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>
@@ -3767,7 +3839,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
             write(PUBLIC_DIR / prefix.lstrip("/") / "page" / str(page) / "index.html", html)
 
 
-def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: int = 2):
+def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: int = MIN_LANG_TOPIC_POSTS):
     """Build topic pages within a language (e.g., /es/category/ai-automation/)."""
     prefix = lang_config["prefix"]
     lang_code = lang_config["code"]
@@ -3934,12 +4006,18 @@ def main():
                 _t = post_topic(_p)
                 _counts[_t] = _counts.get(_t, 0) + 1
         for _t, _n in _counts.items():
-            if _n >= 2:
+            if _n >= MIN_LANG_TOPIC_POSTS:
                 BUILT_PAGE_PATHS.add(f"{_prefix}/category/{slugify(_t)}/")
 
-    # Silo map for the render-time cross-silo unwrap (D11, 2026-07-27)
+    # Silo maps for the render-time cross-silo unwrap (D11 + D13, 2026-07-27):
+    # slug map for /blog/ links, URL map for custom-url_path posts.
     _SILO_BY_SLUG.clear()
     _SILO_BY_SLUG.update({q["slug"]: (post_lang(q), post_topic(q)) for q in merged if q.get("slug")})
+    _SILO_BY_URL.clear()
+    _SILO_BY_URL.update({post_url(q): (q["slug"], (post_lang(q), post_topic(q)))
+                         for q in merged if q.get("slug")})
+    _RENDER_PASS_COUNTS["unwrapped"] = 0
+    _RENDER_PASS_COUNTS["pillar_links"] = 0
 
     # Individual post pages — authority template for series content, blog template for rest
     print("Building post pages...")
@@ -3980,6 +4058,11 @@ def main():
             print(f"  Building {lang['native']} hub ({lang['prefix']})...")
             build_language_hub(lang, merged)
             build_language_topic_pages(lang, merged)
+
+    # After every body-rendering builder (posts + hub pillars): surface the
+    # render-pass outcomes so a silent regression to 0 shows in build output.
+    print(f"  render passes: {_RENDER_PASS_COUNTS['unwrapped']} cross-silo links unwrapped, "
+          f"{_RENDER_PASS_COUNTS['pillar_links']} pillar links injected")
 
     # Sitemap
     print("\nBuilding sitemap...")

@@ -423,32 +423,133 @@ def test_unwrap_cross_silo_links():
     check("unknown-slug link left alone", '<a href="/blog/unknown/">unknown</a>' in out)
     check("pass is idempotent", f(out, post, silo) == out)
     check("empty map is a no-op", f(html, post, {}) == html)
+    # regex coverage the corpus actually contains (review 2026-07-27)
+    check("absolute-URL cross-silo link unwrapped",
+          f('<a href="https://globalhighlevel.com/blog/other/">abs text</a>', post, silo) == 'abs text')
+    check("nested markup preserved on unwrap",
+          f('<a href="/blog/other/"><strong>bold</strong> words</a>', post, silo) == '<strong>bold</strong> words')
+    check("no-trailing-slash href unwrapped",
+          f('<a href="/blog/other">ns</a>', post, silo) == 'ns')
+    check("query-string href unwrapped (no evasion)",
+          f('<a href="/blog/other/?utm=x">q</a>', post, silo) == 'q')
+    check("fragment href unwrapped (no evasion)",
+          f('<a href="/blog/other/#sec">frag</a>', post, silo) == 'frag')
+    # production path: default arg reads the module-global map (fail-open guard)
+    saved_map = dict(build._SILO_BY_SLUG)
+    try:
+        build._SILO_BY_SLUG.clear(); build._SILO_BY_SLUG.update(silo)
+        check("default-arg path reads module global _SILO_BY_SLUG",
+              '/blog/other/' not in f(html, post))
+    finally:
+        build._SILO_BY_SLUG.clear(); build._SILO_BY_SLUG.update(saved_map)
+    # RTL Arabic body: link goes, Arabic text stays
+    ar_silo = {"ar-other": ("ar", "Payments & Pricing")}
+    ar_post = {"slug": "src-ar", "language": "ar", "topic": "CRM & Communication"}
+    ar_html = '<p dir="rtl">جرب <a href="/blog/ar-other/">الأسعار</a> الآن</p>'
+    ar_out = f(ar_html, ar_post, ar_silo)
+    check("RTL cross-silo link unwrapped", '/blog/ar-other/' not in ar_out)
+    check("Arabic anchor text preserved", 'الأسعار' in ar_out)
+    # D13: custom-url_path posts adjudicated via the URL map
+    urls = {"/es/pagos-hub/": ("pagos-hub", ("es", "Payments & Pricing")),
+            "/es/para/serie-x/": ("hub-serie-x", ("es", "Agency, White-Label & SaaS")),
+            "/es/para/serie-x/parte-1/": ("parte-1", ("es", "CRM & Communication")),
+            "/es/para/serie-x/parte-2/": ("parte-2", ("es", "Sites, Funnels & Reputation"))}
+    es_src = {"slug": "src-es", "language": "es", "topic": "CRM & Communication"}
+    check("cross-silo custom-URL link unwrapped",
+          f('<a href="/es/pagos-hub/">pagos</a>', es_src, silo, urls) == 'pagos')
+    check("non-post internal URL kept (hub/landing pages untouched)",
+          f('<a href="/es/category/x/">cat</a>', es_src, silo, urls) == '<a href="/es/category/x/">cat</a>')
+    parte1 = {"slug": "parte-1", "language": "es", "topic": "CRM & Communication",
+              "url_path": "/es/para/serie-x/parte-1/"}
+    check("series child -> parent hub link KEPT (link-circle exemption)",
+          'href="/es/para/serie-x/"' in f('<a href="/es/para/serie-x/">serie</a>', parte1, silo, urls))
+    check("series sibling part link KEPT despite different topics",
+          'href="/es/para/serie-x/parte-2/"' in f('<a href="/es/para/serie-x/parte-2/">parte 2</a>', parte1, silo, urls))
+    check("series part still unwraps a true cross-silo link outside its series",
+          f('<a href="/es/pagos-hub/">pagos</a>', parte1, silo, urls) == 'pagos')
 
 
 def test_inject_pillar_link():
-    build._ANCHOR_URL_COUNTS.clear()
-    # configure module state the pass reads
-    build.CATEGORIES[:] = [{"name": "CRM & Communication", "slug": "crm-communication",
-                            "keywords": ["pipeline", "smart list", "text campaign"]}]
-    build.LIVE_CATEGORY_SLUGS = {"crm-communication"}
-    post = {"slug": "spoke-1", "language": "en", "topic": "CRM & Communication"}
-    body = '<p>' + ("Build a smart list to keep your pipeline clean and current always. " * 3) + '</p>'
-    out = build.inject_pillar_link(body, post, [post])
-    check("en spoke gains ONE in-prose hub link", out.count('href="/category/crm-communication/"') == 1)
-    check("anchor is a MULTI-WORD topic keyword (single-word banned by audit gate)",
-          '>smart list</a>' in out or '>text campaign</a>' in out)
-    single_only = '<p>' + ("Your pipeline management needs constant attention every single day here. " * 3) + '</p>'
-    check("single-word keywords never used as anchors", build.inject_pillar_link(single_only, post, [post]) == single_only)
-    check("second run adds nothing (hub already linked)", build.inject_pillar_link(out, post, [post]) == out)
-    nomatch = '<p>' + ("Nothing relevant appears in this paragraph of filler words here. " * 3) + '</p>'
-    check("no keyword match -> untouched", build.inject_pillar_link(nomatch, post, [post]) == nomatch)
-    es_post = {"slug": "spoke-es", "language": "es", "topic": "CRM & Communication"}
-    es_body = '<p>' + ("Crea una smart list para tu agencia y manten el flujo ordenado. " * 3) + '</p>'
-    build.LANGUAGES[:] = [{"code": "es", "prefix": "/es", "dir": "ltr"}]
-    out_es = build.inject_pillar_link(es_body, es_post, [es_post, dict(es_post, slug="spoke-es-2")])
-    check("es spoke links the /es hub when bucket >= 2", 'href="/es/category/crm-communication/"' in out_es)
-    lone = build.inject_pillar_link(es_body, es_post, [es_post])
-    check("es singleton bucket -> no dead hub link", lone == es_body)
+    # This test stubs module config; restore it so tests appended after this
+    # one don't inherit a 1-category, es-only world (review 2026-07-27 —
+    # LIVE_CATEGORY_SLUGS is REBOUND below, so restore must rebind too).
+    saved = (build.CATEGORIES[:], build.LIVE_CATEGORY_SLUGS, build.LANGUAGES[:])
+    try:
+        build._ANCHOR_URL_COUNTS.clear()
+        # configure module state the pass reads
+        build.CATEGORIES[:] = [{"name": "CRM & Communication", "slug": "crm-communication",
+                                "keywords": ["pipeline", "smart list", "text campaign"]}]
+        build.LIVE_CATEGORY_SLUGS = {"crm-communication"}
+        post = {"slug": "spoke-1", "language": "en", "topic": "CRM & Communication"}
+        hub = "/category/crm-communication/"
+        body = '<p>' + ("Build a smart list to keep your pipeline clean and current always. " * 3) + '</p>'
+        out = build.inject_pillar_link(body, post, [post])
+        check("en spoke gains ONE in-prose hub link", out.count(f'href="{hub}"') == 1)
+        check("anchor is a MULTI-WORD topic keyword (single-word banned by audit gate)",
+              '>smart list</a>' in out or '>text campaign</a>' in out)
+        single_only = '<p>' + ("Your pipeline management needs constant attention every single day here. " * 3) + '</p>'
+        check("single-word keywords never used as anchors", build.inject_pillar_link(single_only, post, [post]) == single_only)
+        check("second run adds nothing (hub already linked)", build.inject_pillar_link(out, post, [post]) == out)
+        nomatch = '<p>' + ("Nothing relevant appears in this paragraph of filler words here. " * 3) + '</p>'
+        check("no keyword match -> untouched", build.inject_pillar_link(nomatch, post, [post]) == nomatch)
+        # word boundary: keyword inside a longer word is never anchored
+        build._ANCHOR_URL_COUNTS.clear()
+        midword = '<p>' + ("Managing your smart listings well keeps every client happy and informed. " * 3) + '</p>'
+        mw_out = build.inject_pillar_link(midword, post, [post])
+        check("keyword inside a longer word never anchored (no mid-word split)",
+              '</a>ings' not in mw_out and '</a>ing' not in mw_out)
+        # plural: anchor extends over the whole word, never splits it
+        build._ANCHOR_URL_COUNTS.clear()
+        plural = '<p>' + ("Your smart lists keep the whole agency pipeline clean and current every day. " * 3) + '</p>'
+        pl_out = build.inject_pillar_link(plural, post, [post])
+        check("plural keyword anchors the whole word", '>smart lists</a>' in pl_out and '</a>s' not in pl_out)
+        # case-insensitive match anchors the ORIGINAL casing, at the right offset
+        build._ANCHOR_URL_COUNTS.clear()
+        cased = '<p>' + ("Opportunity Smart List views keep your whole pipeline clean and current. " * 3) + '</p>'
+        c_out = build.inject_pillar_link(cased, post, [post])
+        check("capitalized keyword matched, original casing kept", '>Smart List</a>' in c_out)
+        # <pre> blocks are never treated as paragraphs
+        build._ANCHOR_URL_COUNTS.clear()
+        pre = '<pre>code smart list here that is long enough to pass the eighty character length gate easily</pre>'
+        check("no injection inside <pre> blocks", build.inject_pillar_link(pre, post, [post]) == pre)
+        # paragraph guards
+        build._ANCHOR_URL_COUNTS.clear()
+        short = '<p>A smart list is neat.</p>'
+        check("paragraph under 80 chars is skipped", build.inject_pillar_link(short, post, [post]) == short)
+        build._ANCHOR_URL_COUNTS.clear()
+        linked = '<p><a href="/x/">x</a> ' + ("A smart list keeps your agency pipeline healthy and informed daily. " * 2) + '</p>'
+        check("paragraph already containing a link is skipped", build.inject_pillar_link(linked, post, [post]) == linked)
+        build._ANCHOR_URL_COUNTS.clear()
+        attr = '<p><img alt="smart list tips" src="/x.png"> Filler prose continues here for quite a while so the paragraph passes the length gate.</p>'
+        check("keyword only inside a tag attribute is never anchored", build.inject_pillar_link(attr, post, [post]) == attr)
+        # ledger: all keywords at cap -> untouched; first at cap -> falls through
+        build._ANCHOR_URL_COUNTS.clear()
+        capbody = '<p>' + ("Build a smart list and a text campaign to keep the pipeline clean here. " * 3) + '</p>'
+        for kw in ("smart list", "text campaign"):
+            build._ANCHOR_URL_COUNTS[(kw, hub)] = build.ANCHOR_URL_CAP
+        check("all keywords at cap -> body untouched", build.inject_pillar_link(capbody, post, [post]) == capbody)
+        build._ANCHOR_URL_COUNTS.clear()
+        import random as _r
+        kws = [k for k in ("smart list", "text campaign")]
+        _kw_order = [k for k in ("pipeline", "smart list", "text campaign") if " " in k and len(k) >= 5]
+        _r.Random("spoke-1").shuffle(_kw_order)
+        build._ANCHOR_URL_COUNTS[(_kw_order[0], hub)] = build.ANCHOR_URL_CAP
+        cap_out = build.inject_pillar_link(capbody, post, [post])
+        check("first keyword at cap -> next keyword used", f'>{_kw_order[1]}</a>' in cap_out)
+        # es hub bucket rules
+        es_post = {"slug": "spoke-es", "language": "es", "topic": "CRM & Communication"}
+        es_body = '<p>' + ("Crea una smart list para tu agencia y manten el flujo ordenado. " * 3) + '</p>'
+        build.LANGUAGES[:] = [{"code": "es", "prefix": "/es", "dir": "ltr"}]
+        build._ANCHOR_URL_COUNTS.clear()
+        out_es = build.inject_pillar_link(es_body, es_post, [es_post, dict(es_post, slug="spoke-es-2")])
+        check("es spoke links the /es hub when bucket >= 2", 'href="/es/category/crm-communication/"' in out_es)
+        lone = build.inject_pillar_link(es_body, es_post, [es_post])
+        check("es singleton bucket -> no dead hub link", lone == es_body)
+    finally:
+        build.CATEGORIES[:] = saved[0]
+        build.LIVE_CATEGORY_SLUGS = saved[1]
+        build.LANGUAGES[:] = saved[2]
+        build._ANCHOR_URL_COUNTS.clear()
 
 
 def main():

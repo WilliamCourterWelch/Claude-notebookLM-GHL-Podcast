@@ -253,9 +253,17 @@ def main() -> int:
     #   d. sink exclusion: mvp_minimal_links pages gain ZERO outbound internal
     #                      links (no circle, no related cards, no hub link, no
     #                      /blog|/category anchors in the post body)
+    #   e. body silo scan : followed internal post links in the BODY prose are
+    #                      same-silo, funnel-sink, or series-nav — the unwrap
+    #                      pass is fail-open, this is the alarm (D13)
     print("\n=== Check 4: canon link invariants (spoke->pillar, circles, silo, sink) ===")
     slug_meta = {p["slug"]: (build.post_lang(p), build.post_topic(p))
                  for p in posts if p.get("slug")}
+    # e. body-zone silo scan needs URL-keyed metadata: custom-url_path posts
+    #    (/es/para/..., /es/mercadopago-gohighlevel/) are invisible to slug
+    #    lookups — the bypass that hid 15 cross-silo links (D13, 2026-07-27).
+    url_meta = {build.post_url(p): (p["slug"], (build.post_lang(p), build.post_topic(p)))
+                for p in posts if p.get("slug")}
     c4_fails: list[str] = []
     for p in posts:
         slug = p.get("slug")
@@ -332,6 +340,37 @@ def main() -> int:
                 meta = slug_meta.get(unquote(tgt))
                 if meta and meta != (lang, topic):
                     c4_fails.append(f"{slug}: cross-silo template link -> {tgt} {meta} != {(lang, topic)}")
+
+        # e. body-zone silo scan (D13, 2026-07-27): the unwrap pass is fail-open
+        # (empty map -> silent no-op), so the BUILT body prose is the ground
+        # truth. Any followed internal post link in the body must be same-silo,
+        # a funnel sink, or series navigation. This catches both a silently
+        # disabled unwrap AND link shapes the unwrap regex can't see.
+        b_start = html.find('class="post-body"')
+        b_end = html.find('class="cta-end"', b_start)
+        body = html[b_start:b_end] if b_start >= 0 and b_end > b_start else ""
+        src_url = build.post_url(p)
+        for m in re.finditer(r'<a\b([^>]*)>', body):
+            attrs = m.group(1)
+            href_m = re.search(
+                r'href="(?:' + re.escape(build.SITE_URL) + r')?(/[^"]+?)"', attrs)
+            if not href_m:
+                continue
+            rel_m = re.search(r'rel="([^"]*)"', attrs)
+            if rel_m and "nofollow" in rel_m.group(1).split():
+                continue
+            tgt_url = unquote(href_m.group(1)).split("?")[0].split("#")[0]
+            if not tgt_url.endswith("/"):
+                tgt_url += "/"
+            t_meta = url_meta.get(tgt_url)
+            if t_meta is None:
+                continue  # not a post page (hub, landing, asset)
+            t_slug, t_silo = t_meta
+            if t_slug in build.FUNNEL_SINK_SLUGS or t_silo == (lang, topic):
+                continue
+            if build._series_nav_exempt(src_url, tgt_url, url_meta):
+                continue
+            c4_fails.append(f"{slug}: cross-silo BODY link -> {tgt_url} {t_silo} != {(lang, topic)}")
     for msg in c4_fails[:20]:
         print(f"    {msg}")
     print("  ->", "PASS" if not c4_fails else f"FAIL ({len(c4_fails)} canon violations)")

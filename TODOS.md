@@ -196,19 +196,57 @@ unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing
   coupons-hindi) are genuine content equivalents — codex flags the cluster as
   possibly false; both about promo codes, symmetric, pre-existing. (codex)
 
-## Completed
-
 ### Spanish topic keywords for better es pillar-link coverage
 **Priority:** P3
 inject_pillar_link() wove only 7 es links (vs 138 en) because categories.json
 keywords are mostly English words. Adding Spanish multi-word keyword lists per
-topic would lift es contextual coverage. (Pack B ship 2026-07-27)
+topic would lift es contextual coverage. Confirmed by codex adversarial
+(0.3.3.0 review): 7/249 es, 0/8 ar eligible posts injected. (Pack B 2026-07-27)
+
+### Caleb canon as a FAT SKILL, not more build.py code (Bill-directed)
+**Priority:** P2 — next architecture step after v0.3.3.0 lands
+Bill (D13 gate, 2026-07-27): the plan was restore-then "create fat skills thin
+harnesses out of caleb canon to apply to the whole site" — not accrete canon
+judgment into build.py. build.py render passes should stay deterministic
+EXECUTION of already-made calls; the JUDGMENT layer (what counts as a silo
+violation, exemption doctrine, when to add/remove links, how to audit a new
+content batch against canon) belongs in a markdown skill Claude reads at
+runtime. Ground in Tan canon first (/office-hours or /plan-eng-review) before
+building — do not freestyle a skill design.
+
+### Shared _render_body_passes() helper (review 0.3.3.0)
+**Priority:** P3
+The body-pass chain (localize_trial_hrefs → correct_trial_claims →
+nofollow_affiliate_links → unwrap_cross_silo_links → enforce_anchor_caps) is
+hand-repeated at 3 render sites (build_post_page, build_authority_page, hub
+pillar in build_category_pages) — the hub site missed the unwrap wire until
+the 0.3.3.0 review caught it. Extract one helper so a new pass cannot miss a
+call site. Same class: inject_pillar_link and inject_internal_links duplicate
+the paragraph-eligibility/splice machinery — and inject_internal_links still
+carries the lowercased-copy indexing + bare '<p' split that 0.3.3.0 fixed in
+inject_pillar_link (adversarial: identical latent bugs). Fix both when
+extracting. Also derive FUNNEL_SINK_SLUGS' money slug from a shared constant
+(one more silent-drift site today).
+
+### Pillar-link build-order churn + anchor diversity (adversarial, watch)
+**Priority:** P3 — watch-mode, revisit with real SERP data
+Cap slots are consumed in merged-list order, so adding/reordering posts
+reshuffles which pages carry pillar links next build (link-graph churn class).
+Payments & Pricing has 1 usable multi-word keyword → identical exact-match
+anchor on all its pillar links. Also note: EN posts can carry up to 3 hub
+references (eyebrow + in-prose + P1.2 footer block) — intended stacking,
+documented here so nobody "fixes" it blind.
+
+## Completed
 
 ### Pack B: Caleb-canon linking (D11 strict + D12 contextual) — DECIDED & SHIPPED
 **Completed:** v0.3.3.0 (2026-07-27)
-D11: cross-silo body links unwrapped render-time (24 LATAM links; funnel
-exempt; 0 remain rendered). D12: 168 in-prose pillar links woven (66 distinct
-multi-word anchors). Bill's calls: strict unwrap + mechanical render pass.
+D11: cross-silo body links unwrapped render-time — 38 total after the review
+extended coverage to custom-URL posts and the hub pillar render (D13); funnel
++ series-nav exempt; 0 remain rendered in any link shape, verify Check 4e now
+guards it. D12: 102 clean in-prose pillar links woven (word-boundary guard
+replaced the first cut's 168, ~55 of which split words mid-plural). Bill's
+calls: strict unwrap + mechanical render pass + D13 extend-and-gate.
 
 
 ### Trial CTAs direct-to-affiliate per language — DECIDED & SHIPPED

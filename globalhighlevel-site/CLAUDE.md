@@ -170,13 +170,19 @@ The canon link structure is enforced at render time by `build.py` and gated by
   paid-link pass stamps `rel="nofollow sponsored"`;
   `unwrap_cross_silo_links()` enforces the Caleb Critical Rule strictly
   (Bill-decided v0.3.3.0) — any body link crossing a topic/language silo is
-  unwrapped (words stay, link goes), EXCEPT links to `FUNNEL_SINK_SLUGS`
-  (money + pricing pages), which are conversion links, not topical ones;
+  unwrapped (words stay, link goes), matching BOTH `/blog/` links and
+  custom-URL posts via `_SILO_BY_URL` (D13 — 14 links hid behind
+  `/es/para/...`-style paths). EXCEPT: `FUNNEL_SINK_SLUGS` (money +
+  pricing — conversion links, not topical ones) and series navigation
+  (`_series_nav_exempt` — a hub and its parts link each other by canon);
   `inject_pillar_link()` weaves ONE in-prose link per post to the
   language-correct silo hub where a MULTI-WORD topic keyword naturally
-  occurs (single-word anchors are banned by the audit gate; no natural
-  phrase → no link — the eyebrow covers structure regardless; non-EN hubs
-  guarded by the min_posts=2 bucket rule so no dead links).
+  occurs as a WHOLE word (the word-boundary guard extends over simple
+  plurals and never splits a word; single-word anchors are banned by the
+  audit gate; no natural phrase → no link — the eyebrow covers structure
+  regardless; non-EN hubs guarded by the MIN_LANG_TOPIC_POSTS bucket rule
+  so no dead links). verify.py Check 4e scans rendered BODY prose for
+  cross-silo links — the unwrap is fail-open, 4e is the alarm.
 - **Localized trial landings:** `build.py`'s `LOCALIZED_LANDING_LANGS` builds
   `/{lang}/trial/` for es, in, and ar (Arabic copy native-reader reviewed,
   5 MSA corrections, v0.3.0.0). Only the `/trial/` variants are built —
