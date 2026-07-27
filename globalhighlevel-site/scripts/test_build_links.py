@@ -361,9 +361,28 @@ def test_localize_trial_hrefs():
     check("en links carry the blog-trial-en campaign tag",
           out_en.count("utm_campaign=blog-trial-en") == 2)
     out_in = f(body, "en-IN")
-    check("en-IN bodies route like English", "highlevel-bootcamp?fp_ref=" in out_in and "blog-trial-en" in out_in)
+    check("en-IN bodies: EN affiliate page with the blog-trial-in tag",
+          "highlevel-bootcamp?fp_ref=" in out_in and "utm_campaign=blog-trial-in" in out_in)
     noslash = '<a href="https://globalhighlevel.com/trial">x</a>'
-    check("no-trailing-slash absolute variant rewritten", "fp_ref=" in f(noslash, "en"))
+    out_ns = f(noslash, "en")
+    check("no-trailing-slash absolute variant rewritten to the full campaign URL",
+          'href="' + build.AFFILIATE + '&utm_campaign=blog-trial-en"' in out_ns)
+    # URL well-formedness (review F4): exactly one '?', fp_ref present, es != en
+    for lc, host in (("en", "highlevel-bootcamp?"), ("es", "highlevel-bootcamp-es?")):
+        url = f('<a href="/trial/">x</a>', lc).split('href="')[1].split('"')[0]
+        check(f"{lc} target has exactly one ? and fp_ref", url.count("?") == 1 and "fp_ref=" in url and host in url)
+    # language-prefixed trial hrefs route by TARGET language (review F1)
+    es_pref = '<a href="https://globalhighlevel.com/es/trial/">x</a> <a href="/es/trial/">y</a>'
+    out_esp = f(es_pref, "es")
+    check("/es/trial hrefs -> bootcamp-es direct", out_esp.count("highlevel-bootcamp-es?") == 2 and "/es/trial" not in out_esp)
+    in_pref = '<a href="/in/trial/">x</a>'
+    check("/in/trial hrefs -> EN bootcamp with blog-trial-in tag",
+          "utm_campaign=blog-trial-in" in f(in_pref, "en-IN") and "bootcamp-es" not in f(in_pref, "en-IN"))
+    check("en-IN bare /trial gets blog-trial-in tag", "utm_campaign=blog-trial-in" in f('<a href="/trial/">x</a>', "en-IN"))
+    ar_pref = '<a href="/ar/trial/">x</a>'
+    check("/ar/trial hrefs never rewritten", f(ar_pref, "ar") == ar_pref and f(ar_pref, "es") == ar_pref)
+    typo = '<a href="https://goingHighLevel.com/free-trial">x</a>'
+    check("typo'd dead domain rewritten to es affiliate", "highlevel-bootcamp-es?" in f(typo, "es"))
     for lc in ("ar", "es", "en"):
         check(f"pass is idempotent ({lc})", f(f(body, lc), lc) == f(body, lc))
     safe = '<p><a href="/trial-something/">x</a></p>'

@@ -178,9 +178,6 @@ unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing
 - 2 posts hold dead translations.en pointers to a nonexistent promo-code slug
   (gohighlevel-coupons-hindi-india-guide, codigo-promocional-gohighlevel-2026-
   descuentos-reales) — gated out of output, cosmetic. (adversarial)
-- One restored ar body CTAs absolute https://globalhighlevel.com/trial (EN
-  podcast-attribution surface) — pollutes the podcast/blog click split; rewrite
-  to /ar/trial/ render-time if it matters. (red-team)
 
 ### Caleb-canon contextual links (D11 + D12, post-sprint plan items)
 **Priority:** P2
