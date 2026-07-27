@@ -350,8 +350,26 @@ def test_localize_trial_hrefs():
     out = f(ar, "ar")
     check("ar bodies: /trial CTAs rewritten to /ar/trial/",
           out.count('href="/ar/trial/"') == 2 and "globalhighlevel.com/trial" not in out)
+    # the no-trailing-slash absolute form is the ONLY variant in the 3 real ar posts
+    noslash = '<a href="https://globalhighlevel.com/trial">x</a>'
+    check("no-trailing-slash absolute variant rewritten", 'href="/ar/trial/"' in f(noslash, "ar"))
+    check("pass is idempotent", f(f(ar, "ar"), "ar") == f(ar, "ar"))
     check("es bodies untouched (pending policy call)", f(ar, "es") == ar)
     check("en bodies untouched", f(ar, "en") == ar)
+    safe = '<a href="/trial-something/">x</a>'
+    check("does not touch /trial-prefixed other paths", f(safe, "ar") == safe)
+
+
+def test_chrome_localization():
+    check("es read-time", build.localize_rtime("7 min read", "es") == "7 min de lectura")
+    check("ar read-time 3-10 plural", build.localize_rtime("7 min read", "ar") == "7 دقائق قراءة")
+    check("ar read-time 1 singular", build.localize_rtime("1 min read", "ar") == "1 دقيقة قراءة")
+    check("ar read-time 11+ singular", build.localize_rtime("12 min read", "ar") == "12 دقيقة قراءة")
+    check("en read-time untouched", build.localize_rtime("7 min read", "en") == "7 min read")
+    check("es month localized", build.localize_date("April 10, 2026", "es") == "abril 10, 2026")
+    check("ar month localized", build.localize_date("April 10, 2026", "ar").startswith("أبريل"))
+    check("en date untouched", build.localize_date("April 10, 2026", "en") == "April 10, 2026")
+    check("empty date safe", build.localize_date("", "ar") == "")
 
 
 def main():
@@ -366,7 +384,8 @@ def main():
               test_nofollow_affiliate_links, test_post_lang_markers,
               test_localized_landing_configs, test_rtl_rendering,
               test_attribution_prefixes_protected, test_correct_trial_claims,
-              test_logo_ltr_on_rtl_pages, test_localize_trial_hrefs):
+              test_logo_ltr_on_rtl_pages, test_localize_trial_hrefs,
+              test_chrome_localization):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

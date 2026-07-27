@@ -161,6 +161,43 @@ def fmt_date(iso: str) -> str:
     except Exception:
         return ""
 
+# Chrome localization (v0.3.1.0 review catches): month names + read-time per
+# language, shared by the post/authority/hub-card templates. en-IN stays
+# English by design.
+_MONTHS = {
+    "es": {"January": "enero", "February": "febrero", "March": "marzo", "April": "abril",
+           "May": "mayo", "June": "junio", "July": "julio", "August": "agosto",
+           "September": "septiembre", "October": "octubre", "November": "noviembre", "December": "diciembre"},
+    "ar": {"January": "يناير", "February": "فبراير", "March": "مارس", "April": "أبريل",
+           "May": "مايو", "June": "يونيو", "July": "يوليو", "August": "أغسطس",
+           "September": "سبتمبر", "October": "أكتوبر", "November": "نوفمبر", "December": "ديسمبر"},
+}
+
+def localize_date(date_str: str, lang_code: str) -> str:
+    months = _MONTHS.get(lang_code)
+    if not months or not date_str:
+        return date_str
+    for en, native in months.items():
+        if date_str.startswith(en):
+            return date_str.replace(en, native, 1)
+    return date_str
+
+def localize_rtime(rtime: str, lang_code: str) -> str:
+    if lang_code == "es":
+        return rtime.replace("min read", "min de lectura")
+    if lang_code == "ar" and rtime.endswith(" min read"):
+        try:
+            mins = int(rtime.split()[0])
+        except ValueError:
+            return rtime
+        # Arabic count grammar: 1 دقيقة, 2 دقيقتان, 3-10 دقائق, 11+ دقيقة
+        if mins == 1: noun = "دقيقة"
+        elif mins == 2: noun = "دقيقتان"
+        elif 3 <= mins <= 10: noun = "دقائق"
+        else: noun = "دقيقة"
+        return f"{mins} {noun} قراءة"
+    return rtime
+
 def truncate(text: str, n: int = 160) -> str:
     return text[:n].rsplit(" ", 1)[0] + "…" if len(text) > n else text
 
@@ -1361,7 +1398,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
   <div class="footer-inner">
     <div class="footer-top">
       <div>
-        <div class="footer-logo">Global<span>HighLevel</span></div>
+        <div class="footer-logo" dir="ltr">Global<span>HighLevel</span></div>
         <p class="footer-desc">Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide.</p>
         <p class="footer-disclaimer">Affiliate disclosure: Some links on this site are affiliate links. If you sign up through our link, we may earn a commission at no extra cost to you. Not affiliated with GoHighLevel LLC.</p>
       </div>
@@ -1625,7 +1662,7 @@ def build_authority_page(post: dict, all_posts: list = None):
 <main class="auth-main">
   {f'<div class="auth-series-label">{series_label}</div>' if series_label else ''}
   <h1 class="auth-title">{title}</h1>
-  <div class="auth-byline">Por William Welch{' · ' + date_str if date_str else ''} · {rtime}</div>
+  <div class="auth-byline">Por William Welch{' · ' + date_str if date_str else ''} · {localize_rtime(rtime, post_lang(post))}</div>
   <article class="auth-body">
     {html_content}
   </article>
@@ -1952,11 +1989,8 @@ def build_post_page(post: dict, all_posts: list = None):
     lang_code = post_lang(post)
     _home_label = {"es": "Inicio", "ar": "الرئيسية"}.get(lang_code, "Home")
     _by_label = {"es": "Por William Welch", "ar": "بقلم ويليام ويلش"}.get(lang_code, "By William Welch")
-    _rtime_local = rtime
-    if lang_code == "es":
-        _rtime_local = rtime.replace("min read", "min de lectura")
-    elif lang_code == "ar":
-        _rtime_local = rtime.replace(" min read", " دقائق قراءة")
+    _rtime_local = localize_rtime(rtime, lang_code)
+    date_str = localize_date(date_str, lang_code)
     body = f"""
 <div id="reading-progress"></div>
 <div class="post-container">
@@ -3522,7 +3556,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
   {cat_html}
   <h2 class="card-title"><a href="{post_url(p)}">{title}</a></h2>
   <p class="card-excerpt">{desc}</p>
-  <div class="card-meta"><span>{date_str}</span>{"<span class='meta-sep'>&middot;</span><span>" + rtime + "</span>" if date_str else ""}</div>
+  <div class="card-meta"><span>{localize_date(date_str, lang_code)}</span>{"<span class='meta-sep'>&middot;</span><span>" + localize_rtime(rtime, lang_code) + "</span>" if date_str else ""}</div>
 </article>"""
 
         # Pagination
@@ -3641,7 +3675,7 @@ def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: 
 <article class="card">
   <h2 class="card-title"><a href="{post_url(p)}">{title}</a></h2>
   <p class="card-excerpt">{desc}</p>
-  <div class="card-meta"><span>{date_str}</span>{"<span class='meta-sep'>&middot;</span><span>" + rtime + "</span>" if date_str else ""}</div>
+  <div class="card-meta"><span>{localize_date(date_str, lang_code)}</span>{"<span class='meta-sep'>&middot;</span><span>" + localize_rtime(rtime, lang_code) + "</span>" if date_str else ""}</div>
 </article>"""
 
         body = f"""

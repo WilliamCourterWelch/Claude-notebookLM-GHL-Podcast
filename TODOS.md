@@ -200,6 +200,23 @@ the remaining Caleb-doctrine gap Bill flagged mid-sprint). Needs a scoping
 conversation first — prose edits touch the byte-faithful doctrine.
 (Sprint plan 2026-07-22; logged per Bill 2026-07-27)
 
+### Arabic/i18n polish backlog (v0.3.1.0 review, all P3)
+**Priority:** P3
+- English chrome blocks on ar pages (CTAs "Ready to try this?", trailing arrows,
+  podcast/share/author boxes) render in RTL bidi context — wrap intentionally-
+  English blocks in dir="ltr" containers or extend label dicts. (adversarial)
+- Breadcrumb JSON-LD still hardcodes "Home" on es/ar posts (visual breadcrumb
+  is localized; the schema.org name is not). (codex)
+- Consolidate chrome labels into one CHROME_LABELS map — labels now live in
+  the post-renderer dicts + localize_date/localize_rtime + authority footer.
+  (maintainability)
+- localize_trial_hrefs() is exact-match by design (single-quote/query-string
+  variants unhandled; zero exist in corpus — verified). Revisit if the es/en
+  cohort rewrite ships. (codex)
+- Confirm the es↔en-IN coupon hreflang pair (codigo-promocional ↔
+  coupons-hindi) are genuine content equivalents — codex flags the cluster as
+  possibly false; both about promo codes, symmetric, pre-existing. (codex)
+
 ## Completed
 
 ### Restore Batch 3 (FINAL) + /ar section — SPRINT COMPLETE
