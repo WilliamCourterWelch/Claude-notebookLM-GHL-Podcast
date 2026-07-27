@@ -1190,6 +1190,21 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         href = l["prefix"] + "/" if l["prefix"] else "/"
         mobile_lang_links += f'<a href="{href}" style="display:inline-block;margin-right:16px;font-size:.9rem">{l["native"]}</a>'
 
+    # Desktop nav language links: every OTHER live language (review D4, 2026-07-27 —
+    # the picker was built but never rendered; nav was a hardcoded EN/ES toggle,
+    # leaving /ar and /in unreachable from the nav)
+    nav_lang_links = ""
+    for l in LANGUAGES:
+        if l["code"] == lang or l["code"] not in LIVE_LANG_CODES:
+            continue
+        href = l["prefix"] + "/" if l["prefix"] else "/"
+        nav_lang_links += f'      <a href="{href}" class="nav-link">{l["native"]}</a>\n'
+    if not nav_lang_links:  # pre-build contexts (tests) fall back to the EN/ES toggle
+        nav_lang_links = f'      <a href="{"/" if lang == "es" else "/es/"}" class="nav-link">{"English" if lang == "es" else "Español"}</a>\n'
+    _guides_href = {"es": "/es/#guides", "ar": "/ar/", "en-IN": "/in/"}.get(lang, "/#guides")
+    _guides_label = {"es": "Guías", "ar": "الأدلة"}.get(lang, "Guides")
+    _nav_cta_label = {"es": "Prueba 30 días gratis", "ar": "ابدأ 30 يوماً مجاناً"}.get(lang, "Start 30 Days Free")
+
     # Footer Topics = the 6 homepage clusters (links-safe to existing pages until hubs build)
     _footer_clusters = [
         ("AI Receptionist &amp; Lead Capture", "/category/ai-receptionist-lead-capture/"),
@@ -1255,20 +1270,19 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
   <div class="nav-inner">
     <a href="/" class="logo">Global<span class="logo-amber">HighLevel</span></a>
     <div class="nav-links">
-      <a href="{'/es/#guides' if lang == 'es' else '/#guides'}" class="nav-link">{'Guías' if lang == 'es' else 'Guides'}</a>
+      <a href="{_guides_href}" class="nav-link">{_guides_label}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" class="nav-link" target="_blank" rel="noopener">Podcast</a>
-      <a href="{'/' if lang == 'es' else '/es/'}" class="nav-link">{'English' if lang == 'es' else 'Español'}</a>
-      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
+{nav_lang_links}      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{_nav_cta_label}</a>
     </div>
     <input type="checkbox" id="mobile-toggle">
     <label for="mobile-toggle" class="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
     </label>
     <div class="mobile-menu">
-      <a href="{'/es/#guides' if lang == 'es' else '/#guides'}">{'Guías' if lang == 'es' else 'Guides'}</a>
+      <a href="{_guides_href}">{_guides_label}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
-      <a href="{'/' if lang == 'es' else '/es/'}">{'English' if lang == 'es' else 'Español'}</a>
-      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
+      <div style="padding:8px 0">{mobile_lang_links}</div>
+      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{_nav_cta_label}</a>
     </div>
   </div>
 </nav>
@@ -3732,7 +3746,11 @@ def main():
     print("\nBuilding trial page...")
     _build_affiliate_landing("trial", "podcast")
     for lang_cfg in LOCALIZED_LANDING_LANGS:
-        _build_localized_affiliate_landing(lang_cfg, "trial", "podcast")
+        # /ar/trial/ is fed exclusively by in-body blog CTAs (no Arabic podcast
+        # exists); es/in keep the historical "podcast" campaign for GA4
+        # continuity (red-team 2026-07-27).
+        _campaign = "blog" if lang_cfg["code"] == "ar" else "podcast"
+        _build_localized_affiliate_landing(lang_cfg, "trial", _campaign)
     # Deliberately NOT building /start/ or /coupon/ — see _redirects file
     print("Building services page...")
     build_services_page()

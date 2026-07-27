@@ -1,0 +1,28 @@
+{
+  "deploy_date": "2026-07-27",
+  "restored": [
+    "how-to-enable-2fa-in-gohighlevel-secure-your-agency",
+    "master-custom-objects-notes-gohighlevel-complete-guide",
+    "remove-spam-likely-tags-gohighlevel-boost-call-answer-rates",
+    "create-high-converting-funnels-gohighlevel-ai-automation",
+    "workflows-gohighlevel-automatizar-negocio-servicios"
+  ],
+  "skipped_collision": [],
+  "errors": [],
+  "flagged": [],
+  "affiliate_rewrites": {
+    "how-to-enable-2fa-in-gohighlevel-secure-your-agency": 3,
+    "master-custom-objects-notes-gohighlevel-complete-guide": 3,
+    "remove-spam-likely-tags-gohighlevel-boost-call-answer-rates": 2,
+    "create-high-converting-funnels-gohighlevel-ai-automation": 3
+  },
+  "overrides_applied": 0,
+  "counts": {
+    "requested": 5,
+    "restored": 5,
+    "skipped_collision": 0,
+    "errors": 0,
+    "flagged": 0,
+    "affiliate_rewrites": 11
+  }
+}

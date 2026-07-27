@@ -208,8 +208,6 @@
 /blog/email-verification-gohighlevel-improve-deliverability-india/ /in/ 301
 /blog/emitir-certificados-gohighlevel-automatizar-credenciales /blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/ 301
 /blog/emitir-certificados-gohighlevel-automatizar-credenciales/ /blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/ 301
-/blog/enable-2fa-gohighlevel-secure-indian-agency /in/ 301
-/blog/enable-2fa-gohighlevel-secure-indian-agency/ /in/ 301
 /blog/enable-3d-secure-payments-gohighlevel-india-reduce-fraud /blog/how-to-enable-3d-secure-payments-gohighlevel-reduce-fraud/ 301
 /blog/enable-3d-secure-payments-gohighlevel-india-reduce-fraud/ /blog/how-to-enable-3d-secure-payments-gohighlevel-reduce-fraud/ 301
 /blog/facebook-ads-gohighlevel-indian-agencies /in/ 301
@@ -476,25 +474,27 @@
 /blog/guia-completa-gohighlevel-que-es-ghl-agencias-latinoamericanas/ /blog/que-es-gohighlevel-guia-completa-agencias-2026/ 301
 /blog/how-to-boost-call-answer-rates-gohighlevel-local-presence-dialing-india /blog/how-to-boost-call-answer-rates-gohighlevel-local-presence-dialing/ 301
 /blog/how-to-boost-call-answer-rates-gohighlevel-local-presence-dialing-india/ /blog/how-to-boost-call-answer-rates-gohighlevel-local-presence-dialing/ 301
-/blog/how-to-enable-2fa-in-gohighlevel-secure-your-agency /blog/enable-2fa-gohighlevel-secure-indian-agency/ 301
-/blog/how-to-enable-2fa-in-gohighlevel-secure-your-agency/ /blog/enable-2fa-gohighlevel-secure-indian-agency/ 301
 /blog/how-to-issue-certificates-gohighlevel-automate-credentials-india /blog/how-to-issue-certificates-in-gohighlevel-automate-credentials/ 301
 /blog/how-to-issue-certificates-gohighlevel-automate-credentials-india/ /blog/how-to-issue-certificates-in-gohighlevel-automate-credentials/ 301
 /blog/how-to-use-custom-values-gohighlevel-personalize-calendars-arabic /blog/how-to-use-custom-values-gohighlevel-personalize-calendars/ 301
 /blog/how-to-use-custom-values-gohighlevel-personalize-calendars-arabic/ /blog/how-to-use-custom-values-gohighlevel-personalize-calendars/ 301
 /blog/master-call-scripts-gohighlevel-india-boost-agent-productivity /blog/master-call-scripts-gohighlevel-boost-agent-productivity/ 301
 /blog/master-call-scripts-gohighlevel-india-boost-agent-productivity/ /blog/master-call-scripts-gohighlevel-boost-agent-productivity/ 301
-/blog/master-custom-objects-notes-gohighlevel-complete-guide /blog/master-custom-objects-notes-gohighlevel-india/ 301
-/blog/master-custom-objects-notes-gohighlevel-complete-guide/ /blog/master-custom-objects-notes-gohighlevel-india/ 301
 /blog/master-gohighlevel-checkout-orchestrator-eliminate-duplicate-orders-1 /blog/master-gohighlevel-checkout-orchestrator-eliminate-duplicate-orders/ 301
 /blog/master-gohighlevel-checkout-orchestrator-eliminate-duplicate-orders-1/ /blog/master-gohighlevel-checkout-orchestrator-eliminate-duplicate-orders/ 301
 /blog/que-es-gohighlevel-ghl-plataforma-all-in-one-agencias /blog/que-es-gohighlevel-plataforma-all-in-one-agencias/ 301
 /blog/que-es-gohighlevel-ghl-plataforma-all-in-one-agencias/ /blog/que-es-gohighlevel-plataforma-all-in-one-agencias/ 301
-/blog/remove-spam-likely-tags-gohighlevel-boost-call-answer-rates /blog/remove-spam-likely-tags-gohighlevel-boost-call-answer-rates-india/ 301
-/blog/remove-spam-likely-tags-gohighlevel-boost-call-answer-rates/ /blog/remove-spam-likely-tags-gohighlevel-boost-call-answer-rates-india/ 301
 /blog/send-file-attachments-gohighlevel-live-chat-faster-support-arabic /blog/send-file-attachments-gohighlevel-live-chat-faster-support/ 301
 /blog/send-file-attachments-gohighlevel-live-chat-faster-support-arabic/ /blog/send-file-attachments-gohighlevel-live-chat-faster-support/ 301
-/blog/workflows-gohighlevel-automatizar-negocio-servicios /blog/workflows-gohighlevel-automatizar-negocio-servicios-1/ 301
-/blog/workflows-gohighlevel-automatizar-negocio-servicios/ /blog/workflows-gohighlevel-automatizar-negocio-servicios-1/ 301
-/blog/create-high-converting-funnels-gohighlevel-ai-automation /blog/create-high-converting-funnels-gohighlevel-ai-automation-arabic/ 301
-/blog/create-high-converting-funnels-gohighlevel-ai-automation/ /blog/create-high-converting-funnels-gohighlevel-ai-automation-arabic/ 301
+
+# clone-pair flips (review D2, 2026-07-27): clean slug is canonical, variant 301s in
+/blog/enable-2fa-gohighlevel-secure-indian-agency /blog/how-to-enable-2fa-in-gohighlevel-secure-your-agency/ 301
+/blog/enable-2fa-gohighlevel-secure-indian-agency/ /blog/how-to-enable-2fa-in-gohighlevel-secure-your-agency/ 301
+/blog/master-custom-objects-notes-gohighlevel-india /blog/master-custom-objects-notes-gohighlevel-complete-guide/ 301
+/blog/master-custom-objects-notes-gohighlevel-india/ /blog/master-custom-objects-notes-gohighlevel-complete-guide/ 301
+/blog/remove-spam-likely-tags-gohighlevel-boost-call-answer-rates-india /blog/remove-spam-likely-tags-gohighlevel-boost-call-answer-rates/ 301
+/blog/remove-spam-likely-tags-gohighlevel-boost-call-answer-rates-india/ /blog/remove-spam-likely-tags-gohighlevel-boost-call-answer-rates/ 301
+/blog/create-high-converting-funnels-gohighlevel-ai-automation-arabic /blog/create-high-converting-funnels-gohighlevel-ai-automation/ 301
+/blog/create-high-converting-funnels-gohighlevel-ai-automation-arabic/ /blog/create-high-converting-funnels-gohighlevel-ai-automation/ 301
+/blog/workflows-gohighlevel-automatizar-negocio-servicios-1 /blog/workflows-gohighlevel-automatizar-negocio-servicios/ 301
+/blog/workflows-gohighlevel-automatizar-negocio-servicios-1/ /blog/workflows-gohighlevel-automatizar-negocio-servicios/ 301
