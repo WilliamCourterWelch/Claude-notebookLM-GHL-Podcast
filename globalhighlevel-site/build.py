@@ -1662,7 +1662,7 @@ def build_authority_page(post: dict, all_posts: list = None):
 <main class="auth-main">
   {f'<div class="auth-series-label">{series_label}</div>' if series_label else ''}
   <h1 class="auth-title">{title}</h1>
-  <div class="auth-byline">Por William Welch{' · ' + date_str if date_str else ''} · {localize_rtime(rtime, post_lang(post))}</div>
+  <div class="auth-byline">Por William Welch{' · ' + localize_date(date_str, post_lang(post)) if date_str else ''} · {localize_rtime(rtime, post_lang(post))}</div>
   <article class="auth-body">
     {html_content}
   </article>
