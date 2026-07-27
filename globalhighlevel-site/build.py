@@ -201,16 +201,19 @@ def inject_inline_ctas(html: str, cta_mid: str) -> str:
     mid = h2_positions[n // 2]
     return html[:mid] + cta_mid + html[mid:]
 
-# Slug-pattern markers for language inference. 470 of 946 posts have no
-# explicit `language` field; these markers catch ~160 of those by slug stem.
-# Conservative list — only unambiguous markers. T2.1 (body-text langdetect)
-# will catch the remaining ~310.
+# Slug-pattern markers for language inference. All current posts carry an
+# explicit `language` field, so this table's live role is the mistag backstop:
+# post_lang() falls back to these markers for a future post whose field is
+# missing, and verify Check 0 fails the build on a marker/field mismatch
+# instead of letting the post leak into the wrong language's hubs.
+# Conservative list — only unambiguous markers, substring-matched on the slug.
 _LANG_SLUG_MARKERS = (
     # 2026-05-23: dropped "whatsapp" — it is a product feature, not a geo signal,
     # and misclassified genuine English posts (e.g. how-to-manage-whatsapp-settings)
     # as India. Added high-precision India payment markers + Arabic "mena".
     ("en-IN", ("india", "indian", "rupee", "upi", "razorpay")),
     ("es",    ("espanol", "agencia", "plataforma", "latino", "mexico")),
+    ("ar",    ("arabic", "mena")),
 )
 
 # Category names that are really LANGUAGE buckets, not topics. They must never
@@ -359,6 +362,63 @@ def is_series_post(post: dict) -> bool:
     return bool(post.get("is_series_hub")
                 or post.get("url_path", "").startswith("/es/para/")
                 or post.get("url_path", "").startswith("/for/"))
+
+
+# Ordered exact-phrase corrections for the false "no credit card" trial claim
+# (review D3, Bill-approved 2026-07-27). The restored firehose bodies predate
+# the trial-copy correction — a card IS required (~$1 verification hold,
+# auto-released, no subscription charge). Render-time pass, same posture as
+# nofollow_affiliate_links: rendered HTML tells the truth, JSON stays
+# byte-faithful (D3 doctrine). Specific multi-sentence rules run before the
+# generic phrase rules so FAQ answers stay grammatical.
+_TRIAL_CLAIM_FIXES = (
+    # Arabic FAQ opener: "لا. GoHighLevel توفر ٣٠ يوماً مجاناً بدون بطاقة ائتمان"
+    ("لا. GoHighLevel توفر 30 يوماً مجاناً بدون بطاقة ائتمان",
+     "نعم، تلزم بطاقة للتحقق فقط (نحو 1$ يُلغى تلقائياً). GoHighLevel توفر 30 يوماً مجاناً"),
+    ("بدون بطاقة ائتمان", "مع تحقق رمزي من البطاقة (نحو 1$ يُلغى تلقائياً)"),
+    ("بدون بطاقة", "مع تحقق رمزي من البطاقة"),
+    # English FAQ/CTA staccato: "No credit card. No commitment."
+    ("No credit card. ", "Just a ~$1 card verification. "),
+    ("No credit card required", "Just a ~$1 card verification (no subscription charge)"),
+    ("no credit card required", "just a ~$1 card verification (no subscription charge)"),
+    ("No credit card needed", "Just a ~$1 card verification (no subscription charge)"),
+    ("No Credit Card Required", "Just a ~$1 Card Verification"),
+    ("No Credit Card Needed", "Just a ~$1 Card Verification"),
+    ("no credit card needed", "just a ~$1 card verification (no subscription charge)"),
+    # English variants (codex P2, 2026-07-27)
+    ("No credit card is required", "A card is needed for a ~$1 verification only — no charge"),
+    ("no credit card is required", "a card is needed for a ~$1 verification only — no charge"),
+    ("No credit card, ", "Just a ~$1 card verification, "),
+    ("no credit card, ", "just a ~$1 card verification, "),
+    ("no credit card)", "just a ~$1 card verification)"),
+    # Spanish
+    ("Sin tarjeta de crédito requerida", "Solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
+    ("sin tarjeta de crédito requerida", "solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
+    ("Sin necesidad de tarjeta de crédito", "Solo una verificación de tarjeta de ~$1"),
+    ("sin necesidad de tarjeta de crédito", "solo una verificación de tarjeta de ~$1"),
+    ("Sin tarjeta de crédito", "Solo una verificación de tarjeta de ~$1"),
+    ("sin tarjeta de crédito", "solo una verificación de tarjeta de ~$1"),
+    ("Sin tarjeta, ", "Solo verificación de tarjeta de ~$1, "),
+    ("sin tarjeta, ", "solo verificación de tarjeta de ~$1, "),
+    ("sin tarjeta)", "solo verificación de tarjeta de ~$1)"),
+    # bare catch-alls LAST — every remaining rendered occurrence is a trial-offer
+    # claim (enumerated 2026-07-27); question-forms ("...no credit card?") are
+    # intentionally untouched, the paired answers carry the correction
+    ("Sin tarjeta", "Solo verificación de tarjeta de ~$1"),
+    ("sin tarjeta", "solo verificación de tarjeta de ~$1"),
+    ("No credit card", "Just a ~$1 card verification"),
+    ("no credit card", "just a ~$1 card verification"),
+)
+
+
+def correct_trial_claims(html: str) -> str:
+    """Rewrite the known false no-card boilerplate to the card-verification
+    truth at render time. Exact ordered replacements only — anything the table
+    does not cover is left alone (long tail tracked in TODOS)."""
+    for old, new in _TRIAL_CLAIM_FIXES:
+        if old in html:
+            html = html.replace(old, new)
+    return html
 
 
 def nofollow_affiliate_links(html: str) -> str:
@@ -1187,6 +1247,21 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         href = l["prefix"] + "/" if l["prefix"] else "/"
         mobile_lang_links += f'<a href="{href}" style="display:inline-block;margin-right:16px;font-size:.9rem">{l["native"]}</a>'
 
+    # Desktop nav language links: every OTHER live language (review D4, 2026-07-27 —
+    # the picker was built but never rendered; nav was a hardcoded EN/ES toggle,
+    # leaving /ar and /in unreachable from the nav)
+    nav_lang_links = ""
+    for l in LANGUAGES:
+        if l["code"] == lang or l["code"] not in LIVE_LANG_CODES:
+            continue
+        href = l["prefix"] + "/" if l["prefix"] else "/"
+        nav_lang_links += f'      <a href="{href}" class="nav-link">{l["native"]}</a>\n'
+    if not nav_lang_links:  # pre-build contexts (tests) fall back to the EN/ES toggle
+        nav_lang_links = f'      <a href="{"/" if lang == "es" else "/es/"}" class="nav-link">{"English" if lang == "es" else "Español"}</a>\n'
+    _guides_href = {"es": "/es/#guides", "ar": "/ar/", "en-IN": "/in/"}.get(lang, "/#guides")
+    _guides_label = {"es": "Guías", "ar": "الأدلة"}.get(lang, "Guides")
+    _nav_cta_label = {"es": "Prueba 30 días gratis", "ar": "ابدأ 30 يوماً مجاناً"}.get(lang, "Start 30 Days Free")
+
     # Footer Topics = the 6 homepage clusters (links-safe to existing pages until hubs build)
     _footer_clusters = [
         ("AI Receptionist &amp; Lead Capture", "/category/ai-receptionist-lead-capture/"),
@@ -1252,20 +1327,19 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
   <div class="nav-inner">
     <a href="/" class="logo">Global<span class="logo-amber">HighLevel</span></a>
     <div class="nav-links">
-      <a href="{'/es/#guides' if lang == 'es' else '/#guides'}" class="nav-link">{'Guías' if lang == 'es' else 'Guides'}</a>
+      <a href="{_guides_href}" class="nav-link">{_guides_label}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" class="nav-link" target="_blank" rel="noopener">Podcast</a>
-      <a href="{'/' if lang == 'es' else '/es/'}" class="nav-link">{'English' if lang == 'es' else 'Español'}</a>
-      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
+{nav_lang_links}      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{_nav_cta_label}</a>
     </div>
     <input type="checkbox" id="mobile-toggle">
     <label for="mobile-toggle" class="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
     </label>
     <div class="mobile-menu">
-      <a href="{'/es/#guides' if lang == 'es' else '/#guides'}">{'Guías' if lang == 'es' else 'Guides'}</a>
+      <a href="{_guides_href}">{_guides_label}</a>
       <a href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">Podcast</a>
-      <a href="{'/' if lang == 'es' else '/es/'}">{'English' if lang == 'es' else 'Español'}</a>
-      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{'Prueba 30 días gratis' if lang == 'es' else 'Start 30 Days Free'}</a>
+      <div style="padding:8px 0">{mobile_lang_links}</div>
+      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{_nav_cta_label}</a>
     </div>
   </div>
 </nav>
@@ -1304,10 +1378,10 @@ def load_posts() -> list[dict]:
     for f in sorted(POSTS_DIR.glob("*.json")):
         try:
             data = json.loads(f.read_text())
-            if data.get("slug") and data.get("html_content"):
-                posts.append(data)
-        except Exception:
-            pass
+        except Exception as e:
+            raise SystemExit(f"FATAL: unparseable post JSON {f.name}: {e}")
+        if data.get("slug") and data.get("html_content"):
+            posts.append(data)
     return posts
 
 def load_published() -> list[dict]:
@@ -1458,7 +1532,7 @@ def build_authority_page(post: dict, all_posts: list = None):
     """
     slug = post["slug"]
     title = post.get("title", "")
-    description = post.get("description", post.get("meta_description", ""))
+    description = correct_trial_claims(post.get("description", post.get("meta_description", "")))
     html_content = post.get("html_content", "")
     date_str = fmt_date(post.get("publishedAt", ""))
     rtime = read_time(html_content)
@@ -1475,7 +1549,7 @@ def build_authority_page(post: dict, all_posts: list = None):
     # Sanitize + cap baked anchors + inject internal links (same as blog template —
     # auth bodies share the site-wide anchor ledger; codex 2026-07-23)
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(html_content)
+    html_content = nofollow_affiliate_links(correct_trial_claims(html_content))
     html_content = enforce_anchor_caps(html_content)
     if all_posts:
         html_content = inject_internal_links(html_content, post, all_posts, max_links=4)
@@ -1595,7 +1669,7 @@ def _date_modified(post: dict) -> str:
 def build_post_page(post: dict, all_posts: list = None):
     slug        = post["slug"]
     title       = post.get("title", post.get("seoTitle", ""))
-    description = post.get("description", post.get("seoDescription", post.get("meta_description", "")))
+    description = correct_trial_claims(post.get("description", post.get("seoDescription", post.get("meta_description", ""))))
     category    = display_cat(post_topic(post)) or "GoHighLevel Tutorials"
     cat_slug    = slugify(category)
     # Only link the category if its page was actually built. Post-prune some topics
@@ -1623,7 +1697,7 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(html_content)
+    html_content = nofollow_affiliate_links(correct_trial_claims(html_content))
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
@@ -1889,8 +1963,8 @@ def build_post_page(post: dict, all_posts: list = None):
 {faq_ld}
 {progress_js}"""
 
-    post_lang = post.get("language", "en")
-    post_lang_config = next((l for l in LANGUAGES if l["code"] == post_lang), None)
+    lang_code = post_lang(post)
+    post_lang_config = next((l for l in LANGUAGES if l["code"] == lang_code), None)
     post_dir = post_lang_config.get("dir", "ltr") if post_lang_config else "ltr"
 
     hreflang_override = _build_post_hreflang_tags(post.get("translations") or {})
@@ -1900,7 +1974,7 @@ def build_post_page(post: dict, all_posts: list = None):
         description=truncate(description, 160),
         canonical=canonical,
         body=body,
-        lang=post_lang,
+        lang=lang_code,
         text_dir=post_dir,
         hreflang_override=hreflang_override,
         disable_hreflang_fallback=True,
@@ -2143,7 +2217,7 @@ def build_category_pages(posts: list[dict]):
             p_title = pillar.get("title", cat)
             # Hub pillar bodies render with a .post-body and share the site-wide
             # anchor ledger — cap them like post bodies (D3 render-time cap).
-            p_body  = enforce_anchor_caps(nofollow_affiliate_links(pillar.get("html_content", "")))
+            p_body  = enforce_anchor_caps(nofollow_affiliate_links(correct_trial_claims(pillar.get("html_content", ""))))
             more_html = (f'''
 <div class="container">
   <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>
@@ -2202,7 +2276,8 @@ def build_category_pages(posts: list[dict]):
             title=page_title,
             description=page_desc,
             canonical=canonical,
-            body=body
+            body=body,
+            hreflang_path=f"/category/{cat_slug}/"
         )
         write(PUBLIC_DIR / "category" / cat_slug / "index.html", html)
 
@@ -2316,19 +2391,32 @@ def build_llms_txt(posts: list[dict]):
     what this site is about and lists all available content.
     Standard: https://llmstxt.org
     """
-    post_lines = ""
-    for p in posts[:200]:  # cap at 200 most recent
+    # Group by language so AI models see a labeled, per-language list instead
+    # of a mixed-language firehose. Per-language caps keep the file bounded
+    # while guaranteeing every language section (incl. the small /ar set) is
+    # represented (red-team 2026-07-27).
+    _LLMS_CAPS = {"en": 150, "es": 60, "en-IN": 60, "ar": 30}
+    _LLMS_HEADINGS = {"en": "Tutorials (English)", "es": "Tutoriales (Español)",
+                      "en-IN": "Tutorials (India)", "ar": "دروس (العربية)"}
+    by_lang: dict[str, list[str]] = {}
+    for p in posts:
         title = p.get("title", p.get("seoTitle", ""))
         slug  = p.get("slug", "")
         desc  = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 120)
         if title and slug:
-            post_lines += f"- [{title}]({SITE_URL}/blog/{slug}/): {desc}\n"
+            code = post_lang(p)
+            if len(by_lang.setdefault(code, [])) < _LLMS_CAPS.get(code, 30):
+                by_lang[code].append(f"- [{title}]({SITE_URL}/blog/{slug}/): {desc}")
+    post_lines = ""
+    for code in ("en", "es", "en-IN", "ar"):
+        if by_lang.get(code):
+            post_lines += f"### {_LLMS_HEADINGS.get(code, code)}\n\n" + "\n".join(by_lang[code]) + "\n\n"
 
     content = f"""# GlobalHighLevel.com
 
 > Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide.
 
-GlobalHighLevel.com is a free resource covering GoHighLevel (GHL) — an all-in-one CRM, marketing automation, and funnel platform used by digital marketing agencies globally. Every tutorial on this site also has a corresponding podcast episode on Spotify ("Go High Level", {SITE_URL}).
+GlobalHighLevel.com is a free resource covering GoHighLevel (GHL) — an all-in-one CRM, marketing automation, and funnel platform used by digital marketing agencies globally. Content is available in English, Spanish (/es/), Indian English (/in/), and Arabic (/ar/). The companion podcast "Go High Level" is on Spotify.
 
 ## About
 
@@ -2410,6 +2498,28 @@ LOCALIZED_LANDING_LANGS = [
         ],
         "footer_cta": "Start your 30-day trial",
     },
+    {
+        "code": "ar",
+        "prefix": "/ar",
+        "dir": "rtl",
+        "title": "جرّب GoHighLevel مجاناً لمدة 30 يوماً — ابدأ بدون تكلفة",
+        "desc": "ابدأ تجربتك المجانية لمدة 30 يوماً مع GoHighLevel. تلزم بطاقة للتحقق فقط (حجز مؤقت بقيمة دولار واحد تقريباً يُلغى تلقائياً، بدون رسوم اشتراك). وصول كامل لجميع الميزات. ألغِ في أي وقت.",
+        "h1": "ابدأ تجربتك المجانية لمدة 30 يوماً مع GoHighLevel",
+        "subh": "0$ لمدة 30 يوماً — مجرد تحقق من البطاقة بقيمة 1$ تقريباً. وصول كامل. ألغِ متى شئت.",
+        "cta": "ابدأ تجربتك المجانية",
+        "value_props": [
+            ("منصة CRM شاملة", "استبدل أكثر من 10 أدوات: إدارة العملاء، قمع المبيعات، البريد، الرسائل، واتساب، التقويمات، والمدفوعات."),
+            ("واتساب للأعمال مدمج", "القناة الأهم في المنطقة العربية. أتمتة المتابعات دون التنقل بين التطبيقات."),
+            ("ابتداءً من 97$ شهرياً", "بعد انتهاء الثلاثين يوماً. ألغِ في أي وقت دون التزام."),
+        ],
+        "faq_h": "الأسئلة الشائعة",
+        "faq": [
+            ("هل أحتاج إلى بطاقة ائتمان؟", "نعم. لتفعيل التجربة المجانية تلزم بطاقة — إنه تحقق بقيمة 1$ تقريباً يلغيه البنك تلقائياً، وليس رسم اشتراك. لا تدفع شيئاً خلال 30 يوماً ويمكنك الإلغاء في أي وقت."),
+            ("كم التكلفة بعد التجربة؟", "ابتداءً من 97$ شهرياً. يمكنك الإلغاء في أي وقت خلال فترة التجربة دون أي رسوم."),
+            ("ماذا يحدث إذا ألغيت؟", "يُغلق حسابك دون أي رسوم. تحتفظ بما أنشأته لكن لا يمكنك الوصول إليه بعد الإلغاء."),
+        ],
+        "footer_cta": "ابدأ تجربتك المجانية الآن",
+    },
 ]
 
 
@@ -2479,6 +2589,7 @@ def _build_localized_affiliate_landing(lang_cfg: dict, slug: str, campaign: str)
         lang=lang,
         text_dir=direction,
         noindex=True,  # localized /{lang}/trial/ and /{lang}/start/ are conversion surfaces too
+        disable_hreflang_fallback=True,
     )
     write(PUBLIC_DIR / lang / slug / "index.html", html)
 
@@ -2761,6 +2872,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
         canonical=canonical,
         body=body,
         noindex=True,  # /trial/ and /start/ are conversion surfaces, not search pages
+        disable_hreflang_fallback=True,
     )
     write(PUBLIC_DIR / slug / "index.html", html)
 
@@ -3320,7 +3432,8 @@ def build_404():
   <p style="color:var(--text3);margin-bottom:32px">The page you're looking for doesn't exist.</p>
   <a href="/" class="btn-amber">Go Home</a>
 </div>"""
-    html = base_html("404 — Page Not Found | Global High Level", "Page not found.", f"{SITE_URL}/404", body)
+    html = base_html("404 — Page Not Found | Global High Level", "Page not found.", f"{SITE_URL}/404", body,
+                     noindex=True, disable_hreflang_fallback=True)
     write(PUBLIC_DIR / "404.html", html)
 
 
@@ -3448,6 +3561,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
             "en": "Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide. Step-by-step help.",
             "es": "Tutoriales y guías gratuitas de GoHighLevel en español. Aprende a configurar, automatizar y escalar tu agencia paso a paso.",
             "en-IN": "Free GoHighLevel tutorials and guides for Indian agencies. UPI payments, WhatsApp automation, and agency growth — step by step.",
+            "ar": "دروس وأدلة GoHighLevel مجانية بالعربية. تعلّم الإعداد والأتمتة وتنمية وكالتك خطوة بخطوة.",
         }
         hub_desc = hub_descriptions.get(lang_code, f"Free GoHighLevel tutorials and guides in {lang_name}.")
         canonical = f"{SITE_URL}{prefix}/" if page == 1 else f"{SITE_URL}{prefix}/page/{page}/"
@@ -3689,7 +3803,11 @@ def main():
     print("\nBuilding trial page...")
     _build_affiliate_landing("trial", "podcast")
     for lang_cfg in LOCALIZED_LANDING_LANGS:
-        _build_localized_affiliate_landing(lang_cfg, "trial", "podcast")
+        # /ar/trial/ is fed exclusively by in-body blog CTAs (no Arabic podcast
+        # exists); es/in keep the historical "podcast" campaign for GA4
+        # continuity (red-team 2026-07-27).
+        _campaign = "blog" if lang_cfg["code"] == "ar" else "podcast"
+        _build_localized_affiliate_landing(lang_cfg, "trial", _campaign)
     # Deliberately NOT building /start/ or /coupon/ — see _redirects file
     print("Building services page...")
     build_services_page()

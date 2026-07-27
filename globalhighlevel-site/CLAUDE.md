@@ -149,12 +149,32 @@ The canon link structure is enforced at render time by `build.py` and gated by
   hosted at `/<key>.txt`; the script verifies the key file is live before
   submitting and fails loudly on any non-2xx.
 
+## Languages & the /ar Section (v0.3.0.0)
+
+- **4 languages in `categories.json`:** en (default, no prefix), es (`/es`),
+  en-IN (`/in`), and ar (`/ar`, `dir: rtl`). Arabic is the only RTL language —
+  templates read `dir` from the language config; never hardcode `ltr`.
+- **Localized trial landings:** `build.py`'s `LOCALIZED_LANDING_LANGS` builds
+  `/{lang}/trial/` for es, in, and ar (Arabic copy native-reader reviewed,
+  5 MSA corrections, v0.3.0.0). Only the `/trial/` variants are built —
+  `/es/start` and `/in/start` stay retired 301s in `_redirects`; `/ar/start`
+  never existed publicly and has no rule (don't add one).
+- **Language hubs + category pages build themselves:** `/ar/` and
+  `/ar/category/<topic>/` come from the standard language-hub loop
+  (`build_language_topic_pages`, `min_posts=2`) — any language-topic bucket
+  with 2+ posts gets a category page, singleton buckets get none. No
+  Arabic-specific page code exists; growing a bucket past 1 post creates its
+  category page automatically.
+- **Language gate:** `_LANG_SLUG_MARKERS` in `build.py` carries Arabic markers
+  (`arabic`, `mena`) so a future mistagged Arabic post fails the build instead
+  of leaking into English hubs.
+
 ## Verified Facts (use ONLY these — invent nothing)
 - Site: GlobalHighLevel.com — free GHL tutorials
 - Podcast: "Go High Level" on Spotify
 - Podcast stats: 380+ followers
 - Top episode: "GoHighLevel Conversation AI Bot"
-- Content: 149 published blog posts (English, India, Spanish; was 27 post-prune 2026-06, +122 in Restore Batch 1, v0.2.12.0 on 2026-07-23) + 158 podcast episodes. NOTE: the full-restore sprint is still bringing the remaining pruned posts back batch by batch — re-verify this count (`ls posts/*.json | wc -l`) before citing it.
+- Content: 904 published blog posts (English, India, Spanish, Arabic; was 27 post-prune 2026-06 — the full-restore sprint completed 2026-07-27 across v0.2.12.0–v0.3.0.0, with all 931 pruned URLs accounted for: 877 live pages + 54 twin 301s) + 158 podcast episodes. NOTE: re-verify this count (`ls posts/*.json | wc -l`) before citing it — it moves as new posts publish.
 - Offer: GoHighLevel 30-day FREE trial (double the standard 14-day trial)
 - GHL starts at $97/month
 - Affiliate link: https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12

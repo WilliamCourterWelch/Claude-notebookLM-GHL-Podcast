@@ -23,11 +23,14 @@ from being silently weakened. (Eng review T4)
 
 ### Delete dead build_trial_page()
 **Priority:** P1
-`build.py` `build_trial_page()` (~line 2355) still calls `_build_affiliate_landing("start", "blog")` and its
+`build.py` `build_trial_page()` (~line 2358) still calls `_build_affiliate_landing("start", "blog")` and its
 docstring calls `/start/` a "full SEO-optimized page". Dead code with a misleading
-docstring — one innocent future call rebuilds a retired page. (Note: per current
-Cloudflare docs the 301 would still win over a static file — see T8 — so the risk
-is confusion + a stale crawlable artifact, not redirect shadowing.) (Eng review T7)
+docstring — one innocent future call rebuilds a retired page. Blast radius grew in
+v0.3.0.0: the function also loops `LOCALIZED_LANDING_LANGS` (now es/in/ar), so an
+accidental call would rebuild retired `/{lang}/start/` pages in all four languages.
+(Note: per current Cloudflare docs the 301 would still win over a static file — see
+T8 — so the risk is confusion + a stale crawlable artifact, not redirect shadowing.)
+(Eng review T7)
 
 
 ### Delete vestigial repo-root _redirects
@@ -38,19 +41,11 @@ output dir in the dashboard. (Eng review T9)
 
 ## Full-restore sprint follow-ups (from Day-1 reviews, 2026-07-23)
 
-### Arabic disposition before Day-3 batch
-**Priority:** P0
-19 posts in the full restore set are lang=ar (held out of Batch 1, so none are
-live yet) with NO listing surface (no /ar/ hub in
-categories.json) -> verify Check 2 fails; their bodies carry absolute
-https://globalhighlevel.com/ar/trial/ CTAs that 404 (now visible to Check 3).
-Bill decides: add an /ar hub, hold the 19 back, or 301 them into EN/ES clones;
-either way add an /ar/trial* redirect. (Red-team 2026-07-23)
 
 ### Precompute silo map for circle/related/inject (perf at 2k+ posts)
 **Priority:** P2
 circle_members/get_related rescan all_posts per post (O(n^2 log n), ~2.5s combined
-at 958, fine today, ~2min at 10k) and _build_link_index is rebuilt per post. One
+at ~950-post scale — site landed at 904 in v0.3.0.0 — fine today, ~2min at 10k) and _build_link_index is rebuilt per post. One
 {(lang,topic): sorted members} map per build fixes all three. (Perf specialist 2026-07-23)
 
 ### Batch git reads in restore_posts.py
@@ -123,11 +118,30 @@ The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
 
 ## Content hygiene
 
-### Prune or restore dead translation pointers in money-page JSON
+### Refine trial-claim render pass long tail
+**Priority:** P3
+v0.3.0.0 pre-landing review shipped `correct_trial_claims()` — a render-time
+exact-phrase pass that rewrites the known no-card boilerplate (en/es/ar, bodies
++ meta descriptions) to the ~$1 card-verification truth; rendered residual is 0
+across 904 pages. Remaining: periodically re-run the residual scan for phrase
+variants the table doesn't cover (e.g. new imports), and consider a Devanagari
+(Hindi) variant if one ever appears. (Codex review 2026-07-27, resolved same day)
+
+### About-page copy in build.py is stale post-restore
 **Priority:** P2
-`translations` maps es/en-IN to two posts that don't exist in `posts/`; build fails
-soft (drops hreflang). Also confirm `/es/start` 301 target (pricing guide, not a
-Spanish trial post) is intentional. (Adversarial review 2026-07-22)
+`build.py` about-page body (~line 3267, 3311) still says "300+ tutorials", "10
+content categories", and "India, Latin America" — site is now 904 posts, 5 topics,
+and 4 languages including Arabic. Copy lives in code, so it was out of scope for
+the docs pass. (Codex doc review 2026-07-27)
+
+### Confirm /es/start 301 target (pricing guide vs restored Spanish trial post)
+**Priority:** P3
+The dead-pointer half of this item resolved itself in v0.3.0.0: both money-page
+`translations` targets (es + en-IN) were restored in Batch 3, so hreflang emits
+again. Remaining: `/es/start` 301s to the pricing guide while the restored Spanish
+trial post (`gohighlevel-prueba-gratis-30-dias-como-empezar`) now exists — confirm
+that target is still intentional or repoint. (Adversarial review 2026-07-22;
+updated 2026-07-27)
 
 ### Discount-intent coverage check on money page
 **Priority:** P3
@@ -152,10 +166,33 @@ without content" — polluting the attribution cleanliness the block protects. C
 GSC coverage for `/trial/`; if indexed-without-content appears, decide between
 unblock+keep-noindex vs status quo. (Adversarial review 2026-07-22, pre-existing)
 
+### Review backlog (v0.3.0.0 pre-landing, all P3)
+**Priority:** P3
+- Language config duplicated: `LOCALIZED_LANDING_LANGS` repeats prefix/dir that
+  categories.json declares (guarded by test_localized_landing_configs; resolve
+  by lookup or keep the test). (maintainability 2026-07-27)
+- site CLAUDE.md says "never hardcode ltr" but build.py:1512's bespoke ES
+  vertical template hardcodes dir="ltr" (harmless, es is LTR). (maintainability)
+- Arabic pages still carry minor English chrome: "Home" breadcrumb, byline,
+  "min read". Nav/CTA/guides ARE localized as of v0.3.0.0. (adversarial)
+- 2 posts hold dead translations.en pointers to a nonexistent promo-code slug
+  (gohighlevel-coupons-hindi-india-guide, codigo-promocional-gohighlevel-2026-
+  descuentos-reales) — gated out of output, cosmetic. (adversarial)
+- One restored ar body CTAs absolute https://globalhighlevel.com/trial (EN
+  podcast-attribution surface) — pollutes the podcast/blog click split; rewrite
+  to /ar/trial/ render-time if it matters. (red-team)
+
 ## Completed
 
+### Restore Batch 3 (FINAL) + /ar section — SPRINT COMPLETE
+**Completed:** v0.3.0.0 (2026-07-27)
+619 pages restored; /ar hub + RTL + Arabic trial landing (Bill: build the AR
+section); all 931 accounted: 877 live + 54 twin 301s. Arabic disposition
+resolved (option a). 904 posts live.
+
+
 ### Restore Batch 2
-**Completed:** (2026-07-27)
+**Completed:** v0.2.13.0 (2026-07-27)
 136 tier-A/B pages restored (incl. GA4-promoted RFC-5322 pair — canonical as
 page, india twin as 301 per clone policy), 13 twin 301s, all 8 old-taxonomy hub
 redirects now correct (4 added, 1 target fixed). 285 posts live.
