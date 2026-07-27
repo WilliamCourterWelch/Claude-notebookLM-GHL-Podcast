@@ -416,3 +416,41 @@
 /blog/setup-payment-notifications-gohighlevel-wordpress-arabic/ /blog/setup-payment-notifications-gohighlevel-wordpress-india/ 301
 /blog/gohighlevel-workflows-automatiza-negocio-servicios-latinoamerica /blog/workflows-gohighlevel-automatiza-negocio-servicios/ 301
 /blog/gohighlevel-workflows-automatiza-negocio-servicios-latinoamerica/ /blog/workflows-gohighlevel-automatiza-negocio-servicios/ 301
+
+# clone-pair consolidation, batch 2 (2026-07-27): twin 301s to canonical
+/blog/how-to-track-sms-limits-gohighlevel-messaging-ramp-india /blog/how-to-track-sms-limits-in-gohighlevel-messaging-ramp/ 301
+/blog/how-to-track-sms-limits-gohighlevel-messaging-ramp-india/ /blog/how-to-track-sms-limits-in-gohighlevel-messaging-ramp/ 301
+/blog/how-to-color-code-pipelines-gohighlevel-smart-tags-guide /blog/color-code-pipelines-gohighlevel-smart-tags-guide/ 301
+/blog/how-to-color-code-pipelines-gohighlevel-smart-tags-guide/ /blog/color-code-pipelines-gohighlevel-smart-tags-guide/ 301
+/blog/how-to-add-tables-to-knowledge-base-gohighlevel-ai-employees /blog/how-to-add-tables-to-knowledge-base-in-gohighlevel-ai-employees/ 301
+/blog/how-to-add-tables-to-knowledge-base-gohighlevel-ai-employees/ /blog/how-to-add-tables-to-knowledge-base-in-gohighlevel-ai-employees/ 301
+/blog/how-to-use-global-custom-colors-gohighlevel-brand-consistency /blog/how-to-use-global-custom-colors-in-gohighlevel-brand-consistency/ 301
+/blog/how-to-use-global-custom-colors-gohighlevel-brand-consistency/ /blog/how-to-use-global-custom-colors-in-gohighlevel-brand-consistency/ 301
+/blog/how-to-preview-meta-ads-in-gohighlevel-share-with-your-team /blog/how-to-preview-meta-ads-in-gohighlevel-share-with-team/ 301
+/blog/how-to-preview-meta-ads-in-gohighlevel-share-with-your-team/ /blog/how-to-preview-meta-ads-in-gohighlevel-share-with-team/ 301
+/blog/how-to-use-kanban-view-gohighlevel-manage-deals /blog/how-to-use-kanban-view-in-gohighlevel-manage-deals-better/ 301
+/blog/how-to-use-kanban-view-gohighlevel-manage-deals/ /blog/how-to-use-kanban-view-in-gohighlevel-manage-deals-better/ 301
+/blog/how-to-use-kanban-view-gohighlevel-manage-deals-1 /blog/how-to-use-kanban-view-in-gohighlevel-manage-deals-better/ 301
+/blog/how-to-use-kanban-view-gohighlevel-manage-deals-1/ /blog/how-to-use-kanban-view-in-gohighlevel-manage-deals-better/ 301
+/blog/how-to-use-app-uninstall-api-gohighlevel-optimize-performance-arabic /blog/how-to-use-app-uninstall-api-gohighlevel-optimize-performance/ 301
+/blog/how-to-use-app-uninstall-api-gohighlevel-optimize-performance-arabic/ /blog/how-to-use-app-uninstall-api-gohighlevel-optimize-performance/ 301
+/blog/how-to-track-local-rankings-gohighlevel-seo-heatmaps /blog/gohighlevel-local-seo-heatmaps-track-rankings-india/ 301
+/blog/how-to-track-local-rankings-gohighlevel-seo-heatmaps/ /blog/gohighlevel-local-seo-heatmaps-track-rankings-india/ 301
+/blog/how-to-share-whitelabel-email-templates-gohighlevel /blog/how-to-share-whitelabel-email-templates-in-gohighlevel/ 301
+/blog/how-to-share-whitelabel-email-templates-gohighlevel/ /blog/how-to-share-whitelabel-email-templates-in-gohighlevel/ 301
+/blog/how-to-configure-global-settings-in-gohighlevel-rental-business /blog/how-to-configure-global-settings-gohighlevel-rental-business/ 301
+/blog/how-to-configure-global-settings-in-gohighlevel-rental-business/ /blog/how-to-configure-global-settings-gohighlevel-rental-business/ 301
+/blog/fix-email-deliverability-gohighlevel-rfc-5322-compliance-india /blog/fix-email-deliverability-gohighlevel-rfc-5322-compliance/ 301
+/blog/fix-email-deliverability-gohighlevel-rfc-5322-compliance-india/ /blog/fix-email-deliverability-gohighlevel-rfc-5322-compliance/ 301
+/blog/launch-branded-apps-gohighlevel-reduce-churn-india-guide /blog/how-to-launch-branded-apps-gohighlevel-reduce-churn/ 301
+/blog/launch-branded-apps-gohighlevel-reduce-churn-india-guide/ /blog/how-to-launch-branded-apps-gohighlevel-reduce-churn/ 301
+
+# old 8-topic hub URLs -> new 5-hub taxonomy (GA4 404 audit 2026-07-26)
+/category/analytics-reporting /category/agency-white-label-saas/ 301
+/category/analytics-reporting/ /category/agency-white-label-saas/ 301
+/category/email-deliverability /category/crm-communication/ 301
+/category/email-deliverability/ /category/crm-communication/ 301
+/category/sms-messaging /category/crm-communication/ 301
+/category/sms-messaging/ /category/crm-communication/ 301
+/category/phone-voice /category/ai-receptionist-lead-capture/ 301
+/category/phone-voice/ /category/ai-receptionist-lead-capture/ 301
