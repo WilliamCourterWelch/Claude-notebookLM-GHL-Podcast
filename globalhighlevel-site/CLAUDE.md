@@ -153,7 +153,18 @@ The canon link structure is enforced at render time by `build.py` and gated by
 
 - **4 languages in `categories.json`:** en (default, no prefix), es (`/es`),
   en-IN (`/in`), and ar (`/ar`, `dir: rtl`). Arabic is the only RTL language —
-  templates read `dir` from the language config; never hardcode `ltr`.
+  templates read `dir` from the language config; never hardcode `ltr`. The ONE
+  deliberate exception: the logo anchor pins `dir="ltr"` so bidi reordering
+  doesn't flip the brand's two spans into "HighLevelGlobal" (v0.3.1.0).
+- **Post chrome is localized per language** (v0.3.1.0): breadcrumb Home,
+  byline, and read-time render via lookup dicts in the post builder — es gets
+  Inicio / Por / "min de lectura", ar gets الرئيسية / بقلم / "دقائق قراءة",
+  en-IN stays English by design. Add a dict entry when adding a language.
+- **Render passes on post bodies** (JSON stays byte-faithful, D3):
+  `correct_trial_claims()` rewrites false no-card boilerplate to the ~$1
+  card-verification truth, and `localize_trial_hrefs()` points ar bodies'
+  in-body /trial CTAs at `/ar/trial/` (es/en cohorts are a pending policy
+  call — see TODOS).
 - **Localized trial landings:** `build.py`'s `LOCALIZED_LANDING_LANGS` builds
   `/{lang}/trial/` for es, in, and ar (Arabic copy native-reader reviewed,
   5 MSA corrections, v0.3.0.0). Only the `/trial/` variants are built —
