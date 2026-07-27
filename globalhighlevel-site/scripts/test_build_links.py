@@ -467,6 +467,20 @@ def test_unwrap_cross_silo_links():
           'href="/es/para/serie-x/parte-2/"' in f('<a href="/es/para/serie-x/parte-2/">parte 2</a>', parte1, silo, urls))
     check("series part still unwraps a true cross-silo link outside its series",
           f('<a href="/es/pagos-hub/">pagos</a>', parte1, silo, urls) == 'pagos')
+    # codex P2: a series hub with a custom url_path, linked via its /blog/ SLUG,
+    # must still get the series exemption in the slug pass
+    saved_urlmap = dict(build._URL_BY_SLUG)
+    try:
+        build._URL_BY_SLUG.clear()
+        build._URL_BY_SLUG.update({"hub-serie-x": "/es/para/serie-x/"})
+        slug_silo = dict(silo)
+        slug_silo["hub-serie-x"] = ("es", "Agency, White-Label & SaaS")
+        kept = f('<a href="/blog/hub-serie-x/">serie</a>', parte1, slug_silo, urls)
+        check("series hub linked by /blog/ slug KEPT (exemption reaches slug pass)",
+              'href="/blog/hub-serie-x/"' in kept)
+    finally:
+        build._URL_BY_SLUG.clear()
+        build._URL_BY_SLUG.update(saved_urlmap)
 
 
 def test_inject_pillar_link():

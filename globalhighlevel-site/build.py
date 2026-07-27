@@ -702,6 +702,11 @@ _SILO_BY_SLUG: dict = {}
 # 15 cross-silo links rode this bypass while the CHANGELOG claimed zero).
 _SILO_BY_URL: dict = {}
 
+# slug -> canonical URL, so the /blog/-slug pass can run the series-nav
+# exemption too (codex P2 2026-07-27: a series post with a custom url_path
+# linked via its /blog/ slug would be unwrapped before the exemption fired).
+_URL_BY_SLUG: dict = {}
+
 
 def _series_nav_exempt(src_url: str, tgt_url: str, url_map: dict) -> bool:
     """Caleb link-circles are cluster structure, not cross-silo leaks: a series
@@ -739,6 +744,8 @@ def unwrap_cross_silo_links(html: str, post: dict, silo_map: dict = None,
         tgt = m.group(1)
         if tgt in FUNNEL_SINK_SLUGS or tgt not in silo_map or silo_map[tgt] == src:
             return m.group(0)
+        if url_map and _series_nav_exempt(src_url, _URL_BY_SLUG.get(tgt, f"/blog/{tgt}/"), url_map):
+            return m.group(0)  # series nav linked by slug (codex P2)
         _RENDER_PASS_COUNTS["unwrapped"] += 1
         return m.group(2)  # keep inner text, drop the anchor
 
@@ -4016,6 +4023,8 @@ def main():
     _SILO_BY_URL.clear()
     _SILO_BY_URL.update({post_url(q): (q["slug"], (post_lang(q), post_topic(q)))
                          for q in merged if q.get("slug")})
+    _URL_BY_SLUG.clear()
+    _URL_BY_SLUG.update({q["slug"]: post_url(q) for q in merged if q.get("slug")})
     _RENDER_PASS_COUNTS["unwrapped"] = 0
     _RENDER_PASS_COUNTS["pillar_links"] = 0
 
