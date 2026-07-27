@@ -405,6 +405,52 @@ def test_chrome_localization():
     check("empty date safe", build.localize_date("", "ar") == "")
 
 
+def test_unwrap_cross_silo_links():
+    f = build.unwrap_cross_silo_links
+    silo = {"same": ("en", "CRM & Communication"), "other": ("en", "Payments & Pricing"),
+            "otherlang": ("es", "CRM & Communication"),
+            "gohighlevel-free-trial-30-days-extended": ("en", "Payments & Pricing")}
+    post = {"slug": "src", "language": "en", "topic": "CRM & Communication"}
+    html = ('<p><a href="/blog/same/">keep</a> <a href="/blog/other/">unwrap</a> '
+            '<a href="/blog/otherlang/">unwrap2</a> '
+            '<a href="/blog/gohighlevel-free-trial-30-days-extended/">funnel</a> '
+            '<a href="/blog/unknown/">unknown</a></p>')
+    out = f(html, post, silo)
+    check("same-silo link kept", '<a href="/blog/same/">keep</a>' in out)
+    check("cross-topic link unwrapped, text kept", ">unwrap<" not in out.replace("unwrap</a>", "") and "unwrap" in out and '/blog/other/' not in out)
+    check("cross-language link unwrapped", '/blog/otherlang/' not in out and "unwrap2" in out)
+    check("funnel link exempt (kept)", 'href="/blog/gohighlevel-free-trial-30-days-extended/"' in out)
+    check("unknown-slug link left alone", '<a href="/blog/unknown/">unknown</a>' in out)
+    check("pass is idempotent", f(out, post, silo) == out)
+    check("empty map is a no-op", f(html, post, {}) == html)
+
+
+def test_inject_pillar_link():
+    build._ANCHOR_URL_COUNTS.clear()
+    # configure module state the pass reads
+    build.CATEGORIES[:] = [{"name": "CRM & Communication", "slug": "crm-communication",
+                            "keywords": ["pipeline", "smart list", "text campaign"]}]
+    build.LIVE_CATEGORY_SLUGS = {"crm-communication"}
+    post = {"slug": "spoke-1", "language": "en", "topic": "CRM & Communication"}
+    body = '<p>' + ("Build a smart list to keep your pipeline clean and current always. " * 3) + '</p>'
+    out = build.inject_pillar_link(body, post, [post])
+    check("en spoke gains ONE in-prose hub link", out.count('href="/category/crm-communication/"') == 1)
+    check("anchor is a MULTI-WORD topic keyword (single-word banned by audit gate)",
+          '>smart list</a>' in out or '>text campaign</a>' in out)
+    single_only = '<p>' + ("Your pipeline management needs constant attention every single day here. " * 3) + '</p>'
+    check("single-word keywords never used as anchors", build.inject_pillar_link(single_only, post, [post]) == single_only)
+    check("second run adds nothing (hub already linked)", build.inject_pillar_link(out, post, [post]) == out)
+    nomatch = '<p>' + ("Nothing relevant appears in this paragraph of filler words here. " * 3) + '</p>'
+    check("no keyword match -> untouched", build.inject_pillar_link(nomatch, post, [post]) == nomatch)
+    es_post = {"slug": "spoke-es", "language": "es", "topic": "CRM & Communication"}
+    es_body = '<p>' + ("Crea una smart list para tu agencia y manten el flujo ordenado. " * 3) + '</p>'
+    build.LANGUAGES[:] = [{"code": "es", "prefix": "/es", "dir": "ltr"}]
+    out_es = build.inject_pillar_link(es_body, es_post, [es_post, dict(es_post, slug="spoke-es-2")])
+    check("es spoke links the /es hub when bucket >= 2", 'href="/es/category/crm-communication/"' in out_es)
+    lone = build.inject_pillar_link(es_body, es_post, [es_post])
+    check("es singleton bucket -> no dead hub link", lone == es_body)
+
+
 def main():
     print("test_build_links.py")
     for t in (test_anchor_cap, test_build_link_index_multiword_only, test_hub_link_block,
@@ -418,7 +464,8 @@ def main():
               test_localized_landing_configs, test_rtl_rendering,
               test_attribution_prefixes_protected, test_correct_trial_claims,
               test_logo_ltr_on_rtl_pages, test_localize_trial_hrefs,
-              test_chrome_localization):
+              test_chrome_localization, test_unwrap_cross_silo_links,
+              test_inject_pillar_link):
         t()
     print(f"\n{'PASS' if not FAILED else 'FAIL'} — {len(FAILED)} failed")
     return 1 if FAILED else 0

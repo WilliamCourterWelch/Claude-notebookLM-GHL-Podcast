@@ -679,6 +679,100 @@ def inject_internal_links(html: str, post: dict, all_posts: list, max_links: int
 
     return "".join(parts)
 
+# Conversion sinks exempt from silo isolation: links TO these from any silo are
+# the sales funnel (D2 doctrine), not topical links. Money page + its language
+# siblings + the pricing cluster (D11 decision, Bill 2026-07-27).
+FUNNEL_SINK_SLUGS = {
+    "gohighlevel-free-trial-30-days-extended", "gohighlevel-prueba-gratis-30-dias-como-empezar",
+    "gohighlevel-free-trial-india-30-days-setup-guide", "gohighlevel-free-trial-arabic-30-days-guide",
+    "gohighlevel-pricing-plans-2026-complete-guide", "gohighlevel-precios-planes-2026-guia-completa",
+    "gohighlevel-pricing-india-2026-rupees-complete-guide", "gohighlevel-pricing-arabic-2026-complete-guide",
+}
+
+# slug -> (lang, topic), populated in main() before post rendering.
+_SILO_BY_SLUG: dict = {}
+
+
+def unwrap_cross_silo_links(html: str, post: dict, silo_map: dict = None) -> str:
+    """Caleb Critical Rule at render time (D11, Bill-decided strict 2026-07-27):
+    an in-body link to a post in a DIFFERENT silo (language+topic) is unwrapped
+    — the words stay, the link goes. Funnel sinks are exempt (they are the
+    business, not topical links). JSON stays byte-faithful (D3)."""
+    silo_map = silo_map if silo_map is not None else _SILO_BY_SLUG
+    if not silo_map:
+        return html
+    src = (post_lang(post), post_topic(post))
+
+    def _repl(m):
+        tgt = m.group(1)
+        if tgt in FUNNEL_SINK_SLUGS or tgt not in silo_map or silo_map[tgt] == src:
+            return m.group(0)
+        return m.group(2)  # keep inner text, drop the anchor
+
+    return re.sub(
+        r'<a\b[^>]*href="(?:https://globalhighlevel\.com)?/blog/([a-z0-9\-]+)/?"[^>]*>(.*?)</a>',
+        _repl, html, flags=re.DOTALL)
+
+
+def inject_pillar_link(html: str, post: dict, all_posts: list = None) -> str:
+    """Caleb contextual rule (D12, Bill-decided 2026-07-27): every spoke gets
+    ONE in-prose link to its silo hub, woven where a topic keyword naturally
+    appears. Deterministic per slug, ledger-aware, skipped when no natural
+    phrase exists or the body already links the hub. JSON untouched."""
+    cat = post_topic(post)
+    lang = post_lang(post)
+    cat_slug = slugify(display_cat(cat) or "")
+    if not cat_slug:
+        return html
+    # Hub URL per language; only link hubs that will actually be built.
+    if lang == "en":
+        if cat_slug not in LIVE_CATEGORY_SLUGS:
+            return html
+        hub_url = f"/category/{cat_slug}/"
+    else:
+        lang_cfg = next((l for l in LANGUAGES if l["code"] == lang), None)
+        prefix = (lang_cfg or {}).get("prefix", "")
+        if not prefix or not all_posts:
+            return html
+        # replicate build_language_topic_pages' min_posts=2 rule
+        bucket = sum(1 for q in all_posts if post_lang(q) == lang and post_topic(q) == cat)
+        if bucket < 2:
+            return html
+        hub_url = f"{prefix}/category/{cat_slug}/"
+    if f'href="{hub_url}"' in html:
+        return html  # body already links the hub
+    topic_cfg = next((c for c in CATEGORIES if c.get("name") == cat), None)
+    # multi-word keywords ONLY — the link-hygiene gate (audit_links check 2)
+    # bans single-word editorial anchors sitewide
+    keywords = [k for k in (topic_cfg or {}).get("keywords", []) if " " in k and len(k) >= 5]
+    if not keywords:
+        return html
+    import random
+    rng = random.Random(post.get("slug", ""))
+    rng.shuffle(keywords)  # rotate anchors across posts so the sitewide cap spreads
+    parts = re.split(r'(<p[^>]*>.*?</p>)', html, flags=re.DOTALL)
+    for i, part in enumerate(parts):
+        if not part.startswith('<p'):
+            continue
+        text_only = re.sub(r'<[^>]+>', '', part)
+        if len(text_only) < 80 or '<a ' in part:
+            continue
+        low = part.lower()
+        for kw in keywords:
+            idx = low.find(kw)
+            if idx < 0:
+                continue
+            before = part[:idx]
+            if before.count('<') > before.count('>'):
+                continue
+            original = part[idx:idx + len(kw)]
+            if not _anchor_under_cap(original, hub_url):
+                continue
+            parts[i] = part[:idx] + f'<a href="{hub_url}">{original}</a>' + part[idx + len(kw):]
+            return "".join(parts)
+    return html
+
+
 def load_categories() -> tuple[list[dict], list[dict]]:
     """Load category definitions from categories.json (new: languages + topics)."""
     if CATEGORIES_JSON.exists():
@@ -1632,8 +1726,10 @@ def build_authority_page(post: dict, all_posts: list = None):
     # auth bodies share the site-wide anchor ledger; codex 2026-07-23)
     html_content = sanitize_content(html_content)
     html_content = nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post))))
+    html_content = unwrap_cross_silo_links(html_content, post)
     html_content = enforce_anchor_caps(html_content)
     if all_posts:
+        html_content = inject_pillar_link(html_content, post, all_posts)
         html_content = inject_internal_links(html_content, post, all_posts, max_links=4)
 
     # Series label: for hub it's "Serie" + vertical name; for pillar it's "Parte N de 9 · [Hub Title]"
@@ -1780,6 +1876,7 @@ def build_post_page(post: dict, all_posts: list = None):
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
     html_content = nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post))))
+    html_content = unwrap_cross_silo_links(html_content, post)
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
     # mvp_minimal_links: money/landing pages concentrate juice — no outbound internal
@@ -1798,6 +1895,7 @@ def build_post_page(post: dict, all_posts: list = None):
         # render (red-team 2026-07-23).
         html_content = enforce_anchor_caps(html_content)
     if all_posts and not _suppress_links:
+        html_content = inject_pillar_link(html_content, post, all_posts)
         html_content = inject_internal_links(html_content, post, all_posts)
     # P1.2: editorial in-body link up to the category hub (only when the hub is built).
     if _cat_built and not _suppress_links:
@@ -3838,6 +3936,10 @@ def main():
         for _t, _n in _counts.items():
             if _n >= 2:
                 BUILT_PAGE_PATHS.add(f"{_prefix}/category/{slugify(_t)}/")
+
+    # Silo map for the render-time cross-silo unwrap (D11, 2026-07-27)
+    _SILO_BY_SLUG.clear()
+    _SILO_BY_SLUG.update({q["slug"]: (post_lang(q), post_topic(q)) for q in merged if q.get("slug")})
 
     # Individual post pages — authority template for series content, blog template for rest
     print("Building post pages...")
