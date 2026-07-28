@@ -216,6 +216,22 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - Student counts or community sizes
 - Awards, press mentions, certifications
 
+## Screenshots — capture → redact → attest → publish (HARD RULE, v0.3.5.0)
+
+No product screenshot reaches `images/` (and therefore the live site) without ALL of:
+1. Raw capture in `captures/<lang>/` (gitignored, local-only) + an entry in the
+   slug's `*.manifest.json` with `claim_supported` and `forbidden_overclaims`.
+2. Solid-bar redaction (NOT blur) of: brand logo, sub-account name box, avatar,
+   and any client/owner PII. Redacted file verified visually.
+3. Bill's attestation recorded in the manifest (`attested: true`, `attested_by`,
+   `attested_at`) BEFORE the image is copied into `images/`.
+4. The published `<img>` alt/caption must match what the image actually shows
+   (adversarial review caught a caption claiming a card not visible in frame).
+
+Why written down: on 2026-07-28 two June captures were found LIVE un-redacted
+(brand + sandbox identity visible) — published by a session that skipped this
+flow because it existed only as convention, not doc. Fixed in v0.3.5.0.
+
 ## Tests — pre-deploy gate suite
 
 Run before any deploy (all must pass): `python3 -m pytest scripts/ -q` — covers
