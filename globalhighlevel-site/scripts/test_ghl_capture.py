@@ -7,6 +7,7 @@ Exits 0 if all pass, 1 otherwise. Uses temp dirs; never touches real posts/image
 from __future__ import annotations
 
 import json
+import os
 import sys
 import tempfile
 import types
@@ -22,6 +23,10 @@ def check(name, cond):
     print(f"  {'ok  ' if cond else 'FAIL'} {name}")
     if not cond:
         FAILED.append(name)
+        # Under pytest a silent append would leave the test green (vacuous
+        # gate); raise so pytest reports the real failure.
+        if os.environ.get("PYTEST_CURRENT_TEST"):
+            raise AssertionError(name)
 
 
 def with_temp_site(fn):
@@ -39,6 +44,28 @@ def with_temp_site(fn):
             fn(root)
         finally:
             lib.SITE, lib.POSTS, lib.IMAGES, lib.CAPTURES = orig
+
+
+try:  # pytest collects the test_* functions; give it the same temp-site `root`
+    import pytest
+
+    @pytest.fixture
+    def root():
+        orig = (lib.SITE, lib.POSTS, lib.IMAGES, lib.CAPTURES)
+        with tempfile.TemporaryDirectory() as d:
+            r = Path(d)
+            lib.SITE = r
+            lib.POSTS = r / "posts"
+            lib.IMAGES = r / "images"
+            lib.CAPTURES = r / "captures"
+            for p in (lib.POSTS, lib.IMAGES, lib.CAPTURES):
+                p.mkdir(parents=True)
+            try:
+                yield r
+            finally:
+                lib.SITE, lib.POSTS, lib.IMAGES, lib.CAPTURES = orig
+except ImportError:  # standalone `python3 scripts/test_ghl_capture.py` path
+    pass
 
 
 def write_post(slug, html_content, language="es"):
