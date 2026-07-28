@@ -129,7 +129,10 @@ maestro-ai-flow-builder (setup guide missing steps 2-5), configurar-facebook-
 instagram-messaging (paso-a-paso section removed), copiar-templates-temporizadores
 (steps 2+ missing), vista-kanban (sections 3-8 never existed), workflows-gohighlevel-
 mercadopago-whatsapp-automaticamente + plantillas-agencias-5-minutos + inmobiliarias
-(case + how-to sections). Any new "Caso Real" must be real and verifiable — the
+(case + how-to sections). Also: ai-help-gohighlevel-workflows-construccion-rapida's
+intro bullet list still promises "Casos reales de agencias latinas automatizando
+con IA" — the body has none (doc review 2026-07-28); fix the bullet or deliver the
+cases during the rebuild. Any new "Caso Real" must be real and verifiable — the
 sitewide inventory shows ~137 es posts carry "Caso Real" headings from the same
 firehose batch; audit that wider set during the wedge (fabrication risk beyond the
 27 already handled). Gate: test_no_editorial_markers.py bans editor notes re-entering.
@@ -145,10 +148,15 @@ shells the two test functions. (Red team 2026-07-28)
 **Priority:** P3
 v0.3.0.0 pre-landing review shipped `correct_trial_claims()` — a render-time
 exact-phrase pass that rewrites the known no-card boilerplate (en/es/ar, bodies
-+ meta descriptions) to the ~$1 card-verification truth; rendered residual is 0
-across 904 pages. Remaining: periodically re-run the residual scan for phrase
-variants the table doesn't cover (e.g. new imports), and consider a Devanagari
-(Hindi) variant if one ever appears. (Codex review 2026-07-27, resolved same day)
++ meta descriptions) to the ~$1 card-verification truth; rendered residual was 0
+across 904 pages. **UPDATE 2026-07-28 (v0.3.4.0 doc review): residual is now 1 —
+the strip's new close in automatizaciones-gohighlevel-flujos-trabajo-ventas-
+latinoamerica says "No necesitas tarjeta de crédito. Solo tu email." which
+escapes the phrase table (verified against build.correct_trial_claims). Add the
+variant to _TRIAL_CLAIM_FIXES or fix the stored line before the next deploy.**
+Remaining: periodically re-run the residual scan for phrase variants the table
+doesn't cover (e.g. new imports), and consider a Devanagari (Hindi) variant if
+one ever appears. (Codex review 2026-07-27; reopened by doc review 2026-07-28)
 
 ### About-page copy in build.py is stale post-restore
 **Priority:** P2

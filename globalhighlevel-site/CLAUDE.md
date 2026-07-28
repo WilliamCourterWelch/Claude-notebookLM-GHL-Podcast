@@ -222,6 +222,6 @@ Run before any deploy (all must pass): `python3 -m pytest scripts/ -q` — cover
 link audits (`test_audit_links`, `test_build_links`), capture pipeline
 (`test_ghl_capture`), IndexNow submitter (`test_submit_indexnow`), restore
 tooling (`test_restore_posts`), and the **editorial-debt gate**
-(`test_no_editorial_markers`: no bracketed editor notes in any post field, no
-empty/trailing heading sections — added v0.3.4.0 after the 2026-07-28 strip of
+(`test_no_editorial_markers`: no bracketed editor notes in any top-level post
+string field, no empty/trailing heading sections — added v0.3.4.0 after the 2026-07-28 strip of
 27 firehose-era es posts). Then `python3 build.py` and `python3 verify.py`.

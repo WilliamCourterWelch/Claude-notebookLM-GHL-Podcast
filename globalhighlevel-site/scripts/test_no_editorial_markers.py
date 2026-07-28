@@ -2,7 +2,7 @@
 """Regression gate: no editorial-debt markers in any post field.
 
 The 2026-07-28 strip removed ~32 bracketed editor notes / fabricated-case
-stubs from 26 firehose-era es posts ([NOTA EDITORIAL: ...], [SECCIÓN A
+stubs from 27 firehose-era es posts ([NOTA EDITORIAL: ...], [SECCIÓN A
 COMPLETAR...], [INCOMPLETO — AÑADIR AQUÍ], etc.). Future imports or the
 research-wedge rebuild must never reintroduce the class.
 
