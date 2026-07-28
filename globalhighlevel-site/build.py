@@ -540,15 +540,20 @@ def nofollow_affiliate_links(html: str) -> str:
         if not href_m or "fp_ref=" not in href_m.group(1):
             return m.group(0)
         rel_m = re.search(r'''rel\s*=\s*("[^"]*"|'[^']*')''', attrs, re.I)
+        _blank = bool(re.search(r'target\s*=\s*["\']_blank["\']', attrs, re.I))
         if rel_m:
             tokens = rel_m.group(1).strip("\"'").split()
-            if "nofollow" in tokens:
+            if "nofollow" in tokens and not (_blank and "noopener" not in tokens):
                 return m.group(0)
-            _stamp = ("nofollow", "sponsored", "noopener") if re.search(r'target\s*=\s*["\']_blank["\']', attrs, re.I) else ("nofollow", "sponsored")
+            _stamp = ("nofollow", "sponsored", "noopener") if _blank else ("nofollow", "sponsored")
+            # already-nofollow anchors only gain noopener; never re-stamp
+            # sponsored onto an author-written rel that chose otherwise
+            if "nofollow" in tokens:
+                _stamp = ("noopener",)
             new_tokens = tokens + [t for t in _stamp if t not in tokens]
             new_rel = 'rel="' + " ".join(new_tokens) + '"'
             return f'<a{attrs.replace(rel_m.group(0), new_rel)}>'
-        if re.search(r'target\s*=\s*["\']_blank["\']', attrs, re.I):
+        if _blank:
             return f'<a{attrs} rel="nofollow sponsored noopener">'
         return f'<a{attrs} rel="nofollow sponsored">'
     return re.sub(r'<a\b([^>]*)>', _repl, html, flags=re.I)
