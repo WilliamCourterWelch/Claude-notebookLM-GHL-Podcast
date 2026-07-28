@@ -439,7 +439,20 @@ _TRIAL_CLAIM_FIXES = (
     ("No credit card, ", "Just a ~$1 card verification, "),
     ("no credit card, ", "just a ~$1 card verification, "),
     ("no credit card)", "just a ~$1 card verification)"),
-    # Spanish
+    # Spanish — long-tail sentence forms first (residual scan 2026-07-28: 9
+    # occurrences in 7 es posts escaped the phrase table; sentence-level
+    # entries keep the surrounding claim truthful, e.g. the trial FAQ's "No."
+    # answer and "Solo tu email" tails would contradict a bare phrase swap)
+    ("No. La prueba de 30 días no requiere tarjeta de crédito. Solo necesitas un email válido para crear tu cuenta.",
+     "Casi: la prueba de 30 días pide una tarjeta solo para una verificación de ~$1 (retención temporal que tu banco libera, sin cargo de suscripción), más un email válido para crear tu cuenta."),
+    ("es completamente gratuita y no requiere tarjeta de crédito.",
+     "es gratuita — solo se pide una tarjeta para una verificación de ~$1 (retención temporal que tu banco libera, sin cargo de suscripción)."),
+    ("No necesitas tarjeta de crédito. Solo tu email.",
+     "Solo se pide una verificación de tarjeta de ~$1 (sin cargo de suscripción) y tu email."),
+    ("No necesitas tarjeta de crédito.", "Solo se requiere una verificación de tarjeta de ~$1 (sin cargo de suscripción)."),
+    ("no necesitas tarjeta de crédito", "solo se requiere una verificación de tarjeta de ~$1"),
+    ("No requiere tarjeta de crédito", "Solo requiere una verificación de tarjeta de ~$1"),
+    ("no requiere tarjeta de crédito", "solo requiere una verificación de tarjeta de ~$1"),
     ("Sin tarjeta de crédito requerida", "Solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
     ("sin tarjeta de crédito requerida", "solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
     ("Sin necesidad de tarjeta de crédito", "Solo una verificación de tarjeta de ~$1"),

@@ -149,14 +149,16 @@ shells the two test functions. (Red team 2026-07-28)
 v0.3.0.0 pre-landing review shipped `correct_trial_claims()` — a render-time
 exact-phrase pass that rewrites the known no-card boilerplate (en/es/ar, bodies
 + meta descriptions) to the ~$1 card-verification truth; rendered residual was 0
-across 904 pages. **UPDATE 2026-07-28 (v0.3.4.0 doc review): residual is now 1 —
-the strip's new close in automatizaciones-gohighlevel-flujos-trabajo-ventas-
-latinoamerica says "No necesitas tarjeta de crédito. Solo tu email." which
-escapes the phrase table (verified against build.correct_trial_claims). Add the
-variant to _TRIAL_CLAIM_FIXES or fix the stored line before the next deploy.**
-Remaining: periodically re-run the residual scan for phrase variants the table
-doesn't cover (e.g. new imports), and consider a Devanagari (Hindi) variant if
-one ever appears. (Codex review 2026-07-27; reopened by doc review 2026-07-28)
+across 904 pages. RESOLVED same day 2026-07-28: the doc review's flagged
+occurrence turned out to be one of 9 escaped variants in 7 es posts ("No
+necesitas tarjeta de crédito", "no requiere tarjeta de crédito" — incl. the
+Spanish trial post's FAQ answer + its JSON-LD). All added to
+_TRIAL_CLAIM_FIXES as sentence-level exact entries (bare phrase swaps would
+have contradicted tails like "Solo tu email"); sitewide rendered residual
+scan back to 0. Remaining: periodically re-run the residual scan for phrase
+variants the table doesn't cover (e.g. new imports), and consider a
+Devanagari (Hindi) variant if one ever appears. (Codex review 2026-07-27;
+reopened + resolved 2026-07-28)
 
 ### About-page copy in build.py is stale post-restore
 **Priority:** P2
