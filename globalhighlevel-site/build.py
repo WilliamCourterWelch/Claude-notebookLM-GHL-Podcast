@@ -439,7 +439,24 @@ _TRIAL_CLAIM_FIXES = (
     ("No credit card, ", "Just a ~$1 card verification, "),
     ("no credit card, ", "just a ~$1 card verification, "),
     ("no credit card)", "just a ~$1 card verification)"),
-    # Spanish
+    # Spanish — long-tail sentence forms first (residual scan 2026-07-28: 9
+    # occurrences in 7 es posts escaped the phrase table; sentence-level
+    # entries keep the surrounding claim truthful, e.g. the trial FAQ's "No."
+    # answer and "Solo tu email" tails would contradict a bare phrase swap)
+    ("No. La prueba de 30 días no requiere tarjeta de crédito. Solo necesitas un email válido para crear tu cuenta.",
+     "Casi: la prueba de 30 días pide una tarjeta solo para una verificación de ~$1 (retención temporal que tu banco libera, sin cargo de suscripción), más un email válido para crear tu cuenta."),
+    ("es completamente gratuita y no requiere tarjeta de crédito.",
+     "es gratuita — solo se pide una tarjeta para una verificación de ~$1 (retención temporal que tu banco libera, sin cargo de suscripción)."),
+    ("No necesitas tarjeta de crédito. Solo tu email.",
+     "Solo se pide una verificación de tarjeta de ~$1 (sin cargo de suscripción) y tu email."),
+    ("No necesitas tarjeta de crédito.", "Solo se requiere una verificación de tarjeta de ~$1 (sin cargo de suscripción)."),
+    ("no necesitas tarjeta de crédito", "solo se requiere una verificación de tarjeta de ~$1"),
+    ("No requiere tarjeta de crédito", "Solo requiere una verificación de tarjeta de ~$1"),
+    ("no requiere tarjeta de crédito", "solo requiere una verificación de tarjeta de ~$1"),
+    ("(Sin Tarjeta de Crédito)", "(Solo verificación de tarjeta de ~$1)"),
+    ("sin solicitar tarjeta de crédito", "solicitando solo una verificación de tarjeta de ~$1"),
+    ("No necesitas tarjeta de crédito", "Solo se requiere una verificación de tarjeta de ~$1"),
+    ("(No Credit Card)", "(Just a ~$1 card verification)"),
     ("Sin tarjeta de crédito requerida", "Solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
     ("sin tarjeta de crédito requerida", "solo una verificación de tarjeta de ~$1 (sin cargo de suscripción)"),
     ("Sin necesidad de tarjeta de crédito", "Solo una verificación de tarjeta de ~$1"),
@@ -523,13 +540,21 @@ def nofollow_affiliate_links(html: str) -> str:
         if not href_m or "fp_ref=" not in href_m.group(1):
             return m.group(0)
         rel_m = re.search(r'''rel\s*=\s*("[^"]*"|'[^']*')''', attrs, re.I)
+        _blank = bool(re.search(r'target\s*=\s*["\']_blank["\']', attrs, re.I))
         if rel_m:
             tokens = rel_m.group(1).strip("\"'").split()
-            if "nofollow" in tokens:
+            if "nofollow" in tokens and not (_blank and "noopener" not in tokens):
                 return m.group(0)
-            new_tokens = tokens + [t for t in ("nofollow", "sponsored") if t not in tokens]
+            _stamp = ("nofollow", "sponsored", "noopener") if _blank else ("nofollow", "sponsored")
+            # already-nofollow anchors only gain noopener; never re-stamp
+            # sponsored onto an author-written rel that chose otherwise
+            if "nofollow" in tokens:
+                _stamp = ("noopener",)
+            new_tokens = tokens + [t for t in _stamp if t not in tokens]
             new_rel = 'rel="' + " ".join(new_tokens) + '"'
             return f'<a{attrs.replace(rel_m.group(0), new_rel)}>'
+        if _blank:
+            return f'<a{attrs} rel="nofollow sponsored noopener">'
         return f'<a{attrs} rel="nofollow sponsored">'
     return re.sub(r'<a\b([^>]*)>', _repl, html, flags=re.I)
 
@@ -2254,7 +2279,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
     def make_card(p):
         slug     = p.get("slug", "")
         title    = p.get("title", p.get("seoTitle", "Untitled"))
-        desc     = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 130)
+        desc     = truncate(correct_trial_claims(p.get("description", p.get("seoDescription", p.get("meta_description", "")))), 130)
         cat      = display_cat(post_topic(p))
         date_str = fmt_date(p.get("publishedAt", p.get("uploadedAt", "")))
         ep_id    = p.get("transistorEpisodeId", "")
@@ -2295,7 +2320,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         # Featured section: lead + stack
         lead_slug = lead.get("slug", "")
         lead_title = lead.get("title", lead.get("seoTitle", ""))
-        lead_desc = truncate(lead.get("description", lead.get("seoDescription", lead.get("meta_description", ""))), 200)
+        lead_desc = truncate(correct_trial_claims(lead.get("description", lead.get("seoDescription", lead.get("meta_description", "")))), 200)
         lead_cat = display_cat(post_topic(lead))
         lead_date = fmt_date(lead.get("publishedAt", lead.get("uploadedAt", "")))
         lead_rtime = read_time(lead.get("html_content", lead_desc))
@@ -2450,7 +2475,7 @@ def build_category_pages(posts: list[dict]):
         for p in list_posts:
             slug     = p.get("slug", "")
             title    = p.get("title", p.get("seoTitle", "Untitled"))
-            desc     = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 130)
+            desc     = truncate(correct_trial_claims(p.get("description", p.get("seoDescription", p.get("meta_description", "")))), 130)
             date_str = fmt_date(p.get("publishedAt", p.get("uploadedAt", "")))
             ep_id    = p.get("transistorEpisodeId", "")
             rtime    = read_time(p.get("html_content", desc))
@@ -2668,7 +2693,7 @@ def build_llms_txt(posts: list[dict]):
     for p in posts:
         title = p.get("title", p.get("seoTitle", ""))
         slug  = p.get("slug", "")
-        desc  = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 120)
+        desc  = truncate(correct_trial_claims(p.get("description", p.get("seoDescription", p.get("meta_description", "")))), 120)
         if title and slug:
             code = post_lang(p)
             if len(by_lang.setdefault(code, [])) < _LLMS_CAPS.get(code, 30):
@@ -3747,7 +3772,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
         for p in page_posts:
             slug = p.get("slug", "")
             title = p.get("title", p.get("seoTitle", "Untitled"))
-            desc = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 130)
+            desc = truncate(correct_trial_claims(p.get("description", p.get("seoDescription", p.get("meta_description", "")))), 130)
             date_str = fmt_date(p.get("publishedAt", p.get("uploadedAt", "")))
             rtime = read_time(p.get("html_content", desc))
             cat_raw = post_topic(p)
@@ -3877,7 +3902,7 @@ def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: 
         for p in cat_posts:
             slug = p.get("slug", "")
             title = p.get("title", p.get("seoTitle", "Untitled"))
-            desc = truncate(p.get("description", p.get("seoDescription", p.get("meta_description", ""))), 130)
+            desc = truncate(correct_trial_claims(p.get("description", p.get("seoDescription", p.get("meta_description", "")))), 130)
             date_str = fmt_date(p.get("publishedAt", p.get("uploadedAt", "")))
             rtime = read_time(p.get("html_content", desc))
             cards_html += f"""

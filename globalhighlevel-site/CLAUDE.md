@@ -215,3 +215,26 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - Income claims or revenue numbers
 - Student counts or community sizes
 - Awards, press mentions, certifications
+
+## Tests — pre-deploy gate suite
+
+Run before any deploy (all must pass): `python3 -m pytest scripts/ -q` — covers
+link audits (`test_audit_links`, `test_build_links`), capture pipeline
+(`test_ghl_capture`), IndexNow submitter (`test_submit_indexnow`), restore
+tooling (`test_restore_posts`), and the **editorial-debt gate**
+(`test_no_editorial_markers`: no bracketed editor notes in any top-level post
+string field, no empty/trailing heading sections — added v0.3.4.0 after the 2026-07-28 strip of
+27 firehose-era es posts). Then `python3 build.py` and `python3 verify.py`.
+
+## Canonical in-body trial CTA block (added v0.3.4.0)
+
+When a post needs a closing trial CTA in stored JSON, copy this block VERBATIM
+(do not mint a new variant — the corpus already has ~18 divergent one-off
+callouts; this is the canonical one). The href stays `globalhighlevel.com/trial`:
+`localize_trial_hrefs()` routes it per language and `nofollow_affiliate_links()`
+stamps rel at render. NEVER write a "no credit card" claim — the truthful line
+is "acceso completo, cancela cuando quieras":
+
+```html
+<p style="background:#fef3c7;border-left:4px solid #f59e0b;padding:12px 16px;border-radius:4px;margin-top:20px;"><strong>👉 Empieza ahora:</strong> Prueba GoHighLevel <strong>GRATIS por 30 días</strong> — acceso completo, cancela cuando quieras. <a href="https://globalhighlevel.com/trial" target="_blank">Acceder a prueba gratis →</a></p>
+```

@@ -118,14 +118,53 @@ The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
 
 ## Content hygiene
 
+### Rebuild stripped es sections via /research-product-wedge (Bill-directed)
+**Priority:** P1
+v0.3.4.0 stripped editor notes + fabricated "Caso Real" cases from 27 es posts;
+the honest gaps now need real content (Bill 2026-07-28: "strip and then use the
+research wedge to fix them"). Highest-value gaps: configurar-workflows-gohighlevel-
+whatsapp-mercadopago (how-to shell — title promises configuration, body has none),
+gohighlevel-workflows-practicos-… (slug still says "casos-de-uso-reales", zero cases),
+maestro-ai-flow-builder (setup guide missing steps 2-5), configurar-facebook-
+instagram-messaging (paso-a-paso section removed), copiar-templates-temporizadores
+(steps 2+ missing), vista-kanban (sections 3-8 never existed), workflows-gohighlevel-
+mercadopago-whatsapp-automaticamente + plantillas-agencias-5-minutos + inmobiliarias
+(case + how-to sections). (ai-help-gohighlevel-workflows-construccion-rapida's
+"Casos reales" intro bullet was removed same day — deliver real cases there
+during the rebuild if the wedge produces them.) Any new "Caso Real" must be real and verifiable — the
+sitewide inventory shows ~137 es posts carry "Caso Real" headings from the same
+firehose batch; audit that wider set during the wedge (fabrication risk beyond the
+27 already handled). Gate: test_no_editorial_markers.py bans editor notes re-entering.
+Watch notes from the 0.3.4.0 adversarial review: (a) all 28 stripped posts got
+updatedAt=2026-07-28, so crawlers are invited to recrawl them at their thinnest
+state until the rebuild lands — prioritize the wedge accordingly; (b)
+gohighlevel-mercadopago-mexico body contains bill@reiamplifi.com in prose —
+confirm intended; (c) workflows-gohighlevel-mercadopago-whatsapp-automaticamente
+still has one pre-existing unclosed <p> (browsers auto-close; cosmetic).
+
+### Editorial-debt gate is pytest-only — consider a verify.py hook
+**Priority:** P3
+test_no_editorial_markers.py runs in the documented pre-deploy pytest suite
+(CLAUDE.md), but verify.py/build.py don't invoke pytest, so a deploy path that
+skips pytest skips the gate. If that ever bites, add a verify.py check that
+shells the two test functions. (Red team 2026-07-28)
+
 ### Refine trial-claim render pass long tail
 **Priority:** P3
 v0.3.0.0 pre-landing review shipped `correct_trial_claims()` — a render-time
 exact-phrase pass that rewrites the known no-card boilerplate (en/es/ar, bodies
-+ meta descriptions) to the ~$1 card-verification truth; rendered residual is 0
-across 904 pages. Remaining: periodically re-run the residual scan for phrase
-variants the table doesn't cover (e.g. new imports), and consider a Devanagari
-(Hindi) variant if one ever appears. (Codex review 2026-07-27, resolved same day)
++ meta descriptions) to the ~$1 card-verification truth; rendered residual was 0
+across 904 pages. RESOLVED 2026-07-28 in two rounds. Round 1: 9 escaped
+lowercase variants in 7 es posts added as sentence-level exact entries.
+Round 2 (standalone /review caught the round-1 scan was casing-blind):
+Title-Case escapes ("(Sin Tarjeta de Crédito)", "(No Credit Card)"), the
+Spanish trial page's own stored TITLE (title/h1/JSON-LD fan-out), and a
+render-path gap — category-page card excerpts never ran the correction
+pass (now correct-then-truncate at all 6 card sites). The manual scan is
+retired: scripts/test_trial_claims_residual.py now gates this automatically
+(ordering invariant + entry behavior + case-insensitive corpus residual,
+titles included). Remaining: consider a Devanagari (Hindi) variant if one
+ever appears. (Codex review 2026-07-27; resolved + gated 2026-07-28)
 
 ### About-page copy in build.py is stale post-restore
 **Priority:** P2
