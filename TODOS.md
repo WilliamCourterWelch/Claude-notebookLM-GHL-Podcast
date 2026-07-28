@@ -120,6 +120,10 @@ The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
 
 ### Rebuild stripped es sections via /research-product-wedge (Bill-directed)
 **Priority:** P1
+**PROGRESS v0.3.5.0 (2026-07-28):** Post 1 of 10 rebuilt and shipped (configurar-workflows-
+gohighlevel-whatsapp-mercadopago, 301→1554 words, wedge vault + attested screenshots +
+in-silo links). Remaining: 9 posts (workflows-…-automaticamente next — same research),
+Step 5 competitor sections, 4 fetch-resolvable ungroundeds, 128-post Caso Real decision.
 v0.3.4.0 stripped editor notes + fabricated "Caso Real" cases from 27 es posts;
 the honest gaps now need real content (Bill 2026-07-28: "strip and then use the
 research wedge to fix them"). Highest-value gaps: configurar-workflows-gohighlevel-
