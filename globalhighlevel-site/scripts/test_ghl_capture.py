@@ -6,6 +6,7 @@ Exits 0 if all pass, 1 otherwise. Uses temp dirs; never touches real posts/image
 """
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import sys
@@ -29,8 +30,11 @@ def check(name, cond):
             raise AssertionError(name)
 
 
-def with_temp_site(fn):
-    """Point lib's SITE/POSTS/IMAGES/CAPTURES at a temp tree, run fn, restore."""
+@contextlib.contextmanager
+def _temp_site():
+    """Point lib's SITE/POSTS/IMAGES/CAPTURES at a temp tree; restore on exit.
+    Single implementation shared by the standalone runner and the pytest
+    fixture so the two entry points can never drift."""
     orig = (lib.SITE, lib.POSTS, lib.IMAGES, lib.CAPTURES)
     with tempfile.TemporaryDirectory() as d:
         root = Path(d)
@@ -41,9 +45,14 @@ def with_temp_site(fn):
         for p in (lib.POSTS, lib.IMAGES, lib.CAPTURES):
             p.mkdir(parents=True)
         try:
-            fn(root)
+            yield root
         finally:
             lib.SITE, lib.POSTS, lib.IMAGES, lib.CAPTURES = orig
+
+
+def with_temp_site(fn):
+    with _temp_site() as root:
+        fn(root)
 
 
 try:  # pytest collects the test_* functions; give it the same temp-site `root`
@@ -51,19 +60,8 @@ try:  # pytest collects the test_* functions; give it the same temp-site `root`
 
     @pytest.fixture
     def root():
-        orig = (lib.SITE, lib.POSTS, lib.IMAGES, lib.CAPTURES)
-        with tempfile.TemporaryDirectory() as d:
-            r = Path(d)
-            lib.SITE = r
-            lib.POSTS = r / "posts"
-            lib.IMAGES = r / "images"
-            lib.CAPTURES = r / "captures"
-            for p in (lib.POSTS, lib.IMAGES, lib.CAPTURES):
-                p.mkdir(parents=True)
-            try:
-                yield r
-            finally:
-                lib.SITE, lib.POSTS, lib.IMAGES, lib.CAPTURES = orig
+        with _temp_site() as r:
+            yield r
 except ImportError:  # standalone `python3 scripts/test_ghl_capture.py` path
     pass
 
