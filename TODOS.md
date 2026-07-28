@@ -129,13 +129,18 @@ maestro-ai-flow-builder (setup guide missing steps 2-5), configurar-facebook-
 instagram-messaging (paso-a-paso section removed), copiar-templates-temporizadores
 (steps 2+ missing), vista-kanban (sections 3-8 never existed), workflows-gohighlevel-
 mercadopago-whatsapp-automaticamente + plantillas-agencias-5-minutos + inmobiliarias
-(case + how-to sections). Also: ai-help-gohighlevel-workflows-construccion-rapida's
-intro bullet list still promises "Casos reales de agencias latinas automatizando
-con IA" — the body has none (doc review 2026-07-28); fix the bullet or deliver the
-cases during the rebuild. Any new "Caso Real" must be real and verifiable — the
+(case + how-to sections). (ai-help-gohighlevel-workflows-construccion-rapida's
+"Casos reales" intro bullet was removed same day — deliver real cases there
+during the rebuild if the wedge produces them.) Any new "Caso Real" must be real and verifiable — the
 sitewide inventory shows ~137 es posts carry "Caso Real" headings from the same
 firehose batch; audit that wider set during the wedge (fabrication risk beyond the
 27 already handled). Gate: test_no_editorial_markers.py bans editor notes re-entering.
+Watch notes from the 0.3.4.0 adversarial review: (a) all 28 stripped posts got
+updatedAt=2026-07-28, so crawlers are invited to recrawl them at their thinnest
+state until the rebuild lands — prioritize the wedge accordingly; (b)
+gohighlevel-mercadopago-mexico body contains bill@reiamplifi.com in prose —
+confirm intended; (c) workflows-gohighlevel-mercadopago-whatsapp-automaticamente
+still has one pre-existing unclosed <p> (browsers auto-close; cosmetic).
 
 ### Editorial-debt gate is pytest-only — consider a verify.py hook
 **Priority:** P3
@@ -149,16 +154,17 @@ shells the two test functions. (Red team 2026-07-28)
 v0.3.0.0 pre-landing review shipped `correct_trial_claims()` — a render-time
 exact-phrase pass that rewrites the known no-card boilerplate (en/es/ar, bodies
 + meta descriptions) to the ~$1 card-verification truth; rendered residual was 0
-across 904 pages. RESOLVED same day 2026-07-28: the doc review's flagged
-occurrence turned out to be one of 9 escaped variants in 7 es posts ("No
-necesitas tarjeta de crédito", "no requiere tarjeta de crédito" — incl. the
-Spanish trial post's FAQ answer + its JSON-LD). All added to
-_TRIAL_CLAIM_FIXES as sentence-level exact entries (bare phrase swaps would
-have contradicted tails like "Solo tu email"); sitewide rendered residual
-scan back to 0. Remaining: periodically re-run the residual scan for phrase
-variants the table doesn't cover (e.g. new imports), and consider a
-Devanagari (Hindi) variant if one ever appears. (Codex review 2026-07-27;
-reopened + resolved 2026-07-28)
+across 904 pages. RESOLVED 2026-07-28 in two rounds. Round 1: 9 escaped
+lowercase variants in 7 es posts added as sentence-level exact entries.
+Round 2 (standalone /review caught the round-1 scan was casing-blind):
+Title-Case escapes ("(Sin Tarjeta de Crédito)", "(No Credit Card)"), the
+Spanish trial page's own stored TITLE (title/h1/JSON-LD fan-out), and a
+render-path gap — category-page card excerpts never ran the correction
+pass (now correct-then-truncate at all 6 card sites). The manual scan is
+retired: scripts/test_trial_claims_residual.py now gates this automatically
+(ordering invariant + entry behavior + case-insensitive corpus residual,
+titles included). Remaining: consider a Devanagari (Hindi) variant if one
+ever appears. (Codex review 2026-07-27; resolved + gated 2026-07-28)
 
 ### About-page copy in build.py is stale post-restore
 **Priority:** P2
