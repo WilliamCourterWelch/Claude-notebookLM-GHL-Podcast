@@ -161,6 +161,8 @@ def md_to_html(md, affiliate, lang='es'):
                 flush_ol()
                 ul.append(item)
             continue
+        if not para and (ul or ol):    # text after a list closes it (keep order)
+            flush_ul(); flush_ol()
         para.append(s)
     flush_p(); flush_ul(); flush_ol(); flush_bq(); flush_tbl()
     return '\n'.join(out)
@@ -211,7 +213,8 @@ def main():
                 raise SystemExit("hub_slug requires hub_title for non-es manifests")
             title = 'GoHighLevel en Latinoamérica'   # legacy es-spoke default
         htmlc = (f'<p class="hub-link">{label}: '
-                 f'<a href="/blog/{man["hub_slug"]}/">{title}</a></p>\n' + htmlc)
+                 f'<a href="/blog/{_html.escape(man["hub_slug"], quote=True)}/">'
+                 f'{_html.escape(title, quote=False)}</a></p>\n' + htmlc)
     post = {
         "title": man["title"], "slug": man["slug"], "description": man["description"],
         "html_content": htmlc, "category": man["category"], "tags": man["tags"],

@@ -370,6 +370,25 @@ def test_hub_title_from_manifest_and_non_es_requirement():
             check("hub_title: non-es without title raises", True)
 
 
+def test_text_after_list_preserves_document_order():
+    # a text line directly after a list (no blank) closes the list first,
+    # so the rendered order matches the draft order
+    h1 = asp.md_to_html("1. first\nNext paragraph", AFF)
+    check("ol->text: list emitted before paragraph",
+          h1.index('</ol>') < h1.index('<p>Next paragraph</p>'))
+    h2 = asp.md_to_html("- item\nNext paragraph", AFF)
+    check("ul->text: list emitted before paragraph",
+          h2.index('</ul>') < h2.index('<p>Next paragraph</p>'))
+
+
+def test_hub_title_and_slug_escaped():
+    with tempfile.TemporaryDirectory() as tmp:
+        post = _run_main(tmp, language="en", hub_slug='hub"x', hub_title="A <b>& Title")
+    h = post["html_content"]
+    check("hub: title html-escaped", 'A &lt;b&gt;&amp; Title' in h)
+    check("hub: slug quote-escaped in href", 'href="/blog/hub&quot;x/"' in h)
+
+
 def test_loose_numbered_list_limitation_pinned():
     # documented limitation: a blank line between numbered items splits the
     # list into separate <ol>s (numbering restarts) — keep lists tight
