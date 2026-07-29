@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Tests for assemble_spoke.py — the markdown-table -> HTML conversion added to
-md_to_html (flush_tbl) and the language-aware author-bio selection (BIOS).
+"""Tests for assemble_spoke.py: markdown tables (flush_tbl), ordered/nested
+lists, language-keyed bios/CTA/hub labels (BIOS et al.), URL hardening
+(scheme allowlist, attribute escaping, host-based rel), and main() end-to-end.
 
 Run: python3 scripts/test_assemble_spoke.py   (or via pytest: python3 -m pytest scripts/ -q)
 Exits 0 if all pass, 1 otherwise. No network, no real posts/: main() end-to-end
@@ -176,7 +177,7 @@ def test_bios_dict_shape():
           'afiliado de HighLevel' in asp.BIO_ES and 'HighLevel affiliate' in asp.BIO_EN)
 
 
-def _run_main(tmp, language=None, hub_slug=None):
+def _run_main(tmp, language=None, hub_slug=None, hub_title=None):
     """Drive main() end-to-end with a minimal manifest + one section draft."""
     sec = Path(tmp) / "section.md"
     sec.write_text("# S\n## Draft\nHello world.\n\n| Plan | Price |\n| --- | --- |\n"
@@ -189,6 +190,8 @@ def _run_main(tmp, language=None, hub_slug=None):
         man["language"] = language
     if hub_slug is not None:
         man["hub_slug"] = hub_slug
+    if hub_title is not None:
+        man["hub_title"] = hub_title
     manp = Path(tmp) / "man.json"
     manp.write_text(json.dumps(man), encoding='utf-8')
     saved = sys.argv
@@ -255,7 +258,7 @@ def test_hub_link_prepended():
 
 def test_hub_link_english_label():
     with tempfile.TemporaryDirectory() as tmp:
-        post = _run_main(tmp, language="en", hub_slug="hub-y")
+        post = _run_main(tmp, language="en", hub_slug="hub-y", hub_title="Hub Y")
     check("hub en: English label", 'Part of the guide' in post["html_content"])
     check("hub en: no Spanish label leak", 'Parte de la guía' not in post["html_content"])
 
@@ -337,6 +340,44 @@ def test_cta_box_url_attribute_escaped():
           'href="https://www.gohighlevel.com/x?fp_ref=amplifi-technologies12&amp;utm_source=g"' in html)
 
 
+def test_valid_schemes_pass_through():
+    check("mailto: link survives",
+          '<a href="mailto:a@b.com">m</a>' in asp.md_to_html("[m](mailto:a@b.com)", AFF))
+    check("uppercase HTTPS survives (case-insensitive allowlist)",
+          '<a href="HTTPS://x.com/p"' in asp.md_to_html("[c](HTTPS://x.com/p)", AFF))
+
+
+def test_host_based_rel_not_substring():
+    # lookalike hosts are EXTERNAL (nofollow); internal paths containing
+    # 'http' stay followed — rel is decided by parsed hostname, not substrings
+    h1 = asp.md_to_html("[evil](https://globalhighlevel.com.evil.com/x)", AFF)
+    check("lookalike host gets nofollow", 'rel="nofollow noopener"' in h1)
+    h2 = asp.md_to_html("[real](https://www.globalhighlevel.com/blog/x/)", AFF)
+    check("own subdomain stays followed", 'rel=' not in h2)
+    h3 = asp.md_to_html("[guide](/blog/gohighlevel-http-guide/)", AFF)
+    check("internal path containing 'http' stays followed", 'rel=' not in h3)
+
+
+def test_hub_title_from_manifest_and_non_es_requirement():
+    with tempfile.TemporaryDirectory() as tmp:
+        post = _run_main(tmp, language="en", hub_slug="hub-z", hub_title="The AI Guide")
+    check("hub_title: manifest value rendered", '>The AI Guide</a>' in post["html_content"])
+    with tempfile.TemporaryDirectory() as tmp:
+        try:
+            _run_main(tmp, language="en", hub_slug="hub-z")
+            check("hub_title: non-es without title raises", False)
+        except SystemExit:
+            check("hub_title: non-es without title raises", True)
+
+
+def test_loose_numbered_list_limitation_pinned():
+    # documented limitation: a blank line between numbered items splits the
+    # list into separate <ol>s (numbering restarts) — keep lists tight
+    html = asp.md_to_html("1. first\n\n2. second", AFF)
+    check("loose list: splits into two ols (known limitation)",
+          html.count('<ol>') == 2)
+
+
 def test_cta_fallback_labels():
     check("cta fallback: es+en labels exist", set(asp.CTA_FALLBACK) == {'es', 'en'})
     # a CTA blockquote mentioning fp_ref with no parseable [label](url) link
@@ -348,24 +389,10 @@ def test_cta_fallback_labels():
 
 
 def main():
-    for t in (test_basic_table, test_alignment_separators_dropped,
-              test_table_without_separator, test_separator_only_and_empty_tables,
-              test_ragged_rows_do_not_crash, test_inline_markdown_and_escaping_in_cells,
-              test_table_terminated_by_text_line, test_table_at_end_of_document_flushes,
-              test_two_tables_split_by_blank_line, test_table_adjacent_to_list,
-              test_table_then_blockquote, test_blockquote_then_table,
-              test_table_between_headings,
-              test_affiliate_cta_blockquote_still_works_next_to_table,
-              test_bios_dict_shape, test_bio_selection_en, test_bio_selection_es,
-              test_bio_selection_en_in, test_bio_selection_unknown_language_falls_back_en,
-              test_missing_language_key_raises, test_hub_link_prepended,
-              test_hub_link_english_label, test_all_dash_data_row_is_kept,
-              test_escaped_pipe_limitation_pinned, test_unsafe_link_scheme_dropped,
-              test_numbered_list_renders_as_ol, test_numbered_list_with_nested_bullets,
-              test_unindented_bullet_after_ol_is_top_level,
-              test_table_wrapped_for_mobile_overflow,
-              test_query_string_url_not_double_escaped, test_protocol_relative_url_dropped,
-              test_cta_box_url_attribute_escaped, test_cta_fallback_labels):
+    # discovery-based: direct-run always executes the same set pytest collects
+    tests = [v for k, v in sorted(globals().items())
+             if k.startswith('test_') and callable(v)]
+    for t in tests:
         print(t.__name__)
         try:
             t()

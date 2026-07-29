@@ -255,7 +255,7 @@ Run before any deploy (all must pass): `python3 -m pytest scripts/ -q` — cover
 link audits (`test_audit_links`, `test_build_links`), capture pipeline
 (`test_ghl_capture`), IndexNow submitter (`test_submit_indexnow`), restore
 tooling (`test_restore_posts`), the spoke assembler (`test_assemble_spoke`,
-32 tests, added v0.3.7.0), the **trial-claim residual gate**
+37 tests, added v0.3.7.0), the **trial-claim residual gate**
 (`test_trial_claims_residual`, v0.3.4.0), and the **editorial-debt gate**
 (`test_no_editorial_markers`: no bracketed editor notes in any post string
 field — nested strings included, e.g. `tldr`/`translations` — no

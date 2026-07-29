@@ -15,7 +15,7 @@ Citation URL follows each fact. Draft-vs-now deltas flagged ⚠️.
 ## Voice AI pay-per-use stack (cite: 155000006652)
 - Voice Engine rate **$0.045/min** (effective May 20, 2026) — confirmed unchanged.
 - TTS: OpenAI **$0.015/min** · Cartesia **$0.015/min** · ElevenLabs V2.5 **$0.035/min** (⚠️ new tier, draft didn't have) · ElevenLabs V3 **$0.170/min**.
-- - LLM tokens on top (e.g. GPT-4o Mini $0.15/1M; GPT-5 $1.25 in / $10 out per 1M).
+- LLM tokens on top (e.g. GPT-4o Mini $0.15/1M; GPT-5 $1.25 in / $10 out per 1M).
 - Worked example ($0.25–$0.86 per 4-min call) applies ONLY to Pay-Per-Use + Growth overage — NOT the $97 tier.
 
 ## Agent Studio (cite: 155000006652)

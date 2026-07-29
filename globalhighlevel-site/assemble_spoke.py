@@ -10,10 +10,13 @@ box (byline: William Welch — no fabricated numbers), and writes the post JSON.
 
 Usage: python3 assemble_spoke.py <manifest.json>
 Manifest: {slug,title,description,category,language,tags,publishedAt,topic,
-           sections:[abs paths in order], hub_slug (optional), affiliate}
+           sections:[paths in order], hub_slug (optional),
+           hub_title (optional hub anchor text; required with hub_slug for non-es),
+           affiliate}
 NO images are emitted (per decision 2026-06-22: ship text-only, add images later).
 """
-import json, re, sys, html as _html
+import json, os, re, sys, html as _html
+from urllib.parse import urlparse
 
 AFFILIATE_DEFAULT = "https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12&utm_source=globalhighlevel&utm_medium=blog"
 
@@ -35,11 +38,13 @@ def inline(t):
     # links [text](url) -> anchor; external gohighlevel/affiliate get target+rel
     def _a(m):
         txt, url = m.group(1), m.group(2)
-        url = url.replace('&amp;', '&')  # t was already escaped; avoid &amp;amp;
-        if not re.match(r'^(https?://|mailto:|/(?!/)|#)', url):
+        url = _html.unescape(url)  # t was already escaped; avoid &amp;amp;-class doubles
+        if not re.match(r'^(https?://|mailto:|/(?!/)|#)', url, re.I):
             DROPPED_LINKS.append(url)
             return txt  # unknown scheme (javascript:, //protocol-relative) — keep text
-        rel = ' target="_blank" rel="nofollow noopener"' if ('http' in url and 'globalhighlevel.com' not in url) else ''
+        host = (urlparse(url).hostname or '').lower()
+        internal = (not host) or host == 'globalhighlevel.com' or host.endswith('.globalhighlevel.com')
+        rel = '' if internal else ' target="_blank" rel="nofollow noopener"'
         return f'<a href="{_html.escape(url, quote=True)}"{rel}>{txt}</a>'
     t = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', _a, t)
     t = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', t)
@@ -186,6 +191,7 @@ CTA_FALLBACK = {'es': 'Empieza tu prueba gratis de 30 días',
 HUB_LABEL = {'es': 'Parte de la guía', 'en': 'Part of the guide'}
 
 def main():
+    DROPPED_LINKS.clear()
     man = json.load(open(sys.argv[1], encoding='utf-8'))
     aff = man.get('affiliate', AFFILIATE_DEFAULT)
     lang = man['language'][:2]
@@ -199,7 +205,11 @@ def main():
     # hub interlink (hub-and-spoke): link up to the hub if provided
     if man.get('hub_slug'):
         label = HUB_LABEL.get(lang, HUB_LABEL['en'])
-        title = man.get('hub_title', 'GoHighLevel en Latinoamérica')
+        title = man.get('hub_title')
+        if not title:
+            if lang != 'es':
+                raise SystemExit("hub_slug requires hub_title for non-es manifests")
+            title = 'GoHighLevel en Latinoamérica'   # legacy es-spoke default
         htmlc = (f'<p class="hub-link">{label}: '
                  f'<a href="/blog/{man["hub_slug"]}/">{title}</a></p>\n' + htmlc)
     post = {
@@ -210,7 +220,6 @@ def main():
         "topic": man.get("topic", ""),
     }
     outp = man["out"]
-    import os
     if os.path.exists(outp):
         print(f"  WARNING: overwriting existing {outp}")
     json.dump(post, open(outp, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
