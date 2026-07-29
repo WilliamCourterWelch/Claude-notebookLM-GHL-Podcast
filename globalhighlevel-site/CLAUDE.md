@@ -203,7 +203,7 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - Podcast: "Go High Level" on Spotify
 - Podcast stats: 380+ followers
 - Top episode: "GoHighLevel Conversation AI Bot"
-- Content: 904 published blog posts (English, India, Spanish, Arabic; was 27 post-prune 2026-06 — the full-restore sprint completed 2026-07-27 across v0.2.12.0–v0.3.0.0, with all 931 pruned URLs accounted for: 877 live pages + 54 twin 301s) + 158 podcast episodes. NOTE: re-verify this count (`ls posts/*.json | wc -l`) before citing it — it moves as new posts publish.
+- Content: 909 published blog posts (English, India, Spanish, Arabic; was 27 post-prune 2026-06 — the full-restore sprint completed 2026-07-27 across v0.2.12.0–v0.3.0.0, with all 931 pruned URLs accounted for: 877 live pages + 54 twin 301s; +5 English AI-silo pages in v0.3.7.0) + 158 podcast episodes. NOTE: re-verify this count (`ls posts/*.json | wc -l`) before citing it — it moves as new posts publish.
 - Offer: GoHighLevel 30-day FREE trial (double the standard 14-day trial)
 - GHL starts at $97/month
 - Affiliate link: https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12
@@ -232,12 +232,29 @@ Why written down: on 2026-07-28 two June captures were found LIVE un-redacted
 (brand + sandbox identity visible) — published by a session that skipped this
 flow because it existed only as convention, not doc. Fixed in v0.3.5.0.
 
+## assemble_spoke.py — manifest-driven post authoring (es + en, v0.3.7.0)
+
+`python3 assemble_spoke.py <manifest.json>` turns approved markdown drafts into
+a post JSON. Originally es-only (LATAM spokes); since v0.3.7.0 it authors
+English pages too: the manifest's `language` field keys the author bio, CTA
+fallback label, and hub-link label, and `hub_title` overrides the hub anchor
+text. Markdown support: GFM tables (scroll-wrapped), numbered lists with
+nested bullets, blockquote → CTA box. URL hardening: unknown-scheme links
+(`javascript:`, protocol-relative) are dropped to plain text and reported
+(`dropped_links=` counter), hrefs are attribute-escaped. Gated by
+`scripts/test_assemble_spoke.py`. **Provenance pattern:** each silo build
+commits its draft sources + manifests under `plans/<silo>-<date>/` plus a fact
+ledger (`plans/*-fact-ledger-*.md`) so every published dollar figure traces to
+a dated source — keep doing this for future silos.
+
 ## Tests — pre-deploy gate suite
 
 Run before any deploy (all must pass): `python3 -m pytest scripts/ -q` — covers
 link audits (`test_audit_links`, `test_build_links`), capture pipeline
 (`test_ghl_capture`), IndexNow submitter (`test_submit_indexnow`), restore
-tooling (`test_restore_posts`), and the **editorial-debt gate**
+tooling (`test_restore_posts`), the spoke assembler (`test_assemble_spoke`,
+32 tests, added v0.3.7.0), the **trial-claim residual gate**
+(`test_trial_claims_residual`, v0.3.4.0), and the **editorial-debt gate**
 (`test_no_editorial_markers`: no bracketed editor notes in any top-level post
 string field, no empty/trailing heading sections — added v0.3.4.0 after the 2026-07-28 strip of
 27 firehose-era es posts). Then `python3 build.py` and `python3 verify.py`.
