@@ -238,8 +238,10 @@ flow because it existed only as convention, not doc. Fixed in v0.3.5.0.
 a post JSON. Originally es-only (LATAM spokes); since v0.3.7.0 it authors
 English pages too: the manifest's `language` field keys the author bio, CTA
 fallback label, and hub-link label, and `hub_title` overrides the hub anchor
-text. Markdown support: GFM tables (scroll-wrapped), numbered lists with
-nested bullets, blockquote → CTA box. URL hardening: unknown-scheme links
+text. Markdown support: simple pipe tables, GFM-style (scroll-wrapped;
+escaped pipes unsupported — pinned in the tests), numbered lists with nested
+bullets, and blockquotes (one containing `fp_ref=` becomes the CTA box;
+others render as plain `<blockquote>`). URL hardening: unknown-scheme links
 (`javascript:`, protocol-relative) are dropped to plain text and reported
 (`dropped_links=` counter), hrefs are attribute-escaped. Gated by
 `scripts/test_assemble_spoke.py`. **Provenance pattern:** each silo build
@@ -255,8 +257,9 @@ link audits (`test_audit_links`, `test_build_links`), capture pipeline
 tooling (`test_restore_posts`), the spoke assembler (`test_assemble_spoke`,
 32 tests, added v0.3.7.0), the **trial-claim residual gate**
 (`test_trial_claims_residual`, v0.3.4.0), and the **editorial-debt gate**
-(`test_no_editorial_markers`: no bracketed editor notes in any top-level post
-string field, no empty/trailing heading sections — added v0.3.4.0 after the 2026-07-28 strip of
+(`test_no_editorial_markers`: no bracketed editor notes in any post string
+field — nested strings included, e.g. `tldr`/`translations` — no
+empty/trailing heading sections — added v0.3.4.0 after the 2026-07-28 strip of
 27 firehose-era es posts). Then `python3 build.py` and `python3 verify.py`.
 
 ## Canonical in-body trial CTA block (added v0.3.4.0)

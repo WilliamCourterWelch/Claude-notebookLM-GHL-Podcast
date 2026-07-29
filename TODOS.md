@@ -173,7 +173,7 @@ ever appears. (Codex review 2026-07-27; resolved + gated 2026-07-28)
 ### About-page copy in build.py is stale post-restore
 **Priority:** P2
 `build.py` about-page body (~line 3267, 3311) still says "300+ tutorials", "10
-content categories", and "India, Latin America" — site is now 904 posts, 5 topics,
+content categories", and "India, Latin America" — site is now 909 posts, 5 topics,
 and 4 languages including Arabic. Copy lives in code, so it was out of scope for
 the docs pass. (Codex doc review 2026-07-27)
 
