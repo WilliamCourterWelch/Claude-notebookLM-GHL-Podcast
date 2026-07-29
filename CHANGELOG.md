@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.6.0] - 2026-07-29
+### Fixed
+- **7 more es posts stop presenting fabricated case studies as real** (highest-exposure subset of the 128-post "Caso Real" inventory from the wedge audit): every "Caso Real" heading and inline mention retitled "Ejemplo hipotético" across body, title, and meta description — including one SERP description that claimed a fake result ("de 8 a 22 cierres mensuales", now removed) and one fake testimonial attribution ("— Agencia Digital, Lima", now labeled "ejemplo ilustrativo, no un testimonio real"). Audit note: the earlier "7 posts quote named fake people" finding was a regex artifact — the named-person cases were in the v0.3.4.0 strip; these 7 carried fabricated company stories and stats. Remaining 121 posts tracked in TODOS for batch treatment.
+
 ## [0.3.5.0] - 2026-07-28
 ### Added
 - **First research-wedge rebuild is live: `configurar-workflows-gohighlevel-whatsapp-mercadopago` went from a 301-word shell to a 1,554-word how-to** built exclusively from verified sources (wedge vault, claim-ledger-gated). Answer-first structure per Caleb canon: a "Respuesta rápida" opens the page, the two firehose problem-agitation intro sections are gone, and a condensed "¿por qué?" follows the pasos. New content: WhatsApp setup with the 24-hour-window and template mechanics, two-layer pricing explained honestly ($10/mo platform→agency per docs; sub-accounts see their agency's resell price), the real 6-step Mercado Pago connection (native since 2026-04, 7 countries — in-product selector verified same-day), workflow build steps naming the 5 native WhatsApp actions, and a verifiable community-evidence section (300+-vote ideas thread, linked; named commenter quotes) replacing the fabricated "Caso Real" pattern. In-silo links added: up-link to /category/crm-communication/ + 2 contextual sibling spokes; zero cross-silo. Draft survived 3-pass codex research critique + codex native-es register pass + Claude adversarial pass + codex adversarial diff challenge (which caught a screenshot/caption mismatch and restored the two lost trial CTAs).
