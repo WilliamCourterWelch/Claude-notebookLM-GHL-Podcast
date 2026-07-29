@@ -297,6 +297,15 @@ def test_numbered_list_with_nested_bullets():
           html.index('<li>top three</li>') < html.index('</ol>'))
 
 
+def test_unindented_bullet_after_ol_is_top_level():
+    # an UNINDENTED bullet after a numbered list starts a new top-level ul,
+    # it does not get swallowed as a nested item of the last ol entry
+    html = asp.md_to_html("1. one\n2. two\n- top bullet", AFF)
+    check("unindented: ol closed before ul", html.index('</ol>') < html.index('<ul>'))
+    check("unindented: bullet is top-level", '<ul><li>top bullet</li></ul>' in html)
+    check("unindented: not nested in item two", '<li>two</li>' in html)
+
+
 def test_table_wrapped_for_mobile_overflow():
     html = asp.md_to_html("| A | B |\n| --- | --- |\n| 1 | 2 |", AFF)
     check("overflow: table wrapped in scroll container",
@@ -353,6 +362,7 @@ def main():
               test_hub_link_english_label, test_all_dash_data_row_is_kept,
               test_escaped_pipe_limitation_pinned, test_unsafe_link_scheme_dropped,
               test_numbered_list_renders_as_ol, test_numbered_list_with_nested_bullets,
+              test_unindented_bullet_after_ol_is_top_level,
               test_table_wrapped_for_mobile_overflow,
               test_query_string_url_not_double_escaped, test_protocol_relative_url_dropped,
               test_cta_box_url_attribute_escaped, test_cta_fallback_labels):

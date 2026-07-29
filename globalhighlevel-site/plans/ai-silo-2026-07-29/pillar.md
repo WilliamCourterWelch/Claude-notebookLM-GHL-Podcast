@@ -21,7 +21,7 @@ This review is the hub of a five-page series. The four companion pages break dow
 - **Conversation AI** — handles SMS and chat conversations.
 - **Reviews AI** — drafts and posts review responses.
 - **Content AI, Funnel/Website AI, Workflow AI** — copy and automation helpers.
-- **Ask AI and AI Studio** — an in-app assistant and a builder for custom AI agents (the builder, Agent Studio, is [billed separately on every plan](https://help.gohighlevel.com/support/solutions/articles/155000006652-ai-product-pricing) — more on that below).
+- **Ask AI and AI Studio** — the in-app AI assistant and workspace. (The custom-agent **builder** is a different product, Agent Studio, and it's [billed separately on every plan](https://help.gohighlevel.com/support/solutions/articles/155000006652-ai-product-pricing) — more on that below.)
 
 The receptionist is **one piece of a marketing platform**, not a standalone phone product. That matters for the rest of this review: GoHighLevel competes less with "a better answering machine" and more with "do you want your phone, your CRM, your reviews, and your follow-up texts in one place."
 

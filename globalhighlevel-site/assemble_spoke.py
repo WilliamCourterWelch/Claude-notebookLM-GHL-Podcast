@@ -148,9 +148,12 @@ def md_to_html(md, affiliate, lang='es'):
         if re.match(r'^[-*]\s+', s):
             flush_p()
             item = re.sub(r'^[-*]\s+', '', s)
-            if ol:                      # bullet inside a numbered list -> nested ul
+            # nested only when the source line was indented under an open ol;
+            # an unindented bullet after a numbered list is a new top-level ul
+            if ol and re.match(r'^\s+[-*]', ln):
                 ol[-1][1].append(item)
             else:
+                flush_ol()
                 ul.append(item)
             continue
         para.append(s)
