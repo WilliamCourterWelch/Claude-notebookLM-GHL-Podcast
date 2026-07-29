@@ -27,13 +27,20 @@ EDITORIAL_LINE = re.compile(r'^\s*(\*\*(Ready for|Codex|Word count|Cost summary|
                             r'|>\s*\*\*v\d|<!--|TODO|PLACEHOLDER)', re.I)
 IMG_LINE = re.compile(r'(!\[|<figure|</figure|<img|\*\(imagen|\*\(captura|\[IMAGEN|\[CAPTURA)', re.I)
 
+DROPPED_LINKS = []  # unknown-scheme links stripped by inline(); reported in main()
+
+
 def inline(t):
     t = _html.escape(t, quote=False)
     # links [text](url) -> anchor; external gohighlevel/affiliate get target+rel
     def _a(m):
         txt, url = m.group(1), m.group(2)
+        url = url.replace('&amp;', '&')  # t was already escaped; avoid &amp;amp;
+        if not re.match(r'^(https?://|mailto:|/(?!/)|#)', url):
+            DROPPED_LINKS.append(url)
+            return txt  # unknown scheme (javascript:, //protocol-relative) — keep text
         rel = ' target="_blank" rel="nofollow noopener"' if ('http' in url and 'globalhighlevel.com' not in url) else ''
-        return f'<a href="{url}"{rel}>{txt}</a>'
+        return f'<a href="{_html.escape(url, quote=True)}"{rel}>{txt}</a>'
     t = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', _a, t)
     t = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', t)
     t = re.sub(r'(?<!\*)\*([^*]+)\*(?!\*)', r'<em>\1</em>', t)
@@ -65,22 +72,45 @@ def section_body(path):
         body.append(ln)
     return '\n'.join(body).strip()
 
-def md_to_html(md, affiliate):
-    out, i = [], 0
+def md_to_html(md, affiliate, lang='es'):
+    out = []
     lines = md.split('\n')
-    para, bq, ul = [], [], []
+    para, bq, ul, ol, tbl = [], [], [], [], []
     def flush_p():
         if para:
             out.append('<p>' + inline(' '.join(para).strip()) + '</p>'); para.clear()
     def flush_ul():
         if ul:
             out.append('<ul>' + ''.join(f'<li>{inline(x)}</li>' for x in ul) + '</ul>'); ul.clear()
+    def flush_ol():
+        if ol:
+            items = []
+            for text, subs in ol:
+                sub = ('<ul>' + ''.join(f'<li>{inline(x)}</li>' for x in subs) + '</ul>') if subs else ''
+                items.append(f'<li>{inline(text)}{sub}</li>')
+            out.append('<ol>' + ''.join(items) + '</ol>'); ol.clear()
+    def flush_tbl():
+        if not tbl: return
+        rows = [[c.strip() for c in r.strip().strip('|').split('|')] for r in tbl]
+        # drop only the canonical GFM separator (row 2); later all-dash rows are data
+        def _sep(r): return all(re.fullmatch(r'[\s:-]*', c) for c in r)
+        if len(rows) > 1 and _sep(rows[1]):
+            rows.pop(1)
+        while rows and _sep(rows[0]):   # a separator can't be a header
+            rows.pop(0)
+        if rows:
+            head = '<tr>' + ''.join(f'<th>{inline(c)}</th>' for c in rows[0]) + '</tr>'
+            body = ''.join('<tr>' + ''.join(f'<td>{inline(c)}</td>' for c in r) + '</tr>'
+                           for r in rows[1:])
+            out.append(f'<div style="overflow-x:auto"><table><thead>{head}</thead>'
+                       f'<tbody>{body}</tbody></table></div>')
+        tbl.clear()
     def flush_bq():
         if not bq: return
         joined = '\n'.join(bq)
         if 'fp_ref=' in joined:            # the affiliate CTA blockquote -> CTA box
             m = re.search(r'\[([^\]]+)\]\((https?://[^)]*fp_ref=[^)]+)\)', joined)
-            label = m.group(1) if m else 'Empieza tu prueba gratis de 30 días'
+            label = m.group(1) if m else CTA_FALLBACK.get(lang, CTA_FALLBACK['en'])
             url = m.group(2) if m else affiliate
             heading = ''
             hm = re.search(r'##\s*\*\*([^*]+)\*\*', joined)
@@ -89,7 +119,7 @@ def md_to_html(md, affiliate):
             tail = re.sub(r'\[[^\]]+\]\([^)]+\)', '', tail)
             tail = re.sub(r'^[>\s]+', '', tail, flags=re.M).strip()
             tailp = f'<p>{inline(tail)}</p>' if tail else ''
-            out.append(f'<div class="cta-box">{heading}<p><a class="cta-btn" href="{url}" '
+            out.append(f'<div class="cta-box">{heading}<p><a class="cta-btn" href="{_html.escape(url, quote=True)}" '
                        f'target="_blank" rel="nofollow noopener">{inline(label)} →</a></p>{tailp}</div>')
         else:
             txt = ' '.join(re.sub(r'^[>\s]+', '', b) for b in bq if b.strip())
@@ -98,45 +128,77 @@ def md_to_html(md, affiliate):
     for ln in lines:
         s = ln.strip()
         if s.startswith('>'):
-            flush_p(); flush_ul(); bq.append(ln); continue
+            flush_p(); flush_ul(); flush_ol(); flush_tbl(); bq.append(ln); continue
         else:
             flush_bq()
+        if s.startswith('|'):
+            flush_p(); flush_ul(); flush_ol(); tbl.append(s); continue
+        else:
+            flush_tbl()
         if not s:
-            flush_p(); flush_ul(); continue
+            flush_p(); flush_ul(); flush_ol(); continue
         if s.startswith('#### '):
-            flush_p(); flush_ul(); out.append(f'<h3>{inline(s[5:])}</h3>'); continue
+            flush_p(); flush_ul(); flush_ol(); out.append(f'<h3>{inline(s[5:])}</h3>'); continue
         if s.startswith('### '):
-            flush_p(); flush_ul(); out.append(f'<h2>{inline(s[4:])}</h2>'); continue
+            flush_p(); flush_ul(); flush_ol(); out.append(f'<h2>{inline(s[4:])}</h2>'); continue
         if s.startswith('## '):
-            flush_p(); flush_ul(); out.append(f'<h2>{inline(s[3:])}</h2>'); continue
+            flush_p(); flush_ul(); flush_ol(); out.append(f'<h2>{inline(s[3:])}</h2>'); continue
+        if re.match(r'^\d+\.\s+', s):
+            flush_p(); flush_ul(); ol.append([re.sub(r'^\d+\.\s+', '', s), []]); continue
         if re.match(r'^[-*]\s+', s):
-            flush_p(); ul.append(re.sub(r'^[-*]\s+', '', s)); continue
+            flush_p()
+            item = re.sub(r'^[-*]\s+', '', s)
+            if ol:                      # bullet inside a numbered list -> nested ul
+                ol[-1][1].append(item)
+            else:
+                ul.append(item)
+            continue
         para.append(s)
-    flush_p(); flush_ul(); flush_bq()
+    flush_p(); flush_ul(); flush_ol(); flush_bq(); flush_tbl()
     return '\n'.join(out)
 
-BIO = ('<section class="author-bio"><h2>Sobre el autor</h2>'
-       '<p><strong>William Welch</strong> es consultor de GoHighLevel y fundador de Amplifi '
-       'Technologies, una agencia digital enfocada en automatización de marketing con GoHighLevel '
-       '. No opero agencias dentro de LATAM y soy afiliado de HighLevel.</p>'
-       '<p>Esta guía se basa en investigación documentada: 38 fuentes verificadas, 8 revisiones '
-       'independientes con Codex/GPT-5 y capturas reales de la interfaz en español de mayo de 2026. '
-       'Si detectas algún dato que necesite actualización, escríbeme a '
-       '<a href="mailto:bill@reiamplifi.com">bill@reiamplifi.com</a>.</p></section>')
+BIO_ES = ('<section class="author-bio"><h2>Sobre el autor</h2>'
+          '<p><strong>William Welch</strong> es consultor de GoHighLevel y fundador de Amplifi '
+          'Technologies, una agencia digital enfocada en automatización de marketing con GoHighLevel '
+          '. No opero agencias dentro de LATAM y soy afiliado de HighLevel.</p>'
+          '<p>Esta guía se basa en investigación documentada: 38 fuentes verificadas, 8 revisiones '
+          'independientes con Codex/GPT-5 y capturas reales de la interfaz en español de mayo de 2026. '
+          'Si detectas algún dato que necesite actualización, escríbeme a '
+          '<a href="mailto:bill@reiamplifi.com">bill@reiamplifi.com</a>.</p></section>')
+
+BIO_EN = ('<section class="author-bio"><h2>About the author</h2>'
+          '<p><strong>William Welch</strong> is a GoHighLevel consultant and the founder of Amplifi '
+          'Technologies, a digital agency focused on marketing automation on GoHighLevel. '
+          'I am a HighLevel affiliate.</p>'
+          '<p>Every price and limit in this guide was re-verified against GoHighLevel\'s official '
+          'help documentation and public ideas board on the date shown in the article. '
+          'If you spot a figure that needs updating, email me at '
+          '<a href="mailto:bill@reiamplifi.com">bill@reiamplifi.com</a>.</p></section>')
+
+BIOS = {'es': BIO_ES, 'en': BIO_EN}
+
+CTA_FALLBACK = {'es': 'Empieza tu prueba gratis de 30 días',
+                'en': 'Start your 30-day free trial'}
+
+HUB_LABEL = {'es': 'Parte de la guía', 'en': 'Part of the guide'}
 
 def main():
     man = json.load(open(sys.argv[1], encoding='utf-8'))
     aff = man.get('affiliate', AFFILIATE_DEFAULT)
+    lang = man['language'][:2]
     parts = []
     for sec in man['sections']:
         body = section_body(sec)
         if body:
-            parts.append(md_to_html(body, aff))
-    htmlc = '\n'.join(parts) + '\n' + BIO
+            parts.append(md_to_html(body, aff, lang))
+    bio = BIOS.get(lang, BIO_EN)
+    htmlc = '\n'.join(parts) + '\n' + bio
     # hub interlink (hub-and-spoke): link up to the hub if provided
     if man.get('hub_slug'):
-        htmlc = (f'<p class="hub-link">Parte de la guía: '
-                 f'<a href="/blog/{man["hub_slug"]}/">GoHighLevel en Latinoamérica</a></p>\n' + htmlc)
+        label = HUB_LABEL.get(lang, HUB_LABEL['en'])
+        title = man.get('hub_title', 'GoHighLevel en Latinoamérica')
+        htmlc = (f'<p class="hub-link">{label}: '
+                 f'<a href="/blog/{man["hub_slug"]}/">{title}</a></p>\n' + htmlc)
     post = {
         "title": man["title"], "slug": man["slug"], "description": man["description"],
         "html_content": htmlc, "category": man["category"], "tags": man["tags"],
@@ -145,13 +207,19 @@ def main():
         "topic": man.get("topic", ""),
     }
     outp = man["out"]
+    import os
+    if os.path.exists(outp):
+        print(f"  WARNING: overwriting existing {outp}")
     json.dump(post, open(outp, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
     words = len(re.sub(r'<[^>]+>', ' ', htmlc).split())
     todos = len(re.findall(r'TODO|PLACEHOLDER|\[ungrounded', htmlc, re.I))
     imgs = len(re.findall(r'<img|<figure', htmlc))
     print(f"wrote {outp}")
     print(f"  words={words}  TODOs={todos}  images={imgs}  "
-          f"affiliate_links={htmlc.count('fp_ref=')}  ctas={htmlc.count('cta-btn')}  faqs={htmlc.count('<h3>')}")
+          f"affiliate_links={htmlc.count('fp_ref=')}  ctas={htmlc.count('cta-btn')}  "
+          f"faqs={htmlc.count('<h3>')}  dropped_links={len(DROPPED_LINKS)}")
+    for u in DROPPED_LINKS:
+        print(f"  DROPPED LINK: {u}")
 
 if __name__ == '__main__':
     main()
