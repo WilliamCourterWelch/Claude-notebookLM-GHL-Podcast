@@ -1,0 +1,23 @@
+{
+  "category": "AI & Automation",
+  "topic": "AI Receptionist & Lead Capture",
+  "language": "en",
+  "publishedAt": "2026-07-29T06:00:00.000000",
+  "slug": "gohighlevel-ai-employee-pricing",
+  "title": "GoHighLevel AI Employee Pricing 2026: $50 vs $97 Tiers",
+  "description": "GoHighLevel AI Employee pricing: $50 Growth vs $97 Unlimited vs pay-per-use, what each tier includes, and the charges that never go away.",
+  "tags": [
+    "gohighlevel",
+    "ai employee",
+    "pricing",
+    "voice ai",
+    "conversation ai"
+  ],
+  "sections": [
+    "plans/ai-silo-2026-07-29/pricing-ai-employee.md"
+  ],
+  "translations": {
+    "en": "gohighlevel-ai-employee-pricing"
+  },
+  "out": "posts/gohighlevel-ai-employee-pricing.json"
+}
