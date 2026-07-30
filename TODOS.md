@@ -260,10 +260,11 @@ building — do not freestyle a skill design.
 ### Shared _render_body_passes() helper (review 0.3.3.0)
 **Priority:** P3
 The body-pass chain (localize_trial_hrefs → correct_trial_claims →
-nofollow_affiliate_links → unwrap_cross_silo_links → enforce_anchor_caps) is
-hand-repeated at 3 render sites (build_post_page, build_authority_page, hub
-pillar in build_category_pages) — the hub site missed the unwrap wire until
-the 0.3.3.0 review caught it. Extract one helper so a new pass cannot miss a
+nofollow_affiliate_links → wrap_tables → unwrap_cross_silo_links →
+enforce_anchor_caps) is hand-repeated at 3 render sites (build_post_page,
+build_authority_page, hub pillar in build_category_pages) — the hub site
+missed the unwrap wire until the 0.3.3.0 review caught it, and v0.3.8.0's
+wrap_tables had to be hand-wired at all 3 sites again. Extract one helper so a new pass cannot miss a
 call site. Same class: inject_pillar_link and inject_internal_links duplicate
 the paragraph-eligibility/splice machinery — and inject_internal_links still
 carries the lowercased-copy indexing + bare '<p' split that 0.3.3.0 fixed in
