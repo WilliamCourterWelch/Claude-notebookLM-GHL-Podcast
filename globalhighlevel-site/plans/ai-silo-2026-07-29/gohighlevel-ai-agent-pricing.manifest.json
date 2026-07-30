@@ -1,0 +1,22 @@
+{
+  "category": "AI & Automation",
+  "topic": "AI Receptionist & Lead Capture",
+  "language": "en",
+  "publishedAt": "2026-07-29T06:00:00.000000",
+  "slug": "gohighlevel-ai-agent-pricing",
+  "title": "GoHighLevel AI Agent Pricing 2026: Agents vs Agent Studio",
+  "description": "GoHighLevel AI agent costs: built-in agents from $50-$97/mo, Agent Studio pay-per-use on every plan, plus how to cap spend. Verified July 2026.",
+  "tags": [
+    "gohighlevel",
+    "ai agent",
+    "agent studio",
+    "pricing"
+  ],
+  "sections": [
+    "plans/ai-silo-2026-07-29/pricing-ai-agent.md"
+  ],
+  "translations": {
+    "en": "gohighlevel-ai-agent-pricing"
+  },
+  "out": "posts/gohighlevel-ai-agent-pricing.json"
+}

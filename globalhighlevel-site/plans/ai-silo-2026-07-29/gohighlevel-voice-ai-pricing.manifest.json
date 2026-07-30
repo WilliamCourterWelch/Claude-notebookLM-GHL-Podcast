@@ -1,0 +1,22 @@
+{
+  "category": "AI & Automation",
+  "topic": "AI Receptionist & Lead Capture",
+  "language": "en",
+  "publishedAt": "2026-07-29T06:00:00.000000",
+  "slug": "gohighlevel-voice-ai-pricing",
+  "title": "GoHighLevel Voice AI Pricing 2026: Cost Per Minute",
+  "description": "GoHighLevel Voice AI pricing: $0.045/min engine plus voice fees pay-per-use, or unlimited on the $97 tier. Real call costs and limits. Verified July 2026.",
+  "tags": [
+    "gohighlevel",
+    "voice ai",
+    "pricing",
+    "ai receptionist"
+  ],
+  "sections": [
+    "plans/ai-silo-2026-07-29/pricing-voice-ai.md"
+  ],
+  "translations": {
+    "en": "gohighlevel-voice-ai-pricing"
+  },
+  "out": "posts/gohighlevel-voice-ai-pricing.json"
+}

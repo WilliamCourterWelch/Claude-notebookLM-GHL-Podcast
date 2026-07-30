@@ -1,0 +1,22 @@
+{
+  "category": "AI & Automation",
+  "topic": "AI Receptionist & Lead Capture",
+  "language": "en",
+  "publishedAt": "2026-07-29T06:00:00.000000",
+  "slug": "gohighlevel-ai-studio-pricing",
+  "title": "GoHighLevel AI Studio Pricing 2026: What's Included",
+  "description": "GoHighLevel AI Studio pricing: what's included with the $50 and $97 AI Employee tiers, what bills at token cost, and how it differs from Agent Studio.",
+  "tags": [
+    "gohighlevel",
+    "ai studio",
+    "pricing",
+    "ask ai"
+  ],
+  "sections": [
+    "plans/ai-silo-2026-07-29/pricing-ai-studio.md"
+  ],
+  "translations": {
+    "en": "gohighlevel-ai-studio-pricing"
+  },
+  "out": "posts/gohighlevel-ai-studio-pricing.json"
+}
