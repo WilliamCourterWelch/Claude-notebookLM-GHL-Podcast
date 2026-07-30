@@ -52,6 +52,25 @@ def test_wrapper_variants_recognized():
     check("variant: spaced overflow-x untouched", build.wrap_tables(s1) == s1)
     s2 = '<div class="foo table-wrap bar"><table><tr><td>b</td></tr></table></div>'
     check("variant: multi-class table-wrap untouched", build.wrap_tables(s2) == s2)
+    # the three wrapper styles that actually exist in the posts corpus —
+    # pinned so a future regex tightening can't silently double-wrap live posts
+    for style in ('overflow-x:auto;', 'overflow-x:auto;margin-bottom:28px;',
+                  'overflow-x:auto;margin:20px 0;'):
+        s = f'<div style="{style}"><table><tr><td>c</td></tr></table></div>'
+        check(f"corpus variant untouched: {style}", build.wrap_tables(s) == s)
+
+
+def test_known_limitations_pinned():
+    # nested tables would be mangled (non-greedy match) — none exist in the
+    # corpus; this pins the CURRENT behavior so a corpus change surfaces it
+    nested = '<table><tr><td><table><tr><td>x</td></tr></table></td></tr></table>'
+    h = build.wrap_tables(nested)
+    check("limitation: nested tables close wrapper early (documented)",
+          h.startswith('<div class="table-wrap"><table>'))
+    # lowercase-only contract: uppercase <TABLE> is not wrapped
+    up = '<TABLE><TR><TD>x</TD></TR></TABLE>'
+    check("limitation: uppercase tables skipped (documented)",
+          build.wrap_tables(up) == up)
 
 
 def test_no_table_passthrough():

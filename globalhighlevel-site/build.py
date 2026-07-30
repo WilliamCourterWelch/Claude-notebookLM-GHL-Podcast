@@ -533,9 +533,10 @@ def wrap_tables(html: str) -> str:
     if '<table' not in html:
         return html
     out, i = [], 0
+    _WRAP_LOOKBACK = 80  # longest known wrapper open-tag prefix (see test_wrap_tables)
     for m in re.finditer(r'<table[^>]*>.*?</table>', html, re.S):
         out.append(html[i:m.start()])
-        prefix = html[max(0, m.start() - 80):m.start()]
+        prefix = html[max(0, m.start() - _WRAP_LOOKBACK):m.start()]
         if re.search(r'(overflow-x:\s*auto[^>]*>|class="[^"]*table-wrap[^"]*"[^>]*>)\s*$', prefix):
             out.append(m.group(0))
         else:
