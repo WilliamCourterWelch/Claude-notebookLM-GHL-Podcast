@@ -524,6 +524,27 @@ def correct_trial_claims(html: str) -> str:
     return html
 
 
+def wrap_tables(html: str) -> str:
+    """Render-time mobile backstop (v0.3.8.0): wrap bare <table> elements in a
+    .table-wrap scroll container so wide tables scroll instead of clipping
+    (body has overflow-x:hidden). Tables already inside an overflow container
+    (assemble_spoke emits <div style="overflow-x:auto">) are left alone.
+    Stored JSON untouched — render pass only, same posture as the rel pass."""
+    if '<table' not in html:
+        return html
+    out, i = [], 0
+    for m in re.finditer(r'<table[^>]*>.*?</table>', html, re.S):
+        out.append(html[i:m.start()])
+        prefix = html[max(0, m.start() - 80):m.start()]
+        if re.search(r'(overflow-x:\s*auto[^>]*>|class="[^"]*table-wrap[^"]*"[^>]*>)\s*$', prefix):
+            out.append(m.group(0))
+        else:
+            out.append(f'<div class="table-wrap">{m.group(0)}</div>')
+        i = m.end()
+    out.append(html[i:])
+    return ''.join(out)
+
+
 def nofollow_affiliate_links(html: str) -> str:
     """Render-time rel hygiene for PAID links (codex P2, 2026-07-23): any anchor
     whose href carries fp_ref= is an affiliate link and must be nofollow —
@@ -1329,7 +1350,15 @@ a.card-cat:hover{{color:var(--amber-light);text-decoration:none}}
 .related-card:hover .r-title{{color:#fff;text-decoration:none}}
 .hub-link{{margin:36px 0 0;padding-top:20px;border-top:1px solid var(--border);font-size:.95rem;color:var(--text2)}}
 .hub-link a{{color:var(--amber);font-weight:600}}
-.circle-nav{{display:flex;justify-content:space-between;gap:16px;margin:36px 0 0;padding-top:20px;border-top:1px solid var(--border)}}
+.circle-nav{{position:static;background:none;border:none;backdrop-filter:none;-webkit-backdrop-filter:none;z-index:auto;display:flex;justify-content:space-between;gap:16px;margin:36px 0 0;padding-top:20px;border-top:1px solid var(--border)}}
+/* Article tables — dark-theme styling for the 58 posts that carry pipe tables */
+.table-wrap{{overflow-x:auto;margin:24px 0}}
+.post-body table,.table-wrap table{{width:100%;border-collapse:collapse;font-size:.92rem;line-height:1.55;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}}
+.post-body th,.table-wrap th{{background:var(--bg2);color:var(--amber);font-weight:700;text-align:left;padding:12px 14px;border-bottom:2px solid var(--amber-border);white-space:nowrap}}
+.post-body td,.table-wrap td{{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}}
+.post-body tr:last-child td,.table-wrap tr:last-child td{{border-bottom:none}}
+.post-body tbody tr:nth-child(even) td,.table-wrap tbody tr:nth-child(even) td{{background:rgba(255,255,255,0.02)}}
+.post-body td strong,.table-wrap td strong{{color:var(--text)}}
 .circle-nav a{{font-size:.9rem;font-weight:600;color:var(--text2);text-decoration:none;max-width:48%}}
 .circle-nav a:hover{{color:var(--amber)}}
 .circle-nav .circle-next{{margin-left:auto;text-align:right}}
@@ -1708,6 +1737,9 @@ def _authority_css() -> str:
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #fdfcf9; color: var(--ink); -webkit-font-smoothing: antialiased; }
   body { font-family: Georgia, "Merriweather", "Times New Roman", serif; font-size: 19px; line-height: 1.75; }
+  .table-wrap { overflow-x: auto; margin: 24px 0; }
+  .table-wrap table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+  .table-wrap th, .table-wrap td { padding: 10px 12px; border-bottom: 1px solid var(--rule); text-align: left; }
   .auth-header { border-bottom: 1px solid var(--rule); background: #fff; padding: 14px 24px; }
   .auth-header-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; font-size: 14px; }
   .auth-header a { color: var(--ink); text-decoration: none; font-weight: 600; letter-spacing: -0.01em; }
@@ -1825,7 +1857,7 @@ def build_authority_page(post: dict, all_posts: list = None):
     # Sanitize + cap baked anchors + inject internal links (same as blog template —
     # auth bodies share the site-wide anchor ledger; codex 2026-07-23)
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post))))
+    html_content = wrap_tables(nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post)))))
     html_content = unwrap_cross_silo_links(html_content, post)
     html_content = enforce_anchor_caps(html_content)
     if all_posts:
@@ -1975,7 +2007,7 @@ def build_post_page(post: dict, all_posts: list = None):
 
     # ── Sanitize content: strip in-content TOC and CTA boxes ──────────────────
     html_content = sanitize_content(html_content)
-    html_content = nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post))))
+    html_content = wrap_tables(nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(html_content, post_lang(post)))))
     html_content = unwrap_cross_silo_links(html_content, post)
 
     # ── Internal links: cross-link to related posts for SEO ──────────────────
@@ -2508,7 +2540,7 @@ def build_category_pages(posts: list[dict]):
             # BEFORE the cap so they never burn ledger slots. This was the one
             # body-render site missing the D11 unwrap (review 2026-07-27 —
             # the CRM pillar's SaaS Mode link survived here).
-            p_body  = enforce_anchor_caps(unwrap_cross_silo_links(nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(pillar.get("html_content", ""), post_lang(pillar)))), pillar))
+            p_body  = enforce_anchor_caps(unwrap_cross_silo_links(wrap_tables(nofollow_affiliate_links(correct_trial_claims(localize_trial_hrefs(pillar.get("html_content", ""), post_lang(pillar))))), pillar))
             more_html = (f'''
 <div class="container">
   <h2 style="font-family:var(--sans);font-size:1.4rem;font-weight:800;margin:8px 0 20px">More {display_cat(cat)} guides</h2>
