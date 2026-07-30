@@ -183,6 +183,11 @@ The canon link structure is enforced at render time by `build.py` and gated by
   regardless; non-EN hubs guarded by the MIN_LANG_TOPIC_POSTS bucket rule
   so no dead links). verify.py Check 4e scans rendered BODY prose for
   cross-silo links — the unwrap is fail-open, 4e is the alarm.
+  `wrap_tables()` (v0.3.8.0) is the mobile-table backstop: any bare
+  `<table>` in a rendered body gets a `.table-wrap` scroll container so wide
+  tables scroll instead of clipping; tables already inside an overflow
+  wrapper (assemble_spoke output) are left alone. Runs on post, authority,
+  and category-pillar bodies. Gated by `scripts/test_wrap_tables.py`.
 - **Localized trial landings:** `build.py`'s `LOCALIZED_LANDING_LANGS` builds
   `/{lang}/trial/` for es, in, and ar (Arabic copy native-reader reviewed,
   5 MSA corrections, v0.3.0.0). Only the `/trial/` variants are built —
@@ -238,7 +243,10 @@ flow because it existed only as convention, not doc. Fixed in v0.3.5.0.
 a post JSON. Originally es-only (LATAM spokes); since v0.3.7.0 it authors
 English pages too: the manifest's `language` field keys the author bio, CTA
 fallback label, and hub-link label, and `hub_title` overrides the hub anchor
-text. Markdown support: simple pipe tables, GFM-style (scroll-wrapped;
+text. Since v0.3.8.0 the EN author bio (`BIO_EN`) carries the full affiliate
+disclosure (~40% recurring commission, plan-based not usage-based) — page-top
+disclosure blockquotes were removed from the AI-silo drafts so pages open
+with the answer; don't re-add them. Markdown support: simple pipe tables, GFM-style (scroll-wrapped;
 escaped pipes unsupported — pinned in the tests), numbered lists with nested
 bullets, and blockquotes (one containing `fp_ref=` becomes the CTA box;
 others render as plain `<blockquote>`). URL hardening: unknown-scheme links
@@ -255,7 +263,8 @@ Run before any deploy (all must pass): `python3 -m pytest scripts/ -q` — cover
 link audits (`test_audit_links`, `test_build_links`), capture pipeline
 (`test_ghl_capture`), IndexNow submitter (`test_submit_indexnow`), restore
 tooling (`test_restore_posts`), the spoke assembler (`test_assemble_spoke`,
-37 tests, added v0.3.7.0), the **trial-claim residual gate**
+37 tests, added v0.3.7.0), the table-wrap render pass (`test_wrap_tables`,
+6 tests, added v0.3.8.0), the **trial-claim residual gate**
 (`test_trial_claims_residual`, v0.3.4.0), and the **editorial-debt gate**
 (`test_no_editorial_markers`: no bracketed editor notes in any post string
 field — nested strings included, e.g. `tldr`/`translations` — no
