@@ -174,7 +174,8 @@ def test_bios_dict_shape():
     check("BIOS: both bios carry the contact mailto",
           all('mailto:bill@reiamplifi.com' in b for b in asp.BIOS.values()))
     check("BIOS: both bios disclose the affiliate relationship",
-          'afiliado de HighLevel' in asp.BIO_ES and 'HighLevel affiliate' in asp.BIO_EN)
+          'afiliado de HighLevel' in asp.BIO_ES and
+          'affiliate links' in asp.BIO_EN and 'about 40%' in asp.BIO_EN)
 
 
 def _run_main(tmp, language=None, hub_slug=None, hub_title=None):

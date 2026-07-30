@@ -178,12 +178,17 @@ BIO_ES = ('<section class="author-bio"><h2>Sobre el autor</h2>'
 
 BIO_EN = ('<section class="author-bio"><h2>About the author</h2>'
           '<p><strong>William Welch</strong> is a GoHighLevel consultant and the founder of Amplifi '
-          'Technologies, a digital agency focused on marketing automation on GoHighLevel. '
-          'I am a HighLevel affiliate.</p>'
+          'Technologies, a digital agency focused on marketing automation on GoHighLevel.</p>'
           '<p>Every price and limit in this guide was re-verified against GoHighLevel\'s official '
           'help documentation and public ideas board on the date shown in the article. '
           'If you spot a figure that needs updating, email me at '
-          '<a href="mailto:bill@reiamplifi.com">bill@reiamplifi.com</a>.</p></section>')
+          '<a href="mailto:bill@reiamplifi.com">bill@reiamplifi.com</a>.</p>'
+          '<p><strong>Disclosure:</strong> GoHighLevel links on this page are affiliate links. '
+          'If you sign up through them, I earn a recurring commission — about 40% of '
+          'GoHighLevel\'s monthly plan fee, for as long as you stay subscribed. That commission '
+          'is based on the plan you choose, not how much you use it, so I don\'t earn more when '
+          'your usage or bill goes up. The costs, the limits, and the "who should not buy this" '
+          'guidance are kept honest anyway.</p></section>')
 
 BIOS = {'es': BIO_ES, 'en': BIO_EN}
 
