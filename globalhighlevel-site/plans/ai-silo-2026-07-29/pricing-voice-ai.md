@@ -6,8 +6,6 @@ built: 2026-07-29
 
 ## Draft
 
-> **Disclosure:** GoHighLevel links on this page are affiliate links — I earn a recurring commission of about 40% of the monthly plan fee if you sign up through them, based on the plan you pick, not your usage. Every rate below links to GoHighLevel's own documentation.
-
 **GoHighLevel Voice AI costs $0.045 per minute in engine fees plus a text-to-speech rate ($0.015–$0.170/min depending on the voice) plus model tokens when you pay per use — or it's included without limits on the $97/month AI Employee Unlimited plan, subject to fair use.** Those are [GoHighLevel's published rates as of July 2026](https://help.gohighlevel.com/support/solutions/articles/155000006652-ai-product-pricing). Phone-system charges apply on every call regardless of plan. Here's what a real call actually costs, in dollars.
 
 Voice AI is the phone-answering piece of the AI Employee bundle — the [full AI Employee review](/blog/gohighlevel-ai-employee-ai-receptionist-review/) covers whether it's any good; this page is the meter.
@@ -38,6 +36,13 @@ What is never free: telephony. [GoHighLevel's pricing guide states](https://help
 More than most standalone receptionists: [340+ voices across 54+ languages](https://help.gohighlevel.com/support/solutions/articles/155000005874-how-to-edit-a-voice-ai-agent-s-voice), filterable by language, accent family (American, British, Australian and others), and gender — including ElevenLabs voices and custom ElevenLabs voice imports you can reuse across locations. Voice choice is also a pricing decision: a standard OpenAI or Cartesia voice bills at $0.015/min while an ElevenLabs V3 voice bills at $0.170/min, more than 11× the speech cost. Pick premium voices for the lines where sound quality sells; leave internal or after-hours lines on standard voices.
 
 One honest caveat from GoHighLevel's own ideas board: users still reported non-English spelling struggles (names, emails) as recently as February 2026. If most of your callers aren't English speakers, test your language before rolling it out.
+
+## Can Voice AI transfer a call to a real person?
+
+Yes — and this is the feature that makes an AI receptionist safe to put on a real phone line, so budget setup time for it. GoHighLevel's [during-call actions](https://help.gohighlevel.com/support/solutions/articles/155000005267-separate-during-and-post-call-actions) include a **Call Transfer** action that hands the live call to a human phone number when conditions you define are met — caller asks for a person, mentions an emergency, or hits a question the agent can't answer. Two details worth knowing before you configure it:
+
+- **Transfers are condition-based, not magic.** You write the conditions in the [agent setup](https://help.gohighlevel.com/support/solutions/articles/155000004107-how-to-create-voice-ai-agents); an agent with no transfer conditions will keep talking no matter how frustrated the caller gets. Test the escalation path with real calls before going live.
+- **Agents can also transfer to other AI agents** — [Voice AI agent transfer](https://help.gohighlevel.com/support/solutions/articles/155000007796-voice-ai-agent-transfer) routes a call from a generalist reception agent to a specialist one (booking, support) before a human ever needs to pick up. The transferred leg is still Voice AI time, so it bills at the same per-minute rates on pay-per-use.
 
 ## Are there usage limits on Voice AI calls?
 

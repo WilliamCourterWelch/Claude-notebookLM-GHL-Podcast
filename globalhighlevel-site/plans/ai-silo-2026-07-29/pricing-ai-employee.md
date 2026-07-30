@@ -6,8 +6,6 @@ built: 2026-07-29
 
 ## Draft
 
-> **Disclosure:** GoHighLevel links on this page are affiliate links — I earn a recurring commission of about 40% of the monthly plan fee if you sign up through them. That's based on the plan you pick, not your usage, so I don't earn more when your bill goes up. The numbers below are kept honest anyway, with a citation to GoHighLevel's own documentation on every figure.
-
 **GoHighLevel's AI Employee costs $50/month (Growth) or $97/month (Unlimited) per location, or you can pay per use with no monthly fee — as of July 2026.** The $97 tier includes [unlimited Voice AI, Conversation AI, Reviews AI, and Content AI, subject to fair use](https://help.gohighlevel.com/support/solutions/articles/155000006652-ai-product-pricing). Two things the sticker price doesn't say: phone-system charges apply on every call no matter which tier you're on, and the add-on price sits **on top of** a [GoHighLevel plan at $97–$497/month](https://help.gohighlevel.com/support/solutions/articles/155000001156-highlevel-pricing-guide). Here's the whole bill, itemized.
 
 This page is part of a series: the full [AI Employee review](/blog/gohighlevel-ai-employee-ai-receptionist-review/) covers what the product actually does; this page is just the money.

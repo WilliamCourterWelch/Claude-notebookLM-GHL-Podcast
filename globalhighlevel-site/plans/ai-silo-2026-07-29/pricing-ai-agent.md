@@ -6,8 +6,6 @@ built: 2026-07-29
 
 ## Draft
 
-> **Disclosure:** GoHighLevel links on this page are affiliate links — I earn a recurring commission of about 40% of the monthly plan fee if you sign up through them, based on the plan you pick, not your usage. Every figure below cites GoHighLevel's own documentation.
-
 **GoHighLevel prices AI agents two different ways, and knowing which one you're buying is the whole game: the ready-made agents (Voice AI and Conversation AI) are covered by the AI Employee plans at $50–$97/month, while custom agents built in Agent Studio are [pay-per-use on every plan](https://help.gohighlevel.com/support/solutions/articles/155000006652-ai-product-pricing) — no subscription includes them, not even the $97 Unlimited tier.** Those are GoHighLevel's published terms as of July 2026. Here's what each path costs and when each makes sense.
 
 For what these agents actually do on a live phone line, start with the [full AI Employee review](/blog/gohighlevel-ai-employee-ai-receptionist-review/) — this page is the pricing.

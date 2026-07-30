@@ -6,15 +6,15 @@ built: 2026-07-29
 
 ## Draft
 
-> **Disclosure:** GoHighLevel links on this page are affiliate links — I earn a recurring commission of about 40% of the monthly plan fee if you sign up through them, based on the plan you pick, not your usage. Every figure below cites GoHighLevel's own documentation.
-
 **GoHighLevel's AI Studio doesn't have its own price tag — its usage is bundled with the AI Employee plans: usage included on the $50/month Growth tier, 3× that included usage on the $97/month Unlimited tier, and token-cost billing on Pay-Per-Use — as of [GoHighLevel's published pricing, July 2026](https://help.gohighlevel.com/support/solutions/articles/155000006652-ai-product-pricing).** The catch most people miss: AI Studio and Agent Studio are different products with different billing, and the names get used interchangeably. Here's which is which, and what each costs.
 
 Both are part of GoHighLevel's AI lineup — the [full AI Employee review](/blog/gohighlevel-ai-employee-ai-receptionist-review/) covers the whole bundle; this page untangles the Studio pricing.
 
 ## What is AI Studio in GoHighLevel?
 
-AI Studio (alongside Ask AI) is GoHighLevel's in-platform AI workspace — the assistant layer you use inside the app. Per [GoHighLevel's AI Product Pricing doc](https://help.gohighlevel.com/support/solutions/articles/155000006652-ai-product-pricing), its billing rides on your AI Employee tier:
+AI Studio is GoHighLevel's **prompt-based AI builder for websites, funnels, and landing pages** — you describe what you want in plain English ("a landing page for a dental clinic with online booking"), and it generates the full structured design, copy and layout included, per [GoHighLevel's AI Studio doc](https://help.gohighlevel.com/support/solutions/articles/155000007587-ai-studio-in-highlevel). One master prompt can produce a complete multi-page site with a lead magnet. It ships with [visual editing](https://help.gohighlevel.com/support/solutions/articles/155000007587-ai-studio-in-highlevel) plus a code editor for manual refinement and advanced SEO support, and it connects to the rest of the platform — you link your existing forms and calendars to the pages it builds (a manual connect step, not automatic), and a form-submitted workflow trigger can then kick off your automations. It lives in Labs, enabled per sub-account (agencies can bulk-enable it across sub-accounts).
+
+Its billing rides on your AI Employee tier, per [GoHighLevel's AI Product Pricing doc](https://help.gohighlevel.com/support/solutions/articles/155000006652-ai-product-pricing):
 
 | AI Employee tier | Ask AI + AI Studio |
 |---|---|
@@ -38,14 +38,14 @@ Some AI features cost nothing extra at all: Funnel & Website AI is free at 1,000
 
 The naming trips up almost everyone comparing prices:
 
-- **AI Studio** — the in-app AI workspace whose usage is included with Growth/Unlimited (table above).
+- **AI Studio** — the prompt-based **site and funnel builder** (pages, layouts, copy); its usage is included with Growth/Unlimited (table above).
 - **Agent Studio** — the builder for custom AI agents. It is [not included in any subscription — pay-per-use across all plans](https://help.gohighlevel.com/support/solutions/articles/155000006652-ai-product-pricing), billed by model tokens (image generation via DALL-E 3 runs $0.04–$0.12 per image).
 
-So if a review says "AI Studio is included in the $97 plan," it's right about the workspace and wrong if it means the agent builder. Budgeting for custom agents? Read the [AI Agent pricing breakdown](/blog/gohighlevel-ai-agent-pricing/) — that's where the real token math lives.
+So if a review says "AI Studio is included in the $97 plan," it's right about the site builder and wrong if it means the agent builder — one builds your pages, the other builds AI agents. Budgeting for custom agents? Read the [AI Agent pricing breakdown](/blog/gohighlevel-ai-agent-pricing/) — that's where the real token math lives.
 
 ## Is GoHighLevel's AI worth it compared to standalone AI tools?
 
-The included-usage model is the actual argument. A standalone AI chatbot platform bills its own subscription; a team AI-assistant seat is its own per-user monthly fee; a dedicated voice-agent platform meters every minute. GoHighLevel's pitch is that once you're on Growth or Unlimited, the workspace AI (Ask AI + AI Studio), the chat AI, the reviews AI, and the content AI ride along at no additional subscription — you're consolidating four or five AI line items into one add-on that also answers your phone.
+The included-usage model is the actual argument. A standalone AI chatbot platform bills its own subscription; a team AI-assistant seat is its own per-user monthly fee; a dedicated voice-agent platform meters every minute. GoHighLevel's pitch is that once you're on Growth or Unlimited, the site-building AI (AI Studio), the in-app assistant (Ask AI), the chat AI, the reviews AI, and the content AI ride along at no additional subscription — you're consolidating four or five AI line items into one add-on that also answers your phone.
 
 The honest counterweight: if you don't want the CRM/marketing platform underneath, you're paying [$97–$497/month](https://help.gohighlevel.com/support/solutions/articles/155000001156-highlevel-pricing-guide) for a foundation you won't use, and standalone tools win. The AI only makes financial sense as an add-on to a platform you'd run anyway — the [full pricing guide](/blog/gohighlevel-pricing-plans-2026-complete-guide/) lays out that base cost.
 
