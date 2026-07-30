@@ -116,6 +116,27 @@ The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
 `_redirects` supports only 301/302/303/307/308; real 410s need
 `functions/_middleware.js`. Lowest value — only if slack. (Eng review T13)
 
+## AI silo follow-ups (Bill review, 2026-07-30)
+
+### Pricing-table screenshots (sandbox GHL or official pricing page)
+**Priority:** P2
+Bill asked whether the tier tables can be augmented with real screenshots
+(his sandboxed GHL account or gohighlevel.com's pricing page). Parked after
+v0.3.8.0 shipped styled HTML tables — screenshots are now an EEAT addition,
+not a fix. MUST follow the capture → solid-bar redact → Bill attestation →
+publish HARD RULE (site CLAUDE.md, v0.3.5.0) on either source.
+
+### Next AI-product spokes: Conversation AI / Reviews AI / Agent Studio — sequencing discussion with Bill
+**Priority:** P2
+The help-center folder 155000001368 (Agent Studio) alone has 21 articles;
+Conversation AI and Reviews AI have their own corpora. Candidate spokes
+feeding the AI pillar, to be sequenced against the Arabic-expansion queue
+(session state 2026-07-30). Per the updated /research-product-wedge Step 0a
+(and learning wedge-research-skips-vendor-doc-corpus): each spoke's research
+STARTS by enumerating that product's help.gohighlevel.com doc folder and
+building the capability model from it — demand data layers on top.
+Discussion with Bill pending; do not start without his sequencing call.
+
 ## Content hygiene
 
 ### Rebuild stripped es sections via /research-product-wedge (Bill-directed)
