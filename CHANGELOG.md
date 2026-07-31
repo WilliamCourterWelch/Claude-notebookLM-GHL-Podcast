@@ -8,6 +8,11 @@ All notable changes to globalhighlevel.com's static-site build are documented he
 - **The Agent Studio FAQ no longer contradicts the pricing page it links to.** The answer on concurrent conversations claimed "Billing is per-conversation"; GoHighLevel's published terms as of July 2026 (and the site's own AI agent pricing page) put Agent Studio agents on pay-per-use across every plan, billed as token cost per response, with no subscription including them — not even the $97 Unlimited tier. Corrected in both the visible copy and the FAQPage schema.
 - **FAQPage structured data no longer drifts from the visible answer.** FAQ answers live twice inside the same `html_content` field — once as visible HTML, once inside an inline FAQPage JSON-LD block — so editing only the visible copy silently desynced the rich-result surface. Both copies are now updated together. Neither `verify.py` nor `audit_links.py` checks this parity, so it is a manual invariant worth remembering.
 
+### For contributors
+- `globalhighlevel-site/CLAUDE.md` now documents two silent-failure modes the build has always had but never stated: `unwrap_cross_silo_links()` and the sitewide anchor cap strip author-added body links by dropping the anchor and keeping the words, so the post reads fine and `verify.py` still reports clean while the link is gone — grep the built HTML in `public/` after adding any body link by hand. And FAQ answers are stored twice in the same `html_content` field (visible HTML plus inline FAQPage JSON-LD), so an edit to one must be an edit to both.
+- Both failure modes now have proposed `verify.py` gates tracked in TODOS.md (P2).
+- Added the gstack skill-routing section to `CLAUDE.md`.
+
 ## [0.3.8.0] - 2026-07-30
 ### Fixed
 - **The prev/next silo navigation no longer floats frozen over the top of every post.** A bare `nav { position:fixed }` selector (the site header) was also capturing the circle-nav `<nav>` element, pinning the prev/next links to the viewport top on every silo post since the link circle shipped in v0.2.11.0 — Bill caught it from a screenshot. The `.circle-nav` rule now resets position, z-index, background, and backdrop blur; the links sit at the end of the article where they were designed to be.

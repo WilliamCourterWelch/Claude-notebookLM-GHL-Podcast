@@ -114,6 +114,21 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - **Anchor caps:** beyond 3 identical anchor→URL pairs sitewide (including
   anchors baked in stored post bodies and absolute same-site URLs), the link
   unwraps to plain text at render time — post JSON is never mutated.
+- **Both stripping passes fail SILENTLY, and no gate reports the loss
+  (learned v0.3.8.1).** `unwrap_cross_silo_links()` and the anchor cap remove an
+  author-added body link by dropping the anchor and keeping the words, so the
+  post still reads fine, the build still passes, and `verify.py` still reports
+  clean — the link is simply gone. After adding any body link by hand, grep the
+  BUILT html under `public/` for the target href to confirm it survived. Do not
+  assume it did because the build was green. A proposed verify gate for this is
+  tracked in TODOS.
+- **FAQ answers exist TWICE inside the same `html_content` field (learned
+  v0.3.8.1):** once as visible HTML (`<h3>` + `<p>`) and once inside an inline
+  `FAQPage` JSON-LD `<script>` block near the end of the body. Editing only the
+  visible copy silently desyncs the rich-result surface, and neither `verify.py`
+  nor `audit_links.py` checks parity. When you touch an FAQ answer, change both
+  copies — a `.replace()` over the field should match `count == 2`. Also tracked
+  in TODOS as a proposed gate.
 
 **Gates (all must pass before deploy):**
 - `verify.py` Check 4 — canon invariants on built output: every spoke links up
