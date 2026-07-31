@@ -255,7 +255,12 @@ others render as plain `<blockquote>`). URL hardening: unknown-scheme links
 `scripts/test_assemble_spoke.py`. **Provenance pattern:** each silo build
 commits its draft sources + manifests under `plans/<silo>-<date>/` plus a fact
 ledger (`plans/*-fact-ledger-*.md`) so every published dollar figure traces to
-a dated source — keep doing this for future silos.
+a dated source — keep doing this for future silos. Extended v0.3.9.0 to
+single-post research rebuilds (`plans/es-timer-rebuild-2026-07-31/`) and to
+non-numeric claims: any sentence attributed to "la documentación" needs a
+ledger row naming the help article and the date it was fetched. A retired
+claim also records the search that retired it, so the next session does not
+re-litigate it from memory.
 
 ## Tests — pre-deploy gate suite
 
