@@ -1,4 +1,4 @@
-"""Tests for scripts/fix_faq_schema.py (v0.3.9.2).
+"""Tests for scripts/fix_faq_schema.py (v0.3.10.0).
 
 The migration rewrites inline FAQPage JSON-LD from a post's own visible copy.
 The dangerous failure modes are (a) stripping a post's only schema, and
@@ -49,7 +49,7 @@ def test_visible_pairs_extracts_h2_section():
 
 
 def test_visible_pairs_handles_h3_section_heading():
-    """36 posts head their FAQ with <h3>, not <h2>. They must not be missed."""
+    """37 posts head their FAQ with <h3>, not <h2>. They must not be missed."""
     html = ("<h3>Frequently Asked Questions</h3>"
             "<h3>Does it work?</h3><p>Yes it works fine.</p>")
     assert F.visible_pairs(html) == [("Does it work?", "Yes it works fine.")]

@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 """Rebuild inline FAQPage JSON-LD from each post's own visible FAQ copy.
 
-Why this exists (v0.3.9.2)
+Why this exists (v0.3.10.0)
 --------------------------
 FAQ answers live TWICE inside a post's `html_content`: once as visible HTML and
 once inside an inline `FAQPage` JSON-LD block. Nothing keeps the two in sync, so
 three defects accumulated across the 159 posts that embed schema:
 
   1. duplicate FAQPage blocks (8 posts) -- engines honor one, the other is waste
-  2. ORPHAN questions (16 across 9 posts) -- schema asserts a Q&A that appears
+  2. ORPHAN questions (19 across 10 posts) -- schema asserts a Q&A that appears
      nowhere on the page. This is the real problem: Google requires FAQ
      structured data to match visible content, and orphans are the class that
      gets rich results suppressed.
-  3. answer drift (53 across 29 posts) -- schema wording no longer matches the
+  3. answer drift (26 answers) -- schema wording no longer matches the
      visible answer it claims to mirror.
 
 The fix is deterministic: visible copy is the source of truth. For each post we
@@ -26,8 +26,8 @@ What this deliberately does NOT do
   `faq_schema()` already generates theirs at render time.
 * It does not "fix" trivial drift (whitespace, entity encoding, or a schema
   answer that is a clean truncation of the visible one). Those are faithful and
-  rewriting them would churn 218 entries for no gain.
-* It does not restructure visible HTML. 36 posts head their FAQ with `<h3>`
+  rewriting them would churn 120 posts for no gain.
+* It does not restructure visible HTML. 37 posts head their FAQ with `<h3>`
   rather than `<h2>`; that is a corpus inconsistency, not a schema defect, and
   changing heading levels is an editorial call, not a migration.
 
@@ -48,7 +48,7 @@ import sys
 
 POSTS_GLOB = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "posts", "*.json")
 
-# FAQ section headings, any level. Enumerated from the corpus (9 distinct
+# FAQ section headings, any level. Enumerated from the corpus (8 distinct
 # variants across the 159 schema-carrying posts), not guessed:
 #   157x "Frequently Asked Questions"   4x "Preguntas frecuentes" (any case)
 #     4x "Common Questions About/During ..."   2x "الأسئلة الشائعة"
@@ -84,7 +84,7 @@ def visible_pairs(html: str) -> list[tuple[str, str]]:
     for m in re.finditer(_FAQ_HEADING, visible, re.I):
         rest = visible[m.end():]
         # A FAQ section always ends at the next <h1>/<h2> (or the author bio),
-        # NEVER at an <h3> -- the questions themselves are <h3>. 36 posts head
+        # NEVER at an <h3> -- the questions themselves are <h3>. 37 posts head
         # their FAQ with <h3> rather than <h2>; stopping at the next <h3> made
         # those sections read as empty and silently skipped every one of them.
         stop = re.search(r"<h[12][^>]*>|<section class=\"author-bio\"", rest, re.I)

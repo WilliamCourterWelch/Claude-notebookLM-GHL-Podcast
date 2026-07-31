@@ -151,10 +151,10 @@ The canon link structure is enforced at render time by `build.py` and gated by
   as well as headings. **Every local gate stayed green while this was wrong**
   (pytest, `build.py`, `verify.py`) because no gate reads schema content; codex
   adversarial review is what caught it.
-- **FAQ markup is not uniform across the corpus.** 9 distinct FAQ section
+- **FAQ markup is not uniform across the corpus.** 8 distinct FAQ section
   heading variants (157x "Frequently Asked Questions", 4x "Preguntas
   frecuentes", 4x "Common Questions About/During X", 2x "الأسئلة الشائعة"), and
-  **36 posts head their FAQ with `<h3>` rather than `<h2>`** — so an extractor
+  **37 posts head their FAQ with `<h3>` rather than `<h2>`** — so an extractor
   that ends the section at the next `<h3>` sees those as empty, because the
   questions themselves are `<h3>`. Beware the Arabic near-miss: "أخطاء شائعة"
   is "common *mistakes*", not an FAQ heading, and must not match.
