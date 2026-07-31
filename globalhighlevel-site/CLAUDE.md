@@ -134,7 +134,30 @@ The canon link structure is enforced at render time by `build.py` and gated by
   `.replace()` over the field should match `count == 2`). Posts WITHOUT an
   inline block are safe: `faq_schema()` (build.py:1948) generates the schema
   from the visible FAQ at render time and returns early when `"FAQPage"` is
-  already present, so it never double-writes. Also tracked in TODOS.
+  already present, so it never double-writes. Gate still tracked in TODOS (P1).
+- **The data is clean as of v0.3.10.0, and `scripts/fix_faq_schema.py` keeps it
+  that way.** That migration rebuilt 39 posts from their own visible copy
+  (8 duplicate `FAQPage` blocks, 19 orphan questions asserting a Q&A absent from
+  the page, 26 drifted answers). Re-run it any time: `--dry-run` audits, a bare
+  run fixes, and a second run is a clean no-op. It refuses rather than guesses —
+  it will not strip a post's only schema, and it aborts on any post where it
+  recovers under half the existing questions.
+- **HAZARD when writing ANY FAQ extractor: the trial CTA is a SIBLING `<div>`
+  immediately after the FAQ container.** Bound an answer on the next heading and
+  the last answer on the page swallows the CTA. That put "Ready to Get Started…
+  Claim Your Free Trial" inside 38 posts' `acceptedAnswer` during v0.3.10.0
+  development — advertising copy in structured data, which Google's
+  structured-data policies prohibit. Bound answers on `</div>`/`<div`/`<section`
+  as well as headings. **Every local gate stayed green while this was wrong**
+  (pytest, `build.py`, `verify.py`) because no gate reads schema content; codex
+  adversarial review is what caught it.
+- **FAQ markup is not uniform across the corpus.** 9 distinct FAQ section
+  heading variants (157x "Frequently Asked Questions", 4x "Preguntas
+  frecuentes", 4x "Common Questions About/During X", 2x "الأسئلة الشائعة"), and
+  **36 posts head their FAQ with `<h3>` rather than `<h2>`** — so an extractor
+  that ends the section at the next `<h3>` sees those as empty, because the
+  questions themselves are `<h3>`. Beware the Arabic near-miss: "أخطاء شائعة"
+  is "common *mistakes*", not an FAQ heading, and must not match.
 
 **Gates (all must pass before deploy):**
 - `verify.py` Check 4 — canon invariants on built output: every spoke links up
@@ -295,10 +318,14 @@ tooling (`test_restore_posts`), the spoke assembler (`test_assemble_spoke`,
 (`test_no_editorial_markers`: no bracketed editor notes in any post string
 field — nested strings included, e.g. `tldr`/`translations` — no
 empty/trailing heading sections — added v0.3.4.0 after the 2026-07-28 strip of
-27 firehose-era es posts), and the **retired-timer-premise gate**
+27 firehose-era es posts), the **retired-timer-premise gate**
 (`test_timer_break_premise`: Spanish posts may not reassert that copying/cloning
 a template breaks its countdown timer — an ungrounded claim removed in the
-2026-07-31 rebuild). Then `python3 build.py` and `python3 verify.py`.
+2026-07-31 rebuild), and the **FAQ schema migration**
+(`test_fix_faq_schema`, 21 tests, added v0.3.10.0 — pins the CTA-swallow
+boundary, the h3-headed FAQ sections, the 9 heading variants, the prefix-vs-
+substring triviality guard, and the refuse-rather-than-guess paths). Then
+`python3 build.py` and `python3 verify.py`.
 
 **Writing a content gate? Match phrases, not meaning — and pin BOTH edges.**
 `test_timer_break_premise` first tried to infer the *claim* (timer noun + copy
