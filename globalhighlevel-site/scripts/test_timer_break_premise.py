@@ -75,6 +75,13 @@ RETIRED = [
     re.compile(r"(?:cuenta\s+regresiva|temporizador(?:es)?)\s+qued\w+\s+"
                r"(?:rot[oa]s?|inutilizable)", re.I),
     re.compile(r"temporizador(?:es)?\s+se\s+estropea\w*", re.I),
+    # "…copiar plantillas con temporizadores en GoHighLevel SIN QUE SE ROMPAN"
+    # (the pre-rebuild meta description). The negative framing presupposes the
+    # retired claim — it only makes sense if copying otherwise breaks them —
+    # and words sit between the timer noun and the verb, so the adjacency
+    # patterns above miss it. Same sentence only.
+    re.compile(r"temporizador(?:es)?\b[^.!?]{0,40}?"
+               r"(?:sin\s+que\s+se\s+romp\w+|para\s+que\s+no\s+se\s+romp\w+)", re.I),
     # "El temporizador se reinicia, los plazos se desincronizán, o
     # directamente no funciona." A bare "el temporizador se reinicia" is the
     # DOCUMENTED recurrent behavior and must stay legal, so this only fires
@@ -229,6 +236,11 @@ def test_gate_fires_on_retired_phrasings_and_not_on_grounded_prose():
         "Copiar el template resetea la cuenta regresiva.",
         "Duplicar el template reinicia el temporizador.",
         "Tras copiar la plantilla el temporizador queda inutilizable.",
+        # the pre-rebuild META DESCRIPTION — negative framing, and the verb is
+        # not adjacent to the timer noun
+        "Aprende a copiar plantillas de email con temporizadores en "
+        "GoHighLevel sin que se rompan.",
+        "Copia tus plantillas para que no se rompan los temporizadores.",
         # --- evasion attempts ---
         "Al copiar el template, el temporizador se &lt;span&gt;rompe&lt;/span&gt;.",
         "Al copiar el template, el temporizador se ro<span>mpe</span>.",
