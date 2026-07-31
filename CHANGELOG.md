@@ -2,6 +2,15 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.9.0] - 2026-07-31
+### Changed
+- **The countdown-timer guide now explains what actually happens, instead of a problem that was never real.** The Spanish post "Cómo Copiar Templates con Temporizadores" rested on a premise no GoHighLevel documentation supports: that copying or cloning an email template breaks, desyncs or resets its timer. It asserted that five times. A full source sweep (the Wait-action article, the clone-templates article, the help portal, general web, and community threads) found zero support for it. The rebuilt post teaches the documented behavior instead — email timers are typically GIFs that count from each open for up to 60 seconds and refresh on reopen, recurrent timers restart at zero by design, and Apple Mail caches the GIF so it can look frozen — which explains the "it reset!" experience honestly. 423 → 975 words.
+- **The guide now shows you how to clone a template.** It promised that in the title and never delivered it; the documented steps (hover the template, three-dot menu, "Clone Template", confirm) plus the agency-admin requirement now sit in Paso 3, ahead of the post-clone verification checklist.
+
+### Added
+- **A gate that stops the retired claim from coming back.** Spanish posts can no longer assert that copying a template breaks its timer. It fires only when the breakage is actually blamed on the copy, so prose that discusses the perception, cites the documentation, or reports an unrelated button failure passes untouched. The Spanish-only scope is deliberate and documented; the English and en-IN siblings still carry the old claim and are tracked separately (#53, #54).
+- **Provenance for the rebuild.** `plans/es-timer-rebuild-2026-07-31/` carries the draft and a fact ledger mapping all ten documentation-attributed claims to the help article and fetch date they came from, plus the five-class search that retired the old premise.
+
 ## [0.3.8.0] - 2026-07-30
 ### Fixed
 - **The prev/next silo navigation no longer floats frozen over the top of every post.** A bare `nav { position:fixed }` selector (the site header) was also capturing the circle-nav `<nav>` element, pinning the prev/next links to the viewport top on every silo post since the link circle shipped in v0.2.11.0 — Bill caught it from a screenshot. The `.circle-nav` rule now resets position, z-index, background, and backdrop blur; the links sit at the end of the article where they were designed to be.
