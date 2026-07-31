@@ -2,6 +2,12 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.8.1] - 2026-07-31
+### Fixed
+- **The Agent Studio guide now sends readers into the AI money silo instead of dead-ending.** Both of the site's former top-Bing URLs (`how-to-build-ai-agents-gohighlevel-agent-studio-setup` and `build-smarter-ai-agents-gohighlevel-agent-studio-setup`) 301 into `how-to-build-ai-agents-in-gohighlevel-agent-studio-guide`, but that page carried only one template link into the silo (`voice-ai-pricing`, via the link circle) and no body link at all to the AI Employee / AI Receptionist pillar. All five silo pages now get in-prose links from it: the pillar in the opening section, the three pricing spokes in the cost section, and Voice AI pricing in the voice FAQ. Same language and topic silo, so all five survive `unwrap_cross_silo_links` and the sitewide anchor cap (verified in built output, not assumed).
+- **The Agent Studio FAQ no longer contradicts the pricing page it links to.** The answer on concurrent conversations claimed "Billing is per-conversation"; GoHighLevel's published terms as of July 2026 (and the site's own AI agent pricing page) put Agent Studio agents on pay-per-use across every plan, billed as token cost per response, with no subscription including them — not even the $97 Unlimited tier. Corrected in both the visible copy and the FAQPage schema.
+- **FAQPage structured data no longer drifts from the visible answer.** FAQ answers live twice inside the same `html_content` field — once as visible HTML, once inside an inline FAQPage JSON-LD block — so editing only the visible copy silently desynced the rich-result surface. Both copies are now updated together. Neither `verify.py` nor `audit_links.py` checks this parity, so it is a manual invariant worth remembering.
+
 ## [0.3.8.0] - 2026-07-30
 ### Fixed
 - **The prev/next silo navigation no longer floats frozen over the top of every post.** A bare `nav { position:fixed }` selector (the site header) was also capturing the circle-nav `<nav>` element, pinning the prev/next links to the viewport top on every silo post since the link circle shipped in v0.2.11.0 — Bill caught it from a screenshot. The `.circle-nav` rule now resets position, z-index, background, and backdrop blur; the links sit at the end of the article where they were designed to be.
