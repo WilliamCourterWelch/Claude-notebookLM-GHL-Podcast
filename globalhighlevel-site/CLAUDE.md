@@ -115,7 +115,7 @@ The canon link structure is enforced at render time by `build.py` and gated by
   anchors baked in stored post bodies and absolute same-site URLs), the link
   unwraps to plain text at render time — post JSON is never mutated.
 - **Neither stripping pass names the link it dropped, and no gate fails on it
-  (learned v0.3.8.1).** `unwrap_cross_silo_links()` (build.py:775) and
+  (learned v0.3.9.1).** `unwrap_cross_silo_links()` (build.py:775) and
   `enforce_anchor_caps()` (build.py:362) both remove an author-added body link
   by dropping the anchor and keeping the words. The cross-silo pass at least
   increments `_RENDER_PASS_COUNTS["unwrapped"]`, and `main()` prints an
@@ -126,7 +126,7 @@ The canon link structure is enforced at render time by `build.py` and gated by
   under `public/` for the target href to confirm it survived. A proposed verify
   gate is tracked in TODOS.
 - **On the 159 posts that embed FAQ schema, the answer text exists TWICE inside
-  the same `html_content` field (learned v0.3.8.1):** once as visible HTML
+  the same `html_content` field (learned v0.3.9.1):** once as visible HTML
   (`<h3>` + `<p>`) and once inside an inline `FAQPage` JSON-LD `<script>` block.
   Editing only the visible copy desyncs the rich-result surface, and neither
   `verify.py` nor `audit_links.py` checks parity. When you touch an FAQ answer,

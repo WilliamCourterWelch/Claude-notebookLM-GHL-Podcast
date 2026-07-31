@@ -2,16 +2,7 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
-## [0.3.9.0] - 2026-07-31
-### Changed
-- **The countdown-timer guide now explains what actually happens, instead of a problem that was never real.** The Spanish post "Cómo Copiar Templates con Temporizadores" rested on a premise no GoHighLevel documentation supports: that copying or cloning an email template breaks, desyncs or resets its timer. It asserted that five times. A full source sweep (the Wait-action article, the clone-templates article, the help portal, general web, and community threads) found zero support for it. The rebuilt post teaches the documented behavior instead — email timers are typically GIFs that count from each open for up to 60 seconds and refresh on reopen, recurrent timers restart at zero by design, and Apple Mail caches the GIF so it can look frozen — which explains the "it reset!" experience honestly. 423 → 975 words.
-- **The guide now shows you how to clone a template.** It promised that in the title and never delivered it; the documented steps (hover the template, three-dot menu, "Clone Template", confirm) plus the agency-admin requirement now sit in Paso 3, ahead of the post-clone verification checklist.
-
-### Added
-- **A gate that stops the retired claim from coming back.** Spanish posts can no longer assert that copying a template breaks its timer. It fires only when the breakage is actually blamed on the copy, so prose that discusses the perception, cites the documentation, or reports an unrelated button failure passes untouched. The Spanish-only scope is deliberate and documented; the English and en-IN siblings still carry the old claim and are tracked separately (#53, #54).
-- **Provenance for the rebuild.** `plans/es-timer-rebuild-2026-07-31/` carries the draft and a fact ledger mapping all ten documentation-attributed claims to the help article and fetch date they came from, plus the five-class search that retired the old premise.
-
-## [0.3.8.1] - 2026-07-31
+## [0.3.9.1] - 2026-07-31
 ### Fixed
 - **The Agent Studio guide now sends readers into the AI money silo instead of dead-ending.** Both of the site's former top-Bing URLs (`how-to-build-ai-agents-gohighlevel-agent-studio-setup` and `build-smarter-ai-agents-gohighlevel-agent-studio-setup`) 301 into `how-to-build-ai-agents-in-gohighlevel-agent-studio-guide`, but that page reached the silo only through a single auto-injected pillar link (`voice-ai-pricing`, placed by `inject_pillar_link()`) and carried no authored body link at all to the AI Employee / AI Receptionist pillar. Five authored in-prose links were added: the pillar in the opening section, the three pricing spokes in the cost section, and Voice AI pricing in the voice FAQ — six in-body silo links in the built page once the injected one is counted. Same language and topic silo, so all five survive `unwrap_cross_silo_links()` and `enforce_anchor_caps()` (verified in built output, not assumed).
 - **The Agent Studio FAQ no longer contradicts the pricing page it links to.** The answer on concurrent conversations claimed "Billing is per-conversation"; GoHighLevel's published terms as of July 2026 (and the site's own AI agent pricing page) put Agent Studio agents on pay-per-use across every plan, billed as token cost per response, with no subscription including them — not even the $97 Unlimited tier. Corrected in both the visible copy and the FAQPage schema.
@@ -21,6 +12,15 @@ All notable changes to globalhighlevel.com's static-site build are documented he
 - `globalhighlevel-site/CLAUDE.md` now documents two failure modes the build has always had but never stated. First: `unwrap_cross_silo_links()` and `enforce_anchor_caps()` strip author-added body links by dropping the anchor and keeping the words. The cross-silo pass prints an aggregate unwrap count, the anchor cap records nothing, and neither names the link it dropped while `verify.py` still reports clean — so grep the built HTML in `public/` after adding any body link by hand. Second: on the 159 posts carrying an inline FAQPage block, answer text is stored twice in `html_content`, so an edit to one must be an edit to both (posts without an inline block are safe — `faq_schema()` generates it at render time).
 - Both failure modes now have proposed `verify.py` gates tracked in TODOS.md (P2).
 - Added the gstack skill-routing section to `CLAUDE.md`.
+
+## [0.3.9.0] - 2026-07-31
+### Changed
+- **The countdown-timer guide now explains what actually happens, instead of a problem that was never real.** The Spanish post "Cómo Copiar Templates con Temporizadores" rested on a premise no GoHighLevel documentation supports: that copying or cloning an email template breaks, desyncs or resets its timer. It asserted that five times. A full source sweep (the Wait-action article, the clone-templates article, the help portal, general web, and community threads) found zero support for it. The rebuilt post teaches the documented behavior instead — email timers are typically GIFs that count from each open for up to 60 seconds and refresh on reopen, recurrent timers restart at zero by design, and Apple Mail caches the GIF so it can look frozen — which explains the "it reset!" experience honestly. 423 → 975 words.
+- **The guide now shows you how to clone a template.** It promised that in the title and never delivered it; the documented steps (hover the template, three-dot menu, "Clone Template", confirm) plus the agency-admin requirement now sit in Paso 3, ahead of the post-clone verification checklist.
+
+### Added
+- **A gate that stops the retired claim from coming back.** Spanish posts can no longer assert that copying a template breaks its timer. It fires only when the breakage is actually blamed on the copy, so prose that discusses the perception, cites the documentation, or reports an unrelated button failure passes untouched. The Spanish-only scope is deliberate and documented; the English and en-IN siblings still carry the old claim and are tracked separately (#53, #54).
+- **Provenance for the rebuild.** `plans/es-timer-rebuild-2026-07-31/` carries the draft and a fact ledger mapping all ten documentation-attributed claims to the help article and fetch date they came from, plus the five-class search that retired the old premise.
 
 ## [0.3.8.0] - 2026-07-30
 ### Fixed

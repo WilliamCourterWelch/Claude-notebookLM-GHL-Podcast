@@ -121,7 +121,7 @@ The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
 FAQ answers exist twice inside the same `html_content` field — visible HTML and
 an inline FAQPage JSON-LD block. Editing one silently desyncs the other, and
 neither `verify.py` nor `audit_links.py` checks parity, so schema drift ships
-clean. Hit for real in v0.3.8.1 (caught by codex adversarial, not by a gate).
+clean. Hit for real in v0.3.9.1 (caught by codex adversarial, not by a gate).
 Add a check that every `<h3>`/`<p>` FAQ pair has a matching `acceptedAnswer`
 text, allowing for stripped markup.
 
@@ -130,7 +130,7 @@ text, allowing for stripped markup.
 `enforce_anchor_caps` unwraps an anchor→URL pair past 3 identical uses sitewide,
 and `unwrap_cross_silo_links` drops cross-silo body links — both silently, with
 no gate reporting that an author-added link vanished from built output. Codex
-measured three v0.3.8.1 silo anchors sitting at 2/3 of the cap, so one more
+measured three v0.3.9.1 silo anchors sitting at 2/3 of the cap, so one more
 matching anchor earlier in sorted build order would strip them. Add a check
 comparing body links in post JSON against anchors in the built HTML, reporting
 any that were unwrapped.
