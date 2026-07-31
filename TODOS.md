@@ -143,8 +143,18 @@ Discussion with Bill pending; do not start without his sequencing call.
 **Priority:** P1
 **PROGRESS v0.3.5.0 (2026-07-28):** Post 1 of 10 rebuilt and shipped (configurar-workflows-
 gohighlevel-whatsapp-mercadopago, 301→1554 words, wedge vault + attested screenshots +
-in-silo links). Remaining: 9 posts (workflows-…-automaticamente next — same research),
-Step 5 competitor sections, 4 fetch-resolvable ungroundeds, 121-post Caso Real batch decision (the 7 highest-exposure posts got the Ejemplo-hipotético treatment in v0.3.6.0).
+in-silo links).
+**PROGRESS v0.3.9.0 (2026-07-31):** Post 2 of 10 rebuilt and shipped (copiar-templates-
+temporizadores-gohighlevel, 423→975 words). Its premise was ungrounded, not merely thin:
+the full 5-class fetch budget found zero support for "copying breaks the timer", so the
+post was rebuilt on the documented GIF mechanism, the documented clone steps were added,
+and a regression gate (`scripts/test_timer_break_premise.py`) now blocks the retired
+phrasings in es posts. Provenance committed at `plans/es-timer-rebuild-2026-07-31/`.
+The 4 fetch-resolvable ungroundeds and Step 5 competitor research both completed in the
+wedge vault (2026-07-30) and feed the remaining rebuilds.
+Remaining: 8 posts, 121-post Caso Real batch decision (the 7 highest-exposure posts got
+the Ejemplo-hipotético treatment in v0.3.6.0), and the EN/en-IN timer siblings that still
+assert the retired premise (#53) plus the contradicting Apple Mail mechanism post (#54).
 v0.3.4.0 stripped editor notes + fabricated "Caso Real" cases from 27 es posts;
 the honest gaps now need real content (Bill 2026-07-28: "strip and then use the
 research wedge to fix them"). Highest-value gaps: configurar-workflows-gohighlevel-
