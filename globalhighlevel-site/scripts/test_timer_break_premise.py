@@ -80,8 +80,6 @@ RETIRED = [
     # retired claim — it only makes sense if copying otherwise breaks them —
     # and words sit between the timer noun and the verb, so the adjacency
     # patterns above miss it. Same sentence only.
-    re.compile(r"temporizador(?:es)?\b[^.!?]{0,40}?"
-               r"(?:sin\s+que\s+se\s+romp\w+|para\s+que\s+no\s+se\s+romp\w+)", re.I),
     # "El temporizador se reinicia, los plazos se desincronizán, o
     # directamente no funciona." A bare "el temporizador se reinicia" is the
     # DOCUMENTED recurrent behavior and must stay legal, so this only fires
@@ -96,6 +94,20 @@ RETIRED = [
 # ordinary instruction ("si falla, reinicia el temporizador").
 RETIRED_IF_COPY = [
     re.compile(r"(?:resetea|reinicia)\s+(?:el\s+temporizador|la\s+cuenta\s+regresiva)", re.I),
+    # "…copiar plantillas con temporizadores en GoHighLevel SIN QUE SE ROMPAN"
+    # (the pre-rebuild meta description). Negative framing presupposes the
+    # retired claim — it only means something if copying otherwise breaks them.
+    # Copy context is required: "prueba los temporizadores en móvil para que no
+    # se rompan" is ordinary QA advice and must not block a deploy.
+    re.compile(r"temporizador(?:es)?\b[^.!?]{0,40}?"
+               r"(?:sin\s+que\s+se\s+romp\w+|para\s+que\s+no\s+se\s+romp\w+)", re.I),
+    re.compile(r"(?:sin\s+que\s+se\s+romp\w+|para\s+que\s+no\s+se\s+romp\w+)"
+               r"[^.!?]{0,20}?\btemporizador(?:es)?\b", re.I),
+    # The pre-rebuild MECHANISM for the retired premise: copying leaves the
+    # timer's placeholders pointing at the original account. Retired with the
+    # claim it explained, and pinned separately so it can't return piecemeal
+    # without the failure sentence that used to follow it.
+    re.compile(r"placeholders?\b[^.!?]{0,60}?apuntan\s+a\s+la\s+cuenta\s+original", re.I),
 ]
 
 COPY = re.compile(r"(?:copia\w*|clona\w*|duplica\w*|replica\w*)", re.I)
@@ -241,6 +253,10 @@ def test_gate_fires_on_retired_phrasings_and_not_on_grounded_prose():
         "Aprende a copiar plantillas de email con temporizadores en "
         "GoHighLevel sin que se rompan.",
         "Copia tus plantillas para que no se rompan los temporizadores.",
+        # the pre-rebuild MECHANISM sentence, restorable on its own
+        "Cuando copias un template de una cuenta a una subcuenta sin los "
+        "pasos correctos, esos placeholders apuntan a la cuenta original, no "
+        "a la nueva.",
         # --- evasion attempts ---
         "Al copiar el template, el temporizador se &lt;span&gt;rompe&lt;/span&gt;.",
         "Al copiar el template, el temporizador se ro<span>mpe</span>.",
@@ -278,6 +294,10 @@ def test_gate_fires_on_retired_phrasings_and_not_on_grounded_prose():
         "Zapier se rompe.",
         # English duty "rota" — why the corpus scan is es-only
         "Duplicate the countdown timer block for each rota you manage.",
+        # ordinary QA advice: negative framing with NO copy context
+        "Prueba los temporizadores en móvil para que no se rompan.",
+        "Revisa la zona horaria de los temporizadores sin que se rompan las "
+        "campañas programadas.",
     ]
     false_pos = [s for s in grounded if _premise_hits(s)]
     assert not false_pos, (
