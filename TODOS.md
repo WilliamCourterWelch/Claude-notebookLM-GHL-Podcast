@@ -117,13 +117,24 @@ The submitter shipped in v0.2.11.0 (`scripts/submit_indexnow.py --urls FILE` or
 `functions/_middleware.js`. Lowest value — only if slack. (Eng review T13)
 
 ### verify.py gate: FAQPage JSON-LD must match the visible FAQ copy
-**Priority:** P2
+**Priority:** P1
 FAQ answers exist twice inside the same `html_content` field — visible HTML and
 an inline FAQPage JSON-LD block. Editing one silently desyncs the other, and
 neither `verify.py` nor `audit_links.py` checks parity, so schema drift ships
 clean. Hit for real in v0.3.9.1 (caught by codex adversarial, not by a gate).
 Add a check that every `<h3>`/`<p>` FAQ pair has a matching `acceptedAnswer`
 text, allowing for stripped markup.
+
+**Status after v0.3.10.0:** the DATA is now clean (all 822 schema questions
+across 159 posts: 0 duplicates, 0 orphans, 0 drift, 0 invalid JSON) and
+`scripts/fix_faq_schema.py` can re-audit on demand. The GATE is still missing,
+so nothing stops the next hand-edit from desyncing again. Raised to P1: during
+this very migration a bad extractor wrote CTA/advertising text into 38 posts'
+`acceptedAnswer` fields and every local gate stayed green — pytest, build.py and
+verify.py all passed, because no gate reads schema content. Codex adversarial
+caught it; a gate would have. Cheapest version: lift `has_real_defect()` +
+`visible_pairs()` out of the migration script and assert zero defects over
+`posts/*.json`, plus assert no answer contains CTA copy.
 
 ### verify.py gate: intended body links must survive render-time unwrapping
 **Priority:** P2
