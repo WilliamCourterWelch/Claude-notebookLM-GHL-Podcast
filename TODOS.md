@@ -45,43 +45,63 @@ IndexNow submit, so the baseline will move.
 
 ## Site capabilities
 
-### Add a booking widget backed by a knowledge base
+### Embed a GHL conversation widget on the site: ask questions -> book a call
 **Priority:** P1
-Bill asked for this 2026-08-03. Captured as stated; the scope question below was
-NOT answered, so do not start building until it is.
+**Scope confirmed by Bill 2026-08-03:** build it IN GoHighLevel and embed it on
+globalhighlevel.com. A visitor lands, asks the widget questions, and if they want
+to, books a call with Bill. Knowledge base sourced from the site's own content.
 
-**Open question that decides the whole shape of this — ask Bill first:**
-Two readings of "booking widget with a knowledge base", and they are different
-projects:
-- **(a) On globalhighlevel.com itself** — embed a GHL booking/chat widget on the
-  site, backed by a knowledge base built from the site's own ~900 posts. This is
-  dogfooding: an affiliate site for GoHighLevel that visibly RUNS GoHighLevel is
-  proof, not just a claim, and it turns organic readers into booked calls instead
-  of only affiliate clicks. Would be the first real lead-capture surface on the
-  site.
-- **(b) As content** — a tutorial/spoke teaching readers to set up a GHL booking
-  widget wired to a knowledge base. Note the site already covers the parts:
-  `how-to-set-up-booking-calendar-gohighlevel-247-appointments`,
-  `how-to-set-up-voice-ai-chat-in-gohighlevel-lead-capture`,
-  `how-to-use-voice-ai-chat-widget-in-gohighlevel-qualify-leads-instantly`,
-  `add-tables-to-knowledge-base-gohighlevel-ai-employee-setup`,
-  `auto-refresh-knowledge-base-gohighlevel-keep-ai-accurate`. So (b) is a
-  consolidation/hub play, not net-new research.
+This is the first real **lead-capture** surface on the site. Today the only
+conversion path is an affiliate click; this adds "booked call with Bill" as a
+second, higher-value outcome from the same organic traffic. It is also
+dogfooding — an affiliate site for GoHighLevel that visibly RUNS GoHighLevel is
+proof rather than a claim, and the widget itself becomes a screenshot-able
+demo for the AI silo pages.
 
-If (a), constraints that already exist and must not be broken:
-- Attribution: `/trial/` is the podcast/owned-media destination and is
-  `Disallow`'d in robots.txt on purpose. A booking widget must not become a
-  second uncontrolled conversion path that pollutes that data — decide up front
-  where booked calls are attributed.
-- The money page (`/blog/gohighlevel-free-trial-30-days-extended/`) is a SINK: it
-  emits zero outbound internal blog/category links by design. Do not hang a
-  widget off it without re-reading the sink doctrine in
-  `globalhighlevel-site/CLAUDE.md`.
-- Any third-party embed is a new render-time dependency on a site whose gates
-  (`build.py`, `verify.py`) currently assume static output. Check what a widget
-  script does to page load — the site's own perf numbers (TTFB ~145ms, DOM ready
-  ~773ms) are good and worth protecting.
-- Affiliate link rules still apply to every GoHighLevel URL the widget touches.
+**Pick the right GHL product before building — they are not interchangeable and
+the cost model differs sharply** (all verified against GHL docs 2026-07-29, see
+`plans/ai-silo-fact-ledger-2026-07-29.md`):
+- **Conversation AI** — chat, bundled into AI Employee plans. Growth $50/mo caps
+  at **1,000 chat responses/month**; Unlimited $97/mo is genuinely unlimited
+  under fair use.
+- **Agent Studio** — custom agents, **pay-per-use on EVERY plan, token cost per
+  response, never bundled — not even in the $97 tier**.
+- **Voice AI** — metered per minute; only relevant if the widget should talk.
+- **AI Studio** — the prompt-based site/funnel builder. NOT this. Easy to confuse
+  by name; the site has a whole page untangling it.
+
+**Cost is the load-bearing decision here.** This widget sits on a public SEO site
+whose impressions are climbing (7-day block went 242 -> 891 through late July), so
+inbound volume is unbounded and grows with the CTR work above. A capped plan plus
+a traffic spike equals a widget that silently stops answering. Model expected
+conversations/month against the 1,000-response Growth cap BEFORE choosing a tier.
+
+Knowledge base: the site has ~900 posts already written, which is the corpus. See
+`add-tables-to-knowledge-base-gohighlevel-ai-employee-setup` and
+`auto-refresh-knowledge-base-gohighlevel-keep-ai-accurate` — auto-refresh matters
+because the corpus changes on every ship, and a stale KB will confidently answer
+with retired facts (this session alone corrected pricing claims on 40+ posts).
+
+**Existing constraints that must not be broken:**
+- **Attribution.** `/trial/` is the podcast/owned-media destination and is
+  `Disallow`'d in robots.txt on purpose so organic clicks do not pollute
+  podcast-attribution data. Decide up front where a widget-booked call is
+  attributed, and do not let the widget become a second uncontrolled path into
+  the affiliate funnel.
+- **The money page is a SINK.** `/blog/gohighlevel-free-trial-30-days-extended/`
+  emits zero outbound internal blog/category links by design, and `verify.py`
+  Check 4 enforces it. Do not hang the widget there without re-reading the sink
+  doctrine in `globalhighlevel-site/CLAUDE.md`.
+- **Static-output assumption.** `build.py` renders static HTML and `verify.py`
+  gates it; a third-party embed script is a new runtime dependency neither gate
+  knows about. Current perf is good (TTFB ~145ms, DOM ready ~773ms) and worth
+  protecting — measure with `/benchmark` before and after.
+- **Affiliate rules still apply** to every gohighlevel.com URL the widget emits:
+  `fp_ref=amplifi-technologies12` + UTM, `rel="nofollow sponsored"`.
+
+**Open questions for Bill (do not guess):** which calendar the booking lands on,
+whether the widget should appear sitewide or only on money/AI-silo pages, and
+whether it should be text-only or voice-capable.
 
 ## Gates (Ship 2)
 
