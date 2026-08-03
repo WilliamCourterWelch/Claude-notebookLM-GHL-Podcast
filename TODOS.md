@@ -4,6 +4,45 @@ Backlog for globalhighlevel.com (static site + build pipeline). Source of truth
 for the Bing-first recovery ship queue (eng review 2026-07-21, run
 `20260721T205056Z-57180`) plus follow-ups. Priorities: P0 (now) → P4 (someday).
 
+## NEXT UP — CTR, not rankings (Bing data 2026-08-03)
+
+### Rewrite titles + meta descriptions on pages ranking 2-6 with ~0% CTR
+**Priority:** P0
+**This is the highest-value lane on the site right now, and it is not a rankings
+problem.** Bing already shows the site for the queries we want; almost nobody
+clicks.
+
+Evidence (Bing Webmaster, rolling window ending 2026-08-01):
+- Sitewide CTR fell 2.72% (June) → 1.24% (July) while average position stayed
+  good, mostly 2-6.
+- Impressions are RECOVERING hard: the 7-day block bottomed at 242
+  (07-01→07-07) and reached 891 (07-22→07-28), a 3.7x climb. Clicks did not
+  follow. More eyeballs, same non-clicks.
+- The AI cluster is the sharpest case: **~125 impressions, 0 clicks** across
+  `get insights on go high level ai agent` (23), `...ai studio` (21),
+  `...ai agent app` (15), `...ai studio pricing` (15),
+  `discover more information about go high level ai studio pricing` (14),
+  `...ai studio` (13), `...ai agent software` (12), `...ai agent` (12).
+  AI queries are 14% of all impressions (189/1329).
+
+Note those query shapes ("get insights on…", "discover more information
+about…") look machine-generated, likely Copilot/assistant-mediated rather than
+human typed. Worth deciding whether they are worth optimizing a title FOR, or
+whether they are grounding impressions that will never click. **Answer that
+question first** — it changes whether this is a title-rewrite job or a
+structured-answer job.
+
+Start with the pages that have impressions and no clicks:
+`gohighlevel-pricing-plans-2026-complete-guide` (325 impr / 2 clicks),
+`how-to-install-gohighlevel-desktop-app-complete-setup-guide` (63 / 0),
+`master-payment-providers-gohighlevel-complete-setup-guide` (52 / 0),
+`gohighlevel-sub-accounts-snapshots-agency-guide` (37 / 0),
+`how-to-maximize-ai-pricing-in-gohighlevel-2025-update` (33 / 0).
+
+Do NOT start this before re-reading Bing on/after **Wed 2026-08-05** — the
+current window predates the v0.3.9.1 + v0.3.10.0 recrawls and the 39-URL
+IndexNow submit, so the baseline will move.
+
 ## Gates (Ship 2)
 
 ### Add robots-aware crawlability gate to verify.py (next free check number)
