@@ -43,6 +43,46 @@ Do NOT start this before re-reading Bing on/after **Wed 2026-08-05** — the
 current window predates the v0.3.9.1 + v0.3.10.0 recrawls and the 39-URL
 IndexNow submit, so the baseline will move.
 
+## Site capabilities
+
+### Add a booking widget backed by a knowledge base
+**Priority:** P1
+Bill asked for this 2026-08-03. Captured as stated; the scope question below was
+NOT answered, so do not start building until it is.
+
+**Open question that decides the whole shape of this — ask Bill first:**
+Two readings of "booking widget with a knowledge base", and they are different
+projects:
+- **(a) On globalhighlevel.com itself** — embed a GHL booking/chat widget on the
+  site, backed by a knowledge base built from the site's own ~900 posts. This is
+  dogfooding: an affiliate site for GoHighLevel that visibly RUNS GoHighLevel is
+  proof, not just a claim, and it turns organic readers into booked calls instead
+  of only affiliate clicks. Would be the first real lead-capture surface on the
+  site.
+- **(b) As content** — a tutorial/spoke teaching readers to set up a GHL booking
+  widget wired to a knowledge base. Note the site already covers the parts:
+  `how-to-set-up-booking-calendar-gohighlevel-247-appointments`,
+  `how-to-set-up-voice-ai-chat-in-gohighlevel-lead-capture`,
+  `how-to-use-voice-ai-chat-widget-in-gohighlevel-qualify-leads-instantly`,
+  `add-tables-to-knowledge-base-gohighlevel-ai-employee-setup`,
+  `auto-refresh-knowledge-base-gohighlevel-keep-ai-accurate`. So (b) is a
+  consolidation/hub play, not net-new research.
+
+If (a), constraints that already exist and must not be broken:
+- Attribution: `/trial/` is the podcast/owned-media destination and is
+  `Disallow`'d in robots.txt on purpose. A booking widget must not become a
+  second uncontrolled conversion path that pollutes that data — decide up front
+  where booked calls are attributed.
+- The money page (`/blog/gohighlevel-free-trial-30-days-extended/`) is a SINK: it
+  emits zero outbound internal blog/category links by design. Do not hang a
+  widget off it without re-reading the sink doctrine in
+  `globalhighlevel-site/CLAUDE.md`.
+- Any third-party embed is a new render-time dependency on a site whose gates
+  (`build.py`, `verify.py`) currently assume static output. Check what a widget
+  script does to page load — the site's own perf numbers (TTFB ~145ms, DOM ready
+  ~773ms) are good and worth protecting.
+- Affiliate link rules still apply to every GoHighLevel URL the widget touches.
+
 ## Gates (Ship 2)
 
 ### Add robots-aware crawlability gate to verify.py (next free check number)
