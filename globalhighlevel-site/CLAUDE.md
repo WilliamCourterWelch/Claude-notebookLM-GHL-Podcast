@@ -324,7 +324,14 @@ a template breaks its countdown timer — an ungrounded claim removed in the
 2026-07-31 rebuild), and the **FAQ schema migration**
 (`test_fix_faq_schema`, 21 tests, added v0.3.10.0 — pins the CTA-swallow
 boundary, the h3-headed FAQ sections, the 9 heading variants, the prefix-vs-
-substring triviality guard, and the refuse-rather-than-guess paths). Then
+substring triviality guard, and the refuse-rather-than-guess paths), and the
+**undisclosed zero-cost claim gate** (`test_zero_cost_claims_disclosed`,
+4 tests, added v0.3.11.0 — the implicit sibling of the trial-claim residual
+gate: a bare "$0 to start" with no `~$1` card-verification hold within 200
+chars makes the same promise as "no credit card" without using any word that
+gate matches. Reads `$` as literal, `&#36;`, or `&dollar;`, and whitespace as
+`&nbsp;`. A cancellation promise is deliberately NOT accepted as a cost
+disclosure. Carries an `ALLOWLIST` for honest quotation). Then
 `python3 build.py` and `python3 verify.py`.
 
 **Writing a content gate? Match phrases, not meaning — and pin BOTH edges.**
