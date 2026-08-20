@@ -120,6 +120,17 @@ target is robots-blocked must FAIL verify. Protects the robots gate (T3 above)
 from being silently weakened. (Eng review T4)
 
 
+### Wire the zero-cost claim gate into the build backstop
+**Priority:** P2
+`scripts/test_zero_cost_claims_disclosed.py` (v0.3.11.0) scans the corpus for a
+`$0 to start`-style claim with no `~$1` card-verification disclosure nearby. It
+runs under pytest only. `build.py` and `verify.py` do not call it, so a deploy
+path that skips pytest ships an undisclosed claim green — the same fail-open
+shape as the FAQ-parity gap. Fold the scan into `verify.py` as a check, or call
+it from `build.py` alongside `audit_links.py`. (Codex adversarial review,
+2026-08-20)
+
+
 ### Delete dead build_trial_page()
 **Priority:** P1
 `build.py` `build_trial_page()` (~line 2358) still calls `_build_affiliate_landing("start", "blog")` and its
