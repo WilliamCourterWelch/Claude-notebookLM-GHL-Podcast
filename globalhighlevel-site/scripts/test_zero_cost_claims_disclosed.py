@@ -30,18 +30,35 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 POSTS = Path(__file__).resolve().parents[1] / "posts"
 
 # A claim that the trial costs nothing to begin.
+#
+# `_D` matches a dollar sign however the HTML spells it (literal, numeric
+# entity, named entity); `_SP` matches whitespace including &nbsp;. Without
+# those the gate reads only the prettiest spelling and misses the rest.
+_D = r"(?:\$|&#0*36;|&dollar;)"
+_SP = r"(?:\s|&nbsp;|&#0*160;)+"
 ZERO_COST = re.compile(
-    r"\$0\s+(?:to start|upfront|down|al empezar|por adelantado)",
+    # "$0 to start" / "$0 today" / "$0 al empezar" ...
+    rf"{_D}0{_SP}(?:to start|today|due today|due|upfront|up front|down"
+    rf"|al empezar|por adelantado|hoy)"
+    # "starts at $0" / "pay nothing to start" / "free to start"
+    rf"|starts?{_SP}at{_SP}{_D}0"
+    rf"|pay{_SP}nothing{_SP}(?:to start|today|upfront)"
+    rf"|free{_SP}to{_SP}start"
+    rf"|gratis{_SP}para{_SP}empezar",
     re.I,
 )
 
-# Any of these in the surrounding text makes the claim honest.
+# What counts as an honest disclosure: the ~$1 card-verification hold, in
+# either language. NOTE: a cancellation promise ("cancel any time" /
+# "cancela cuando quieras") is deliberately NOT accepted here. It speaks to
+# the cancellation policy, not to what the card is charged at signup, so
+# "$0 upfront, cancel any time" would otherwise sail through while still
+# implying no card is required. (Codex adversarial review, 2026-08-20.)
 DISCLOSURE = re.compile(
     r"card-verification"
+    r"|card verification"
     r"|verificaci[oó]n de tarjeta"
-    r"|~?\$1"
-    r"|cancela cuando quieras"
-    r"|cancel any time",
+    rf"|~?{_D}1",
     re.I,
 )
 
@@ -112,6 +129,44 @@ def test_gate_would_catch_a_bare_claim():
                  "just a ~$1 card-verification hold.")
     assert ZERO_COST.search(disclosed), "disclosed claim still contains the phrase"
     assert DISCLOSURE.search(disclosed), "disclosure not recognised"
+
+
+def test_cancellation_promise_is_not_a_cost_disclosure():
+    """A cancellation promise says nothing about what the card is charged at
+    signup. Accepting it would let '$0 upfront, cancel any time' ship while
+    still implying no card is needed. (Codex adversarial review, 2026-08-20.)"""
+    for laundered in (
+        "$0 upfront, cancel any time.",
+        "Empieza con $0 por adelantado, cancela cuando quieras.",
+    ):
+        assert ZERO_COST.search(laundered), f"claim not detected: {laundered!r}"
+        assert not DISCLOSURE.search(laundered), (
+            f"cancellation promise wrongly accepted as a cost disclosure: {laundered!r}"
+        )
+
+
+def test_gate_catches_spelling_variants():
+    """The corpus is HTML written by several hands. A gate that only reads
+    one spelling of the claim is a gate in name only."""
+    for variant in (
+        "$0 today",
+        "$0 due today",
+        "starts at $0",
+        "pay nothing to start",
+        "free to start",
+        "gratis para empezar",
+        "&#36;0 to start",
+        "$0&nbsp;to start",
+    ):
+        assert ZERO_COST.search(variant), f"variant not detected: {variant!r}"
+
+    # And it must not fire on unrelated money copy.
+    for innocent in (
+        "SaaS Pro is $497/month.",
+        "Annual billing knocks roughly 17% off.",
+        "The platform replaces $0-to-$500 worth of niche tools.",
+    ):
+        assert not ZERO_COST.search(innocent), f"false positive on {innocent!r}"
 
 
 if __name__ == "__main__":
