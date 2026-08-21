@@ -3763,6 +3763,42 @@ def build_404():
 
 # ── Language hub + topic pages ────────────────────────────────────────────────
 
+def hub_title_for(lang_code: str, lang_name: str, post_count: int, page: int = 1) -> str:
+    """Return the <title> text for a language hub (brand suffix added by caller).
+
+    The default is the bare label `GoHighLevel {native}`, which gives a searcher
+    no reason to click: /in/ drew 131 Bing impressions at position 4.2 and ZERO
+    clicks over the 75-day window ending 2026-08-18. Overridden languages get a
+    payoff early in the string, ahead of SERP truncation.
+
+    `post_count` is interpolated, never hardcoded, so the number cannot drift as
+    posts publish. Languages with no entry keep the default untouched.
+
+    Only page 1 carries the count. A paginated page holds a slice, not the whole
+    inventory, so repeating "145 Guides" on /in/page/9/ (which renders a single
+    card) would both overstate that page and hand nine pages one identical
+    indexable title. Pages 2+ keep the payoff, drop the count, and carry their
+    page number so every title is distinct.
+
+    "and" is used instead of "&" on purpose: base_html interpolates titles into
+    <title>/og:title with no HTML escaping (build.py:1610), so a bare `&` ships
+    unescaped. 63 of 909 existing post titles already do this; the systemic fix
+    is tracked in TODOS rather than adding one more instance here.
+    """
+    overrides = {
+        "en-IN": ("GoHighLevel India: {count} Guides, UPI and WhatsApp",
+                  "GoHighLevel India: UPI and WhatsApp"),
+    }
+    entry = overrides.get(lang_code)
+    if entry is None:
+        base = f"GoHighLevel {lang_name}"
+        return base if page == 1 else f"{base} — Page {page}"
+    first_page, later_pages = entry
+    if page == 1:
+        return first_page.format(count=post_count)
+    return f"{later_pages} — Page {page}"
+
+
 def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18):
     """Build a language hub page (e.g., /es/, /in/, /ar/) with paginated posts."""
     prefix = lang_config["prefix"]
@@ -3888,9 +3924,10 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
             "ar": "دروس وأدلة GoHighLevel مجانية بالعربية. تعلّم الإعداد والأتمتة وتنمية وكالتك خطوة بخطوة.",
         }
         hub_desc = hub_descriptions.get(lang_code, f"Free GoHighLevel tutorials and guides in {lang_name}.")
+        hub_title = hub_title_for(lang_code, lang_name, len(lang_posts), page)
         canonical = f"{SITE_URL}{prefix}/" if page == 1 else f"{SITE_URL}{prefix}/page/{page}/"
         html = base_html(
-            title=f"GoHighLevel {lang_name} | {SITE_NAME}",
+            title=f"{hub_title} | {SITE_NAME}",
             description=hub_desc,
             canonical=canonical,
             body=body,

@@ -32,6 +32,17 @@ whether they are grounding impressions that will never click. **Answer that
 question first** — it changes whether this is a title-rewrite job or a
 structured-answer job.
 
+**ANSWERED 2026-08-20 (v0.3.12.0):** grounding impressions, not click surface.
+The cluster is 16 queries / 171 impressions at avg position 4.8 with **exactly
+zero clicks** — no human reads a SERP title for "discover more information
+about". This corroborates the 07-22 AI Search Queries export
+(`concepts/globalhighlevel-bing-404-audit-2026-07-22`), where the site already
+holds 17-50% citation share on the trial/pricing cluster, and GA4 confirms the
+downstream traffic is real but small (28d: chatgpt.com 4 sessions, copilot.com
+2, both with a key event). **Do not spend title rewrites here** — it is a
+structured-answer / citation job. Full analysis:
+`client-globalhighlevel:concepts/globalhighlevel-query-targets-2026-08-20`.
+
 Start with the pages that have impressions and no clicks:
 `gohighlevel-pricing-plans-2026-complete-guide` (325 impr / 2 clicks),
 `how-to-install-gohighlevel-desktop-app-complete-setup-guide` (63 / 0),
@@ -39,9 +50,17 @@ Start with the pages that have impressions and no clicks:
 `gohighlevel-sub-accounts-snapshots-agency-guide` (37 / 0),
 `how-to-maximize-ai-pricing-in-gohighlevel-2025-update` (33 / 0).
 
+**Round 1 shipped in v0.3.12.0** against a fresh 2026-08-20 pull: free-trial
+(610 impr / 0.7%), EN pricing (488 / 0.4%), sub-accounts (329 / 0.9%), `/in/`
+(131 / 0.0%) and WhatsApp settings (55 / 0.0%). Still open from the list above:
+`how-to-install-gohighlevel-desktop-app-complete-setup-guide` (now 308 impr but
+already converting at 2.6%, so lower priority) and
+`master-payment-providers-gohighlevel-complete-setup-guide` (112 / 0.9%), plus
+`how-to-maximize-ai-pricing-in-gohighlevel-2025-update` (41 / 0.0%).
+
 Do NOT start this before re-reading Bing on/after **Wed 2026-08-05** — the
 current window predates the v0.3.9.1 + v0.3.10.0 recrawls and the 39-URL
-IndexNow submit, so the baseline will move.
+IndexNow submit, so the baseline will move. (Satisfied: re-read 2026-08-20.)
 
 ## Site capabilities
 
@@ -129,6 +148,30 @@ path that skips pytest ships an undisclosed claim green — the same fail-open
 shape as the FAQ-parity gap. Fold the scan into `verify.py` as a check, or call
 it from `build.py` alongside `audit_links.py`. (Codex adversarial review,
 2026-08-20)
+
+
+### Escape titles/descriptions before interpolating into head tags
+**Priority:** P2
+`base_html()` (`build.py:1610`) writes `title` and `description` straight into
+`<title>`, `<meta name="description">`, `og:title` and `og:description` with no
+HTML escaping. **63 of 909 post titles contain `&`, and 58 built pages already
+emit a bare `&` in `<title>`** — invalid HTML today, and head corruption or
+attribute injection the first time a title carries `"`, `<`, or entity-looking
+text from JSON. Fix is `html.escape(..., quote=True)` at the interpolation site,
+but it must not double-escape titles that already carry deliberate entities, so
+audit those 63 first. v0.3.12.0 sidesteps it (hub titles say "and", not "&")
+rather than adding a 59th instance. (Codex adversarial review, 2026-08-20)
+
+
+### Give /es/ hub a real title (round 2 of the snippet rewrite)
+**Priority:** P2
+`/es/` shows the same defect v0.3.12.0 fixed on `/in/`: 20 Bing impressions at
+position 6.3 with ZERO clicks against a bare "GoHighLevel Español" label. The
+machinery is already in place — one entry in `hub_title_for`'s `overrides` dict.
+Held out of v0.3.12.0 because Bill approved a specific 5-page target list and
+this is user-visible copy on a page outside it. Spanish is the site's strongest
+segment (9.43% CTR vs 2.14% English), so this is worth doing. (2026-08-20 query
+analysis)
 
 
 ### Delete dead build_trial_page()
