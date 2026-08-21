@@ -331,8 +331,14 @@ gate: a bare "$0 to start" with no `~$1` card-verification hold within 200
 chars makes the same promise as "no credit card" without using any word that
 gate matches. Reads `$` as literal, `&#36;`, or `&dollar;`, and whitespace as
 `&nbsp;`. A cancellation promise is deliberately NOT accepted as a cost
-disclosure. Carries an `ALLOWLIST` for honest quotation). Then
-`python3 build.py` and `python3 verify.py`.
+disclosure. Carries an `ALLOWLIST` for honest quotation), and the
+**hub-title gate** (`test_hub_titles`, 7 tests, added v0.3.12.0 — covers
+`hub_title_for()`, which gives a language hub a `<title>` worth clicking and
+keeps paginated hub titles distinct. Pins both edges: the override fires for
+`en-IN`, stays quiet for `es`/`ar`/`en`/`fr`. Also pins that the post count is
+interpolated rather than literal, that pages 2+ drop the count instead of
+claiming the whole inventory, and that no hub title emits a bare `&`).
+Then `python3 build.py` and `python3 verify.py`.
 
 **Writing a content gate? Match phrases, not meaning — and pin BOTH edges.**
 `test_timer_break_premise` first tried to infer the *claim* (timer noun + copy
