@@ -19,6 +19,7 @@ Run: python3 -m pytest scripts/test_hub_titles.py
 """
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -111,7 +112,7 @@ def test_spanish_override_fires():
     """/es/ drew 25 Bing impressions at position 6.9 with ZERO clicks against a
     bare "GoHighLevel Español" (2026-08-24 pull) — the same defect /in/ had."""
     p1 = hub_title_for("es", "Español", ES_POST_COUNT)
-    assert p1 == f"GoHighLevel en Español: {ES_POST_COUNT} Guías Paso a Paso", p1
+    assert p1 == "GoHighLevel en Español: Guías y Precios", p1
 
     # Assert at the PRODUCTION count, and in BYTES: accented characters cost two
     # bytes each, so a character-length check passes while the real title
@@ -122,15 +123,31 @@ def test_spanish_override_fires():
         f"({len(rendered)} chars) — too long for the SERP"
     )
 
-    # Same pagination rule as en-IN: page 1 carries the count, later pages do not.
     p4 = hub_title_for("es", "Español", ES_POST_COUNT, 4)
-    assert str(ES_POST_COUNT) not in p4, f"page 4 claims the full inventory: {p4!r}"
     assert "Guías" in p4, p4
     titles = [hub_title_for("es", "Español", ES_POST_COUNT, n) for n in range(1, 6)]
     assert len(set(titles)) == 5, "duplicate Spanish hub titles across pagination"
 
-    # Count interpolated, not literal.
-    assert hub_title_for("es", "Español", ES_POST_COUNT + 1) != p1
+
+def test_spanish_title_carries_no_count_at_all():
+    """UNLIKE en-IN, the Spanish hub must not state a number on ANY page.
+
+    /es/ page 1 consumes lang_posts[0:18] and then discards those cards, so the
+    numbered path exposes 231 of 249 and the first 18 posts are unreachable
+    through it. A draft shipped "249 Guías y Precios" reasoning that the new
+    pagination made the count honest; Codex refuted it on 2026-08-24 — "249 is
+    not defensible unless page 1 actually links a complete 249-item path" — the
+    fourth count-over-collection overclaim caught that day. Restore a count only
+    after the 18-post hole is closed."""
+    for page in (1, 2, 5):
+        t = hub_title_for("es", "Español", ES_POST_COUNT, page)
+        payoff = t.split("—")[0]  # "— Página N" is a page marker, not a claim
+        assert not re.search(r"\d", payoff), f"Spanish title states a count: {t!r}"
+
+    # The count must not sneak back via interpolation either.
+    assert hub_title_for("es", "Español", ES_POST_COUNT) == hub_title_for(
+        "es", "Español", ES_POST_COUNT + 1
+    ), "Spanish hub title varies with post count — a count leaked in"
 
 
 def test_spanish_pagination_is_not_english():
