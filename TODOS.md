@@ -537,6 +537,11 @@ Español: 249 Guías Paso a Paso", with per-language pagination wording so
 `/es/page/N/` says "Página N". First draft said "Guías para Agencias" and was
 corrected in review: 30 of the 249 Spanish posts are not agency-framed.
 **Completed:** v0.3.13.0 (2026-08-24)
+**Superseded by v0.3.14.0:** the count is gone. `/es/` now reads "GoHighLevel en
+Español: Guías y Precios" with no number, because page 1 discards its 18-post
+slice and the numbered path only reaches 231 of 249. The per-language "Página N"
+wording from this item survives. See the open P2 "/es/ pagination skips the 18
+newest Spanish posts" before restoring any count.
 
 
 ### Pack B: Caleb-canon linking (D11 strict + D12 contextual) — DECIDED & SHIPPED

@@ -195,6 +195,30 @@ The canon link structure is enforced at render time by `build.py` and gated by
 
 ## Languages & the /ar Section (v0.3.0.0)
 
+- **`/es/` page 1 renders ZERO post cards, and that is not a bug.** Read this
+  before "fixing" it. `build_language_hub()` has an explicit
+  `if page == 1 and lang_code == "es":` branch that replaces the standard
+  card-grid body with a hand-authored brand hub: hero, a featured pricing-guide
+  card, three topic clusters, and the English-site banner. Deliberate since
+  v0.2.0.0 (commit `6a83e63`, "MVP relaunch — EN+ES brand-hub homepages") and
+  reconfirmed by Bill on 2026-08-24. Every other language, and every `/es/page/N/`,
+  takes the `else` branch and renders cards normally. A 2026-08-24 session spent
+  a full investigation rediscovering this from scratch — the symptom looks
+  exactly like a broken hub.
+  - **Consequence worth knowing:** that branch still consumes its slice
+    (`lang_posts[0:18]`) and then throws the cards away, so the 18 newest Spanish
+    posts are absent from the hub's numbered path, which reaches 231 of 249. They
+    are not orphaned (all sit on `/es/category/` pages and in the sitemap). Open
+    P2 in `TODOS.md` with both closure options.
+  - **Because of that hole, no `/es/` surface may state a corpus count** — not
+    the `<title>`, not the paginated subtitle, not the all-topics chip (which
+    reads `Todas`, not `All (N)`). v0.3.14.0 removed all three after Codex
+    caught the title claiming 249. `/in/` and `/ar/` keep their counts: their
+    page 1 renders cards and links every page, so theirs are honest.
+  - Until v0.3.14.0 that branch also emitted **no pagination at all**, so
+    `/es/page/2..14/` had zero inbound links and no sitemap entry (no `/page/`
+    URL is sitemapped, by policy). `es_library_block()` now carries the strip
+    into the curated body. If you edit this branch, keep `{es_all_guides}` in it.
 - **4 languages in `categories.json`:** en (default, no prefix), es (`/es`),
   en-IN (`/in`), and ar (`/ar`, `dir: rtl`). Arabic is the only RTL language —
   templates read `dir` from the language config; never hardcode `ltr`. The ONE
@@ -332,20 +356,52 @@ chars makes the same promise as "no credit card" without using any word that
 gate matches. Reads `$` as literal, `&#36;`, or `&dollar;`, and whitespace as
 `&nbsp;`. A cancellation promise is deliberately NOT accepted as a cost
 disclosure. Carries an `ALLOWLIST` for honest quotation), and the
-**hub-title gate** (`test_hub_titles`, 10 tests, added v0.3.12.0, Spanish added
+**hub-title gate** (`test_hub_titles`, 11 tests, added v0.3.12.0, Spanish added
 v0.3.13.0 — covers `hub_title_for()`, which gives a language hub a `<title>`
 worth clicking and keeps paginated hub titles distinct. Pins both edges: the
 overrides fire for `en-IN` and `es`, and stay quiet for `ar`/`en`/`fr`/`pt`.
-Also pins that the post count is interpolated rather than literal, that pages
-2+ drop the count instead of claiming the whole inventory, that no hub title
-emits a bare `&`, that a Spanish hub paginates in Spanish (`Página N`, not
-`Page N`), and that the `/es/` title does not describe all 249 Spanish posts as
-agency guides when 30 of them are not. **Length is asserted at the PRODUCTION
-count and in UTF-8 BYTES** — accented characters cost two bytes each, so a
+For `en-IN` it pins that the post count is interpolated rather than literal and
+that pages 2+ drop the count instead of claiming the whole inventory. It also
+pins that no hub title emits a bare `&`, and that a Spanish hub paginates in
+Spanish (`Página N`, not `Page N`). **Length is asserted at the PRODUCTION count
+and in UTF-8 BYTES** — accented characters cost two bytes each, so a
 character-length check passes while the real SERP title overflows.
 Paginated titles are deliberately exempt from the page-1 byte budget: hub
 pagination is not a ranking target, so the requirement there is distinct and
-honest, not short).
+honest, not short.
+
+**The Spanish title carries NO count on any page, and that is deliberate — do
+not "helpfully" restore it** (`test_spanish_title_carries_no_count_at_all`,
+v0.3.14.0). `/es/` page 1 is a curated hub that renders no cards, and
+`build_language_hub` still slices `lang_posts[0:18]` for it and then discards
+those cards, so the numbered path reaches **231 of 249** and the 18 newest
+Spanish posts sit outside it. Any number on that page promises a listing the
+page cannot deliver. v0.3.13.0 shipped "249 Guías Paso a Paso"; a v0.3.14.0
+draft restored "249 Guías y Precios" arguing the new pagination made it honest,
+and Codex refuted it — *"249 is not defensible unless page 1 actually links a
+complete 249-item path."* Restore the count only after closing the 18-post hole
+(filed as a P2 in `TODOS.md`, with both closure options costed). `/in/` and
+`/ar/` keep their counts: their page 1 renders cards and links every page, so
+theirs are honest).
+
+Also run the **/es/ hub pagination gate** (`test_es_hub_pagination`, 10 tests,
+added v0.3.14.0). `/es/` page 1 is hand-authored and had emitted no pagination
+at all since v0.2.0.0, leaving `/es/page/2..14/` with zero inbound links and no
+sitemap entry — 13 indexable pages reachable only by typing the URL. The gate
+pins that `es_library_block()` fires when there are pages, stays empty when
+there are none, embeds the caller's `pag_html` verbatim rather than rebuilding
+it, and states no count or completeness wording (`todas`, `completa`).
+
+**These tests assert against RENDERED HTML, not helper output** — a technique
+new to this repo in v0.3.14.0 and worth reusing. `build.py` exposes `PUBLIC_DIR`
+as a module-level constant that `build_language_hub()` and `write()` read at
+call time, so a test can `monkeypatch.setattr(build, "PUBLIC_DIR", tmp_path)`,
+call the real builder with synthetic posts (`post_lang()` reads `post["language"]`
+directly, so `{"language": "es"}` is enough), and read the pages it produces.
+Costs about 0.2s per test. The first draft pinned the wiring with a
+source-string assertion instead; Codex flagged that it would pass on a comment,
+a non-f-string body, or an assigned-then-overwritten variable. **If a gate can
+only fail when a helper's text changes, it is not guarding the page.**
 Then `python3 build.py` and `python3 verify.py`.
 
 **Writing a content gate? Match phrases, not meaning — and pin BOTH edges.**
