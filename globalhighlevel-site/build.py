@@ -3796,12 +3796,26 @@ def hub_title_for(lang_code: str, lang_name: str, post_count: int, page: int = 1
         # strongest segment by CTR (9.43% vs 2.14% English), so the hub was the
         # one Spanish surface leaking every impression it earned.
         #
-        # "Guías Paso a Paso", NOT "Guías para Agencias": lang_posts is every
-        # Spanish post, and 30 of the 249 are not agency-framed (restaurants,
-        # belleza/salud, e-commerce, inmobiliarias, cupones, checkout). The
-        # title must describe what the hub actually lists.
-        "es": ("GoHighLevel en Español: {count} Guías Paso a Paso",
-               "GoHighLevel en Español: Guías Paso a Paso", "Página"),
+        # NOT "Guías para Agencias": lang_posts is every Spanish post, and 30 of
+        # the 249 are not agency-framed (restaurants, belleza/salud, e-commerce,
+        # inmobiliarias, cupones, checkout). The title must describe what the hub
+        # actually lists.
+        #
+        # "y Precios" replaced "Paso a Paso" in v0.3.14.0. The hub's featured
+        # element IS the pricing guide, and `gohighlevel precios` holds the
+        # highest AI-citation share on record (50%) while the ES pricing page
+        # converts at 3.1% vs 0.4% EN — so the money term belongs in the title.
+        #
+        # NO COUNT here, deliberately — unlike en-IN. A draft read "249 Guías y
+        # Precios" on the theory that v0.3.14.0's new pagination strip made the
+        # number honest. It does not: /es/ page 1 consumes lang_posts[0:18] and
+        # then discards those cards, so the numbered path exposes 231 of 249 and
+        # the first 18 posts are unreachable through it. Codex caught this on
+        # 2026-08-24 — "249 is not defensible unless page 1 actually links a
+        # complete 249-item path" — the fourth count-over-collection overclaim
+        # that day. Restore a count here only after that hole is closed.
+        "es": ("GoHighLevel en Español: Guías y Precios",
+               "GoHighLevel en Español: Guías y Precios", "Página"),
     }
     entry = overrides.get(lang_code)
     if entry is None:
@@ -3811,6 +3825,38 @@ def hub_title_for(lang_code: str, lang_name: str, post_count: int, page: int = 1
     if page == 1:
         return first_page.format(count=post_count)
     return f"{later_pages} — {page_word} {page}"
+
+
+def es_library_block(pag_html: str) -> str:
+    """The /es/ page-1 strip that carries the pagination (v0.3.14.0).
+
+    /es/ page 1 is a curated hub with no card grid (build_language_hub's
+    `page == 1 and lang_code == "es"` branch), so it emitted no pagination at
+    all. That left /es/page/2..14/ with ZERO inbound links AND no sitemap entry
+    — no /page/ URL is sitemapped, by policy — so 13 indexable pages, and the
+    231 Spanish posts they list, had no crawl path from the hub. /in/ never had
+    this: its page 1 takes the else branch, which already emits pag_html.
+
+    Makes NO count claim, deliberately. Page 1 consumes lang_posts[0:18] and then
+    discards those cards, so paging reaches 231 of the 249 Spanish posts. A first
+    draft of this block read "Las 249 guías" above a strip that delivers 231 —
+    the same count-over-collection overclaim that got caught three separate times
+    on 2026-08-24. The count belongs in the <title>, where it describes the
+    library (all 249 are sitemapped and listed on /es/category/ pages); it does
+    not belong over a navigation strip that cannot reach all of them.
+
+    Returns "" when there is nothing to paginate, so a single-page corpus cannot
+    render a heading over an empty strip.
+    """
+    if not pag_html:
+        return ""
+    return f"""
+  <div style="margin-top:56px">
+    <span class="eyebrow">M&aacute;s gu&iacute;as</span>
+    <h2>Explora la biblioteca en espa&ntilde;ol</h2>
+    <p class="lead">Sigue explorando las gu&iacute;as de GoHighLevel.</p>
+    {pag_html}
+  </div>"""
 
 
 def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18):
@@ -3836,7 +3882,16 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
         cat = post_topic(p)
         topic_counts[cat] = topic_counts.get(cat, 0) + 1
 
-    chips_html = f'<a href="{prefix}/" class="chip chip-active">All ({len(lang_posts)})</a>'
+    # The "all" chip links back to {prefix}/. On /es/ that is the curated hub,
+    # which lists no cards at all — so an "All (249)" chip there promises a
+    # 249-item listing the destination does not have, in English, on a Spanish
+    # page. Spanish gets a countless, localized chip; every other hub keeps the
+    # count, which is honest because its page 1 really does list them.
+    # (Codex adversarial re-review, 2026-08-24.)
+    if lang_code == "es":
+        chips_html = f'<a href="{prefix}/" class="chip chip-active">Todas</a>'
+    else:
+        chips_html = f'<a href="{prefix}/" class="chip chip-active">All ({len(lang_posts)})</a>'
     for c in CATEGORIES:
         count = topic_counts.get(c["name"], 0)
         # Only link categories that ACTUALLY get a page. build_language_topic_pages
@@ -3886,6 +3941,8 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
                 pag_html += f' <a href="{href}"{cls}>{pg}</a>'
             pag_html += "</div>"
 
+        es_all_guides = es_library_block(pag_html)
+
         if page == 1 and lang_code == "es":
             money_url = "/blog/gohighlevel-precios-planes-2026-guia-completa/"
             body = f"""
@@ -3905,24 +3962,37 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
 <section class="hubsec" id="guides"><div class="container">
   <span class="eyebrow">Cada tema de GoHighLevel</span>
   <h2>Configura GoHighLevel bien &mdash; por tema</h2>
-  <p class="lead">La biblioteca completa, organizada. Elige el &aacute;rea en la que est&aacute;s trabajando.</p>
+  <p class="lead">Los temas principales, organizados. Elige el &aacute;rea en la que est&aacute;s trabajando.</p>
   <div class="clusters">
     <div class="cluster"><h3>Automatizaci&oacute;n y Agentes IA</h3><p>Pon la plataforma en piloto autom&aacute;tico &mdash; workflows, WhatsApp, seguimiento de leads y agentes con IA.</p><a class="cl" href="/blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/">Explorar gu&iacute;as &rarr;</a></div>
     <div class="cluster"><h3>Agencia, Marca Blanca y SaaS</h3><p>Revende GoHighLevel como tuyo &mdash; marca blanca, modo SaaS, sub-cuentas y reportes.</p><a class="cl" href="/es/category/agency-white-label-saas/">Explorar gu&iacute;as &rarr;</a></div>
     <div class="cluster"><h3>Pagos y Precios</h3><p>Cobra dentro de GoHighLevel y conoce el costo real &mdash; MercadoPago y pasarelas para LATAM, m&aacute;s el desglose de precios.</p><a class="cl" href="/es/category/payments-pricing/">Explorar gu&iacute;as &rarr;</a></div>
-  </div>
+  </div>{es_all_guides}
   <div class="es-banner">
     <div><b style="color:var(--text)">Prefer English?</b> <span style="color:var(--text2)">The full GoHighLevel guide library and the 30-day trial.</span></div>
     <a class="btn-amber" href="/" style="font-size:.85rem;padding:10px 18px">Go to the English site &rarr;</a>
   </div>
 </div></section>"""
         else:
+            # Spanish paginated pages get a COUNTLESS, Spanish-language subtitle.
+            # The shared line below reads "{N} guides in {lang}", which on
+            # /es/page/2/ rendered "249 guides in Español" — wrong twice: it
+            # states a count the numbered path cannot deliver (231 reachable,
+            # first 18 discarded by page 1), and it ships English UI copy to a
+            # Spanish audience, the same defect v0.3.13.0 fixed in the <title>.
+            # /in/ and /ar/ keep the shared line: they are English-language hubs
+            # whose page 1 renders cards and links every page, so their count is
+            # honest. (Codex adversarial re-review, 2026-08-24.)
+            if lang_code == "es":
+                hub_subtitle = "Gu&iacute;as de GoHighLevel en espa&ntilde;ol"
+            else:
+                hub_subtitle = f"{len(lang_posts)} guides in {lang_name}"
             body = f"""
 <div class="cat-header">
   <div class="container">
     <div class="section-label fade-1" style="border-bottom:none;padding-bottom:0;margin-bottom:8px">{lang_name}</div>
     <h1 class="fade-2">GoHighLevel — {lang_name}</h1>
-    <p class="fade-3">{len(lang_posts)} guides in {lang_name}</p>
+    <p class="fade-3">{hub_subtitle}</p>
     <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px">{chips_html}</div>
   </div>
 </div>

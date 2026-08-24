@@ -174,6 +174,35 @@ to the hreflang builder, or drop alternates on pages 2+. (Codex adversarial
 review, 2026-08-24)
 
 
+### /es/ pagination skips the 18 newest Spanish posts
+**Priority:** P2
+`build_language_hub` slices `page_posts = lang_posts[start:start + per_page]` for
+every page, but the `page == 1 and lang_code == "es"` branch renders a curated
+hub and **discards page 1's cards**. So posts 0-17 are consumed by a page that
+never shows them, and the numbered path (`/es/page/2..14/`) covers only 231 of
+249 Spanish posts. Confirmed by counting `<article class="card">` across the
+built pages: 231.
+
+Not an indexation problem — all 18 appear on `/es/category/` pages and 18/18 are
+in the sitemap — so the cost is internal linking to the newest Spanish content,
+not visibility. As of v0.3.14.0 **nothing on the site claims otherwise**: the
+`/es/` title, the paginated subtitle, and the all-topics chip all had their
+corpus counts removed precisely because of this hole.
+
+Two ways to close it, both needing Bill's call:
+- Render cards on `/es/` page 1 — changes the curated brand-hub design, which was
+  a deliberate v0.2.0.0 decision (commit 6a83e63) and which Bill confirmed on
+  2026-08-24 should stay.
+- Let the es hub paginate from offset 0 across pages 2..N — no design change, but
+  it shifts which posts sit on which `/es/page/N/` URL and adds one page. Cheap
+  in SEO terms *because* those pages had zero inbound links until v0.3.14.0, so
+  none of them have accumulated equity.
+
+If it is closed, restore the count to the `/es/` title — the override in
+`hub_title_for` has a comment marking exactly where. (Codex adversarial review,
+2026-08-24, rounds 1-2)
+
+
 ### Delete dead build_trial_page()
 **Priority:** P1
 `build.py` `build_trial_page()` (~line 2358) still calls `_build_affiliate_landing("start", "blog")` and its
@@ -508,6 +537,11 @@ Español: 249 Guías Paso a Paso", with per-language pagination wording so
 `/es/page/N/` says "Página N". First draft said "Guías para Agencias" and was
 corrected in review: 30 of the 249 Spanish posts are not agency-framed.
 **Completed:** v0.3.13.0 (2026-08-24)
+**Superseded by v0.3.14.0:** the count is gone. `/es/` now reads "GoHighLevel en
+Español: Guías y Precios" with no number, because page 1 discards its 18-post
+slice and the numbered path only reaches 231 of 249. The per-language "Página N"
+wording from this item survives. See the open P2 "/es/ pagination skips the 18
+newest Spanish posts" before restoring any count.
 
 
 ### Pack B: Caleb-canon linking (D11 strict + D12 contextual) — DECIDED & SHIPPED
