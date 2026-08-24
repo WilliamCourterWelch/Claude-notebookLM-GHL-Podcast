@@ -2,6 +2,22 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.13.0] - 2026-08-24
+### Changed
+- **`/es/` stops introducing itself as a bare label.** The Spanish hub carried the same defect v0.3.12.0 fixed on `/in/`: 25 Bing impressions at position 6.9 with **zero clicks** against "GoHighLevel Español" (2026-08-24 pull). It now reads "GoHighLevel en Español: 249 Guías Paso a Paso", count interpolated from the real post list. Spanish is the site's strongest segment by CTR (9.43% vs 2.14% English) and its highest AI-citation surface, so the hub was leaking every impression it earned.
+- **Spanish pagination speaks Spanish.** The page-number word is now per-language, so `/es/page/2/` reads "— Página 2" rather than shipping English UI copy to a Spanish audience. `/in/` keeps "Page" because it is an English-language hub.
+
+### Fixed
+- **The `/es/` title no longer overclaims the corpus.** It was first written as "249 Guías **para Agencias**", but `lang_posts` is *every* Spanish post and **30 of the 249 are not agency-framed** — restaurantes, belleza/salud, e-commerce, inmobiliarias, cupones, checkout orchestrator. 88% agency-framed does not license calling all 249 agency guides. Now "Guías Paso a Paso", which is true of the whole set, and pinned by `test_spanish_title_does_not_overclaim_the_corpus`.
+
+### Added
+- **3 tests** on the Spanish path (suite 159 → 162): the override fires and stays within the SERP budget, pagination is Spanish not English, and the title does not overclaim. The length assertion now runs at the **production count (249) and in UTF-8 bytes** — accented characters cost two bytes each, so the previous character-length check would have passed while the real title overflowed.
+
+### For contributors
+- **Third instance in one day of a snippet promising more than the page delivers**, after "Updated August 2026" against a June body and "Without Errors" on a page documenting failures. All three were caught by adversarial review, none by the local gates. The generalised rule now recorded in learnings: **when a title interpolates a COUNT over a collection, the descriptor must be true of the WHOLE collection, not the majority.** Filter the actual set before choosing the noun.
+- **Known and deliberate:** paginated hub titles exceed the page-1 byte budget (`/es/page/2/` renders 77 bytes). Hub pagination is not a ranking target; the requirement there is that each page is distinct and honest. The test asserts a loose ceiling so a runaway template still fails, without pretending page 2 needs page 1's discipline.
+- **Not fixed here:** paginated hubs get a self-canonical but root-level hreflang alternates (`hreflang_path=""` → `build.py:1486`), so pages 2+ pair unique titles with alternates describing different pages. Pre-existing, surfaced by Codex, filed in TODOS.
+
 ## [0.3.12.0] - 2026-08-20
 ### Changed
 - **The five pages Bing shows most now give a searcher a reason to click.** A fresh four-source pull (Bing 200-query cut, GSC 90d, GA4 28d, Clarity) found the site's problem is not rankings: **198 Bing impressions sit at position 1-3 and produce zero clicks**, and three trial queries sit at literal position 1 with none — `gohighlevel 30 day free trial discount` (24 impr), `gohighlevel free trial promo` (11), `gohighlevel 30 day trial offer` (10). You cannot rank better than 1, so this is a snippet problem. The two highest-impression pages had the worst CTR on the site: free-trial 610 impressions at 0.7%, EN pricing 488 at 0.4%, against `reduce-spam-calls` doing **8.2% at position 3.7** with the shape "Stop Spam Calls in GHL: 5-Min IVR Setup". Five titles were rewritten to put a concrete payoff in the first ~50 characters: free-trial ("Get 30 Days Free, Not 14"), EN pricing ("$97–$497 + Hidden Costs"), sub-accounts ("How Many You Really Get"), WhatsApp settings, and the `/in/` hub. Note the post `title` field drives both the `<title>` tag and the visible H1, so those four headlines changed too — approved deliberately.

@@ -3785,18 +3785,32 @@ def hub_title_for(lang_code: str, lang_name: str, post_count: int, page: int = 1
     unescaped. 63 of 909 existing post titles already do this; the systemic fix
     is tracked in TODOS rather than adding one more instance here.
     """
+    # (page-1 template, later-pages template, page-number word). The page word
+    # is per-entry because a Spanish hub reading "— Page 2" is English UI copy
+    # on a Spanish page. (Codex adversarial review, 2026-08-24.)
     overrides = {
         "en-IN": ("GoHighLevel India: {count} Guides, UPI and WhatsApp",
-                  "GoHighLevel India: UPI and WhatsApp"),
+                  "GoHighLevel India: UPI and WhatsApp", "Page"),
+        # /es/ carried the same bare label /in/ did: 25 Bing impressions at
+        # position 6.9 with ZERO clicks (2026-08-24 pull). Spanish is the site's
+        # strongest segment by CTR (9.43% vs 2.14% English), so the hub was the
+        # one Spanish surface leaking every impression it earned.
+        #
+        # "Guías Paso a Paso", NOT "Guías para Agencias": lang_posts is every
+        # Spanish post, and 30 of the 249 are not agency-framed (restaurants,
+        # belleza/salud, e-commerce, inmobiliarias, cupones, checkout). The
+        # title must describe what the hub actually lists.
+        "es": ("GoHighLevel en Español: {count} Guías Paso a Paso",
+               "GoHighLevel en Español: Guías Paso a Paso", "Página"),
     }
     entry = overrides.get(lang_code)
     if entry is None:
         base = f"GoHighLevel {lang_name}"
         return base if page == 1 else f"{base} — Page {page}"
-    first_page, later_pages = entry
+    first_page, later_pages, page_word = entry
     if page == 1:
         return first_page.format(count=post_count)
-    return f"{later_pages} — Page {page}"
+    return f"{later_pages} — {page_word} {page}"
 
 
 def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18):

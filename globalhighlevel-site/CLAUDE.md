@@ -332,12 +332,20 @@ chars makes the same promise as "no credit card" without using any word that
 gate matches. Reads `$` as literal, `&#36;`, or `&dollar;`, and whitespace as
 `&nbsp;`. A cancellation promise is deliberately NOT accepted as a cost
 disclosure. Carries an `ALLOWLIST` for honest quotation), and the
-**hub-title gate** (`test_hub_titles`, 7 tests, added v0.3.12.0 — covers
-`hub_title_for()`, which gives a language hub a `<title>` worth clicking and
-keeps paginated hub titles distinct. Pins both edges: the override fires for
-`en-IN`, stays quiet for `es`/`ar`/`en`/`fr`. Also pins that the post count is
-interpolated rather than literal, that pages 2+ drop the count instead of
-claiming the whole inventory, and that no hub title emits a bare `&`).
+**hub-title gate** (`test_hub_titles`, 10 tests, added v0.3.12.0, Spanish added
+v0.3.13.0 — covers `hub_title_for()`, which gives a language hub a `<title>`
+worth clicking and keeps paginated hub titles distinct. Pins both edges: the
+overrides fire for `en-IN` and `es`, and stay quiet for `ar`/`en`/`fr`/`pt`.
+Also pins that the post count is interpolated rather than literal, that pages
+2+ drop the count instead of claiming the whole inventory, that no hub title
+emits a bare `&`, that a Spanish hub paginates in Spanish (`Página N`, not
+`Page N`), and that the `/es/` title does not describe all 249 Spanish posts as
+agency guides when 30 of them are not. **Length is asserted at the PRODUCTION
+count and in UTF-8 BYTES** — accented characters cost two bytes each, so a
+character-length check passes while the real SERP title overflows.
+Paginated titles are deliberately exempt from the page-1 byte budget: hub
+pagination is not a ranking target, so the requirement there is distinct and
+honest, not short).
 Then `python3 build.py` and `python3 verify.py`.
 
 **Writing a content gate? Match phrases, not meaning — and pin BOTH edges.**
