@@ -163,15 +163,15 @@ audit those 63 first. v0.3.12.0 sidesteps it (hub titles say "and", not "&")
 rather than adding a 59th instance. (Codex adversarial review, 2026-08-20)
 
 
-### Give /es/ hub a real title (round 2 of the snippet rewrite)
+### Paginated hubs pair a self-canonical with root-level hreflang
 **Priority:** P2
-`/es/` shows the same defect v0.3.12.0 fixed on `/in/`: 20 Bing impressions at
-position 6.3 with ZERO clicks against a bare "GoHighLevel Español" label. The
-machinery is already in place — one entry in `hub_title_for`'s `overrides` dict.
-Held out of v0.3.12.0 because Bill approved a specific 5-page target list and
-this is user-visible copy on a page outside it. Spanish is the site's strongest
-segment (9.43% CTR vs 2.14% English), so this is worth doing. (2026-08-20 query
-analysis)
+`build_language_hub` gives `/es/page/N/` a self-canonical but passes
+`hreflang_path=""`, so `_build_hreflang_tags()` (`build.py:1486`) emits root
+alternates (`/`, `/es/`, `/in/`, `/ar/`). Pages 2+ therefore carry unique titles
+paired with alternates that describe different pages. Pre-existing, but sharper
+now that paginated titles are distinct. Either pass the paginated path through
+to the hreflang builder, or drop alternates on pages 2+. (Codex adversarial
+review, 2026-08-24)
 
 
 ### Delete dead build_trial_page()
@@ -499,6 +499,16 @@ references (eyebrow + in-prose + P1.2 footer block) — intended stacking,
 documented here so nobody "fixes" it blind.
 
 ## Completed
+
+### Give /es/ hub a real title (round 2 of the snippet rewrite)
+**Priority:** P2
+`/es/` rendered a bare "GoHighLevel Español" and drew 25 Bing impressions at
+position 6.9 with ZERO clicks (2026-08-24 pull). Now reads "GoHighLevel en
+Español: 249 Guías Paso a Paso", with per-language pagination wording so
+`/es/page/N/` says "Página N". First draft said "Guías para Agencias" and was
+corrected in review: 30 of the 249 Spanish posts are not agency-framed.
+**Completed:** v0.3.13.0 (2026-08-24)
+
 
 ### Pack B: Caleb-canon linking (D11 strict + D12 contextual) — DECIDED & SHIPPED
 **Completed:** v0.3.3.0 (2026-07-27)
