@@ -1517,6 +1517,46 @@ def _build_post_hreflang_tags(translations: dict) -> str:
 
 LANG_META_VIOLATIONS = []
 
+# Caleb Ulku's non-local SEO canon puts title tags at 50-60 characters, which is
+# also roughly where Google truncates. See lessons/12-non-local-seo/
+# click-through-rate-ctr-analysis.md in the AI SEO Mastery Pro corpus.
+TITLE_MAX = 60
+
+
+def compose_title(base: str) -> str:
+    """Compose a <title>, appending the brand suffix only when it still fits.
+
+    Every call site used to append " | {SITE_NAME}" unconditionally. That is 20
+    characters, and it was on 973 of 980 built pages — pushing the median title
+    to 83 characters so that 95% of the site rendered a title too long for
+    Google to display in full. Measured 2026-08-25 against the whole built tree.
+
+    Dropping it wherever it does not fit takes the median to 63c and moves a
+    third of the site into the 50-60 band.
+
+    The brand survives on any base title of 40 characters or fewer — 44 pages as
+    built on 2026-08-25: 28 /page/N/ blog pagination, 12 category pages, 2 short
+    blog posts, and the /es/ and /ar/ language hubs. An earlier draft of this
+    docstring claimed the survivors were "all /page/N/ pagination"; that came
+    from reading only the shortest few of a sorted list and was wrong for 16 of
+    the 44. Do not restate the cohort from memory — measure it.
+
+    This does NOT shorten the underlying titles. 590 pages still exceed 60
+    characters on their own words and need real rewrites — tracked in TODOS and
+    ratcheted by scripts/test_title_length.py so the number cannot grow.
+    """
+    suffix = f" | {SITE_NAME}"
+    # Idempotence guard. Without it, a caller that already composed its own
+    # branded title gets the brand twice — and ONLY when the result is short
+    # enough to fit, which is exactly when it is easiest to miss. A long
+    # pre-branded title masks the bug, because the second suffix is dropped for
+    # length anyway. Found by testing the short case on 2026-08-25.
+    if base.endswith(suffix):
+        return base
+    full = f"{base}{suffix}"
+    return full if len(full) <= TITLE_MAX else base
+
+
 def base_html(title: str, description: str, canonical: str, body: str, og_image: str = "", lang: str = "en", text_dir: str = "ltr", hreflang_path: str = "", hreflang_override: str = "", noindex: bool = False, disable_hreflang_fallback: bool = False) -> str:
     ok, msg = validate_meta(canonical, title, description)
     if not ok:
@@ -1897,7 +1937,7 @@ def build_authority_page(post: dict, all_posts: list = None):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} | {SITE_NAME}</title>
+<title>{compose_title(title)}</title>
 <meta name="description" content="{truncate(description, 160)}">
 <link rel="canonical" href="{canonical}">
 <link rel="icon" type="image/png" href="/images/logo.png">
@@ -2290,7 +2330,7 @@ def build_post_page(post: dict, all_posts: list = None):
     hreflang_override = _build_post_hreflang_tags(post.get("translations") or {})
 
     html = base_html(
-        title=f"{title} | {SITE_NAME}",
+        title=compose_title(title),
         description=truncate(description, 160),
         canonical=canonical,
         body=body,
@@ -2466,7 +2506,7 @@ def build_index(posts: list[dict], page: int = 1, per_page: int = 18):
         body += f'\n<script type="application/ld+json">{org_schema}</script>'
 
     html = base_html(
-        title="GoHighLevel Tutorials, Guides & Strategies for Agencies" if page == 1 else f"Page {page} | {SITE_NAME}",
+        title="GoHighLevel Tutorials, Guides & Strategies for Agencies" if page == 1 else compose_title(f"Page {page}"),
         description="Free GoHighLevel tutorials and guides for marketing agencies: CRM, automation, funnels, payments and pricing explained step by step, plus a 30-day free trial." if page == 1 else "Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies worldwide. Learn GHL step by step.",
         canonical=canonical,
         body=body
@@ -2553,7 +2593,11 @@ def build_category_pages(posts: list[dict]):
   <h1 class="post-title fade-2">{p_title}</h1>
   <div class="post-body fade-3">{p_body}</div>
 </div>{more_html}"""
-            page_title = pillar.get("title", f"{cat} | {SITE_NAME}")
+            # compose_title on BOTH paths. Routing only the fallback through it
+            # meant a pillar with its own short title would silently skip the
+            # brand while having room for it — invisible, because no gate looks
+            # for a MISSING brand on a short title. (Codex adversarial, 2026-08-25.)
+            page_title = compose_title(pillar.get("title", cat))
             page_desc  = truncate(pillar.get("description", f"Free GoHighLevel {cat.lower()} guides and tutorials."), 158)
             # 2026-07-07: emit Article + FAQPage JSON-LD for the hub pillar (parity
             # with the blog-post template). The category-as-pillar rendering only
@@ -2592,7 +2636,7 @@ def build_category_pages(posts: list[dict]):
 <div class="container">
   <div class="cards-grid" style="padding:32px 0 80px">{cards_html}</div>
 </div>"""
-            page_title = f"{cat} | {SITE_NAME}"
+            page_title = compose_title(cat)
             page_desc  = f"Free GoHighLevel {cat.lower()} guides and tutorials. Step-by-step help for agencies and businesses."
 
         canonical = f"{SITE_URL}/category/{cat_slug}/"
@@ -2906,7 +2950,7 @@ def _build_localized_affiliate_landing(lang_cfg: dict, slug: str, campaign: str)
 </style>
 """
     html = base_html(
-        title=f"{lang_cfg['title']} | {SITE_NAME}",
+        title=compose_title(lang_cfg['title']),
         description=lang_cfg["desc"],
         canonical=canonical,
         body=body,
@@ -3191,7 +3235,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
 <script type="application/ld+json">{offer_schema}</script>"""
 
     html = base_html(
-        title=f"{title} | {SITE_NAME}",
+        title=compose_title(title),
         description=description,
         canonical=canonical,
         body=body,
@@ -3364,7 +3408,7 @@ def build_coupon_page():
 <script type="application/ld+json">{faq_schema}</script>"""
 
     html = base_html(
-        title=f"{title} | {SITE_NAME}",
+        title=compose_title(title),
         description=description,
         canonical=canonical,
         body=body
@@ -3665,7 +3709,7 @@ def build_services_page():
 </script>"""
 
     html = base_html(
-        title=f"{title} | {SITE_NAME}",
+        title=compose_title(title),
         description=description,
         canonical=canonical,
         body=body
@@ -3756,7 +3800,10 @@ def build_404():
   <p style="color:var(--text3);margin-bottom:32px">The page you're looking for doesn't exist.</p>
   <a href="/" class="btn-amber">Go Home</a>
 </div>"""
-    html = base_html("404 — Page Not Found | Global High Level", "Page not found.", f"{SITE_URL}/404", body,
+    # Route through compose_title like every other caller. This was the last
+    # hardcoded brand suffix in the file, and Check 7 missed it because the
+    # check only scanned index.html. (Codex adversarial, 2026-08-25.)
+    html = base_html(compose_title("404 — Page Not Found"), "Page not found.", f"{SITE_URL}/404", body,
                      noindex=True, disable_hreflang_fallback=True)
     write(PUBLIC_DIR / "404.html", html)
 
@@ -4011,7 +4058,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
         hub_title = hub_title_for(lang_code, lang_name, len(lang_posts), page)
         canonical = f"{SITE_URL}{prefix}/" if page == 1 else f"{SITE_URL}{prefix}/page/{page}/"
         html = base_html(
-            title=f"{hub_title} | {SITE_NAME}",
+            title=compose_title(hub_title),
             description=hub_desc,
             canonical=canonical,
             body=body,
@@ -4081,7 +4128,7 @@ def build_language_topic_pages(lang_config: dict, posts: list[dict], min_posts: 
 
         canonical = f"{SITE_URL}{prefix}/category/{cat_slug}/"
         html = base_html(
-            title=f"{cat_name} — {lang_config['native']} | {SITE_NAME}",
+            title=compose_title(f"{cat_name} — {lang_config['native']}"),
             description=f"GoHighLevel {cat_name.lower()} guides in {lang_config['native']}.",
             canonical=canonical,
             body=body,
