@@ -559,6 +559,104 @@ def main() -> int:
     if sm_bad:
         fails.append(f"Check 6: {len(sm_bad)} sitemap/paid-link defects")
 
+    # ---- Check 7: SERP title-length ratchet -------------------------------
+    # Caleb Ulku's non-local canon puts title tags at 50-60 characters, which is
+    # about where Google truncates. On 2026-08-25 the whole built tree was
+    # measured: median 83c and 95% over 60, because " | Global High Level" was
+    # appended unconditionally to 973 of 980 pages. compose_title() (build.py)
+    # now drops the brand when it does not fit, taking the median to 63c and the
+    # over-60 count to TITLE_OVERLONG_BASELINE.
+    #
+    # This is a RATCHET, not a clean gate. 590 pages are still too long on their
+    # own words and need real title rewrites, which change the visible <h1> too
+    # (a post's `title` drives both). Failing outright would block every build
+    # until that work is done, so instead the count may shrink but never grow.
+    # LOWER THE BASELINE as you rewrite titles — that is the point of it.
+    print("\n=== Check 7: SERP title length (Caleb canon: 50-60 chars) ===")
+    # Import the budget rather than restating it. A second `TITLE_MAX = 60` here
+    # would be free to drift from build.py's, and the gate would then be checking
+    # a different rule than the composer enforces.
+    TITLE_MAX = build.TITLE_MAX
+    TITLE_OVERLONG_BASELINE = 590
+    _t_re = re.compile(r"<title>(.*?)</title>", re.S)
+    _noindex_re = re.compile(r'name="robots"[^>]*noindex')
+
+    # Scan EVERY .html, not just index.html. 404.html is a standalone file and
+    # was invisible to an index.html-only scan, which is how its hardcoded brand
+    # suffix survived the conversion. (Codex adversarial, 2026-08-25.)
+    #
+    # Skip noindex pages. A page excluded from search has no SERP title to
+    # budget, so neither the length ceiling nor the branding rule means anything
+    # for it — and without this a future short noindex page (a /thanks/ titled
+    # "Thanks") would trip the mirror invariant below for no reason. Today this
+    # exempts 5 pages (404 + the four /trial/ landings) and changes no count:
+    # 0 of them are overlong and 0 have room for the brand.
+    _titled = []
+    for f_ in sorted(PUBLIC.rglob("*.html")):
+        h_ = read(f_)
+        m_ = _t_re.search(h_)
+        if not m_ or _noindex_re.search(h_):
+            continue
+        _titled.append((m_.group(1), str(f_.relative_to(PUBLIC))))
+
+    overlong = [(len(t_), p_) for t_, p_ in _titled if len(t_) > TITLE_MAX]
+    n_over = len(overlong)
+    print(f"  titles over {TITLE_MAX} chars: {n_over} (baseline {TITLE_OVERLONG_BASELINE})")
+
+    # HARD invariant, not a ratchet: no page may keep the brand suffix while
+    # over the limit. That combination means a title was composed somewhere
+    # that does not route through compose_title(). It caught exactly that on
+    # 2026-08-25 — build.py has a SECOND, separate page template for the
+    # /es/para/<vertical>/ pages (build.py:1935) that still hardcoded
+    # "{title} | {SITE_NAME}", so 2 pages kept a 20-char suffix at 85 chars
+    # while every other call site had been converted.
+    _brand_suffix = f" | {build.SITE_NAME}"
+    branded_overlong = [p_ for t_, p_ in _titled
+                        if len(t_) > TITLE_MAX and t_.endswith(_brand_suffix)]
+    if branded_overlong:
+        for p_ in branded_overlong[:5]:
+            print(f"    keeps brand while overlong: {p_}")
+        print(f"  -> FAIL ({len(branded_overlong)} pages bypass compose_title)")
+        fails.append(
+            f"Check 7: {len(branded_overlong)} overlong titles still carry the brand "
+            f"suffix (a title is being composed outside compose_title)"
+        )
+
+    # MIRROR invariant. The check above only catches a caller that keeps the
+    # brand when it should not. This catches the opposite bypass: a title with
+    # room for the brand that does not carry it. compose_title ALWAYS appends
+    # when it fits, so a short unbranded title proves the page was composed
+    # somewhere else. Without this, a caller could regress from
+    # compose_title("Page 2") to a bare "Page 2" and every gate would still
+    # pass. Verified 0 false positives across the built tree on 2026-08-25.
+    # (Codex adversarial, 2026-08-25.)
+    short_unbranded = [(len(t_), p_) for t_, p_ in _titled
+                       if not t_.endswith(_brand_suffix)
+                       and len(t_) + len(_brand_suffix) <= TITLE_MAX]
+    if short_unbranded:
+        for L_, p_ in sorted(short_unbranded)[:5]:
+            print(f"    room for brand but missing it ({L_}c): {p_}")
+        print(f"  -> FAIL ({len(short_unbranded)} pages bypass compose_title)")
+        fails.append(
+            f"Check 7: {len(short_unbranded)} titles have room for the brand but "
+            f"lack it (a title is being composed outside compose_title)"
+        )
+    if n_over > TITLE_OVERLONG_BASELINE:
+        for L_, p_ in sorted(overlong, reverse=True)[:5]:
+            print(f"    {L_}c  {p_}")
+        print("  -> FAIL (regression: more overlong titles than the baseline)")
+        fails.append(
+            f"Check 7: {n_over} overlong titles > baseline {TITLE_OVERLONG_BASELINE}"
+        )
+    else:
+        if n_over < TITLE_OVERLONG_BASELINE:
+            print(
+                f"  -> PASS (improved by {TITLE_OVERLONG_BASELINE - n_over} — "
+                f"lower TITLE_OVERLONG_BASELINE to {n_over} in verify.py)"
+            )
+        else:
+            print("  -> PASS (holding at baseline)")
+
     print("\n" + "=" * 52)
     if fails:
         print("VERIFY: FAIL")

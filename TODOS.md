@@ -203,6 +203,39 @@ If it is closed, restore the count to the `/es/` title — the override in
 2026-08-24, rounds 1-2)
 
 
+### 590 titles still exceed Caleb's 60-character SERP budget
+**Priority:** P1
+v0.3.15.0 fixed the mechanical half by making the brand suffix conditional
+(`compose_title`, build.py), taking the median title 83c → 63c and the over-60
+share 95% → 60%. The remaining **590 pages are too long on their own words**,
+median 68 characters, so Google truncates them in the SERP.
+
+This is copy work, not a pass. A post's `title` drives BOTH `<title>` and the
+visible `<h1 class="post-title">`, so every rewrite changes what a reader sees on
+the page, not just what a searcher sees in results. Caleb's CTR lesson is the
+method: pull GSC, find high-impression/low-CTR pages first, rewrite those.
+Highest-leverage subset is anything ranking positions 4-10.
+
+`verify.py` Check 7 ratchets the count at `TITLE_OVERLONG_BASELINE = 590` — it
+may shrink but never grow. **Lower the baseline as titles land**; the check
+prints the new number to use. (Caleb-canon audit, 2026-08-25)
+
+
+### Title budget: characters here, bytes in the hub gate
+**Priority:** P3
+`verify.py` Check 7 and `scripts/test_title_length.py` budget titles in
+CHARACTERS (<= 60, per Caleb). `scripts/test_hub_titles.py` budgets in UTF-8
+BYTES (<= 75) because accented characters cost two bytes. `/es/` is 59 characters
+but 61 bytes, so the two gates encode different theories of the same limit.
+
+They do not contradict on any page today. Codex's assessment (2026-08-25) is that
+both are proxies and neither models the real constraint, which is **pixel width** —
+byte count is the weaker of the two, since it penalises accents without saying
+anything about how wide the glyphs render. Reconcile on one model if the tension
+ever produces a real disagreement. Filed rather than fixed. (Codex adversarial
+review, 2026-08-25)
+
+
 ### Delete dead build_trial_page()
 **Priority:** P1
 `build.py` `build_trial_page()` (~line 2358) still calls `_build_affiliate_landing("start", "blog")` and its
