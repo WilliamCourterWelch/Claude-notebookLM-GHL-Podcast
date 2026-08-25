@@ -173,6 +173,14 @@ The canon link structure is enforced at render time by `build.py` and gated by
   be a built page and never a redirect source. The build excludes pillar
   `/blog/` URLs that 301 to their hubs from the sitemap, so IndexNow
   submissions only carry real pages.
+- `verify.py` Check 7 (v0.3.15.0) — SERP title length. **A ratchet plus two hard
+  invariants; read the title rule below before changing any of it.** The ratchet
+  counts titles over 60 characters and fails only if the number grows past
+  `TITLE_OVERLONG_BASELINE` (590 today). The invariants fail outright: no page
+  may keep the brand suffix while over the limit, and no page may have room for
+  the brand and lack it — either proves a title was composed outside
+  `compose_title()`. Scans every `*.html` (404.html is standalone and was
+  invisible to an `index.html`-only scan) and skips `noindex` pages.
 - `scripts/audit_links.py` — `/start` + `/coupon` are no longer audit-exempt;
   nofollow links are exempt from anchor doctrine by `rel` attribute; exemption
   prefixes are imported from `build.py` (single source of truth) and matched on
@@ -402,7 +410,57 @@ Costs about 0.2s per test. The first draft pinned the wiring with a
 source-string assertion instead; Codex flagged that it would pass on a comment,
 a non-f-string body, or an assigned-then-overwritten variable. **If a gate can
 only fail when a helper's text changes, it is not guarding the page.**
+Also run the **title-length gate** (`scripts/test_title_length.py`, 6 tests,
+added v0.3.15.0) — see the title rule immediately below, which it enforces.
 Then `python3 build.py` and `python3 verify.py`.
+
+## SERP titles — 60 characters, and the brand is conditional (v0.3.15.0)
+
+**Every `<title>` must go through `compose_title()` (`build.py`). Never write
+`f"{title} | {SITE_NAME}"` at a call site.** That was the old pattern at ten
+call sites plus a separate page template, and it put the 20-character publisher
+name on 973 of 980 pages — pushing the median title to 83 characters when Caleb
+Ulku's non-local canon (and roughly Google's truncation point) is **50-60
+characters**. 95% of the site rendered a title too long to display in full.
+
+`compose_title()` appends `" | Global High Level"` only when the result still
+fits 60 characters — i.e. on any base title of **40 characters or fewer**
+(60 minus the 20-character suffix). That is **44 indexable pages**: blog
+pagination (`Page 2` says nothing on its own), category pages, two short posts,
+and the `/es/` and `/ar/` hubs. Plus `404.html`, which is `noindex` and so sits
+outside the gate — 45 branded titles in the built tree, 44 of them indexable.
+Everywhere else the page keeps its own words.
+
+**Do not restate that cohort from memory.** An earlier draft of the docstring
+called it "all `/page/N/` pagination", drawn from the shortest few entries of a
+sorted list; it was wrong for 16 of the 44. A later draft said 44 across the
+whole tree, having counted only `index.html`. Both were caught in review. Count
+it when you need it.
+
+Three things to know before touching this:
+
+- **A green build does NOT mean titles are compliant.** 590 pages still exceed
+  60 characters on their own words (median 68). Check 7 is a **ratchet**: the
+  count may shrink, never grow. Failing outright would block every build until
+  590 pages of copy work landed, and the gate would get deleted instead. Lower
+  `TITLE_OVERLONG_BASELINE` in `verify.py` as titles land; the check prints the
+  new number to use. Tracked as a P1 in `TODOS.md`.
+- **Shortening a title changes the visible page.** A post's `title` drives BOTH
+  `<title>` and the `<h1 class="post-title">` (`seoTitle` is only a fallback, not
+  an override). Title rewrites are copy work, not a mechanical pass.
+- **`noindex` pages are exempt, deliberately.** A page excluded from search has
+  no SERP title to budget, and without the exemption a future short `noindex`
+  page (a `/thanks/` titled "Thanks") would trip the invariant for nothing. The
+  consequence: `404.html`'s title is composed correctly but is **not**
+  gate-protected — re-hardcoding its suffix would not fail the build. That is
+  consistency hygiene, not an enforced invariant. It is not a hole to "fix".
+
+**Two budgets in two units, on purpose-ish.** This gate measures CHARACTERS
+(<= 60). `scripts/test_hub_titles.py` measures UTF-8 BYTES (<= 75), because
+accented characters cost two bytes — `/es/` is 59 characters but 61 bytes. They
+do not disagree on any current page. Both are proxies; the real constraint is
+pixel width, which neither models. Filed as a P3 in `TODOS.md` rather than
+reconciled, so don't assume one of them is a bug.
 
 **Writing a content gate? Match phrases, not meaning — and pin BOTH edges.**
 `test_timer_break_premise` first tried to infer the *claim* (timer noun + copy
