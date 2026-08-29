@@ -577,7 +577,10 @@ def main() -> int:
     # would be free to drift from build.py's, and the gate would then be checking
     # a different rule than the composer enforces.
     TITLE_MAX = build.TITLE_MAX
-    TITLE_OVERLONG_BASELINE = 590
+    # Ratchet history — lower this as titles land, never raise it:
+    #   590  v0.3.15.0  conditional brand suffix (mechanical, sitewide)
+    #   580  v0.3.16.0  10 hand-rewritten titles, picked by BING impressions
+    TITLE_OVERLONG_BASELINE = 580
     _t_re = re.compile(r"<title>(.*?)</title>", re.S)
     _noindex_re = re.compile(r'name="robots"[^>]*noindex')
 

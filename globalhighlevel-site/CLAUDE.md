@@ -176,7 +176,9 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - `verify.py` Check 7 (v0.3.15.0) — SERP title length. **A ratchet plus two hard
   invariants; read the title rule below before changing any of it.** The ratchet
   counts titles over 60 characters and fails only if the number grows past
-  `TITLE_OVERLONG_BASELINE` (590 today). The invariants fail outright: no page
+  `TITLE_OVERLONG_BASELINE` (580 as of v0.3.16.0; the constant carries its own
+  history, so read it rather than trusting this line). The invariants fail
+  outright: no page
   may keep the brand suffix while over the limit, and no page may have room for
   the brand and lack it — either proves a title was composed outside
   `compose_title()`. Scans every `*.html` (404.html is standalone and was
@@ -439,12 +441,13 @@ it when you need it.
 
 Three things to know before touching this:
 
-- **A green build does NOT mean titles are compliant.** 590 pages still exceed
+- **A green build does NOT mean titles are compliant.** 580 pages still exceed
   60 characters on their own words (median 68). Check 7 is a **ratchet**: the
   count may shrink, never grow. Failing outright would block every build until
-  590 pages of copy work landed, and the gate would get deleted instead. Lower
-  `TITLE_OVERLONG_BASELINE` in `verify.py` as titles land; the check prints the
-  new number to use. Tracked as a P1 in `TODOS.md`.
+  hundreds of pages of copy work landed, and the gate would get deleted instead.
+  Lower `TITLE_OVERLONG_BASELINE` in `verify.py` as titles land; the check prints
+  the new number to use and the constant carries its own history. Tracked as a
+  P2 in `TODOS.md`.
 - **Shortening a title changes the visible page.** A post's `title` drives BOTH
   `<title>` and the `<h1 class="post-title">` (`seoTitle` is only a fallback, not
   an override). Title rewrites are copy work, not a mechanical pass.
@@ -454,6 +457,45 @@ Three things to know before touching this:
   consequence: `404.html`'s title is composed correctly but is **not**
   gate-protected — re-hardcoding its suffix would not fail the build. That is
   consistency hygiene, not an enforced invariant. It is not a hole to "fix".
+
+### Rewriting a title? Three rules, learned the hard way (v0.3.16.0)
+
+**1. PRIORITISE BY BING, NOT GOOGLE.** This decides whether the work is worth
+doing at all, and the two engines give opposite answers for this site. Measured
+2026-08-25:
+
+| | Google (90d) | Bing (~75d feed) |
+|---|---|---|
+| impressions | 1,524 | **10,356** |
+| clicks | **5** | **152** |
+| URLs known | 203 of 927 | — |
+| the overlong pages | 499 impr, **0 clicks** | 1,278 impr, **45 clicks** at pos 3-6 |
+
+Ranked by Google, rewriting titles looks worthless and the honest advice is
+don't bother. Ranked by Bing, the top 10 were worth roughly +35 clicks per
+window, about 23% of all site Bing clicks. **A percentage of pages is not a
+percentage of traffic, and neither means anything until you name the engine.**
+Method: `python3 scripts/pull-bing.py --property ghl --top 200`, join
+`top_pages` against built `<title>` lengths, rank by
+`impressions * (target_ctr - current_ctr)`. Note `pull-bing.py`'s
+`live_payload()` sums the whole feed with no date filter, so its totals are
+~75 days, not 28.
+
+**2. Check `_redirects` before dropping ANY term from a title.** The LATAM page
+has **14 URLs 301'ing into it** from `vs alternativas` / `vs herramientas
+locales` sources — it is the consolidation target for a whole cluster. A first
+draft dropped "Herramientas Locales" from its title and would have discarded the
+topical match those 14 redirects are pointing at. Adversarial review caught it.
+A title is not just a snippet; on a consolidation target it is the thing that
+tells the engine the redirected pages' topic still lives here.
+
+**3. Edit post titles BYTE-FAITHFULLY.** Do NOT `json.load` a post and
+`json.dumps` it back — that re-escapes the entire file, and on one post it
+rewrote the whole `html_content` blob (semantically identical, but a ten-line
+title change became an unreviewable diff). Read the raw text, detect whether the
+file uses `\u` escapes, encode just the title value the same way, and do a
+single string replacement. This repo's doctrine is that post JSON stays
+byte-faithful; a title PR should be exactly one changed line per file.
 
 **Two budgets in two units, on purpose-ish.** This gate measures CHARACTERS
 (<= 60). `scripts/test_hub_titles.py` measures UTF-8 BYTES (<= 75), because

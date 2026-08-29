@@ -203,22 +203,43 @@ If it is closed, restore the count to the `/es/` title — the override in
 2026-08-24, rounds 1-2)
 
 
-### 590 titles still exceed Caleb's 60-character SERP budget
-**Priority:** P1
+### 580 titles still exceed Caleb's 60-character SERP budget
+**Priority:** P2 (was P1 — the traffic-carrying ones are done)
 v0.3.15.0 fixed the mechanical half by making the brand suffix conditional
 (`compose_title`, build.py), taking the median title 83c → 63c and the over-60
-share 95% → 60%. The remaining **590 pages are too long on their own words**,
-median 68 characters, so Google truncates them in the SERP.
+share 95% → 60%. v0.3.16.0 hand-rewrote the **10 highest-value ones**, leaving
+580 too long on their own words, median 68 characters.
+
+**PRIORITISE BY BING, NOT GOOGLE.** This is the thing to know before spending
+time here. Measured 2026-08-25:
+
+| | Google (90d) | Bing (~75d feed) |
+|---|---|---|
+| impressions | 1,524 | 10,356 |
+| clicks | 5 | 152 |
+| overlong pages | 499 impr, **0 clicks** | 1,278 impr, **45 clicks** |
+
+Ranked by Google, this work looks worthless. Ranked by Bing, the top 10 were
+worth roughly +35 clicks per window (~23% of all site Bing clicks). **The
+remaining 580 are the long tail below that** — the next tier drops off fast, so
+re-pull Bing before assuming there is another 10 worth doing.
+
+Method (Caleb's CTR lesson, adapted to Bing): `python3 scripts/pull-bing.py
+--property ghl --top 200`, join `top_pages` against built `<title>` lengths,
+rank by `impressions * (target_ctr - current_ctr)`. The working script is in the
+2026-08-28 session scratchpad. Note `pull-bing.py`'s `live_payload()` sums the
+whole feed with no date filter, so treat totals as ~75 days, not 28.
 
 This is copy work, not a pass. A post's `title` drives BOTH `<title>` and the
 visible `<h1 class="post-title">`, so every rewrite changes what a reader sees on
-the page, not just what a searcher sees in results. Caleb's CTR lesson is the
-method: pull GSC, find high-impression/low-CTR pages first, rewrite those.
-Highest-leverage subset is anything ranking positions 4-10.
+the page. Check each new claim against the page's own `<h2>` list before writing
+it, and check `_redirects` — the LATAM page had **14 URLs 301'ing into it**, so
+dropping a term from its title would have discarded a whole cluster's equity.
 
-`verify.py` Check 7 ratchets the count at `TITLE_OVERLONG_BASELINE = 590` — it
+`verify.py` Check 7 ratchets the count at `TITLE_OVERLONG_BASELINE = 580` — it
 may shrink but never grow. **Lower the baseline as titles land**; the check
-prints the new number to use. (Caleb-canon audit, 2026-08-25)
+prints the new number to use, and the constant carries its own history comment.
+(Caleb-canon audit 2026-08-25; Bing re-prioritisation 2026-08-28)
 
 
 ### Title budget: characters here, bytes in the hub gate
