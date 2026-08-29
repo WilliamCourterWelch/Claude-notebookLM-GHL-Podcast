@@ -203,6 +203,56 @@ If it is closed, restore the count to the `/es/` title — the override in
 2026-08-24, rounds 1-2)
 
 
+### Plan-by-plan trial section on the money page
+**Priority:** P2
+Bing shows real demand for **plan-specific** trial queries that no page answers:
+
+| query | impr | pos | clicks |
+|---|---|---|---|
+| gohighlevel agency pro plan 30 day trial | 38 | 8.1 | 0 |
+| gohighlevel saas mode 30 day trial deal | 30 | 1.9 | 0 |
+| gohighlevel agency unlimited 30 day trial | 25 | 7.8 | 0 |
+| gohighlevel pro plan extended trial | 16 | 4.6 | 0 |
+
+**130 impressions, zero clicks.** The string "agency pro" appears in NEITHER the
+English money page nor the English pricing page. These searchers have already
+picked a plan and want to know the trial applies to it.
+
+**This is a SECTION on `/blog/gohighlevel-free-trial-30-days-extended/`, not a new
+page.** That page already carries 1,091 Bing impressions; a plan-by-plan table
+(does the 30-day extension apply to Starter / Unlimited / Agency Pro, and what
+changes) strengthens a ranking page instead of starting a new one from zero
+authority. See the v0.3.16.1 note on why the discount page was NOT created.
+(Bing query analysis, 2026-08-29)
+
+
+### Spanish "qué es GoHighLevel" cluster is fragmenting — consolidate
+**Priority:** P2 — needs Bill's decision, it means 301'ing live pages
+Nine Spanish pages split 130 Bing impressions, most in single digits:
+
+```
+72 impr  1 clk  pos 6.2  que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica
+35 impr  0 clk  pos 4.4  que-es-gohighlevel-guia-completa-agencias-2026
+ 7 impr  0 clk  pos 5.0  guia-completa-gohighlevel-que-es-ghl-agencias-latinoamerica
+ 4 impr  0 clk  pos 5.0  que-es-gohighlevel-plataforma-automatizacion-agencias-latinoamerica
+ 4 impr  0 clk  pos 7.0  que-es-gohighlevel-ghl-plataforma-todo-en-uno-agencias-latinoamerica
+ ... plus 4 more at 1-7 impressions
+```
+
+Caleb's one-URL-one-keyword rule, violated nine ways. Codex flagged it twice
+during v0.3.16.0 and the v0.3.16.1 data confirms it: the cluster is splitting
+authority rather than compounding it.
+
+**Consolidation target:** the 72-impression page, which already absorbs a
+14-URL redirect cluster from `vs alternativas` / `vs herramientas locales`
+sources. Do NOT drop "Herramientas Locales" from its title if you touch it.
+
+**Counter-evidence to weigh first:** `/blog/gohighlevel-precios-planes-2026-guia-completa/`
+does 298 impressions at **3.02% CTR** — eight times the English money page — so
+Spanish pages are not inherently weak. The problem is duplication, not language.
+(Bing query analysis, 2026-08-29)
+
+
 ### 580 titles still exceed Caleb's 60-character SERP budget
 **Priority:** P2 (was P1 — the traffic-carrying ones are done)
 v0.3.15.0 fixed the mechanical half by making the brand suffix conditional
