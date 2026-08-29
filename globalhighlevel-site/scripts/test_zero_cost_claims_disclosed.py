@@ -12,9 +12,10 @@ newly drafted CTAs carried a bare "$0 upfront" / "$0 por adelantado". The
 existing gate passed on all four. They were corrected by hand; this gate
 makes the next one fail loudly instead.
 
-The rule: a zero-cost claim is fine, but the same neighbourhood must carry a
-disclosure — the ~$1 verification hold, or the truthful cancel line
-("cancela cuando quieras" / "cancel any time").
+The rule: a zero-cost claim is fine, but the same neighbourhood must carry
+the ~$1 card-verification disclosure. A cancellation promise ("cancel any
+time" / "cancela cuando quieras") does NOT satisfy it — see the note on
+DISCLOSURE below.
 
 Run: python3 -m pytest scripts/test_zero_cost_claims_disclosed.py
 """
@@ -93,7 +94,7 @@ def _post_files():
 
 def test_zero_cost_claims_carry_a_disclosure():
     """Every '$0 to start'-style claim in the corpus must sit within WINDOW
-    characters of the ~$1 hold or the truthful cancel line."""
+    characters of the ~$1 card-verification hold."""
     offenders = []
     for path in _post_files():
         data = json.loads(path.read_text(encoding="utf-8"))
