@@ -519,6 +519,67 @@ a `retired` group (fires, or the gate is decorative) AND a `grounded` group
 is half-tested. Cost of a false positive here is "nobody can deploy", so bias to
 precision.
 
+## Meta descriptions — the snippet has to answer the query it ranks for (v0.3.16.1)
+
+**A page can rank well and convert terribly because its snippet turns away the
+searcher.** This is the diagnostic that section exists for. Before blaming the
+content or the ranking, read the description AGAINST the queries the page
+actually ranks for.
+
+Worked example, the money page (`gohighlevel-free-trial-30-days-extended`),
+measured 2026-08-29 from `scripts/pull-bing.py --property ghl`:
+
+| | |
+|---|---|
+| impressions | **1,091** — a tenth of the site's 10,952 |
+| position | 5.0 |
+| clicks | 4 |
+| CTR | **0.37%** vs 2.70% across the 250 ranked pages, and 1.57% site-wide |
+
+Its description ended **"No fake coupon codes."** Truthful, and as SERP copy it
+dismissed the exact person searching: 12 discount-intent queries carrying 134
+impressions earned **zero** clicks, several of them at position 1. The content
+was never the problem — the page has five sections on discounts. The snippet was
+hiding them. It now opens *"Looking for a GoHighLevel coupon?"* and hands over a
+number the page delivers.
+
+Three rules for writing one:
+
+**1. 150-160 characters, and the zero-cost gate applies.** The band is Caleb
+Ulku's non-local canon (`lessons/12-non-local-seo/`), same source as the 60-char
+title budget. And a description is corpus text like any other: if it contains a
+`$0 to start`-style claim, `scripts/test_zero_cost_claims_disclosed.py` requires
+the `~$1 card-verification` disclosure within **200 characters** of it. NEVER
+write a "no credit card" claim anywhere, description included — a card IS
+required.
+
+**2. Absolute claims fail here exactly as they do in titles.** Codex rejected two
+drafts of this one 154-character string. "beats any coupon code" is false because
+the page itself documents seasonal promotions that could beat 16 extra trial
+days. "The real deal is 30 days instead of 14" still implied exclusivity and
+self-contradicted, since the same sentence named annual billing as a second deal.
+The word that fixed it was **"include"** — two savings routes presented without
+claiming they are the complete set. That is the fifth overclaim of this shape
+caught on this project; assume your first draft has one.
+
+**3. Before declaring a CONTENT GAP, search page BODIES, not slugs and titles.**
+The plan going in was to create an English discount page. It was wrong twice
+over, and both errors were mine:
+
+- The money page **already** covered discount intent in five `<h2>` sections.
+  The "English has no discount page" claim came from grepping slugs and titles.
+  Grep `html_content`.
+- Spanish had already run the experiment and it failed. The standalone
+  `codigo-promocional-gohighlevel-2026-descuentos-reales` page (1,885 words) is
+  **absent from the 250 ranked Bing pages, whose floor is a single impression** —
+  so it earned none at all. It had been cited as proof the format works; it is
+  evidence against. **When another language on this site has already tried the
+  format, check how it did before recommending it in English.**
+
+**This release is a bet, not a result.** Nothing about the new snippet is
+measured yet. Re-pull Bing ~30 days out and compare against the 0.37% baseline;
+the page may still convert badly for reasons a description cannot fix.
+
 ## Canonical in-body trial CTA block (added v0.3.4.0)
 
 When a post needs a closing trial CTA in stored JSON, copy this block VERBATIM

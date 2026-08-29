@@ -292,6 +292,30 @@ prints the new number to use, and the constant carries its own history comment.
 (Caleb-canon audit 2026-08-25; Bing re-prioritisation 2026-08-28)
 
 
+### No gate on meta-description length (titles have one, descriptions do not)
+**Priority:** P3
+`verify.py` Check 7 ratchets titles against Caleb's 60-character SERP budget.
+Nothing checks the **150-160 character** description budget from the same
+lesson, and nothing checks that a description exists at all.
+
+Measured 2026-08-29 across the 909 posts carrying a `description`:
+
+| | |
+|---|---|
+| in the 150-160 band | 519 (57%) |
+| under 150 | 265 |
+| over 160 | 125 |
+| median / min / max | 156 / 104 / 288 |
+
+**Not urgent, and the numbers are why.** Descriptions are in far better shape
+than titles ever were (57% in band, against 1% for titles before v0.3.15.0), so
+this is hygiene, not a recovery lane. If it gets built, copy Check 7's shape: a
+ratchet at the current over-160 count rather than a hard fail, so it cannot
+block every deploy until 125 pages of copy work lands. Note the same
+characters-vs-bytes tension as the entry below applies here too.
+(Documentation audit during v0.3.16.1)
+
+
 ### Title budget: characters here, bytes in the hub gate
 **Priority:** P3
 `verify.py` Check 7 and `scripts/test_title_length.py` budget titles in
