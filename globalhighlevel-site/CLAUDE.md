@@ -571,10 +571,38 @@ over, and both errors were mine:
   Grep `html_content`.
 - Spanish had already run the experiment and it failed. The standalone
   `codigo-promocional-gohighlevel-2026-descuentos-reales` page (1,885 words) is
-  **absent from the 250 ranked Bing pages, whose floor is a single impression** —
-  so it earned none at all. It had been cited as proof the format works; it is
-  evidence against. **When another language on this site has already tried the
+  absent from the 250 pages Bing returns. It had been cited as proof the format
+  works, which it is not — but see the hard rule below: absence is **not** proof
+  of zero traffic either. The honest read is that the page is unproven, and a
+  standalone discount page remains unjustified on the evidence we have. **When another language on this site has already tried the
   format, check how it did before recommending it in English.**
+
+### The Bing page list is capped at 250. Absence is NOT zero. (added 2026-08-30)
+
+**`GetPageStats` returns a hard maximum of 250 unique pages, no matter what
+`--top` you pass.** Verified 2026-08-30: `pull-bing.py --top 100000` still
+returned exactly 250 pages, while `top_queries` grew 300 to 905 on the same
+call. The 250 rows account for **5,155 of the site's 11,118 impressions**, so
+**more than half of all page impressions belong to pages the endpoint will never
+show you.**
+
+The trap: 59 of those rows sit at exactly 1 impression, which makes the list
+*look* like it bottoms out at the floor and therefore *looks* complete. It is
+not. It is a cap cutting through a tie.
+
+**So you cannot conclude a page earns nothing because it is missing from the
+list.** An earlier version of this file and of the v0.3.16.1 changelog did
+exactly that, and used it to argue 208 Spanish pages were dead inventory. Codex
+falsified it 2026-08-30. Both are corrected.
+
+**When you need per-page truth, use `GetPageQueryStats`** — it takes a single
+page URL and returns that page's queries with impressions, clicks and position.
+`pull-bing.py` does not wrap it yet; call the endpoint directly. It is the only
+way to see the position MIX behind a page's average, and the mix is usually the
+finding. Worked example, 2026-08-30: the pricing guide's average position of 5.8
+hides that its head terms `go high level pricing` (49 impr) and `ghl pricing`
+(29 impr) sit at **7.4 and 7.7**, with 65% of its impressions at position 5-8.
+That is a ranking problem wearing a CTR problem's clothes.
 
 **This release is a bet, not a result.** Nothing about the new snippet is
 measured yet. Re-pull Bing ~30 days out and compare against the 0.37% baseline;
