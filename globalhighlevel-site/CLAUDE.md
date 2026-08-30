@@ -413,7 +413,22 @@ source-string assertion instead; Codex flagged that it would pass on a comment,
 a non-f-string body, or an assigned-then-overwritten variable. **If a gate can
 only fail when a helper's text changes, it is not guarding the page.**
 Also run the **title-length gate** (`scripts/test_title_length.py`, 6 tests,
-added v0.3.15.0) — see the title rule immediately below, which it enforces.
+added v0.3.15.0) — see the title rule immediately below, which it enforces —
+and the **FAQ schema sync gate** (`scripts/test_faq_schema_sync.py`, 3 tests,
+added v0.3.17.0, suite 179 → 182).
+
+**The sync gate is not a duplicate of `test_fix_faq_schema`.** That one pins the
+one-off *migration* that built the schema. This one pins the *invariant* that
+keeps it true: for all **159 posts carrying hand-written `FAQPage` JSON-LD in
+the body**, the questions in that JSON-LD must exactly equal the visible FAQ
+questions, in order. Search engines read the JSON-LD, not the prose, so adding a
+Q&A to one side and not the other ships a page that contradicts itself — nothing
+renders wrong, no other gate fires, and you find out when a SERP shows an answer
+the page no longer contains. All 159 are in sync and there is **no allowlist**.
+
+Posts *without* body `FAQPage` are exempt because they cannot drift: `faq_schema()`
+in `build.py` generates theirs from the visible questions at render time. That is
+the whole reason the gate's scope is what it is.
 Then `python3 build.py` and `python3 verify.py`.
 
 ## SERP titles — 60 characters, and the brand is conditional (v0.3.15.0)
@@ -504,6 +519,28 @@ do not disagree on any current page. Both are proxies; the real constraint is
 pixel width, which neither models. Filed as a P3 in `TODOS.md` rather than
 reconciled, so don't assume one of them is a bug.
 
+**Building a gate? Search the repo for the extractor before writing one.**
+The first draft of `test_faq_schema_sync.py` hand-rolled an English-only
+`<h2>Frequently Asked Questions</h2>` matcher. It silently skipped **42 of the
+159** schema-carrying posts (Spanish `Preguntas frecuentes`, Arabic, and
+`Common Questions` variants) and reported **3 drifted posts that were not
+drifted** — its crude `<h3>` scan was picking up headings from outside the FAQ
+section. Those three phantoms were one commit away from being written into a
+`KNOWN_DRIFT` allowlist and living forever as "known corpus debt".
+`scripts/fix_faq_schema.py` already had `_FAQ_HEADING`, **enumerated from the
+corpus** (157 `Frequently Asked Questions`, 4 Spanish, 4 `Common Questions`,
+2 Arabic) with section-scoped `visible_pairs()`. Importing it moved scope
+117 → 159 and drift 3 → **0**. **A detector bug looks exactly like corpus
+debt.** When a new gate reports pre-existing violations, suspect the detector
+before you believe the corpus.
+
+**An exceptions list is not a ratchet.** `KNOWN_DRIFT` only verified that its
+own entries were still broken, which does nothing to stop the next person adding
+a newly-failing slug to make the suite green. That is a mute button. `verify.py`
+Check 7 is a real ratchet because it pins a **count** that may only shrink, and
+the count does not care which pages are in it. **If a gate needs exceptions, pin
+the number, not the names.**
+
 **Writing a content gate? Match phrases, not meaning — and pin BOTH edges.**
 `test_timer_break_premise` first tried to infer the *claim* (timer noun + copy
 verb + breakage verb co-occurring in a window, minus a hedge list). Three review
@@ -571,10 +608,38 @@ over, and both errors were mine:
   Grep `html_content`.
 - Spanish had already run the experiment and it failed. The standalone
   `codigo-promocional-gohighlevel-2026-descuentos-reales` page (1,885 words) is
-  **absent from the 250 ranked Bing pages, whose floor is a single impression** —
-  so it earned none at all. It had been cited as proof the format works; it is
-  evidence against. **When another language on this site has already tried the
+  absent from the 250 pages Bing returns. It had been cited as proof the format
+  works, which it is not — but see the hard rule below: absence is **not** proof
+  of zero traffic either. The honest read is that the page is unproven, and a
+  standalone discount page remains unjustified on the evidence we have. **When another language on this site has already tried the
   format, check how it did before recommending it in English.**
+
+### The Bing page list is capped at 250. Absence is NOT zero. (added 2026-08-30)
+
+**`GetPageStats` returns a hard maximum of 250 unique pages, no matter what
+`--top` you pass.** Verified 2026-08-30: `pull-bing.py --top 100000` still
+returned exactly 250 pages, while `top_queries` grew 300 to 905 on the same
+call. The 250 rows account for **5,155 of the site's 11,118 impressions**, so
+**more than half of all page impressions belong to pages the endpoint will never
+show you.**
+
+The trap: 59 of those rows sit at exactly 1 impression, which makes the list
+*look* like it bottoms out at the floor and therefore *looks* complete. It is
+not. It is a cap cutting through a tie.
+
+**So you cannot conclude a page earns nothing because it is missing from the
+list.** An earlier version of this file and of the v0.3.16.1 changelog did
+exactly that, and used it to argue 208 Spanish pages were dead inventory. Codex
+falsified it 2026-08-30. Both are corrected.
+
+**When you need per-page truth, use `GetPageQueryStats`** — it takes a single
+page URL and returns that page's queries with impressions, clicks and position.
+`pull-bing.py` does not wrap it yet; call the endpoint directly. It is the only
+way to see the position MIX behind a page's average, and the mix is usually the
+finding. Worked example, 2026-08-30: the pricing guide's average position of 5.8
+hides that its head terms `go high level pricing` (49 impr) and `ghl pricing`
+(29 impr) sit at **7.4 and 7.7**, with 65% of its impressions at position 5-8.
+That is a ranking problem wearing a CTR problem's clothes.
 
 **This release is a bet, not a result.** Nothing about the new snippet is
 measured yet. Re-pull Bing ~30 days out and compare against the 0.37% baseline;

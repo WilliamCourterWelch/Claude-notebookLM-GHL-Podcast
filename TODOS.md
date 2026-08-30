@@ -316,6 +316,32 @@ characters-vs-bytes tension as the entry below applies here too.
 (Documentation audit during v0.3.16.1)
 
 
+### The $497 tier is called "SaaS Pro" on 10 other posts
+**Priority:** P2
+v0.3.17.0 moved the English pricing guide to HighLevel's official name, **Agency Pro**,
+keeping "SaaS Pro" as the common alias. Ten posts still use SaaS Pro as the plan name:
+Spanish pricing and promo pages, the Arabic and India pricing guides, the money page,
+the HIPAA page, the AI-pricing page, a Zoho comparison and a snapshots guide.
+
+Not wrong — SaaS Pro is what many people call it — but the corpus now disagrees with
+itself, and "agency pro" is a term with measured demand we mostly do not carry.
+
+**The money page is the prize and it is currently frozen.** Measured 2026-08-30 via
+`GetPageQueryStats`:
+
+| query | impr | pos | clicks |
+|---|---|---|---|
+| gohighlevel agency pro plan 30 day trial | 59 | 8.7 | 0 |
+| gohighlevel agency pro trial promotion | 15 | 7.5 | 0 |
+
+**74 impressions, zero clicks**, and the string "agency pro" appears nowhere on it.
+That is five times the agency-pro demand the pricing guide sees. But the money page is
+inside a 30-day measurement window from the v0.3.16.1 snippet change (shipped
+2026-08-29); editing it before ~2026-09-28 contaminates that experiment. Do the other
+nine first, or wait.
+(Bing page-query analysis, 2026-08-30)
+
+
 ### Title budget: characters here, bytes in the hub gate
 **Priority:** P3
 `verify.py` Check 7 and `scripts/test_title_length.py` budget titles in
