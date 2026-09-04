@@ -91,6 +91,15 @@
 /blog/build-smarter-ai-agents-gohighlevel-agent-studio-setup/ /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
 /blog/how-to-build-ai-agents-gohighlevel-agent-studio-setup /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
 /blog/how-to-build-ai-agents-gohighlevel-agent-studio-setup/ /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
+# Bing-ranked slugs stranded by the July restore's renames (Bing-first plan 2026-07-12,
+# Phase 1). Bing still ranks these at pos 1.0 / 2.0 and serves them to 404s; the content
+# was restored under longer slugs. Same shape as the agent-studio pair directly above.
+/blog/how-to-connect-airtable-in-gohighlevel /blog/how-to-connect-airtable-in-gohighlevel-automate-workflows/ 301
+/blog/how-to-connect-airtable-in-gohighlevel/ /blog/how-to-connect-airtable-in-gohighlevel-automate-workflows/ 301
+/blog/master-global-custom-colors /blog/master-global-custom-colors-gohighlevel/ 301
+/blog/master-global-custom-colors/ /blog/master-global-custom-colors-gohighlevel/ 301
+/blog/how-to-install-gohighlevel-desktop-app /blog/how-to-install-gohighlevel-desktop-app-complete-setup-guide/ 301
+/blog/how-to-install-gohighlevel-desktop-app/ /blog/how-to-install-gohighlevel-desktop-app-complete-setup-guide/ 301
 /blog/fix-gohighlevel-payment-errors-paywall-checkout-india-guide /blog/how-to-fix-payment-errors-in-gohighlevel-paywall-checkout/ 301
 /blog/fix-gohighlevel-payment-errors-paywall-checkout-india-guide/ /blog/how-to-fix-payment-errors-in-gohighlevel-paywall-checkout/ 301
 /blog/manage-pipeline-permissions-gohighlevel-control-access-arabic /blog/how-to-manage-pipeline-permissions-in-gohighlevel-control-access/ 301
