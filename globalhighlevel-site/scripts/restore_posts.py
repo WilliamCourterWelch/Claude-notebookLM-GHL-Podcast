@@ -195,6 +195,12 @@ def normalize_affiliate_links(html, language):
             ]
             if "utm_campaign" in params:
                 pairs.append(("utm_campaign", params["utm_campaign"]))
+            # Slot params are load-bearing for GA4 cta_slot (nav vs cta3 vs
+            # pricing tier_*). Dropping them here would un-measure restored posts.
+            if "utm_content" in params:
+                pairs.append(("utm_content", params["utm_content"]))
+            if "cta_slot" in params:
+                pairs.append(("cta_slot", params["cta_slot"]))
             canonical = f"{BOOTCAMP_DOMAIN}{path}?{urlencode(pairs)}"
             if canonical != href_plain:
                 rewrites += 1

@@ -141,6 +141,22 @@ def test_affiliate():
                  "&utm_medium=blog&utm_campaign=spring")
     check("fp_ref href rewritten to canonical (campaign preserved)",
           f'href="{canonical}"' in new_html)
+    content_html = (
+        '<a href="https://www.gohighlevel.com/x?fp_ref=oldref'
+        '&utm_campaign=spring&utm_content=tier_starter">go</a>'
+    )
+    slot_html = (
+        '<a href="https://www.gohighlevel.com/x?fp_ref=oldref'
+        '&utm_campaign=spring&cta_slot=nav">go</a>'
+    )
+    content_out, content_n, _ = rp.normalize_affiliate_links(content_html, "en")
+    slot_out, slot_n, _ = rp.normalize_affiliate_links(slot_html, "en")
+    check("utm_content survives restore canonicalization",
+          "utm_content=tier_starter" in content_out)
+    check("cta_slot survives restore canonicalization",
+          "cta_slot=nav" in slot_out)
+    check("content rewrite counted", content_n == 1)
+    check("cta_slot rewrite counted", slot_n == 1)
     check("one rewrite counted", rewrites == 1)
     check("bare gohighlevel href untouched",
           'href="https://www.gohighlevel.com/pricing"' in new_html)
