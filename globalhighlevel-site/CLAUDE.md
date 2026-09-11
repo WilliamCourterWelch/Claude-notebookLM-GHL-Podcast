@@ -110,8 +110,9 @@ The canon link structure is enforced at render time by `build.py` and gated by
   generalizing the scan is an open TODO.) Do not add outbound links to it.
 - **Internal trial-path CTAs (formerly `/start/`) point at the money page
   directly**, `rel=nofollow`. Direct-affiliate CTAs (cta3, TLDR) still go
-  straight to the affiliate URL. Trial-path conversion CTAs get `rel=nofollow`
-  stamped at render time.
+  straight to the affiliate URL, now with `utm_content=cta3` / `tldr`
+  (v0.3.17.1). Trial-path conversion CTAs get `rel=nofollow` stamped at
+  render time.
 - **Anchor caps:** beyond 3 identical anchor→URL pairs sitewide (including
   anchors baked in stored post bodies and absolute same-site URLs), the link
   unwraps to plain text at render time — post JSON is never mutated.
@@ -194,11 +195,13 @@ The canon link structure is enforced at render time by `build.py` and gated by
   [--dry-run] [--report PATH] [--topic-overrides FILE]` — restores pruned
   posts from git history at their original slugs; never overwrites a newer
   page; maps old 8-topic taxonomy onto the current 5 hubs; normalizes
-  affiliate hrefs to the current `fp_ref`; writes atomically; exits nonzero on
-  any slug error. `--topic-overrides` takes a `{slug: topic}` JSON (the
-  Bill-approved assignment sheet) that wins over the taxonomy mapping —
-  unknown topics are fatal, and the report counts how many overrides were
-  consumed (`overrides_applied`).
+  affiliate hrefs to the current `fp_ref` and keeps any existing
+  `utm_campaign`, `utm_content`, or `cta_slot` (v0.3.17.1 — dropping the
+  slot params would un-measure restored posts in GA4); writes atomically;
+  exits nonzero on any slug error. `--topic-overrides` takes a `{slug: topic}`
+  JSON (the Bill-approved assignment sheet) that wins over the taxonomy
+  mapping — unknown topics are fatal, and the report counts how many
+  overrides were consumed (`overrides_applied`).
 - `scripts/submit_indexnow.py --urls FILE|--sitemap [--dry-run]` — pushes URL
   batches to Bing via IndexNow. The key lives in `indexnow-key.txt` and is
   hosted at `/<key>.txt`; the script verifies the key file is live before
@@ -245,7 +248,8 @@ The canon link structure is enforced at render time by `build.py` and gated by
   CTAs direct to the language-matched affiliate page (Bill-decided
   v0.3.2.0): en/en-IN → `highlevel-bootcamp`, es → `highlevel-bootcamp-es`
   (FirstPromoter tracker verified identical to EN), ar → `/ar/trial/` (GHL
-  has no Arabic page), tags `utm_campaign=blog-trial-{en|es|in}`, downstream
+  has no Arabic page), tags `utm_campaign=blog-trial-{en|es|in}` and
+  `utm_content=blog_trial` (v0.3.17.1, via `affiliate_href()`), downstream
   paid-link pass stamps `rel="nofollow sponsored"`;
   `unwrap_cross_silo_links()` enforces the Caleb Critical Rule strictly
   (Bill-decided v0.3.3.0) — any body link crossing a topic/language silo is
@@ -417,9 +421,10 @@ Also run the **title-length gate** (`scripts/test_title_length.py`, 6 tests,
 added v0.3.15.0) — see the title rule immediately below, which it enforces —
 the **FAQ schema sync gate** (`scripts/test_faq_schema_sync.py`, 3 tests,
 added v0.3.17.0, suite 179 → 182), and the **CTA slot gate**
-(`scripts/test_cta_slot.py`, rendered HTML, added v0.3.17.1) which pins that
-nav/cta3/tldr/trial landings stamp short `utm_content` and that `ghl_click`
-copies it into the `cta_slot` event param without an allowlist.
+(`scripts/test_cta_slot.py`, 18 tests, rendered HTML, added v0.3.17.1,
+suite 182 → 200) which pins that nav/cta3/tldr/trial landings stamp short
+`utm_content` and that `ghl_click` copies it into the `cta_slot` event
+param without an allowlist.
 
 **The sync gate is not a duplicate of `test_fix_faq_schema`.** That one pins the
 one-off *migration* that built the schema. This one pins the *invariant* that
