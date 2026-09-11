@@ -22,6 +22,7 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import quote
 from xml.sax.saxutils import escape as _xml_escape
 
 from lang_check import validate_meta
@@ -46,11 +47,35 @@ AFFILIATE_ES = AFFILIATE.replace("/highlevel-bootcamp?", "/highlevel-bootcamp-es
 # GHL_AFFILIATE_LINK override changes shape. Fail the build loudly instead.
 assert "?" in AFFILIATE and "fp_ref=" in AFFILIATE, "AFFILIATE must carry a query string with fp_ref"
 assert "utm_campaign=" not in AFFILIATE, "AFFILIATE must not pre-bake utm_campaign (passes append their own)"
+assert "utm_content=" not in AFFILIATE and "cta_slot=" not in AFFILIATE, (
+    "AFFILIATE must not pre-bake slot params (call sites pass utm_content via affiliate_href)"
+)
 assert AFFILIATE_ES != AFFILIATE, "AFFILIATE_ES derivation no-opped — check the bootcamp path in AFFILIATE"
 
 def affiliate_for(lang: str) -> str:
-    """Language-aware affiliate base URL. Spanish -> -es bootcamp; others -> default."""
+    """Language-aware affiliate base URL. Spanish -> -es bootcamp; others -> default.
+
+    Language only. Slot/campaign query params belong on affiliate_href() call
+    sites so GA4 can tell nav from cta3 without truncating a baked-in URL.
+    """
     return AFFILIATE_ES if lang == "es" else AFFILIATE
+
+
+def affiliate_href(lang: str, *, campaign=None, content=None) -> str:
+    """Affiliate URL for a specific CTA: language base + optional campaign + slot.
+
+    Appends short utm_content= with &. Never writes those params onto AFFILIATE
+    or into affiliate_for(). The ghl_click listener copies utm_content (or
+    cta_slot) into the event param cta_slot, which survives GA4 Link URL
+    truncation (~100 chars). content is not allowlisted — pricing's tier_*
+    values and any future slot must pass through.
+    """
+    url = affiliate_for(lang)
+    if campaign:
+        url = f"{url}&utm_campaign={quote(str(campaign), safe='-_.')}"
+    if content:
+        url = f"{url}&utm_content={quote(str(content), safe='-_.')}"
+    return url
 
 # The conversion sink: every in-post CTA points here directly (D2, 2026-07-23).
 # /start/ is retired — it 301s to this page, so routing CTAs through it added a
@@ -488,8 +513,12 @@ def localize_trial_hrefs(html: str, lang_code: str) -> str:
     language. /trial itself stays live for the podcast spoken URL — bodies
     just stop linking it."""
     def _direct(campaign_lang: str) -> str:
-        base = AFFILIATE_ES if campaign_lang == "es" else AFFILIATE
-        return f'{base}&utm_campaign=blog-trial-{campaign_lang}'
+        # Keep blog-trial-{lang} campaign names; append slot, don't collapse.
+        # campaign_lang is es|en|in (not en-IN); affiliate_for treats only es
+        # as Spanish bootcamp, so "in" shares the English URL.
+        return affiliate_href(
+            campaign_lang, campaign=f"blog-trial-{campaign_lang}", content="blog_trial"
+        )
 
     # 1. Bare /trial hrefs route by the POST's language (ar keeps its landing —
     #    the only possible Arabic step; everything else goes direct).
@@ -1440,11 +1469,21 @@ def _ga_snippet() -> str:
         f'  var isTrial=h.indexOf("/trial")>-1||h.indexOf("/start")>-1||h.indexOf("/free-trial")>-1||a.classList.contains("nav-cta")||a.classList.contains("btn-amber");\n'
         f'  var isGHL=h.indexOf("gohighlevel.com")>-1;\n'
         f'  if(isAffiliate){{\n'
+        f'    var slot="";\n'
+        f'    try{{\n'
+        f'      var u=new URL(h,location.href);\n'
+        f'      var host=u.hostname||"";\n'
+        f'      if(host==="gohighlevel.com"||host.slice(-16)===".gohighlevel.com"){{\n'
+        f'        var qs=u.searchParams;\n'
+        f'        slot=qs.get("cta_slot")||qs.get("utm_content")||"";\n'
+        f'      }}\n'
+        f'    }}catch(err){{}}\n'
         f'    gtag("event","ghl_click",{{\n'
         f"      link_url:h,\n"
         f"      link_text:a.textContent.trim().slice(0,50),\n"
         f"      page_path:location.pathname,\n"
-        f'      page_lang:document.documentElement.lang||"en"\n'
+        f'      page_lang:document.documentElement.lang||"en",\n'
+        f"      cta_slot:String(slot).slice(0,64)\n"
         f"    }});\n"
         f"  }}else if(isTrial||isGHL){{\n"
         f'    gtag("event","cta_click",{{\n'
@@ -1563,7 +1602,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
         LANG_META_VIOLATIONS.append(msg)
     og_img = og_image or os.getenv("OG_IMAGE_URL", f"{SITE_URL}/images/og-default.png")
     cats = CATEGORIES
-    aff = affiliate_for(lang)
+    aff = affiliate_href(lang, content="nav")
 
     # Determine current language for language picker
     current_lang = next((l for l in LANGUAGES if l["code"] == lang), None)
@@ -2037,7 +2076,6 @@ def build_post_page(post: dict, all_posts: list = None):
     cat_eyebrow = f'<a href="/category/{cat_slug}/" style="color:var(--amber);text-decoration:none">{category}</a>' if _eyebrow_link_ok else f'<span style="color:var(--amber)">{category}</span>'
     date_str    = fmt_date(post.get("publishedAt", post.get("uploadedAt", "")))
     html_content = post.get("html_content", "")
-    aff         = affiliate_for(post.get("language", "en"))
     episode_id  = post.get("transistorEpisodeId", "")
     rtime       = read_time(html_content)
     canonical   = f"{SITE_URL}{post_url(post)}"
@@ -2121,8 +2159,10 @@ def build_post_page(post: dict, all_posts: list = None):
         _tcta = post.get("tldr_cta")
         _tctahtml = ""
         if _tcta:
-            _tctahtml = (f'<a class="btn-amber tldr-cta" href="{aff}&utm_campaign={slug}_tldr" '
-                         f'target="_blank" rel="nofollow noopener">{_tcta} &rarr;</a>')
+            _tctahtml = (
+                f'<a class="btn-amber tldr-cta" href="{affiliate_href(post_lang(post), campaign=f"{slug}_tldr", content="tldr")}" '
+                f'target="_blank" rel="nofollow noopener">{_tcta} &rarr;</a>'
+            )
         tldr_html = f'<div class="tldr"><div class="tldr-label">The short version</div>{_body}{_tctahtml}</div>'
 
     # ── CTA #1 — Below byline (compact one-liner) ─────────────────────────────
@@ -2142,7 +2182,7 @@ def build_post_page(post: dict, all_posts: list = None):
 <div class="cta-end">
   <h3>Ready to try this?</h3>
   <p>$0 for 30 days — just a ~$1 card-verification hold (no subscription charge). Set up everything in this guide inside your trial.</p>
-  <a href="{aff}&utm_campaign={slug}" class="btn-amber" target="_blank" rel="nofollow noopener">Start Free 30-Day Trial</a>
+  <a href="{affiliate_href(post_lang(post), campaign=slug, content="cta3")}" class="btn-amber" target="_blank" rel="nofollow noopener">Start Free 30-Day Trial</a>
   <div class="fine">Cancel anytime &mdash; $0 for the first 30 days</div>
 </div>"""
 
@@ -2899,7 +2939,8 @@ def _build_localized_affiliate_landing(lang_cfg: dict, slug: str, campaign: str)
     prefix = lang_cfg["prefix"]
     direction = lang_cfg["dir"]
     canonical = f"{SITE_URL}{prefix}/{slug}/"
-    affiliate_url = f"{affiliate_for(lang)}&utm_campaign={lang}-{campaign}"
+    affiliate_hero = affiliate_href(lang, campaign=f"{lang}-{campaign}", content="trial_hero")
+    affiliate_bottom = affiliate_href(lang, campaign=f"{lang}-{campaign}", content="trial_bottom")
 
     value_props_html = "\n".join(
         f'  <div class="vp-item">\n    <strong>{name}</strong>\n    <p>{desc}</p>\n  </div>'
@@ -2915,7 +2956,7 @@ def _build_localized_affiliate_landing(lang_cfg: dict, slug: str, campaign: str)
   <header class="trial-header">
     <h1>{lang_cfg["h1"]}</h1>
     <p class="trial-sub">{lang_cfg["subh"]}</p>
-    <a class="trial-cta-primary" href="{affiliate_url}" target="_blank" rel="nofollow noopener">{lang_cfg["cta"]} →</a>
+    <a class="trial-cta-primary" href="{affiliate_hero}" target="_blank" rel="nofollow noopener">{lang_cfg["cta"]} →</a>
   </header>
 
   <section class="trial-value-props">
@@ -2928,7 +2969,7 @@ def _build_localized_affiliate_landing(lang_cfg: dict, slug: str, campaign: str)
   </section>
 
   <footer class="trial-footer-cta">
-    <a class="trial-cta-primary" href="{affiliate_url}" target="_blank" rel="nofollow noopener">{lang_cfg["footer_cta"]} →</a>
+    <a class="trial-cta-primary" href="{affiliate_bottom}" target="_blank" rel="nofollow noopener">{lang_cfg["footer_cta"]} →</a>
   </footer>
 </div>
 
@@ -3050,11 +3091,11 @@ def _build_affiliate_landing(slug: str, campaign: str):
 <div class="post-container" style="max-width:740px;padding-top:100px">
 
   <div class="fade-1" style="text-align:center;margin-bottom:48px">
-    <p style="font-size:.82rem;color:var(--text3);margin-bottom:24px">Already know you want in? <a href="{AFFILIATE}&utm_campaign={campaign}-skip" target="_blank" rel="nofollow noopener" style="color:var(--amber)">Go straight to GoHighLevel &rarr;</a></p>
+    <p style="font-size:.82rem;color:var(--text3);margin-bottom:24px">Already know you want in? <a href="{affiliate_href('en', campaign=f'{campaign}-skip', content='trial_skip')}" target="_blank" rel="nofollow noopener" style="color:var(--amber)">Go straight to GoHighLevel &rarr;</a></p>
     <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--amber);margin-bottom:16px">Extended 30-Day Offer · $0 to Start</p>
     <h1 style="font-family:var(--sans);font-size:clamp(2rem,4vw,3.2rem);font-weight:800;line-height:1.15;color:var(--text);letter-spacing:-.5px;margin-bottom:20px">30 Days to Test GoHighLevel. $0 to Start. No BS.</h1>
     <p style="font-size:1.15rem;color:var(--text2);line-height:1.7;max-width:580px;margin:0 auto 28px">Most trials give you 14 days and hope you figure it out. We give you 30—enough time to actually build, test, and decide if GHL scales your business.</p>
-    <a href="{AFFILIATE}&utm_campaign={campaign}-hero" class="btn-amber" style="font-size:1rem;padding:14px 36px" target="_blank" rel="nofollow noopener">Start Your 30-Day Free Trial &rarr;</a>
+    <a href="{affiliate_href('en', campaign=f'{campaign}-hero', content='trial_hero')}" class="btn-amber" style="font-size:1rem;padding:14px 36px" target="_blank" rel="nofollow noopener">Start Your 30-Day Free Trial &rarr;</a>
     <p style="font-size:.8rem;color:var(--text3);margin-top:12px">$0 for 30 days &middot; ~$1 card-verification hold &middot; Cancel anytime</p>
   </div>
 
@@ -3218,7 +3259,7 @@ def _build_affiliate_landing(slug: str, campaign: str):
   <div class="cta-end" style="margin-bottom:48px">
     <h3>Start Your GoHighLevel Free Trial</h3>
     <p>30 days full access. Cancel anytime. Set up your funnels, automations, and AI bots — and follow along with our <a href="/" style="color:var(--amber)">free tutorials</a>.</p>
-    <a href="{AFFILIATE}&utm_campaign={campaign}-bottom" class="btn-amber" target="_blank" rel="nofollow noopener">Start Free 30-Day Trial &rarr;</a>
+    <a href="{affiliate_href('en', campaign=f'{campaign}-bottom', content='trial_bottom')}" class="btn-amber" target="_blank" rel="nofollow noopener">Start Free 30-Day Trial &rarr;</a>
     <div class="fine">$0 for the first 30 days &middot; then $97/mo &middot; cancel anytime</div>
   </div>
 
