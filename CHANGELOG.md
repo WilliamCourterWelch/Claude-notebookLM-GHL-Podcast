@@ -2,6 +2,16 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.17.1] - 2026-09-11
+### Added
+- **GA4 can now tell which affiliate button was clicked.** Template CTAs carry a short `utm_content` slot (`nav`, `cta3`, `tldr`, `trial_hero`, and the rest). The existing `ghl_click` event copies that into the `cta_slot` parameter, so Explores no longer depend on truncated Link URL (about 100 characters, which hid `utm_campaign`). Pricing plan buttons keep their `tier_*` slots.
+
+### Changed
+- Restoring older posts still rewrites affiliate URLs to the canonical bootcamp link, and now keeps any `utm_content` or `cta_slot` that was already on the URL.
+
+### Documentation
+- Site CLAUDE.md records the rule: do not bake `utm_content` or `cta_slot` into the `AFFILIATE` constant. Call sites pass the slot through `affiliate_href()`.
+
 ## [0.3.17.0] - 2026-08-30
 ### Changed
 - **The pricing guide now uses the plan name HighLevel actually uses.** The $497 tier was called "SaaS Pro" in 17 places across the page, its meta description and its FAQ structured data. HighLevel's official name is **Agency Pro** (gohighlevel.com/pricing; the billing guide calls SaaS Mode a *feature* of that plan, not a plan name). The page now leads with Agency Pro and keeps SaaS Pro as the common name, because Bing shows searchers using both: 15 impressions on this page's agency-pro queries, 10 of them spelling it "saas pro". A first pass renamed all 17 and dropped SaaS Pro to a single mention — adversarial review caught that as a coverage regression on the term this page's own searchers use more, and it was restored to 7.

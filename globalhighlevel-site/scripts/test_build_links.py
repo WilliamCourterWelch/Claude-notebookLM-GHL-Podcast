@@ -366,7 +366,7 @@ def test_localize_trial_hrefs():
     noslash = '<a href="https://globalhighlevel.com/trial">x</a>'
     out_ns = f(noslash, "en")
     check("no-trailing-slash absolute variant rewritten to the full campaign URL",
-          'href="' + build.AFFILIATE + '&utm_campaign=blog-trial-en"' in out_ns)
+          'href="' + build.AFFILIATE + '&utm_campaign=blog-trial-en&utm_content=blog_trial"' in out_ns)
     # URL well-formedness (review F4): exactly one '?', fp_ref present, es != en
     for lc, host in (("en", "highlevel-bootcamp?"), ("es", "highlevel-bootcamp-es?")):
         url = f('<a href="/trial/">x</a>', lc).split('href="')[1].split('"')[0]

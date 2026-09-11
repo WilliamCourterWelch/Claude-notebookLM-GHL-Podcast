@@ -26,7 +26,9 @@ Rules enforced here, in order, per slug:
      `fp_ref=` is rewritten to the canonical bootcamp link (fp_ref forced to
      AFFILIATE_REF, path /highlevel-bootcamp, or /highlevel-bootcamp-es for
      language=="es", utm_source/utm_medium ensured, existing utm_campaign
-     preserved, all other params dropped). gohighlevel.com hrefs WITHOUT fp_ref,
+     preserved, existing utm_content and cta_slot preserved (v0.3.17.1 — those
+     slots feed GA4 ghl_click; dropping them un-measures restored posts), all
+     other params dropped). gohighlevel.com hrefs WITHOUT fp_ref,
      and hrefs to known affiliate-network domains (firstpromoter, shareasale,
      partnerstack, bit.ly), are NOT modified — they are flagged in the report
      for human review. EXCEPTION (Bill-approved 2026-07-23): app.gohighlevel.com
@@ -195,6 +197,12 @@ def normalize_affiliate_links(html, language):
             ]
             if "utm_campaign" in params:
                 pairs.append(("utm_campaign", params["utm_campaign"]))
+            # Slot params are load-bearing for GA4 cta_slot (nav vs cta3 vs
+            # pricing tier_*). Dropping them here would un-measure restored posts.
+            if "utm_content" in params:
+                pairs.append(("utm_content", params["utm_content"]))
+            if "cta_slot" in params:
+                pairs.append(("cta_slot", params["cta_slot"]))
             canonical = f"{BOOTCAMP_DOMAIN}{path}?{urlencode(pairs)}"
             if canonical != href_plain:
                 rewrites += 1
