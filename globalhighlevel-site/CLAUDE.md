@@ -41,6 +41,7 @@
 - **Every single link to GoHighLevel.com MUST use the affiliate link** — no exceptions
 - Affiliate link: `https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12`
 - Always append UTM params: `&utm_source=globalhighlevel&utm_medium={location}&utm_campaign={context}`
+- **CTA slot (v0.3.17.1):** template affiliate CTAs go through `affiliate_href(lang, campaign=..., content=...)`, which appends short `utm_content=` (nav, cta3, tldr, trial_hero, …). Do NOT bake `utm_content` / `cta_slot` into the `AFFILIATE` constant or `affiliate_for()` — those stay language-only. The `ghl_click` listener copies `cta_slot` or `utm_content` from the URL into the GA4 event param `cta_slot` (no allowlist — pricing `tier_*` must pass through). See `scripts/test_cta_slot.py`.
 - This includes: pricing pages, feature pages, sign-up pages, help links — ANYTHING on gohighlevel.com
 - NEVER link to `gohighlevel.com/pricing` or any GHL URL without `fp_ref=amplifi-technologies12`
 - All affiliate links: `target="_blank" rel="nofollow noopener"`
@@ -414,8 +415,11 @@ a non-f-string body, or an assigned-then-overwritten variable. **If a gate can
 only fail when a helper's text changes, it is not guarding the page.**
 Also run the **title-length gate** (`scripts/test_title_length.py`, 6 tests,
 added v0.3.15.0) — see the title rule immediately below, which it enforces —
-and the **FAQ schema sync gate** (`scripts/test_faq_schema_sync.py`, 3 tests,
-added v0.3.17.0, suite 179 → 182).
+the **FAQ schema sync gate** (`scripts/test_faq_schema_sync.py`, 3 tests,
+added v0.3.17.0, suite 179 → 182), and the **CTA slot gate**
+(`scripts/test_cta_slot.py`, rendered HTML, added v0.3.17.1) which pins that
+nav/cta3/tldr/trial landings stamp short `utm_content` and that `ghl_click`
+copies it into the `cta_slot` event param without an allowlist.
 
 **The sync gate is not a duplicate of `test_fix_faq_schema`.** That one pins the
 one-off *migration* that built the schema. This one pins the *invariant* that
