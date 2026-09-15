@@ -424,7 +424,10 @@ added v0.3.17.0, suite 179 → 182), and the **CTA slot gate**
 (`scripts/test_cta_slot.py`, 18 tests, rendered HTML, added v0.3.17.1,
 suite 182 → 200) which pins that nav/cta3/tldr/trial landings stamp short
 `utm_content` and that `ghl_click` copies it into the `cta_slot` event
-param without an allowlist.
+param without an allowlist, and the **money-page title gate**
+(`scripts/test_trial_title.py`, 3 tests, rendered HTML, added v0.3.17.2)
+which pins the locked Bing head-term title on `<title>`, `<h1>`, `og:title`,
+and JSON-LD headline.
 
 **The sync gate is not a duplicate of `test_fix_faq_schema`.** That one pins the
 one-off *migration* that built the schema. This one pins the *invariant* that
