@@ -115,6 +115,16 @@ def test_folded_subsections_and_affiliate_in_source():
     assert "credit card required" not in html.lower()
 
 
+def test_rendered_toc_includes_create_within_the_eight_item_cap():
+    """create-cousin 301s land here; extract_toc hard-caps at 8 H2s."""
+    toc = build.extract_toc(_pillar()["html_content"])
+    ids = [anchor for anchor, _ in toc]
+    assert "create" in ids
+    assert "manage" in ids
+    assert "faq" in ids
+    assert len(toc) <= 8
+
+
 def test_do_not_touch_neighbors_keep_their_titles():
     for slug, title in DO_NOT_TOUCH.items():
         post = json.loads((POSTS / f"{slug}.json").read_text(encoding="utf-8"))
