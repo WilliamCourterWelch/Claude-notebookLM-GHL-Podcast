@@ -6,6 +6,9 @@ for the Bing-first recovery ship queue (eng review 2026-07-21, run
 
 ## NEXT UP — CTR, not rankings (Bing data 2026-08-03)
 
+### DONE 2026-09-15 (v0.3.17.2) — money-page title rewrite
+`/blog/gohighlevel-free-trial-30-days-extended/` title/H1/og/headline now lead with the Bing head term: `GoHighLevel 30-Day Free Trial (2026): Get Extended Access`. COS cancelled the `/in/` hub upgrade and the agency/sub-account consolidate for this PR.
+
 ### Rewrite titles + meta descriptions on pages ranking 2-6 with ~0% CTR
 **Priority:** P0
 **This is the highest-value lane on the site right now, and it is not a rankings

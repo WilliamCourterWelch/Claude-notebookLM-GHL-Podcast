@@ -2,6 +2,13 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.17.2] - 2026-09-15
+### Changed
+- **The money-page title now leads with the head term Bing already ranks.** `/blog/gohighlevel-free-trial-30-days-extended/` held position ~5 on W37 (4 clicks / 1,267 impressions / 0.32% CTR) while the query cluster is `gohighlevel 30 day free trial*`. Title, H1, og:title, and JSON-LD headline all become `GoHighLevel 30-Day Free Trial (2026): Get Extended Access` (57 characters, inside the 60-character budget). Body truth is unchanged: still 30 days not 14, still the ~$1 card-verification hold, affiliate `fp_ref` / CTA slots untouched. There is no `twitter:title` meta on this template — none was added.
+
+### Added
+- **`scripts/test_trial_title.py`** pins the locked string in the post JSON and on the rendered `<title>`, `<h1>`, `og:title`, and headline, and asserts the affiliate `fp_ref` still ships.
+
 ## [0.3.17.1] - 2026-09-11
 ### Added
 - **GA4 can now tell which affiliate button was clicked.** Template CTAs carry a short `utm_content` slot (`nav`, `cta3`, `tldr`, `trial_hero`, and the rest). The existing `ghl_click` event copies that into the `cta_slot` parameter, so Explores no longer depend on truncated Link URL (about 100 characters, which hid `utm_campaign`). Pricing plan buttons keep their `tier_*` slots.
