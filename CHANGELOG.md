@@ -2,6 +2,14 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.18.0] - 2026-09-15
+### Changed
+- **Two sub-account cousins now 301 into the agency snapshots guide.** `/blog/manage-sub-accounts-gohighlevel-advanced-filtering/` and `/blog/how-to-create-sub-accounts-gohighlevel-snapshots/` are gone as built pages. Both slash and non-slash sources 301 to `/blog/gohighlevel-sub-accounts-snapshots-agency-guide/`. Title and H1 on that page stay `GoHighLevel Sub-Accounts: How Many You Really Get`. Canonical stays the blog URL (`isPillar` is still false, so the page is not rewritten onto the category hub).
+
+### Added
+- **The guide now carries the filter/bulk and create-from-snapshot how-tos those cousins held.** New sections: filter chips plus a stacked-filter example, bulk actions, short scale habits, create-snapshot steps, create-sub-account steps, reconnect-integrations, three client-type snapshot bullets, common mistakes, and the explicit note that pushing a new snapshot does **not** auto-update existing sub-accounts. In-body CTA still uses `fp_ref=amplifi-technologies12`. Homepage, `/es/`, the trial title/H1, and the white-label / SaaS / rebilling guides were not edited.
+- **`scripts/test_agency_subaccounts_consolidate.py`** pins the locked title, the 301s, the folded subsection ids, zero leftover cousin links, the do-not-touch neighbor titles, and a rendered-HTML check that canonical + `fp_ref` still ship.
+
 ## [0.3.17.2] - 2026-09-15
 ### Changed
 - **The money-page title now leads with the head term Bing already ranks.** `/blog/gohighlevel-free-trial-30-days-extended/` held position ~5 on W37 (4 clicks / 1,267 impressions / 0.32% CTR) while the query cluster is `gohighlevel 30 day free trial*`. Title, H1, og:title, and JSON-LD headline all become `GoHighLevel 30-Day Free Trial (2026): Get Extended Access` (57 characters, inside the 60-character budget). Body truth is unchanged: still 30 days not 14, still the ~$1 card-verification hold, affiliate `fp_ref` / CTA slots untouched. There is no `twitter:title` meta on this template — none was added.
