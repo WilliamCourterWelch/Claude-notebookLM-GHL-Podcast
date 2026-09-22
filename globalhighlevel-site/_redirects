@@ -91,6 +91,12 @@
 /blog/build-smarter-ai-agents-gohighlevel-agent-studio-setup/ /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
 /blog/how-to-build-ai-agents-gohighlevel-agent-studio-setup /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
 /blog/how-to-build-ai-agents-gohighlevel-agent-studio-setup/ /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
+# Agent Studio cluster depth (2026-09-22): these paths 404'd and were never posts.
+# Setup and the AI Studio / Agent Studio name split both live on the build guide.
+/blog/how-to-setup-ai-agents-in-gohighlevel /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
+/blog/how-to-setup-ai-agents-in-gohighlevel/ /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
+/blog/gohighlevel-ai-studio-vs-agent-studio /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
+/blog/gohighlevel-ai-studio-vs-agent-studio/ /blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/ 301
 /blog/fix-gohighlevel-payment-errors-paywall-checkout-india-guide /blog/how-to-fix-payment-errors-in-gohighlevel-paywall-checkout/ 301
 /blog/fix-gohighlevel-payment-errors-paywall-checkout-india-guide/ /blog/how-to-fix-payment-errors-in-gohighlevel-paywall-checkout/ 301
 /blog/manage-pipeline-permissions-gohighlevel-control-access-arabic /blog/how-to-manage-pipeline-permissions-in-gohighlevel-control-access/ 301
