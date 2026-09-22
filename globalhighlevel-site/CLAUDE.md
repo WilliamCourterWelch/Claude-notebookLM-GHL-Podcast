@@ -178,7 +178,7 @@ The canon link structure is enforced at render time by `build.py` and gated by
 - `verify.py` Check 7 (v0.3.15.0) — SERP title length. **A ratchet plus two hard
   invariants; read the title rule below before changing any of it.** The ratchet
   counts titles over 60 characters and fails only if the number grows past
-  `TITLE_OVERLONG_BASELINE` (580 as of v0.3.16.0; the constant carries its own
+  `TITLE_OVERLONG_BASELINE` (579 as of v0.3.19.0; the constant carries its own
   history, so read it rather than trusting this line). The invariants fail
   outright: no page
   may keep the brand suffix while over the limit, and no page may have room for
@@ -477,7 +477,7 @@ it when you need it.
 
 Three things to know before touching this:
 
-- **A green build does NOT mean titles are compliant.** 580 pages still exceed
+- **A green build does NOT mean titles are compliant.** 579 pages still exceed
   60 characters on their own words (median 68). Check 7 is a **ratchet**: the
   count may shrink, never grow. Failing outright would block every build until
   hundreds of pages of copy work landed, and the gate would get deleted instead.

@@ -2,6 +2,18 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.19.0] - 2026-09-22
+### Changed
+- **The Spanish LATAM hub is the canonical pagos page.** `/es/gohighlevel-latam/` ships with the locked title and H1 `GoHighLevel en Latinoamérica: guía de pagos` (43 characters). `compose_title` does not append the brand suffix, because 43 + 20 would be 63 and fail the 60-character title check. The SaaS dual-statement stays: Flujo A is Stripe, NMI, Authorize.net, and Square; MercadoPago is Flujo B for end customers in seven countries. This page does not claim MercadoPago for Flujo A.
+- **`/blog/gohighlevel-latam-pagos-agencias/` 301s to the hub**, slash and non-slash. The cousin post JSON is deleted so the build does not emit a static file that would make Cloudflare drop the redirect. The cousin slug is gone from every post body. Precios and México are the same Payments silo, so their new hrefs to `/es/gohighlevel-latam/` stay linked. Opiniones and qué-es are the Agency silo: the builder unwraps those hrefs at render and keeps the words. The hub's own "guías publicadas" list no longer includes the cross-silo qué-es link, and the México entry in that list uses a distinct anchor so the 3-per-anchor cap does not strip it.
+
+### Added
+- **`scripts/test_latam_hub_consolidate.py`** pins the locked title, both 301s, the missing cousin JSON, zero leftover cousin slugs in post HTML, the dual-statement, the retargeted hrefs, and a rendered check for canonical, `fp_ref=amplifi-technologies12`, and `highlevel-bootcamp-es`.
+- **Check 7 ratchet** drops from 580 to 579. Retiring the cousin removed one over-60 title. The new hub title is 43 characters, so it does not enter the over-60 set.
+
+### Documentation
+- `seo-cooldown.json` stays retired. The deploy log of record remains the gbrain SEO changelog. Frozen English paths (trial, agency snapshots, pricing consolidate targets) were not edited.
+
 ## [0.3.18.1] - 2026-09-22
 ### Changed
 - **The Agent Studio guide title now leads with the product name.** `/blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/` title, H1, og:title, and JSON-LD headline are `GoHighLevel Agent Studio: Build AI Agents Step by Step` (54 characters, inside the 60-character budget, no brand suffix). Slug, body copy, and affiliate CTAs are unchanged. The money page, the agency snapshots guide, and the other frozen paths were not edited.

@@ -59,7 +59,7 @@ If any appears: re-frame/crop the screen and re-capture, or drop that image.
 
 ### Step 1 — Pick the target + extract claims (JUDGMENT)
 - Choose ONE post (`posts/<slug>.json`, note its `language`). Pilot recommendation:
-  `gohighlevel-latam-pagos-agencias` (crawled today, fastest indexing signal).
+  `hub-es-gohighlevel-latam` (the Spanish hub at `/es/gohighlevel-latam/`; the old blog slug 301s here).
 - Read its `html_content`. List the factual/product claims a screenshot would
   substantiate (e.g. "MercadoPago is a native GHL payment provider" → Payments →
   Integrations screen). Decoration that proves no claim is NOT allowed.
