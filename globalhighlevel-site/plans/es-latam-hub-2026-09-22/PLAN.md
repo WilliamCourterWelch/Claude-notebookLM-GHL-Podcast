@@ -1,8 +1,14 @@
-# LATAM hub `/es/gohighlevel-latam/` — ship plan (taste hold)
+# LATAM hub `/es/gohighlevel-latam/` — ship plan
 
-**Status: AWAITING WILLIAM TASTE. Do not land, merge, or canary.**
+**Status: GO. Manager locked taste on 2026-09-22. Land is authorized.**
 
-Review label: plan only. Outside adversarial review was not run. No Codex CLI. Not `CODEX_PASS`. Dual-Cursor is the next wave after taste GO.
+Three locked calls, not re-opened:
+
+- **A.** 301 `/blog/gohighlevel-latam-pagos-agencias/` → `/es/gohighlevel-latam/` (slash and non-slash). Do not keep both. Do not reverse.
+- **B.** Title and H1 are exactly `GoHighLevel en Latinoamérica: guía de pagos` (43 characters). The brand suffix is not appended: 43 + 20 = 63, which would fail Check 7. The rendered `<title>` is the locked string.
+- **C.** Keep the SaaS dual-statement. Flujo A stays Stripe, NMI, Authorize.net, and Square. Do not claim MercadoPago for Flujo A.
+
+Review label: Dual-Cursor (Claude primary + a second high model). Not Codex-only. Not `CODEX_PASS`.
 
 ## URL, title, H1
 
@@ -13,11 +19,9 @@ Review label: plan only. Outside adversarial review was not run. No Codex CLI. N
 | `url_path` | `/es/gohighlevel-latam/` |
 | `language` | `es` |
 | `topic` | `Payments & Pricing` |
-| Title / H1 | `GoHighLevel en Latinoamérica: pagos` (35 characters) |
-| Rendered `<title>` | brand suffix fits: `GoHighLevel en Latinoamérica: pagos \| Global High Level` |
-| Description | 150 characters. Names MercadoPago, the two flows, and the ~$1 card check. |
-
-The June publish draft's H1 is `GoHighLevel en Latinoamérica: la guía honesta de pagos para agencias (2026)`. That string is already the live H1 of `/blog/gohighlevel-latam-pagos-agencias/`. Reusing it here would be a second page with the same headline, and it is over the 60-character title ratchet (`verify.py` Check 7 fails if the over-long count grows). The short H1 is the draft. William can lengthen it only if he also lowers some other title or accepts a ratchet bump.
+| Title / H1 | `GoHighLevel en Latinoamérica: guía de pagos` (43 characters, decision B) |
+| Rendered `<title>` | the locked string, no brand suffix (43 > 40) |
+| Description | 150 characters. Names MercadoPago, the two flows, and the ~$1 card check. It does not repeat the retired 35-character title. |
 
 ## What this page is
 
@@ -34,7 +38,7 @@ All checked 200 on 2026-09-22 except the SaaS Mode help article, which 404s and 
 | Role | URL |
 |---|---|
 | Precios | `/blog/gohighlevel-precios-planes-2026-guia-completa/` |
-| Pagos agencias (same topic, already live) | `/blog/gohighlevel-latam-pagos-agencias/` |
+| Pagos agencias (retired; 301 into this hub, decision A) | `/blog/gohighlevel-latam-pagos-agencias/` → `/es/gohighlevel-latam/` |
 | MercadoPago hub | `/es/mercadopago-gohighlevel/` |
 | México | `/blog/gohighlevel-mercadopago-mexico/` |
 | Qué es | `/blog/que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica/` |
@@ -69,9 +73,9 @@ The outline's `es-419` / `es-MX` / `es-AR` / `es-CO` / `pt-BR` block points at p
 
 - No rewrite of the 28 Spanish posts.
 - No new country spokes.
-- No 301 from `/blog/gohighlevel-latam-pagos-agencias/` to this URL. That is a taste call. Landing both without a canonical decision leaves two pages on the same topic.
+- Decision A is in: both 301 lines, cousin JSON deleted, in-site hrefs retargeted. The hub's two self-references to the cousin were removed rather than turned into links to this same URL. They said the blog page was a second investigation to read alongside this one.
 - No English, Desktop, or India edits.
-- No VERSION bump, no CHANGELOG, no `seo-cooldown.json`. Those are land steps.
+- VERSION `0.3.19.0` and CHANGELOG are the land record. `seo-cooldown.json` stays retired (gbrain SEO changelog is the log of record).
 - Frozen English paths were not touched.
 
 ## Acceptance checks before any land
@@ -89,11 +93,4 @@ From `globalhighlevel-site/`:
 
 ## GSTACK REVIEW REPORT
 
-Primary pass only. Outside voice: not run (deferred Dual-Cursor, no Codex).
-
-Taste held for William:
-
-1. Overlap with the live pagos page. Same research, new URL, no 301.
-2. Short H1 versus the June headline.
-3. The "SaaS mode" changelog sentence versus "MercadoPago is not Flujo A".
-4. "más de 300" versus the June draft's 303.
+Taste hold lifted 2026-09-22. Decisions A, B, and C are implemented. Dual-Cursor is the outside pass for this land. Codex is not the authorized reviewer.

@@ -172,7 +172,7 @@ real intent is precios / "es gratis" / qué es).
 15. gohighlevel reportes de agencia
 
 ## HUB 9 — Pagos y Cobros (LATAM)  *(optional 9th — your live pillar)*
-**Head:** `gohighlevel pagos` — **LIVE:** `gohighlevel-latam-pagos-agencias`; **DRAFT:** `gohighlevel-mercadopago-mexico`
+**Head:** `gohighlevel pagos` — **LIVE:** `/es/gohighlevel-latam/` (manager GO 2026-09-22; former blog slug `gohighlevel-latam-pagos-agencias` 301s here); **DRAFT:** `gohighlevel-mercadopago-mexico`
 1. ¿gohighlevel acepta pagos? *(PAA)*
 2. gohighlevel + mercado pago méxico *(DRAFT)*
 3. gohighlevel pagos para agencias LATAM *(LIVE)*
