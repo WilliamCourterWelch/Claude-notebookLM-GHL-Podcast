@@ -1,6 +1,6 @@
 # AI agents cluster depth — ship plan
 
-**Status: AWAITING WILLIAM TASTE. Do not land.**
+**Status: TASTE LIFTED 2026-09-22. Manager locked A, B, and C as drafted. Dual-Cursor approved. Landing.**
 
 No new URL. No new title. No new H1.
 
@@ -12,7 +12,7 @@ The locked pillar stays:
 | File | `globalhighlevel-site/posts/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide.json` |
 | Title / H1 | `GoHighLevel Agent Studio: Build AI Agents Step by Step` (54 characters, PR #69, frozen) |
 
-Review label: primary pass on this branch. Codex CLI is not installed in this environment, so there is no outside-model pass. That gap is named here. It is not a `CODEX_PASS`.
+Review label: Dual-Cursor approved at `e39a36e7`. Claude (`claude-opus-5-5-high`, `bc-e5c80f0b-d691-54e8-8c4a-154b5f55699d`) and secondary high (`gpt-5.6-terra-high`, `bc-b8b4a2df-bac0-54b6-808b-46b2abd17fb2`) both APPROVE. Codex CLI is not installed (`CODEX_MODE: not_installed`). Dual-Cursor is the authorized outside voice.
 
 ## Decision
 
@@ -105,7 +105,7 @@ Both forms, slash and non-slash, 301 to the pillar. Existing setup 301s are unch
 
 ## Taste holds (William)
 
-The new sentences are the taste. Locked calls, if he wants to GO without a rewrite:
+Locked 2026-09-22 as drafted. The new sentences ship.
 
 - **A.** No compare post. The naming section on the pillar is the page. The 301 from `/blog/gohighlevel-ai-studio-vs-agent-studio/` stays.
 - **B.** No setup sibling. `#section-2` remains the setup section. `#setup` is an alias. The existing setup 301s stay. The new 301 from `/blog/how-to-setup-ai-agents-in-gohighlevel/` stays.
@@ -134,9 +134,9 @@ Phase 1 (CEO): The queue asked for setup, naming, and links without a thin secon
 
 Phase 3 (eng): Edits are string splices of `html_content` inside post JSON (`json.dumps(..., ensure_ascii=False)` round-trips the existing value). FAQ blocks are not edited, so the hand-written FAQPage stays aligned with the visible questions. New paragraphs each contain one `<a>`, so `inject_internal_links` skips them. Same-silo hrefs are not unwrapped. The money page is untouched. No title passes through `compose_title` differently, so Check 7 stays at 579.
 
-Outside voice: Codex CLI absent (`CODEX_MODE: not_installed`). Claude subagent pass was not a second model. Missing coverage is recorded. Do not treat this report as dual-model agreement.
+Outside voice: Codex CLI absent (`CODEX_MODE: not_installed`). Dual-Cursor is the authorized outside voice. Both reviewers APPROVE at `e39a36e7`: Claude opus (`bc-e5c80f0b-d691-54e8-8c4a-154b5f55699d`) and GPT terra (`bc-b8b4a2df-bac0-54b6-808b-46b2abd17fb2`). No blockers.
 
-Taste gate: **AWAITING WILLIAM TASTE.** Decisions A, B, and C above are the GO switches. Do not merge on this report alone.
+Taste gate: **LIFTED 2026-09-22.** Manager locked A, B, and C as drafted.
 
 <!-- autoplan-accepted:ceo -->
 - Naming is a section on the locked pillar, not a new compare URL.

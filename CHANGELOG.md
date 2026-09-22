@@ -12,7 +12,7 @@ All notable changes to globalhighlevel.com's static-site build are documented he
 - **`scripts/test_agent_studio_cluster.py`** pins the section ids, the cluster hrefs, the spoke backlinks, both new 301s, the locked title on the rendered page, `fp_ref=amplifi-technologies12`, and the money page's lack of a link to the guide.
 
 ### Documentation
-- Plan and fact ledger: `globalhighlevel-site/plans/ai-agents-cluster-depth-2026-09-22/PLAN.md`. Awaiting William's taste on the new sentences. `seo-cooldown.json` stays retired.
+- Plan and fact ledger: `globalhighlevel-site/plans/ai-agents-cluster-depth-2026-09-22/PLAN.md`. Taste lifted 2026-09-22: A, B, and C locked as drafted. `seo-cooldown.json` stays retired.
 
 ## [0.3.20.0] - 2026-09-22
 ### Changed

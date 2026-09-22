@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Gate: Agent Studio cluster depth stays on the locked build guide.
 
-William taste is still open (2026-09-22). This pins the structure, not the
-prose: naming section, setup anchor, cluster hrefs, spoke backlinks, the two
-new 301s, the locked title, and no new outbound from the money page.
+Taste lifted 2026-09-22. Manager locked A, B, and C as drafted. This pins
+the structure: naming section, setup anchor, cluster hrefs, spoke backlinks,
+the two new 301s, the locked title, and no new outbound from the money page.
 
 Run: python3 -m pytest scripts/test_agent_studio_cluster.py
 """
