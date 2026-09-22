@@ -112,12 +112,83 @@ def test_retargeted_posts_link_the_hub_and_keep_their_titles():
         assert HUB_PATH in post["html_content"], slug
 
 
+def _arm_silo(posts: list[dict]) -> None:
+    for post in posts:
+        slug = post["slug"]
+        silo = (build.post_lang(post), build.post_topic(post))
+        build._SILO_BY_SLUG[slug] = silo
+        url = build.post_url(post)
+        build._SILO_BY_URL[url] = (slug, silo)
+        build._URL_BY_SLUG[slug] = url
+
+
+def test_same_silo_hrefs_survive_and_cross_silo_unwraps(tmp_path, monkeypatch):
+    """Payments posts keep the hub link. Agency posts store it and render the words."""
+    monkeypatch.setattr(build, "PUBLIC_DIR", tmp_path)
+    saved = (
+        dict(build._SILO_BY_SLUG),
+        dict(build._SILO_BY_URL),
+        dict(build._URL_BY_SLUG),
+        dict(build._ANCHOR_URL_COUNTS),
+    )
+    posts = [_hub()]
+    for slug in RETARGETED:
+        posts.append(json.loads((POSTS / f"{slug}.json").read_text(encoding="utf-8")))
+    build._SILO_BY_SLUG.clear()
+    build._SILO_BY_URL.clear()
+    build._URL_BY_SLUG.clear()
+    build._ANCHOR_URL_COUNTS.clear()
+    _arm_silo(posts)
+    by_slug = {p["slug"]: p for p in posts}
+    same_silo = (
+        "gohighlevel-precios-planes-2026-guia-completa",
+        "gohighlevel-mercadopago-mexico",
+    )
+    cross_silo = (
+        "gohighlevel-opiniones-es-confiable-vale-la-pena",
+        "que-es-gohighlevel-mejor-alternativa-herramientas-locales-latinoamerica",
+    )
+    for slug in same_silo:
+        build.build_post_page(by_slug[slug], all_posts=posts)
+        html = (tmp_path / build.post_output_rel(by_slug[slug]) / "index.html").read_text(
+            encoding="utf-8"
+        )
+        assert HUB_PATH in html, slug
+        assert COUSIN not in html, slug
+    for slug in cross_silo:
+        build.build_post_page(by_slug[slug], all_posts=posts)
+        html = (tmp_path / build.post_output_rel(by_slug[slug]) / "index.html").read_text(
+            encoding="utf-8"
+        )
+        assert HUB_PATH not in html, slug
+        assert COUSIN not in html, slug
+    build._ANCHOR_URL_COUNTS.clear()
+    build.build_post_page(by_slug[HUB_SLUG], all_posts=posts)
+    hub_html = (tmp_path / build.post_output_rel(by_slug[HUB_SLUG]) / "index.html").read_text(
+        encoding="utf-8"
+    )
+    assert (
+        'href="/blog/gohighlevel-mercadopago-mexico/">guía de Mercado Pago para agencias en México</a>'
+        in hub_html
+    )
+    # qué-es is Agency silo. The guides list must not offer it as a dead link.
+    assert "que-es-gohighlevel" not in hub_html
+    build._SILO_BY_SLUG.clear()
+    build._SILO_BY_SLUG.update(saved[0])
+    build._SILO_BY_URL.clear()
+    build._SILO_BY_URL.update(saved[1])
+    build._URL_BY_SLUG.clear()
+    build._URL_BY_SLUG.update(saved[2])
+    build._ANCHOR_URL_COUNTS.clear()
+    build._ANCHOR_URL_COUNTS.update(saved[3])
+
+
 def test_dual_statement_keeps_mercadopago_off_flujo_a():
     html = _hub()["html_content"]
     assert DUAL_STATEMENT in html
     assert FLUJO_B in html
     assert "sin tarjeta" not in html.lower()
-    assert "fp_ref=amplifi-technologies12" in html or "globalhighlevel.com/trial" in html
+    assert "globalhighlevel.com/trial" in html
     # Decision C: do not claim MercadoPago as the Flujo A processor.
     lowered = html.lower()
     for banned in (
