@@ -3967,9 +3967,11 @@ def india_hub_intro() -> str:
       migrate from another provider. Meta bills WhatsApp separately
       (155000007938, error 131042).
 
-    The India pricing guide still says Razorpay can bill SaaS Mode. The card
-    under the hero says that sentence is wrong. This function does not edit
-    the guide.
+    The India pricing guide was corrected on 2026-09-22 (William lock 3): it
+    no longer says Razorpay bills SaaS Mode, and it no longer calls PayU
+    native. The featured card states the same limit and does not accuse the
+    guide. Older India posts outside that file still say PayU is built in.
+    That sentence on this hub stays, on purpose (William lock 4).
     """
     cta = affiliate_href("en-IN", campaign="in-hub", content="hub_cta")
     pricing = "/blog/gohighlevel-pricing-india-2026-rupees-complete-guide/"
@@ -3988,7 +3990,7 @@ def india_hub_intro() -> str:
     <div>
       <div class="gc-k">Start with pricing</div>
       <div class="gc-t">GoHighLevel pricing in rupees</div>
-      <div class="gc-d">Plan prices for India, and what the invoice adds. That guide still says Razorpay can bill SaaS Mode. HighLevel's provider table says no. Read the limit on this page before you use the rupee math.</div>
+      <div class="gc-d">Plan prices in rupees, and what the invoice adds. Razorpay does not bill SaaS Mode. The pricing guide says the same thing.</div>
     </div>
     <span class="gc-arrow">Read &rarr;</span>
   </a>
@@ -3999,7 +4001,7 @@ def india_hub_intro() -> str:
   <p class="lead">Three routes into the India library. Limits below are from HighLevel's help docs, checked September 2026.</p>
   <div class="clusters">
     <div class="cluster"><h3>WhatsApp</h3><p>Connect WhatsApp on each sub-account: an existing Business app, a new number, or a move from another provider (<a href="{whatsapp_doc}" target="_blank" rel="noopener">HighLevel's setup guide</a>). Meta bills conversation fees separately from the GoHighLevel plan. A missing Meta payment method blocks sends even when the CRM subscription is paid. The <a href="{whatsapp}">India setup guide</a> walks the same path.</p><a class="cl" href="/in/category/crm-communication/">CRM and communication guides &rarr;</a></div>
-    <div class="cluster"><h3>Razorpay and UPI</h3><p>Razorpay is a sub-account marketplace app (<a href="{razorpay_doc}" target="_blank" rel="noopener">how to connect it</a>). The <a href="{table_doc}" target="_blank" rel="noopener">provider table</a> marks it Yes for order forms, invoices including recurring, payment links, courses, communities, the store, and calendars. It is No for SaaS Mode, wallet recharges, charging a card on the contact page, the service menu, and POS. UPI is not its own row: customers pay a Razorpay checkout. PayU is not in the provider table. The <a href="{razorpay}">Razorpay setup guide</a> is the long version. Where an older India post says PayU is built in, that sentence is wrong.</p><a class="cl" href="/in/category/payments-pricing/">Payments and pricing guides &rarr;</a></div>
+    <div class="cluster"><h3>Razorpay and UPI</h3><p>Razorpay is a sub-account marketplace app (<a href="{razorpay_doc}" target="_blank" rel="noopener">how to connect it</a>). The <a href="{table_doc}" target="_blank" rel="noopener">provider table</a> marks it Yes for order forms, invoices including recurring, payment links, courses, communities, the store, and calendars. That table marks it No for SaaS Mode, charging a card on the contact page, the service menu, and POS. The Razorpay app FAQ says wallet recharges do not work on that app. UPI is not its own row: customers pay a Razorpay checkout. PayU is not in the provider table. The <a href="{razorpay}">Razorpay setup guide</a> is the long version. Where an older India post says PayU is built in, that sentence is wrong.</p><a class="cl" href="/in/category/payments-pricing/">Payments and pricing guides &rarr;</a></div>
     <div class="cluster"><h3>White-label and SaaS Mode</h3><p>Agencies resell GoHighLevel under their own brand. SaaS Mode is how those client accounts get billed. The provider table marks SaaS Mode Yes for Stripe, Authorize.net, NMI, and Square, and No for Razorpay. Do not plan client subscriptions on the Razorpay app. The <a href="{whitelabel}">white-label guide</a> covers the resale setup.</p><a class="cl" href="/in/category/agency-white-label-saas/">Agency and white-label guides &rarr;</a></div>
   </div>
   <div class="es-banner" style="margin-top:28px">

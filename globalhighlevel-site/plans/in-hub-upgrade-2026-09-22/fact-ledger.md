@@ -25,6 +25,10 @@ Every payment sentence on the `/in/` draft traces to a HighLevel help article fe
 | A rupee price, GST rate, or Razorpay fee | Those numbers live in older posts and were not re-verified for this hub. The featured card does not repeat them |
 | WhatsApp is included free in the GoHighLevel plan | Meta conversation fees are separate |
 
+## Pricing guide correction (William lock 3, 2026-09-22)
+
+`posts/gohighlevel-pricing-india-2026-rupees-complete-guide.json` was edited in place. Visible FAQ and FAQPage answer for "What payment methods can my clients use through GHL?" are the same string. The guide now says Razorpay does not bill SaaS Mode, and that PayU is not in the provider table. It does not say PayU is available. The hub card repeats the SaaS Mode limit and does not call the guide wrong.
+
 ## Corpus note
 
 145 `en-IN` posts on 2026-09-22. A large share mention Razorpay. Many also say "no credit card required" or treat PayU as native. Those posts are out of scope for this draft. The hub does not quote them as fact.

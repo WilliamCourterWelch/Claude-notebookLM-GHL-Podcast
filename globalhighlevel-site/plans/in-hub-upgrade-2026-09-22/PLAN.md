@@ -1,10 +1,19 @@
-# `/in/` India hub upgrade — draft plan
+# `/in/` India hub upgrade — ship plan
 
-**Status: AWAITING WILLIAM TASTE. Do not land.**
+**Status: GO. Manager locked taste on 2026-09-22. Land is authorized.**
 
 Client: Global HighLevel only. URL stays `https://globalhighlevel.com/in/`. This is an upgrade. It is not a 410, not a 301, and not a new URL.
 
-William's queue lock: LATAM done (v0.3.19.0) → Desktop quiet → this hub → AI cluster depth next. This PR stops at taste. Dual-Cursor land waits for a manager reply of GO.
+Four locked calls, not re-opened:
+
+1. **H1** is `GoHighLevel for Indian agencies`.
+2. **SERP title** stays `GoHighLevel India: {count} Guides, UPI and WhatsApp`. The count stays interpolated.
+3. **The India pricing guide is corrected before land.** `gohighlevel-pricing-india-2026-rupees-complete-guide` no longer says Razorpay bills SaaS Mode and no longer calls PayU native. The hub featured card states the same limit and does not say the guide is wrong.
+4. **The hub keeps the on-page note** that older India posts are wrong about PayU. It is not softened.
+
+Review label: Dual-Cursor (primary plus a second high model). Codex is not the authorized blocker. Not `CODEX_PASS`.
+
+VERSION `0.3.20.0`.
 
 ## How `/in/` is authored
 
@@ -54,7 +63,7 @@ No new posts in this draft. The library is already large. The hub was thin becau
 | H1 | `GoHighLevel for Indian agencies` | visible page only |
 | Meta description | `WhatsApp, Razorpay, and white-label for Indian agencies. Razorpay does not bill SaaS Mode. UPI is Razorpay checkout, not its own HighLevel row. Card required.` | 158 |
 
-The SERP title is unchanged on purpose. It already names UPI and WhatsApp, the count is real, and growing the over-60 title count is forbidden unless another over-long title is retired. Changing this title is a taste question, not a requirement of the upgrade.
+The SERP title is unchanged on purpose (lock 2). It already names UPI and WhatsApp, the count is real, and growing the over-60 title count is forbidden unless another over-long title is retired.
 
 Paginated titles stay `GoHighLevel India: UPI and WhatsApp — Page N`. They do not repeat "145 Guides".
 
@@ -63,7 +72,7 @@ Paginated titles stay `GoHighLevel India: UPI and WhatsApp — Page N`. They do 
 Page 1, above the existing card grid:
 
 1. H1 and a three-sentence stack: WhatsApp, Razorpay, white-label.
-2. A featured card to `/blog/gohighlevel-pricing-india-2026-rupees-complete-guide/`. The card says that guide still claims Razorpay can bill SaaS Mode, and that HighLevel's table says no.
+2. A featured card to `/blog/gohighlevel-pricing-india-2026-rupees-complete-guide/`. The card says Razorpay does not bill SaaS Mode, and that the pricing guide says the same thing.
 3. Three clusters, each with one category link:
    - WhatsApp → `/in/category/crm-communication/` and the WhatsApp setup post
    - Razorpay and UPI → `/in/category/payments-pricing/` and the Razorpay setup post
@@ -86,7 +95,7 @@ Checked 2026-09-22. Detail is in `fact-ledger.md` in this folder.
 - WhatsApp connects per sub-account (help `155000001980`). Meta bills conversation fees separately (error 131042, help `155000007938`).
 - SaaS Mode is Yes for Stripe, Authorize.net, NMI, and Square. Not for Razorpay.
 
-The India pricing guide (`gohighlevel-pricing-india-2026-rupees-complete-guide`) still says SaaS Mode can bill with Razorpay, and it names PayU. This draft does not edit that post. The hub card warns the reader. Editing it is taste question 3. It is a live page with FAQ schema stored twice in `html_content`.
+The India pricing guide (`gohighlevel-pricing-india-2026-rupees-complete-guide`) was corrected under lock 3. It no longer says Razorpay bills SaaS Mode, and it no longer calls PayU native. The visible FAQ and the inline FAQPage answer were edited as one string. The hub card states the same limit and does not say the guide is wrong. Other India posts that still call PayU native were left alone (lock 4 names them from the hub).
 
 ## What already exists
 
@@ -153,33 +162,25 @@ build_language_hub()
 | 3 | Keep the SERP title | Taste, recommended | Already specific, under 60, count is real. A new title needs a retired over-long title if it exceeds 60 |
 | 4 | Change the H1 | Taste, recommended | The live H1 is the thin part |
 | 5 | No new posts | Mechanical | 145 posts already cover the three clusters. The gap is the hub, not a missing spoke |
-| 6 | State Razorpay's SaaS Mode limit on the hub, do not rewrite the pricing guide in this PR | Taste, recommended | The guide is a live page with duplicated FAQ schema. The hub warns. A rewrite is a separate GO |
+| 6 | Correct the pricing guide's Razorpay SaaS Mode and PayU-native sentences, and keep the hub PayU note | Locked by William | FAQ visible text and FAQPage answer edited together. Other India posts stay |
 | 7 | One bootcamp CTA with `utm_content=hub_cta` | Mechanical | Measurement stays intact, `fp_ref` required |
-| 8 | No version bump until land | Mechanical | Taste hold. v0.3.19.0 is LATAM and stays the shipped version |
+| 8 | Ship as 0.3.20.0 | Locked by the GO | Next slot after LATAM 0.3.19.0 |
 
-## Taste questions for William
+## Taste locks (2026-09-22)
 
-1. **H1.** Recommended: `GoHighLevel for Indian agencies`. Live is `GoHighLevel — India`. The SERP title does not change.
-2. **SERP title.** Recommended: keep `GoHighLevel India: {count} Guides, UPI and WhatsApp`. It is 47 characters at 145 posts. A replacement that drops the count, or that runs past 60, is a different call.
-3. **Pricing guide.** The featured card links the India rupee pricing guide and says its Razorpay-for-SaaS-Mode sentence is wrong. Recommended: leave the guide for a follow-up. Say if this PR should correct that post (and the PayU sentences) before land.
-4. **Tone of the correction.** The hub tells the reader the older posts are wrong about PayU and about SaaS Mode. Recommended: keep that on the page. The alternative is a softer cluster that only states the limit and does not mention the older posts.
+Closed. Do not re-open.
+
+1. H1 is `GoHighLevel for Indian agencies`.
+2. SERP title stays `GoHighLevel India: {count} Guides, UPI and WhatsApp` (47 characters at 145 posts).
+3. The pricing guide was corrected in this version. The featured card no longer says the guide is wrong.
+4. The PayU note on the hub stays specific: older India posts that say PayU is built in are wrong.
 
 ## Land checklist (after GO only)
 
 - Dual-Cursor review, then VERSION and CHANGELOG.
-- gbrain timeline on `globalhighlevel-seo-changelog` before any push to `main`.
-- `seo-cooldown.json` mirror for `/in/`.
+- gbrain timeline on `globalhighlevel-seo-changelog` before any push to `main`, when gbrain is available. `seo-cooldown.json` stays retired.
 - Re-run pytest, build, verify on the land commit.
 
 ## GSTACK REVIEW REPORT
 
-Draft only. Not approved. Not landed.
-
-- gstack preflight: bun 1.4.2, `~/.claude/skills/gstack/ship/SKILL.md` and `review/SKILL.md` present after `./setup`.
-- Codex outside voice: not installed (`CODEX_NOT_INSTALLED`). Missing coverage. Dual-Cursor is the land reviewer William already requires. Do not treat this draft as that pass.
-- CEO: upgrade, do not kill, do not add spokes. The thin page is the product bug. Completeness here is an honest hub over 145 existing posts, not 145 rewrites.
-- Design: reused the `/es/` hub classes. No new visual system. UI scope is the page-1 intro only.
-- DX: skipped. This is a reader page, not a developer tool.
-- Eng: one function, one branch inside the existing hub builder, one rendered-HTML test. Title ratchet untouched.
-
-**AWAITING WILLIAM TASTE. Do not land.**
+Taste hold lifted 2026-09-22. Locks 1-4 are implemented. Dual-Cursor is the outside pass for this land. Codex is not the authorized reviewer.
