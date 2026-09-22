@@ -2,6 +2,13 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.18.1] - 2026-09-22
+### Changed
+- **The Agent Studio guide title now leads with the product name.** `/blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/` title, H1, og:title, and JSON-LD headline are `GoHighLevel Agent Studio: Build AI Agents Step by Step` (54 characters, inside the 60-character budget, no brand suffix). Slug, body copy, and affiliate CTAs are unchanged. The money page, the agency snapshots guide, and the other frozen paths were not edited.
+
+### Added
+- **`scripts/test_agent_studio_title.py`** pins the locked string on the parsed post title and on the rendered `<title>`, `<h1>`, `og:title`, and headline, and asserts the affiliate `fp_ref` still ships.
+
 ## [0.3.18.0] - 2026-09-15
 ### Changed
 - **Two sub-account cousins now 301 into the agency snapshots guide.** `/blog/manage-sub-accounts-gohighlevel-advanced-filtering/` and `/blog/how-to-create-sub-accounts-gohighlevel-snapshots/` are gone as built pages. Both slash and non-slash sources 301 to `/blog/gohighlevel-sub-accounts-snapshots-agency-guide/`. Title and H1 on that page stay `GoHighLevel Sub-Accounts: How Many You Really Get`. Canonical stays the blog URL (`isPillar` is still false, so the page is not rewritten onto the category hub).
