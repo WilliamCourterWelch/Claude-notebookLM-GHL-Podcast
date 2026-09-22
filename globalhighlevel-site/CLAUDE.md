@@ -431,7 +431,12 @@ and JSON-LD headline, and the **agency sub-accounts consolidate gate**
 (`scripts/test_agency_subaccounts_consolidate.py`, added v0.3.18.0) which
 pins the locked title/H1 on `/blog/gohighlevel-sub-accounts-snapshots-agency-guide/`,
 the two cousin 301s, the folded filter/bulk and create-from-snapshot
-subsections, zero leftover cousin links, and `fp_ref` on the rendered page.
+subsections, zero leftover cousin links, and `fp_ref` on the rendered page, and the **Agent Studio title gate**
+(`scripts/test_agent_studio_title.py`, 3 tests, rendered HTML, added v0.3.18.1)
+which pins the locked title/H1 on
+`/blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/`
+(`GoHighLevel Agent Studio: Build AI Agents Step by Step`) across `<title>`,
+`<h1>`, `og:title`, and JSON-LD headline. Slug, body, and CTAs stay put.
 
 **The sync gate is not a duplicate of `test_fix_faq_schema`.** That one pins the
 one-off *migration* that built the schema. This one pins the *invariant* that
