@@ -4054,7 +4054,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
   <div class="clusters">
     <div class="cluster"><h3>Automatizaci&oacute;n y Agentes IA</h3><p>Pon la plataforma en piloto autom&aacute;tico &mdash; workflows, WhatsApp, seguimiento de leads y agentes con IA.</p><a class="cl" href="/blog/como-configurar-primera-automatizacion-gohighlevel-paso-a-paso/">Explorar gu&iacute;as &rarr;</a></div>
     <div class="cluster"><h3>Agencia, Marca Blanca y SaaS</h3><p>Revende GoHighLevel como tuyo &mdash; marca blanca, modo SaaS, sub-cuentas y reportes.</p><a class="cl" href="/es/category/agency-white-label-saas/">Explorar gu&iacute;as &rarr;</a></div>
-    <div class="cluster"><h3>Pagos y Precios</h3><p>Cobra dentro de GoHighLevel y conoce el costo real &mdash; MercadoPago y pasarelas para LATAM, m&aacute;s el desglose de precios.</p><a class="cl" href="/es/category/payments-pricing/">Explorar gu&iacute;as &rarr;</a></div>
+    <div class="cluster"><h3>Pagos y Precios</h3><p>Cobra dentro de GoHighLevel y conoce el costo real &mdash; MercadoPago y pasarelas para LATAM, m&aacute;s el desglose de precios. El mapa regional est&aacute; en la <a href="/es/gohighlevel-latam/">gu&iacute;a de GoHighLevel para Latinoam&eacute;rica</a>.</p><a class="cl" href="/es/category/payments-pricing/">Explorar gu&iacute;as &rarr;</a></div>
   </div>{es_all_guides}
   <div class="es-banner">
     <div><b style="color:var(--text)">Prefer English?</b> <span style="color:var(--text2)">The full GoHighLevel guide library and the 30-day trial.</span></div>
