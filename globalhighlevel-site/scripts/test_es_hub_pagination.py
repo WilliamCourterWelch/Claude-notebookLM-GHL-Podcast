@@ -200,10 +200,10 @@ def test_rendered_es_paginated_pages_make_no_false_count_claim(tmp_path, monkeyp
 
 
 def test_rendered_english_hubs_keep_their_honest_count(tmp_path, monkeypatch):
-    """The quiet edge for the es-only subtitle. /in/ page 1 takes the else
-    branch: it renders cards AND links every paginated page, so its count is
-    honest and must survive. Without this, the Spanish carve-out silently
-    strips the count from every language."""
+    """The quiet edge for the es-only subtitle. /in/ page 1 keeps the card
+    grid (india_hub_intro is prepended, the cards are not discarded) and links
+    every paginated page, so its count is honest and must survive. Without
+    this, the Spanish carve-out silently strips the count from every language."""
     import build
 
     monkeypatch.setattr(build, "PUBLIC_DIR", tmp_path)

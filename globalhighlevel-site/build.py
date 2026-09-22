@@ -3947,6 +3947,68 @@ def es_library_block(pag_html: str) -> str:
   </div>"""
 
 
+def india_hub_intro() -> str:
+    """Curated pitch prepended to /in/ page 1. The card grid stays below it.
+
+    /es/ page 1 throws its cards away. /in/ must not: the title interpolates
+    the post count, and that count is honest only while page 1 lists the
+    cards and links every later page.
+
+    Payment limits are from HighLevel help, fetched 2026-09-22:
+    - 155000002559 (Razorpay app, modified 2025-12-12): marketplace app on a
+      sub-account. FAQ: the app does not do SaaS Mode or wallet recharges,
+      because it cannot charge a saved card off-session.
+    - 155000006075 (provider table, modified 2026-02-17): Razorpay is Yes on
+      order forms, forms, surveys, email checkout, the store, invoices
+      including recurring, payment links, courses, communities, and calendars.
+      No on contact-page card charges, SaaS Mode, the service menu, and POS.
+      The table has a Razorpay row and no UPI row. PayU is not listed.
+    - 155000001980 (WhatsApp sub-account setup): existing app, new number, or
+      migrate from another provider. Meta bills WhatsApp separately
+      (155000007938, error 131042).
+
+    The India pricing guide still says Razorpay can bill SaaS Mode. The card
+    under the hero says that sentence is wrong. This function does not edit
+    the guide.
+    """
+    cta = affiliate_href("en-IN", campaign="in-hub", content="hub_cta")
+    pricing = "/blog/gohighlevel-pricing-india-2026-rupees-complete-guide/"
+    razorpay = "/blog/how-to-accept-razorpay-upi-payments-in-gohighlevel-india/"
+    whatsapp = "/blog/gohighlevel-whatsapp-business-api-setup-india/"
+    whitelabel = "/blog/how-indian-saas-companies-white-label-gohighlevel/"
+    razorpay_doc = "https://help.gohighlevel.com/support/solutions/articles/155000002559-how-to-integrate-razorpay-within-the-crm"
+    table_doc = "https://help.gohighlevel.com/support/solutions/articles/155000006075-supported-payment-providers-methods-by-product-area-what-works-where-"
+    whatsapp_doc = "https://help.gohighlevel.com/support/solutions/articles/155000001980-how-to-set-up-whatsapp-for-a-sub-account"
+    return f"""
+<header class="hh"><div class="container">
+  <h1>GoHighLevel for <em>Indian agencies</em></h1>
+  <p class="sub">WhatsApp is the client inbox. Razorpay is the India processor HighLevel documents, and it <b>does not bill SaaS Mode</b>. White-label is how an agency resells the platform under its own name.</p>
+  <a class="guidecard" href="{pricing}">
+    <div class="gc-ic">&#9733;</div>
+    <div>
+      <div class="gc-k">Start with pricing</div>
+      <div class="gc-t">GoHighLevel pricing in rupees</div>
+      <div class="gc-d">Plan prices for India, and what the invoice adds. That guide still says Razorpay can bill SaaS Mode. HighLevel's provider table says no. Read the limit on this page before you use the rupee math.</div>
+    </div>
+    <span class="gc-arrow">Read &rarr;</span>
+  </a>
+</div></header>
+<section class="hubsec" id="guides"><div class="container">
+  <span class="eyebrow">What actually works in India</span>
+  <h2>WhatsApp, Razorpay, and white-label</h2>
+  <p class="lead">Three routes into the India library. Limits below are from HighLevel's help docs, checked September 2026.</p>
+  <div class="clusters">
+    <div class="cluster"><h3>WhatsApp</h3><p>Connect WhatsApp on each sub-account: an existing Business app, a new number, or a move from another provider (<a href="{whatsapp_doc}" target="_blank" rel="noopener">HighLevel's setup guide</a>). Meta bills conversation fees separately from the GoHighLevel plan. A missing Meta payment method blocks sends even when the CRM subscription is paid. The <a href="{whatsapp}">India setup guide</a> walks the same path.</p><a class="cl" href="/in/category/crm-communication/">CRM and communication guides &rarr;</a></div>
+    <div class="cluster"><h3>Razorpay and UPI</h3><p>Razorpay is a sub-account marketplace app (<a href="{razorpay_doc}" target="_blank" rel="noopener">how to connect it</a>). The <a href="{table_doc}" target="_blank" rel="noopener">provider table</a> marks it Yes for order forms, invoices including recurring, payment links, courses, communities, the store, and calendars. It is No for SaaS Mode, wallet recharges, charging a card on the contact page, the service menu, and POS. UPI is not its own row: customers pay a Razorpay checkout. PayU is not in the provider table. The <a href="{razorpay}">Razorpay setup guide</a> is the long version. Where an older India post says PayU is built in, that sentence is wrong.</p><a class="cl" href="/in/category/payments-pricing/">Payments and pricing guides &rarr;</a></div>
+    <div class="cluster"><h3>White-label and SaaS Mode</h3><p>Agencies resell GoHighLevel under their own brand. SaaS Mode is how those client accounts get billed. The provider table marks SaaS Mode Yes for Stripe, Authorize.net, NMI, and Square, and No for Razorpay. Do not plan client subscriptions on the Razorpay app. The <a href="{whitelabel}">white-label guide</a> covers the resale setup.</p><a class="cl" href="/in/category/agency-white-label-saas/">Agency and white-label guides &rarr;</a></div>
+  </div>
+  <div class="es-banner" style="margin-top:28px">
+    <div><b style="color:var(--text)">30-day trial</b> <span style="color:var(--text2)">A card is required. About a $1 verification hold. The subscription is not charged during the trial.</span></div>
+    <a class="btn-amber" href="{cta}" target="_blank" rel="nofollow noopener" style="font-size:.85rem;padding:10px 18px">Start the 30-day trial &rarr;</a>
+  </div>
+</div></section>"""
+
+
 def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18):
     """Build a language hub page (e.g., /es/, /in/, /ar/) with paginated posts."""
     prefix = lang_config["prefix"]
@@ -4075,11 +4137,20 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
                 hub_subtitle = "Gu&iacute;as de GoHighLevel en espa&ntilde;ol"
             else:
                 hub_subtitle = f"{len(lang_posts)} guides in {lang_name}"
+            # /in/ page 1 keeps this card grid. india_hub_intro() is additive.
+            # Dropping the cards to mimic /es/ would make the interpolated
+            # "N Guides" title a lie. Pages 2+ stay a plain catalog.
+            india_intro = ""
+            catalog_heading = f'<h1 class="fade-2">GoHighLevel — {lang_name}</h1>'
+            if page == 1 and lang_code == "en-IN":
+                india_intro = india_hub_intro()
+                catalog_heading = '<h2 class="fade-2">Every India guide</h2>'
             body = f"""
+{india_intro}
 <div class="cat-header">
   <div class="container">
     <div class="section-label fade-1" style="border-bottom:none;padding-bottom:0;margin-bottom:8px">{lang_name}</div>
-    <h1 class="fade-2">GoHighLevel — {lang_name}</h1>
+    {catalog_heading}
     <p class="fade-3">{hub_subtitle}</p>
     <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:8px">{chips_html}</div>
   </div>
@@ -4092,7 +4163,7 @@ def build_language_hub(lang_config: dict, posts: list[dict], per_page: int = 18)
         hub_descriptions = {
             "en": "Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide. Step-by-step help.",
             "es": "Tutoriales y guías gratuitas de GoHighLevel en español. Aprende a configurar, automatizar y escalar tu agencia paso a paso.",
-            "en-IN": "Free GoHighLevel tutorials and guides for Indian agencies. UPI payments, WhatsApp automation, and agency growth — step by step.",
+            "en-IN": "WhatsApp, Razorpay, and white-label for Indian agencies. Razorpay does not bill SaaS Mode. UPI is Razorpay checkout, not its own HighLevel row. Card required.",
             "ar": "دروس وأدلة GoHighLevel مجانية بالعربية. تعلّم الإعداد والأتمتة وتنمية وكالتك خطوة بخطوة.",
         }
         hub_desc = hub_descriptions.get(lang_code, f"Free GoHighLevel tutorials and guides in {lang_name}.")
