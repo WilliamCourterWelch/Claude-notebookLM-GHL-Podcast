@@ -30,9 +30,12 @@ POST = (
 
 def test_source_title_is_byte_faithful_locked_string():
     raw = POST.read_text(encoding="utf-8")
-    assert f'"title": "{LOCKED}"' in raw
-    assert OLD not in raw.split("html_content", 1)[0]
-    assert '"slug": "how-to-build-ai-agents-in-gohighlevel-agent-studio-guide"' in raw
+    front, _, _body = raw.partition('"html_content"')
+    assert f'"title": "{LOCKED}"' in front
+    assert OLD not in front
+    data = json.loads(raw)
+    assert data["title"] == LOCKED
+    assert data["slug"] == "how-to-build-ai-agents-in-gohighlevel-agent-studio-guide"
 
 
 def test_locked_title_fits_serp_budget_without_brand():
@@ -48,6 +51,10 @@ def test_rendered_title_h1_og_and_headline_match(tmp_path, monkeypatch):
     html = (tmp_path / build.post_output_rel(post) / "index.html").read_text(
         encoding="utf-8"
     )
+    head, sep, _rest = html.partition("<body")
+    assert sep == "<body"
+    assert f"<title>{LOCKED}</title>" in head
+    assert f'<meta property="og:title" content="{LOCKED}">' in head
     assert f"<title>{LOCKED}</title>" in html
     assert f'<h1 class="post-title fade-2">{LOCKED}</h1>' in html
     assert f'<meta property="og:title" content="{LOCKED}">' in html
