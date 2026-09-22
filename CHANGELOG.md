@@ -2,6 +2,18 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.21.0] - 2026-09-22
+### Changed
+- **The Agent Studio build guide now says AI Studio and Agent Studio are different products.** `/blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/` keeps the locked title and H1 `GoHighLevel Agent Studio: Build AI Agents Step by Step`. New section `AI Studio Is Not Agent Studio` cites the HighLevel help articles fetched 22 September 2026: AI Studio is the page builder (included on Growth, 3× on Unlimited), and Agent Studio is pay-per-use on every plan, including the $97 tier. Setup stays on the existing `How to Set Up Your First AI Agent` heading. `#setup` is an anchor on that same heading. No second setup post and no compare post.
+- **Two never-published 404s 301 to that guide.** `/blog/how-to-setup-ai-agents-in-gohighlevel` and `/blog/gohighlevel-ai-studio-vs-agent-studio`, slash and non-slash. The older setup twins (`how-to-build-ai-agents-gohighlevel-agent-studio-setup`, `build-smarter-ai-agents-gohighlevel-agent-studio-setup`) still 301 to the same guide.
+- **The live Agent Studio spokes link back to the build guide.** One sentence each, unique anchor text, same silo only: AI Studio pricing, AI agent pricing, Voice AI pricing, AI Employee pricing, the AI Employee review, the AI Studio pages how-to, clone, router, brand voice, variables, Ask AI support, and both Agent Logs pages. The money page was not edited and does not link out to the guide. Titles were not rewritten, so the over-60 count does not grow. Frozen trial and agency titles were not touched. Spanish, India, Arabic, Desktop, and LATAM were not edited.
+
+### Added
+- **`scripts/test_agent_studio_cluster.py`** pins the section ids, the cluster hrefs, the spoke backlinks, both new 301s, the locked title on the rendered page, `fp_ref=amplifi-technologies12`, and the money page's lack of a link to the guide.
+
+### Documentation
+- Plan and fact ledger: `globalhighlevel-site/plans/ai-agents-cluster-depth-2026-09-22/PLAN.md`. Awaiting William's taste on the new sentences. `seo-cooldown.json` stays retired.
+
 ## [0.3.20.0] - 2026-09-22
 ### Changed
 - **`/in/` is a real India hub, and it still lists the guides.** Page 1 opens with WhatsApp, Razorpay, and white-label, then the same card grid and pagination. The SERP title stays `GoHighLevel India: {count} Guides, UPI and WhatsApp`. The H1 is `GoHighLevel for Indian agencies`. The bootcamp CTA uses `fp_ref=amplifi-technologies12` and `utm_content=hub_cta` on the English bootcamp, not the Spanish one. Cards stay, because the count in the title is only true while page 1 lists them.
