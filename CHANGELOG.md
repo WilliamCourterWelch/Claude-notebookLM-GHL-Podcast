@@ -2,6 +2,19 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.22.0] - 2026-09-22
+### Changed
+- **Nine existing Spanish posts now follow HighLevel's help articles instead of unsourced agency math.** No new URLs. Titles are unchanged, including the historical "3x" and "5 minutos" titles. The bodies say what those articles actually publish: the 3x multiplier is not in the Workflow AI Builder guide, and the template library says "minutes", not a five-minute clock.
+- **WhatsApp + Mercado Pago setup** (`configurar-workflows-gohighlevel-whatsapp-mercadopago`) keeps the 28 July 2026 captures and adds production credentials, the payment webhook, one-checkout and local-currency limits, and the Meta billing split (error 131042). Flujo A stays Stripe, NMI, Authorize.net, or Square. Mercado Pago stays the end-customer charge.
+- **The other eight** cover Payment Received filters, four documented workflow uses with no named case study, Conversation AI Flow Builder, Facebook and Instagram Messenger, Kanban, the workflow template library, a real-estate pipeline you name yourself, and Workflow AI Builder. Conekta and PayU are not described as native connectors. Trial copy on these pages is the ~$1 card verification.
+- **`copiar-templates-temporizadores-gohighlevel` was not edited.** That rebuild already shipped in v0.3.9.0.
+
+### Added
+- **`scripts/test_es_workflow_rebuild.py`** pins the nine titles, help-center citations, the ~$1 line, the four-processor Flujo A sentence, and the explicit denial of a documented 3x rate.
+
+### Documentation
+- Fact ledger: `globalhighlevel-site/plans/es-workflows-rebuild-2026-09-22/fact-ledger.md`. Sources were the live help articles on 22 September 2026. The research-vault repo was not visible to this token, and gbrain is not installed here, so there is no timeline entry from this session. `seo-cooldown.json` stays retired. Frozen English trial and agency titles were not edited.
+
 ## [0.3.21.0] - 2026-09-22
 ### Changed
 - **The Agent Studio build guide now says AI Studio and Agent Studio are different products.** `/blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/` keeps the locked title and H1 `GoHighLevel Agent Studio: Build AI Agents Step by Step`. New section `AI Studio Is Not Agent Studio` cites the HighLevel help articles fetched 22 September 2026: AI Studio is the page builder (included on Growth, 3× on Unlimited), and Agent Studio is pay-per-use on every plan, including the $97 tier. Setup stays on the existing `How to Set Up Your First AI Agent` heading. `#setup` is an anchor on that same heading. No second setup post and no compare post.
