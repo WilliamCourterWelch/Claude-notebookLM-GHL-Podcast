@@ -219,6 +219,11 @@ The canon link structure is enforced at render time by `build.py` and gated by
   takes the `else` branch and renders cards normally. A 2026-08-24 session spent
   a full investigation rediscovering this from scratch — the symptom looks
   exactly like a broken hub.
+  - **`/in/` page 1 stays on that card-grid path** and prepends
+    `india_hub_intro()` (hero, three clusters, bootcamp CTA). Do not drop the
+    cards to copy `/es/`. The India `<title>` interpolates the post count, and
+    that count is honest only while page 1 lists the cards and links every
+    page. The intro is the place that says Razorpay does not bill SaaS Mode.
   - **Consequence worth knowing:** that branch still consumes its slice
     (`lang_posts[0:18]`) and then throws the cards away, so the 18 newest Spanish
     posts are absent from the hub's numbered path, which reaches 231 of 249. They

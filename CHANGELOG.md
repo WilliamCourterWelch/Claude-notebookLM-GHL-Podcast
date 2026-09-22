@@ -2,6 +2,18 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.20.0] - 2026-09-22
+### Changed
+- **`/in/` is a real India hub, and it still lists the guides.** Page 1 opens with WhatsApp, Razorpay, and white-label, then the same card grid and pagination. The SERP title stays `GoHighLevel India: {count} Guides, UPI and WhatsApp`. The H1 is `GoHighLevel for Indian agencies`. The bootcamp CTA uses `fp_ref=amplifi-technologies12` and `utm_content=hub_cta` on the English bootcamp, not the Spanish one. Cards stay, because the count in the title is only true while page 1 lists them.
+- **The India pricing guide no longer says Razorpay bills SaaS Mode, and it no longer calls PayU native.** `gohighlevel-pricing-india-2026-rupees-complete-guide` now matches HighLevel's provider table (fetched 2026-09-22): Razorpay is the sub-account app, UPI is that checkout, SaaS Mode is Stripe, Authorize.net, NMI, or Square. The visible FAQ and the FAQPage answer were edited together. The hub card points at the guide and states the same limit. The hub still says older India posts are wrong about PayU. Those other posts were not rewritten. Title on the pricing guide is unchanged, so the over-60 title count does not grow.
+
+### Added
+- **`scripts/test_in_hub.py`** pins the H1, the SaaS Mode limit, the PayU denial, the bootcamp slot, the card grid, and that the intro does not leak onto `/es/`, `/ar/`, or `/in/page/2/`.
+- **`scripts/test_india_pricing_honesty.py`** pins the pricing-guide denials, FAQ/schema parity on the payment answer, and the hub card that no longer calls the guide wrong.
+
+### Documentation
+- Plan and fact ledger: `globalhighlevel-site/plans/in-hub-upgrade-2026-09-22/`. Taste locks from 2026-09-22 are recorded there. `seo-cooldown.json` stays retired. Frozen English paths were not edited.
+
 ## [0.3.19.0] - 2026-09-22
 ### Changed
 - **The Spanish LATAM hub is the canonical pagos page.** `/es/gohighlevel-latam/` ships with the locked title and H1 `GoHighLevel en Latinoamérica: guía de pagos` (43 characters). `compose_title` does not append the brand suffix, because 43 + 20 would be 63 and fail the 60-character title check. The SaaS dual-statement stays: Flujo A is Stripe, NMI, Authorize.net, and Square; MercadoPago is Flujo B for end customers in seven countries. This page does not claim MercadoPago for Flujo A.
