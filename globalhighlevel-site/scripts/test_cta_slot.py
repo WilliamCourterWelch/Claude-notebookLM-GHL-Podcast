@@ -12,6 +12,7 @@ Run: python3 -m pytest scripts/test_cta_slot.py
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -183,7 +184,7 @@ def test_rendered_ghl_click_listener_copies_slot_from_url():
     assert 'page_lang:document.documentElement.lang||"en"' in html
     assert 'qs.get("cta_slot")' in html
     assert 'qs.get("utm_content")' in html
-    assert 'qs.get("cta_slot")||qs.get("utm_content")||""' in html
+    assert 'qs.get("cta_slot")||qs.get("utm_content")||"unstamped"' in html
     assert "cta_slot:String(slot).slice(0,64)" in html
     assert "try{" in html
     assert "catch(err){}" in html
@@ -362,6 +363,117 @@ def test_localize_trial_hrefs_ar_does_not_stamp_blog_trial():
     assert href == "/ar/trial/"
     assert "utm_content=" not in out
     assert "utm_campaign=" not in out
+
+
+def _bootcamp_hrefs(html: str) -> list[str]:
+    return re.findall(r'href="([^"]*highlevel-bootcamp[^"]*)"', html, re.I)
+
+
+def _slot_of(href: str) -> str:
+    raw = href.replace("&amp;", "&").replace("&#38;", "&")
+    query = raw.split("#", 1)[0].split("?", 1)[-1]
+    for part in query.split("&"):
+        key, _, value = part.partition("=")
+        if key in ("utm_content", "cta_slot") and value:
+            return value
+    return ""
+
+
+def test_stamp_appends_in_article_without_copying_campaign():
+    src = (
+        '<a href="https://www.gohighlevel.com/highlevel-bootcamp'
+        '?fp_ref=amplifi-technologies12&utm_source=blog&utm_medium=article'
+        '&utm_campaign=how-to-install-gohighlevel-desktop-app--complete-setup-guide">'
+        'Install</a>'
+    )
+    out = build.stamp_missing_bootcamp_slots(src)
+    assert "utm_content=in_article" in out
+    assert "utm_campaign=how-to-install-gohighlevel-desktop-app--complete-setup-guide&utm_content=in_article" in out
+    assert "utm_content=how-to-install" not in out
+    assert out.count("utm_content=") == 1
+    assert build.stamp_missing_bootcamp_slots(out) == out
+
+
+def test_stamp_leaves_existing_slots_and_non_bootcamp_hrefs():
+    kept = (
+        '<a href="https://www.gohighlevel.com/highlevel-bootcamp'
+        '?fp_ref=amplifi-technologies12&amp;utm_content=tier_starter">S</a>'
+        '<a href="https://www.gohighlevel.com/highlevel-bootcamp'
+        '?fp_ref=amplifi-technologies12&utm_content=extractable-steps">T</a>'
+        '<a href="https://www.gohighlevel.com/highlevel-bootcamp'
+        '?fp_ref=amplifi-technologies12&cta_slot=nav">N</a>'
+        '<a href="https://www.gohighlevel.com/ai'
+        '?fp_ref=amplifi-technologies12&utm_campaign=summer_ai">AI</a>'
+        '<a href="https://help.gohighlevel.com/highlevel-bootcamp">docs</a>'
+    )
+    out = build.stamp_missing_bootcamp_slots(kept)
+    assert out == kept
+    bare = (
+        '<a href="https://www.gohighlevel.com/highlevel-bootcamp-es'
+        '?fp_ref=amplifi-technologies12">ES</a>'
+    )
+    es = build.stamp_missing_bootcamp_slots(bare)
+    assert "highlevel-bootcamp-es?" in es
+    assert "utm_content=in_article" in es
+    assert "utm_campaign=" not in es
+
+
+def test_rendered_gap_pages_stamp_every_bootcamp_href(tmp_path, monkeypatch):
+    """Desktop install guide, money page, white-label guide, ES precios guía.
+
+    Titles/H1 stay on the stored strings. Body hrefs gain utm_content=in_article.
+    Template slots (nav, cta3) and stored slots (tier_*, extractable-steps) stay.
+    """
+    monkeypatch.setattr(build, "PUBLIC_DIR", tmp_path)
+    root = Path(__file__).resolve().parents[1] / "posts"
+    pages = {
+        "how-to-install-gohighlevel-desktop-app-complete-setup-guide.json": (
+            "utm_campaign=how-to-install-gohighlevel-desktop-app--complete-setup-guide&utm_content=in_article"
+        ),
+        "gohighlevel-free-trial-30-days-extended.json": (
+            "utm_campaign=gohighlevel-free-trial-30-days-extended&utm_content=in_article"
+        ),
+        "gohighlevel-white-label-setup-agency-guide.json": (
+            "utm_campaign=white-label-spoke&utm_content=in_article"
+        ),
+        "gohighlevel-precios-planes-2026-guia-completa.json": (
+            "utm_campaign=gohighlevel-precios-planes-2026-guia-completa&utm_content=in_article"
+        ),
+    }
+    locked_trial = "GoHighLevel 30-Day Free Trial (2026): Get Extended Access"
+    for name, needle in pages.items():
+        post = json.loads((root / name).read_text(encoding="utf-8"))
+        build._ANCHOR_URL_COUNTS.clear()
+        build.build_post_page(post, all_posts=[post])
+        html = (tmp_path / build.post_output_rel(post) / "index.html").read_text(encoding="utf-8")
+        assert f'<h1 class="post-title fade-2">{post["title"]}</h1>' in html
+        hrefs = _bootcamp_hrefs(html)
+        assert hrefs, name
+        for href in hrefs:
+            slot = _slot_of(href)
+            assert slot, href
+            assert len(slot) <= 64, slot
+            assert "utm_campaign" not in slot
+            assert len(slot) < 40, slot
+        assert needle in html, name
+        assert "utm_content=nav" in html
+        assert "utm_content=cta3" in html
+        assert "utm_content=unstamped" not in html
+    trial = json.loads((root / "gohighlevel-free-trial-30-days-extended.json").read_text(encoding="utf-8"))
+    trial_html = (tmp_path / build.post_output_rel(trial) / "index.html").read_text(encoding="utf-8")
+    assert f"<title>{locked_trial}</title>" in trial_html
+    assert "utm_campaign=master-discount-guide&utm_content=in_article" in trial_html
+    ai_hrefs = [
+        h for h in re.findall(r'href="([^"]+)"', trial_html) if "gohighlevel.com/ai?" in h
+    ]
+    assert ai_hrefs and all("utm_content=" not in h and "cta_slot=" not in h for h in ai_hrefs)
+    assert all("utm_campaign=summer_ai" in h for h in ai_hrefs)
+    precios = json.loads((root / "gohighlevel-precios-planes-2026-guia-completa.json").read_text(encoding="utf-8"))
+    precios_html = (tmp_path / build.post_output_rel(precios) / "index.html").read_text(encoding="utf-8")
+    for slot in PRICING_SLOTS:
+        assert f"utm_content={slot}" in precios_html
+    agency = (root / "gohighlevel-sub-accounts-snapshots-agency-guide.json").read_text(encoding="utf-8")
+    assert '"title": "GoHighLevel Sub-Accounts: How Many You Really Get"' in agency
 
 
 def test_live_pricing_post_json_still_has_tier_slots():

@@ -610,6 +610,69 @@ def nofollow_affiliate_links(html: str) -> str:
     return re.sub(r'<a\b([^>]*)>', _repl, html, flags=re.I)
 
 
+# Body Bootcamp hrefs were authored with utm_campaign and no utm_content, so
+# ghl_click recorded cta_slot=(not set). Template CTAs already pass a slot
+# through affiliate_href(); this backstop only fills the gap. Never copy the
+# campaign slug into the slot — those strings are long and are not slot names.
+BOOTCAMP_CONTENT_FALLBACK = "in_article"
+_BOOTCAMP_HREF = re.compile(
+    r'(<a\b[^>]*?\bhref\s*=\s*)(["\'])([^"\']*)(\2)',
+    re.I,
+)
+
+
+def _bootcamp_query(href: str) -> dict:
+    raw = href.replace("&amp;", "&").replace("&#38;", "&")
+    raw = raw.split("#", 1)[0]
+    query = raw.split("?", 1)[1] if "?" in raw else ""
+    params = {}
+    for part in query.split("&"):
+        if not part:
+            continue
+        key, _, value = part.partition("=")
+        params[key] = value
+    return params
+
+
+def _is_bootcamp_affiliate(href: str) -> bool:
+    raw = href.replace("&amp;", "&").replace("&#38;", "&").lower()
+    if "fp_ref=" not in raw or "gohighlevel.com" not in raw:
+        return False
+    return re.search(r"highlevel-bootcamp(-es)?(?:[/?#]|$)", raw) is not None
+
+
+def stamp_missing_bootcamp_slots(html: str, slot: str = BOOTCAMP_CONTENT_FALLBACK) -> str:
+    """Append a short utm_content to Bootcamp affiliate hrefs that lack a slot.
+
+    highlevel-bootcamp and highlevel-bootcamp-es only, and only when fp_ref is
+    present (those are the hrefs ghl_click fires on). An existing utm_content
+    or cta_slot is left alone, including tier_*, nav, cta3, tldr, trial_*,
+    and extractable-steps. Stored post JSON is not modified.
+    """
+    if "highlevel-bootcamp" not in html:
+        return html
+    slot_q = quote(str(slot), safe="-_.")
+    if not slot_q or len(slot_q) > 64:
+        raise ValueError(f"bootcamp slot must be 1–64 chars, got {slot_q!r}")
+
+    def _repl(m):
+        href = m.group(3)
+        if not _is_bootcamp_affiliate(href):
+            return m.group(0)
+        params = _bootcamp_query(href)
+        # Key presence wins, even when the value is empty. A second
+        # utm_content would make GA4 read the blank one first.
+        if "utm_content" in params or "cta_slot" in params:
+            return m.group(0)
+        amp = "&amp;" if "&amp;" in href else "&"
+        hash_at = href.find("#")
+        head, tail = (href, "") if hash_at < 0 else (href[:hash_at], href[hash_at:])
+        joiner = "?" if "?" not in head else amp
+        return f"{m.group(1)}{m.group(2)}{head}{joiner}utm_content={slot_q}{tail}{m.group(4)}"
+
+    return _BOOTCAMP_HREF.sub(_repl, html)
+
+
 def circle_members(post: dict, all_posts: list) -> list:
     """The post's link-circle silo: same language + same topic, ordered by
     publishedAt (slug tiebreak). Pillars are excluded (their home is the hub —
@@ -939,6 +1002,10 @@ def write(path: Path, html: str):
     # (the pillar's single canonical home). Catches hard-coded + auto-injected links.
     for _blog, _hub in PILLAR_HUB_MAP.items():
         html = html.replace(f'href="{_blog}"', f'href="{_hub}"')
+    # Last HTML mutator: body Bootcamp hrefs that never received a template
+    # slot get utm_content=in_article. Sitemap and llms.txt are not HTML.
+    if path.suffix == ".html":
+        html = stamp_missing_bootcamp_slots(html)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(html, encoding="utf-8")
     print(f"  ✓ {path.relative_to(PUBLIC_DIR)}")
@@ -1475,7 +1542,9 @@ def _ga_snippet() -> str:
         f'      var host=u.hostname||"";\n'
         f'      if(host==="gohighlevel.com"||host.slice(-16)===".gohighlevel.com"){{\n'
         f'        var qs=u.searchParams;\n'
-        f'        slot=qs.get("cta_slot")||qs.get("utm_content")||"";\n'
+        # Blank slot stays blank in Explores. "unstamped" is the short fallback
+        # when a Bootcamp href still has neither param — never the campaign slug.
+        f'        slot=qs.get("cta_slot")||qs.get("utm_content")||"unstamped";\n'
         f'      }}\n'
         f'    }}catch(err){{}}\n'
         f'    gtag("event","ghl_click",{{\n'
