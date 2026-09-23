@@ -57,6 +57,15 @@ FORBIDDEN = (
     "any major payment gateway",
     "सभी payment gateways",
     "तीनों major",
+    "native UPI",
+    "Native UPI",
+    "All three payment methods",
+    "All three are integrated",
+    "all gateways",
+    "other payment gateways",
+    "integrates with all three",
+    "UPI native support",
+    "Native Razorpay + UPI",
 )
 TAG = re.compile(r"<[^>]+>")
 
