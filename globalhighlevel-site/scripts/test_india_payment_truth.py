@@ -74,6 +74,11 @@ FORBIDDEN = (
     "can be connected via API/Zapier",
     "or (2% + ₹2",
     "App Connector lets you integrate Razorpay",
+    "or enable UPI",
+    "enable UPI collection",
+    "UPI built-in",
+    "Direct bank transfers via NEFT/IMPS",
+    "Available through Razorpay's UPI gateway",
 )
 TAG = re.compile(r"<[^>]+>")
 
