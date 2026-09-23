@@ -70,7 +70,7 @@ Before ANY `git push origin main` that touches SEO content (posts, redirects, bu
 This is Rule 7 of `seo-deploy-gate` (skill currently not installed — the rule is enforced manually). **gbrain timeline is source of truth; Sheet + JSON are mirrors.**
 
 ## Affiliate Link
-All GHL links must include `fp_ref=amplifi-technologies12`. Template CTAs stamp a short `utm_content` slot via `affiliate_href()` so GA4 `ghl_click` can tell nav from cta3 (v0.3.17.1) — do not bake `utm_content` / `cta_slot` into the affiliate constant. Full rules in `globalhighlevel-site/CLAUDE.md`.
+All GHL links must include `fp_ref=amplifi-technologies12`. Template CTAs stamp a short `utm_content` slot via `affiliate_href()` so GA4 `ghl_click` can tell nav from cta3 (v0.3.17.1) — do not bake `utm_content` / `cta_slot` into the affiliate constant. Body Bootcamp and bootcamp-es hrefs that still omit a slot get `utm_content=in_article` at render (v0.3.27.0). The click listener falls back to `unstamped`, not the campaign slug. Full rules in `globalhighlevel-site/CLAUDE.md`.
 
 ## Trigger Surface — BLOCKING (do not skip)
 

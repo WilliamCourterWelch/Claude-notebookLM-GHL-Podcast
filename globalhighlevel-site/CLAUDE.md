@@ -41,7 +41,7 @@
 - **Every single link to GoHighLevel.com MUST use the affiliate link** — no exceptions
 - Affiliate link: `https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=amplifi-technologies12`
 - Always append UTM params: `&utm_source=globalhighlevel&utm_medium={location}&utm_campaign={context}`
-- **CTA slot (v0.3.17.1):** template affiliate CTAs go through `affiliate_href(lang, campaign=..., content=...)`, which appends short `utm_content=` (nav, cta3, tldr, trial_hero, …). Do NOT bake `utm_content` / `cta_slot` into the `AFFILIATE` constant or `affiliate_for()` — those stay language-only. The `ghl_click` listener copies `cta_slot` or `utm_content` from the URL into the GA4 event param `cta_slot` (no allowlist — pricing `tier_*` must pass through). See `scripts/test_cta_slot.py`.
+- **CTA slot (v0.3.17.1, body backstop v0.3.27.0):** template affiliate CTAs go through `affiliate_href(lang, campaign=..., content=...)`, which appends short `utm_content=` (nav, cta3, tldr, trial_hero, …). Do NOT bake `utm_content` / `cta_slot` into the `AFFILIATE` constant or `affiliate_for()` — those stay language-only. `write()` then stamps `utm_content=in_article` onto any `highlevel-bootcamp` / `highlevel-bootcamp-es` href that has `fp_ref` and neither slot param. Existing slots, including pricing `tier_*` and `extractable-steps`, are left alone. The campaign slug is never copied into the slot. The `ghl_click` listener copies `cta_slot` or `utm_content` from the URL into the GA4 event param `cta_slot` (no allowlist). If both are missing it sends `unstamped`. See `scripts/test_cta_slot.py`.
 - This includes: pricing pages, feature pages, sign-up pages, help links — ANYTHING on gohighlevel.com
 - NEVER link to `gohighlevel.com/pricing` or any GHL URL without `fp_ref=amplifi-technologies12`
 - All affiliate links: `target="_blank" rel="nofollow noopener"`
@@ -433,10 +433,11 @@ Also run the **title-length gate** (`scripts/test_title_length.py`, 6 tests,
 added v0.3.15.0) — see the title rule immediately below, which it enforces —
 the **FAQ schema sync gate** (`scripts/test_faq_schema_sync.py`, 3 tests,
 added v0.3.17.0, suite 179 → 182), and the **CTA slot gate**
-(`scripts/test_cta_slot.py`, 18 tests, rendered HTML, added v0.3.17.1,
+(`scripts/test_cta_slot.py`, 21 tests, rendered HTML, added v0.3.17.1, body backstop v0.3.27.0,
 suite 182 → 200) which pins that nav/cta3/tldr/trial landings stamp short
-`utm_content` and that `ghl_click` copies it into the `cta_slot` event
-param without an allowlist, and the **money-page title gate**
+`utm_content`, that unstamped Bootcamp body hrefs gain `in_article`, and that
+`ghl_click` copies the slot into the event param without an allowlist
+(`unstamped` only when the href still has none), and the **money-page title gate**
 (`scripts/test_trial_title.py`, 3 tests, rendered HTML, added v0.3.17.2)
 which pins the locked Bing head-term title on `<title>`, `<h1>`, `og:title`,
 and JSON-LD headline, and the **agency sub-accounts consolidate gate**

@@ -2,6 +2,17 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.27.0] - 2026-09-23
+### Changed
+- **Bootcamp affiliate hrefs that had no slot now carry `utm_content=in_article`.** GA4 `ghl_click` already copied `utm_content` into `cta_slot`. Last 28 days, 15 of 19 clicks were `(not set)` or blank because body links had `utm_campaign` and no `utm_content`. The render pass stamps only `highlevel-bootcamp` and `highlevel-bootcamp-es` hrefs that include `fp_ref` and lack both `utm_content` and `cta_slot`. Existing slots stay: `nav`, `cta3`, `tldr`, `trial_*`, `tier_*`, `blog_trial`, `hub_cta`, `extractable-steps`. The campaign slug is not copied into the slot. Post JSON, titles, and H1s are unchanged, including the frozen free-trial and agency-subaccount titles.
+- **If a GoHighLevel affiliate click still has no slot, `ghl_click` sends `cta_slot=unstamped`.** That is the listener fallback only. It is not written onto the href, and it is not the raw campaign.
+
+### Added
+- **`scripts/test_cta_slot.py`** pins the stamp, the preserved slots, the `unstamped` listener fallback, and rendered hrefs on the desktop install guide, the free-trial money page, the white-label guide, and the Spanish precios guía.
+
+### Documentation
+- `seo-cooldown.json` stays retired. gbrain is not installed in this session, so there is no timeline entry. Historical `(not set)` events stay historical: the dimension is not retroactive.
+
 ## [0.3.26.0] - 2026-09-23
 ### Changed
 - **The Agent Studio build guide opens with a text-only 5-step TLDR.** `/blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/` keeps the locked title and H1 `GoHighLevel Agent Studio: Build AI Agents Step by Step`. After the intro and before `What is Agent Studio in GoHighLevel?`, the page now lists the five build steps (create, template, personality, triggers, test and deploy) plus a Bootcamp CTA with `fp_ref=amplifi-technologies12` and `utm_content=extractable-steps`. No screenshots. The rest of the article, the frozen free-trial title, and the agency sub-accounts title were not edited.
