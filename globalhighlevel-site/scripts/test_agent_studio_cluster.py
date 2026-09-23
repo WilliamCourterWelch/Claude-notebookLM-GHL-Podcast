@@ -89,6 +89,41 @@ def test_pillar_keeps_locked_title_and_gains_sections():
     # The pre-existing no-card sentence is rewritten at render. New copy must
     # not add another one. Count stays at the one legacy CTA line.
     assert html.lower().count("no credit card") == 1
+    _assert_extractable_steps(html)
+
+
+EXTRACTABLE_HEADING = (
+    "How to build your first GoHighLevel Agent Studio agent (5 steps)"
+)
+EXTRACTABLE_STEPS = [
+    "Open Agent Studio and create a new agent",
+    "Start from a template",
+    "Set personality and tone",
+    "Wire triggers and decisions",
+    "Test in the built-in chat, then deploy",
+]
+EXTRACTABLE_HREF = (
+    "https://www.gohighlevel.com/highlevel-bootcamp?"
+    "fp_ref=amplifi-technologies12&utm_source=globalhighlevel"
+    "&utm_medium=blog&utm_campaign=agent-studio-guide"
+    "&utm_content=extractable-steps"
+)
+
+
+def _assert_extractable_steps(html: str) -> None:
+    """Text-only TLDR (William GO 2026-09-23). After the intro, before the
+    Agent Studio section. Plain markup: sanitize_content strips #f0f4ff boxes."""
+    intro = html.find("fastest way to get started.")
+    steps = html.find('id="extractable-steps"')
+    section = html.find(">What is Agent Studio in GoHighLevel?</h2>")
+    assert intro != -1 and steps != -1 and section != -1
+    assert intro < steps < section
+    assert EXTRACTABLE_HEADING in html
+    for label in EXTRACTABLE_STEPS:
+        assert f"<strong>{label}</strong>" in html
+    assert html.count(EXTRACTABLE_HREF) == 1
+    assert "Start the GoHighLevel free trial" in html
+    assert "<img" not in html[steps:section]
 
 
 def test_spokes_link_back_and_money_page_does_not():
@@ -131,6 +166,7 @@ def test_rendered_pillar_keeps_sections_title_and_affiliate(tmp_path, monkeypatc
     assert "fp_ref=amplifi-technologies12" in html
     for href in CLUSTER_HREFS:
         assert f'href="{href}"' in html
+    _assert_extractable_steps(html)
 
 
 if __name__ == "__main__":

@@ -2,6 +2,13 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.26.0] - 2026-09-23
+### Changed
+- **The Agent Studio build guide opens with a text-only 5-step TLDR.** `/blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/` keeps the locked title and H1 `GoHighLevel Agent Studio: Build AI Agents Step by Step`. After the intro and before `What is Agent Studio in GoHighLevel?`, the page now lists the five build steps (create, template, personality, triggers, test and deploy) plus a Bootcamp CTA with `fp_ref=amplifi-technologies12` and `utm_content=extractable-steps`. No screenshots. The rest of the article, the frozen free-trial title, and the agency sub-accounts title were not edited.
+
+### Added
+- **`scripts/test_agent_studio_cluster.py`** now pins that TLDR: the five step labels, placement before the Agent Studio heading, the extractable-steps Bootcamp URL in rendered HTML, and the locked title.
+
 ## [0.3.25.0] - 2026-09-22
 ### Changed
 - **India posts no longer call PayU a native HighLevel integration, and they no longer say Razorpay bills SaaS Mode.** 119 `en-IN` posts. Razorpay stays the documented India processor. UPI stays a method inside that checkout. PayU stays off the provider table (help 155000006075, fetched 2026-09-22). Where a sentence still names PayU, it says PayU is not native, or that a custom build would be required. The Razorpay setup post no longer says recurring Razorpay covers "SaaS-style services." It says recurring invoices, retainers, and courses can use Razorpay, and Razorpay does not bill SaaS Mode. A second pass removed leftover "set up both," "all major Indian gateways," Instamojo, and "all payment gateways" answers that still implied PayU after the name was deleted. Review then removed "native UPI," "all three payment methods," and "all gateways" sentences the first pass had left behind.
