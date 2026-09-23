@@ -66,6 +66,7 @@ FORBIDDEN = (
     "UPI native support",
     "Native Razorpay + UPI",
     "Both payment gateways",
+    "Both are integrated",
     "Both work seamlessly",
     "both GST-compliant",
     "both accepted across India",
