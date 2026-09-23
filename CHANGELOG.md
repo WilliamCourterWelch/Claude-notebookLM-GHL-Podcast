@@ -2,7 +2,7 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
-## [0.3.22.0] - 2026-09-22
+## [0.3.24.0] - 2026-09-22
 ### Changed
 - **Nine existing Spanish posts now follow HighLevel's help articles instead of unsourced agency math.** No new URLs. Titles are unchanged, including the historical "3x" and "5 minutos" titles. The bodies say what those articles actually publish: the 3x multiplier is not in the Workflow AI Builder guide, and the template library says "minutes", not a five-minute clock.
 - **WhatsApp + Mercado Pago setup** (`configurar-workflows-gohighlevel-whatsapp-mercadopago`) keeps the 28 July 2026 captures and adds production credentials, the payment webhook, one-checkout and local-currency limits, and the Meta billing split (error 131042). Flujo A stays Stripe, NMI, Authorize.net, or Square. Mercado Pago stays the end-customer charge.
