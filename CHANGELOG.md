@@ -2,6 +2,17 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.23.0] - 2026-09-22
+### Changed
+- **India posts no longer call PayU a native HighLevel integration, and they no longer say Razorpay bills SaaS Mode.** 119 `en-IN` posts. Razorpay stays the documented India processor. UPI stays a method inside that checkout. PayU stays off the provider table (help 155000006075, fetched 2026-09-22). Where a sentence still names PayU, it says PayU is not native, or that a custom build would be required. The Razorpay setup post no longer says recurring Razorpay covers "SaaS-style services." It says recurring invoices, retainers, and courses can use Razorpay, and Razorpay does not bill SaaS Mode. A second pass removed leftover "set up both," "all major Indian gateways," Instamojo, and "all payment gateways" answers that still implied PayU after the name was deleted.
+- **`/in/` and `gohighlevel-pricing-india-2026-rupees-complete-guide` were not rewritten.** They already deny both claims (v0.3.20.0). Titles were not rewritten, including the frozen free-trial and agency-subaccount titles, so the over-60 title count stays 579. Affiliate `fp_ref=amplifi-technologies12` is unchanged. Spanish PayU mentions (MercadoPago / Conekta / PayU for LATAM) were left alone.
+
+### Added
+- **`scripts/test_india_payment_truth.py`** fails if an `en-IN` post pairs PayU with a native-integration claim, or pairs Razorpay with SaaS Mode without the denial. The gate checks both edges: a "Razorpay and PayU" fixture fails, and a denial sentence passes.
+
+### Documentation
+- Queue-aware version is 0.3.23.0 because 0.3.22.0 is already claimed. `seo-cooldown.json` stays retired.
+
 ## [0.3.21.0] - 2026-09-22
 ### Changed
 - **The Agent Studio build guide now says AI Studio and Agent Studio are different products.** `/blog/how-to-build-ai-agents-in-gohighlevel-agent-studio-guide/` keeps the locked title and H1 `GoHighLevel Agent Studio: Build AI Agents Step by Step`. New section `AI Studio Is Not Agent Studio` cites the HighLevel help articles fetched 22 September 2026: AI Studio is the page builder (included on Growth, 3× on Unlimited), and Agent Studio is pay-per-use on every plan, including the $97 tier. Setup stays on the existing `How to Set Up Your First AI Agent` heading. `#setup` is an anchor on that same heading. No second setup post and no compare post.
