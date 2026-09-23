@@ -352,6 +352,13 @@ re-litigate it from memory.
 
 ## Tests — pre-deploy gate suite
 
+**India payment truth gate** (`scripts/test_india_payment_truth.py`, added
+v0.3.25.0). Every `en-IN` string may mention PayU only next to a denial
+(PayU is not a native integration, or it needs a custom build and is not
+native). A sentence that names both Razorpay and SaaS Mode must say Razorpay
+does not bill SaaS Mode. The `/in/` hub and the India pricing guide keep the
+v0.3.20.0 wording.
+
 Run before any deploy (all must pass): `python3 -m pytest scripts/ -q` — covers
 link audits (`test_audit_links`, `test_build_links`), capture pipeline
 (`test_ghl_capture`), IndexNow submitter (`test_submit_indexnow`), restore

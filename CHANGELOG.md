@@ -2,6 +2,17 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.25.0] - 2026-09-22
+### Changed
+- **India posts no longer call PayU a native HighLevel integration, and they no longer say Razorpay bills SaaS Mode.** 119 `en-IN` posts. Razorpay stays the documented India processor. UPI stays a method inside that checkout. PayU stays off the provider table (help 155000006075, fetched 2026-09-22). Where a sentence still names PayU, it says PayU is not native, or that a custom build would be required. The Razorpay setup post no longer says recurring Razorpay covers "SaaS-style services." It says recurring invoices, retainers, and courses can use Razorpay, and Razorpay does not bill SaaS Mode. A second pass removed leftover "set up both," "all major Indian gateways," Instamojo, and "all payment gateways" answers that still implied PayU after the name was deleted. Review then removed "native UPI," "all three payment methods," and "all gateways" sentences the first pass had left behind.
+- **`/in/` and `gohighlevel-pricing-india-2026-rupees-complete-guide` were not rewritten.** They already deny both claims (v0.3.20.0). Titles were not rewritten, including the frozen free-trial and agency-subaccount titles, so the over-60 title count stays 579. Affiliate `fp_ref=amplifi-technologies12` is unchanged. Spanish PayU mentions (MercadoPago / Conekta / PayU for LATAM) were left alone.
+
+### Added
+- **`scripts/test_india_payment_truth.py`** fails if an `en-IN` post pairs PayU with a native-integration claim, or pairs Razorpay with SaaS Mode without the denial. The gate checks both edges: a "Razorpay and PayU" fixture fails, and a denial sentence passes.
+
+### Documentation
+- Queue-aware version is 0.3.25.0. Main had already landed 0.3.24.0, so 0.3.23.0 was no longer free. `seo-cooldown.json` stays retired.
+
 ## [0.3.24.0] - 2026-09-22
 ### Changed
 - **Nine existing Spanish posts now follow HighLevel's help articles instead of unsourced agency math.** No new URLs. Titles are unchanged, including the historical "3x" and "5 minutos" titles. The bodies say what those articles actually publish: the 3x multiplier is not in the Workflow AI Builder guide, and the template library says "minutes", not a five-minute clock.
