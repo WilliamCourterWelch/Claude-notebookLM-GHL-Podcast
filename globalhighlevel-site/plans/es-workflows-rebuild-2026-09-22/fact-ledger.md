@@ -45,7 +45,7 @@ WhatsApp integration at $10/month is the figure in this site's English pricing g
 
 Path AI Agents > Conversation AI > Create Bot > Flow Based Builder. Auto Pilot, channel list, Chat Initiated only, [END] does not end the chat, action list, up to 3 custom triggers. The article does not mention Mercado Pago.
 
-## Workflow AI Builder — help `155000006100`, modified 3 Aug 2026
+## Workflow AI Builder — help `155000006100`, modified 28 Aug 2026
 
 Three entry points. Average generation under 30 seconds, down from about 60. Clarifying Agent asks up to three questions. Point and Edit, Chat Mode, post-generation to-do list. Beta: AI does not test the workflow. The article does not publish a 3x multiplier. The page title still says 3x; the body says the guide does not.
 
@@ -63,4 +63,4 @@ Automation > Workflows > Create Workflow > Select from Template. "In minutes" is
 
 ## Not used
 
-No Caso Real with a name and a result. Ideas-thread vote line stays "más de 300", linked, with no new quotation. PagBank is not stated as a native provider. Conekta and PayU are named only to say the Mercado Pago article does not list them as native connectors.
+No Caso Real with a name and a result. Ideas-thread vote line stays "más de 300", linked, with no new quotation. PagBank is not stated as a native provider. Conekta, PayU, and Transbank are named only to say article 155000007562 does not list them. That article, read 22 September 2026, does not mention those three names.

@@ -33,7 +33,7 @@ MORE["gohighlevel-workflows-practicos-casos-de-uso-reales-agencias-digitales"] =
 <h2>Uso 2: Aviso cuando el pago entra</h2>
 <p>La guía de Payment Received (15 de abril de 2026) dice que el disparador corre cuando un pago se procesa en la cuenta: funnel, factura, calendario, membresía, formulario o un pago manual. Para que no corra en un fallo, filtra <strong>Payment Status = Success</strong>. El origen se filtra aparte: Calendar, External, Form, Funnel, Invoice, Manual Payment, Memberships o Website.</p>
 <p>El artículo dice que el mecanismo es agnóstico de pasarela para cualquier gateway conectado. Mercado Pago se conecta en Payments como proveedor. El alta de credenciales y el webhook no se repiten aquí.</p>
-<p>Conekta, PayU y Transbank no salen en esa guía como conectores nativos. No los sumes a esta lista.</p>
+<p>Conekta, PayU y Transbank no salen en la guía de Mercado Pago como conectores nativos. No los sumes a esta lista.</p>
 <h2>Uso 3: Un formulario crea la oportunidad</h2>
 <p>La guía de pipelines (Getting Started) documenta este flujo, con etapas de ejemplo New Lead, Booked Call o Closed. Esos nombres son del artículo, no un pipeline inmobiliario cerrado:</p>
 <ol>
@@ -366,7 +366,7 @@ MORE["gohighlevel-inmobiliarias-automatiza-consultas-ventas"] = (
 MORE["ai-help-gohighlevel-workflows-construccion-rapida"] = (
     "Workflow AI Builder de HighLevel arma el flujo desde un prompt. El promedio publicado es bajo 30 segundos. La guía no publica un factor de 3x. Revísalo antes.",
     f"""<h2>Respuesta rápida</h2>
-<p>La función que esta página llamaba AI Help es el <strong>Workflow AI Builder</strong> de la guía modificada el 3 de agosto de 2026. Escribes qué quieres automatizar y el builder arma disparadores y acciones para que los revises. No es el Conversation AI Flow Builder, que diseña la conversación de un bot. Ese otro lienzo está en <a href="/blog/maestro-ai-flow-builder-gohighlevel-setup-completo/">la guía del AI Flow Builder</a>.</p>
+<p>La función que esta página llamaba AI Help es el <strong>Workflow AI Builder</strong> de la guía modificada el 28 de agosto de 2026. Escribes qué quieres automatizar y el builder arma disparadores y acciones para que los revises. No es el Conversation AI Flow Builder, que diseña la conversación de un bot. Ese otro lienzo está en <a href="/blog/maestro-ai-flow-builder-gohighlevel-setup-completo/">la guía del AI Flow Builder</a>.</p>
 <p>El título histórico dice "3x más rápido". La guía no publica ese multiplicador. Lo que sí publica es un promedio de generación por debajo de 30 segundos, frente a unos 60 segundos antes, sin presentar eso como un cambio de calidad.</p>
 <h2>Dónde se abre</h2>
 <ol>
@@ -399,10 +399,10 @@ MORE["ai-help-gohighlevel-workflows-construccion-rapida"] = (
 <h3>¿El flujo generado se puede publicar tal cual?</h3>
 <p>No siempre. La guía manda revisar la lista de pendientes y completar campos antes de publicar.</p>
 <h3>¿Dónde está el 3x del título?</h3>
-<p>No está en la guía del 3 de agosto de 2026. El dato de velocidad que el artículo sí da es el promedio de generación, por debajo de 30 segundos.</p>
+<p>No está en la guía del 28 de agosto de 2026. El dato de velocidad que el artículo sí da es el promedio de generación, por debajo de 30 segundos.</p>
 <h2>Fuentes</h2>
 <ul>
-{_src("https://help.gohighlevel.com/support/solutions/articles/155000006100-workflow-ai-builder", "Workflow AI Builder", "el 3 de agosto de 2026")}
+{_src("https://help.gohighlevel.com/support/solutions/articles/155000006100-workflow-ai-builder", "Workflow AI Builder", "el 28 de agosto de 2026")}
 </ul>
 {C}
 """,

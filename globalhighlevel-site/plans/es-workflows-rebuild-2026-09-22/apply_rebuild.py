@@ -92,7 +92,7 @@ BODIES["configurar-workflows-gohighlevel-whatsapp-mercadopago"] = (
 <h2>Paso 3: Webhook en Mercado Pago</h2>
 <ol>
 <li>En la aplicación de Mercado Pago, abre Webhooks y configura las notificaciones.</li>
-<li>Pega en la URL de modo producción: <code>https://backend.leadconnectorhq.com/payments/mercado-pago/webhook</code>. La guía escribe el host con esa ruta; usa la cadena que muestra el artículo el día que conectes, porque el mismo texto también aparece con otra mayúscula en LeadConnector.</li>
+<li>Pega en la URL de modo producción: <code>https://backend.leadconnectorhq.com/payments/mercado-pago/webhook</code>. En el mismo artículo el host también aparece como <code>LeadConnectorhq</code> con esa mayúscula. Copia la cadena que muestre la guía el día que conectes.</li>
 <li>El secreto tiene que ser el mismo en HighLevel y en Mercado Pago.</li>
 <li>Selecciona el evento Payment y guarda.</li>
 </ol>
@@ -104,15 +104,15 @@ BODIES["configurar-workflows-gohighlevel-whatsapp-mercadopago"] = (
 <li>No puedes tener dos checkouts de Mercado Pago activos en la misma página. Dos order forms con captura de tarjeta en un mismo funnel no cargan.</li>
 </ul>
 <h2>Qué es Flujo B y qué no es</h2>
-<p>Esta conexión es para cobrarle al cliente final desde formularios, funnels, facturas, calendarios u otros canales que asignes. La tarjeta de Mercado Pago en la captura de julio lista varios canales, incluido SaaS mode. La guía del 10 de septiembre dice que, sin pagos sin CVV, los flujos de facturación tipo SaaS pueden no funcionar.</p>
-<p>En este sitio, el cobro de la agencia a sus propias subcuentas (Flujo A) sigue siendo Stripe, NMI, Authorize.net o Square. Mercado Pago no reemplaza esa lista. Esa frase es la misma que mantiene la guía de pagos en Latinoamérica.</p>
+<p>Esta conexión es para cobrarle al cliente final desde formularios, funnels, facturas, calendarios u otros canales que asignes. La captura de julio muestra las palabras SaaS mode en la tarjeta de Mercado Pago. Esa etiqueta no mueve el Flujo A.</p>
+<p>En este sitio, el cobro de la agencia a sus propias subcuentas (Flujo A) sigue siendo Stripe, NMI, Authorize.net o Square. Mercado Pago no reemplaza esa lista. La guía del 10 de septiembre añade un límite distinto: sin pagos sin CVV, los flujos de facturación tipo SaaS pueden no funcionar. La frase de los cuatro procesadores es la misma que mantiene la guía de pagos en Latinoamérica.</p>
 <h2>Paso 5: El mensaje de WhatsApp sale del flujo</h2>
 <p>En Automation &gt; Workflows creas el flujo. La acción documentada se llama WhatsApp. Dentro de la ventana de 24 horas puedes enviar texto libre. Fuera de esa ventana hace falta una plantilla aprobada. La guía también describe una Free Entry Point: si el cliente responde, puedes enviar texto libre o plantilla hasta por 72 horas sin costo adicional de esa conversación, según el texto de la acción.</p>
 <p>Un pago que acaba de entrar es un mensaje que inicia el negocio, no una respuesta a un chat abierto. Por eso el aviso de pago usa plantilla, no texto libre, salvo que el contacto esté dentro de la ventana. Los filtros del disparador están en la otra guía de este mismo tema.</p>
 <p>La captura del 28 de julio muestra, en el buscador de acciones, WhatsApp, WhatsApp media, WhatsApp interactive messages, WhatsApp send flows y WhatsApp customer service window check. Esos cinco nombres son lo que se veía en esa pantalla. La guía de la acción, modificada el 8 de abril de 2025, documenta el envío de plantilla o de texto dentro de la ventana, más variables del contacto y la opción de no molestar (DND) para WhatsApp.</p>
 {FIG_WA_ACTIONS}
 {FIG_AI_HOME}
-<p>En esa misma captura de julio, el listado ofrece crear con IA y dice en pantalla que puedes crear flujos chateando con la IA. La guía de Workflow AI Builder del 3 de agosto de 2026 no publica una tarifa de ese asistente. No uses la palabra de la captura como precio vigente.</p>
+<p>En esa misma captura de julio, el listado ofrece crear con IA y dice en pantalla que puedes crear flujos chateando con la IA. La guía de Workflow AI Builder del 28 de agosto de 2026 no publica una tarifa de ese asistente. No uses la palabra de la captura como precio vigente.</p>
 <h2>WhatsApp se cobra en Meta, aparte del plan</h2>
 <p>La guía de precios de este sitio, revisada contra la documentación de HighLevel en agosto de 2026, lista la integración de WhatsApp en 10 USD al mes. Aparte, el error 131042 de la API de WhatsApp bloquea los envíos cuando Meta no tiene un método de pago válido en la cuenta de WhatsApp Business. El artículo, modificado el 30 de junio de 2026, dice que la suscripción del CRM no cubre esas tarifas de conversación. También dice que WhatsApp incluye 1.000 conversaciones de servicio gratis al mes y que, pasado ese cupo, sin método de pago en Meta los mensajes nuevos se bloquean.</p>
 <p>El hilo público de ideas de Mercado Pago es la demanda verificable: más de 300 votos. No hay en esta página un caso de una agencia con nombre, ciudad y cifra de ventas.</p>
