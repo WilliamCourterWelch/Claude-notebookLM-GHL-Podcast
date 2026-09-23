@@ -17,22 +17,21 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 POSTS = ROOT / "posts"
 
-# A PayU mention is allowed only inside a denial. Match the phrase, not the
-# intent: "not natively" / "custom integration" are the sentences that already
-# told the truth before this pass (WhatsApp Business API setup).
+# A PayU mention is allowed only in a sentence that denies a native integration.
+# A nearby "not natively" about Stripe does not excuse "select PayU".
 DENIAL = re.compile(
     r"PayU is not a native"
     r"|PayU is not native"
     r"|PayU is not in the provider table"
     r"|PayU is not in HighLevel's provider table"
-    r"|not natively"
     r"|via a custom integration"
     r"|custom build"
     r"|नेटिव इंटीग्रेशन नहीं",
     re.I,
 )
 SAAS_DENIAL = re.compile(
-    r"does not bill SaaS Mode|SaaS Mode का बिल नहीं करता"
+    r"does not bill SaaS Mode|SaaS Mode का बिल नहीं करता",
+    re.I,
 )
 FORBIDDEN = (
     "Razorpay/PayU",
@@ -66,6 +65,15 @@ FORBIDDEN = (
     "integrates with all three",
     "UPI native support",
     "Native Razorpay + UPI",
+    "Both payment gateways",
+    "Both work seamlessly",
+    "both GST-compliant",
+    "both accepted across India",
+    "are your best bets",
+    "works via Zapier",
+    "can be connected via API/Zapier",
+    "or (2% + ₹2",
+    "App Connector lets you integrate Razorpay",
 )
 TAG = re.compile(r"<[^>]+>")
 
@@ -93,12 +101,15 @@ def _india_posts():
 
 
 def payu_mentions_are_denied(blob: str) -> list[str]:
-    """Return PayU windows that do not sit next to a denial."""
+    """Return PayU sentences that do not themselves deny a native integration.
+
+    A denial in the next sentence does not excuse "Select PayU" in this one.
+    """
+    plain = _plain(blob)
     bad = []
-    for match in re.finditer(r"PayU", blob):
-        window = blob[max(0, match.start() - 180) : match.end() + 180]
-        if not DENIAL.search(window):
-            bad.append(re.sub(r"\s+", " ", window)[:160])
+    for sentence in re.split(r"(?<=[.?!।])\s+", plain):
+        if re.search(r"PayU", sentence) and not DENIAL.search(sentence):
+            bad.append(sentence[:160])
     return bad
 
 
@@ -118,6 +129,12 @@ def test_gate_fires_on_a_native_claim_and_passes_a_denial():
     assert not payu_mentions_are_denied(
         "local gateways like PayU connect via a custom integration, not natively."
     )
+    assert payu_mentions_are_denied(
+        "Select PayU in Settings → Payments. PayU is not a native HighLevel integration."
+    )
+    assert payu_mentions_are_denied(
+        "Stripe is not natively available for INR, so select PayU in Payment Gateways."
+    )
 
 
 def test_india_corpus_has_no_payu_native_or_razorpay_saas_claim():
@@ -132,7 +149,7 @@ def test_india_corpus_has_no_payu_native_or_razorpay_saas_claim():
         for sentence in re.split(r"(?<=[.?!।])\s+", plain):
             if (
                 re.search(r"Razorpay", sentence)
-                and "SaaS Mode" in sentence
+                and re.search(r"SaaS\s+(Mode|billing|rebilling)", sentence, re.I)
                 and not SAAS_DENIAL.search(sentence)
             ):
                 offenders.append(f"{slug}: SaaS Mode without denial: {sentence[:160]}")
