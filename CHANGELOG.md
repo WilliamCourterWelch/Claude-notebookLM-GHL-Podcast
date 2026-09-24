@@ -2,6 +2,19 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.28.0] - 2026-09-24
+### Changed
+- **The Conversation AI Flow Builder guide now includes the Appointment Booking Conversation AI workflow action.** `/blog/master-conversation-ai-flow-builder-gohighlevel-complete-setup/` keeps its title and H1, `GoHighLevel Conversation AI Flow Builder, No Code`. A five-step list and a `#booking-bot` section cite HighLevel help `155000003467` (modified 23 September 2026) and keep the flow-canvas Book Appointment action on help `155000006515` (modified 1 June 2026). The old "3 suggested times" sentences are gone. The page embeds Transistor `968aa4ab` and the unlisted YouTube `y_eFDPg1wrE`. The existing page player stays episode `1480182e`.
+- **Bootcamp CTAs on that section use `fp_ref=amplifi-technologies12` with slots `ai-booking-bots` and `ai-booking-episode`.** Campaign is `conversation-ai-booking-bot`. Same-silo links run to the Agent Studio build guide, Guided Form setup, and Service Booking Triggers, and those pages plus the AI pillar link back. Multi-calendar stays unlinked because it is in CRM & Communication and the render pass unwraps cross-topic hrefs. The meta description is 151 characters and names both Flow Builder and the booking-bot action. The canvas path in the opening section now matches the help article: AI Agents, Conversation AI, Create Bot, Flow Based Builder.
+- **No new URL.** Agent Studio title and H1 stay `GoHighLevel Agent Studio: Build AI Agents Step by Step`. Frozen free-trial and agency titles were not edited. No Meta Pixel. No homepage edit.
+
+### Added
+- **`scripts/test_ai_booking_bot_fold.py`** pins the steps, both embeds, both Bootcamp slots, the same-silo hrefs, the locked host and Agent Studio titles, and that a CRM multi-calendar href unwraps.
+- **`plans/ai-booking-bots-fold-2026-09-24/`** holds the decision, the fact ledger, and `PATTERN.md` for the next daily AI episode fold.
+
+### Documentation
+- `seo-cooldown.json` stays retired. gbrain is not installed in this session, so there is no timeline entry.
+
 ## [0.3.27.0] - 2026-09-23
 ### Changed
 - **Bootcamp affiliate hrefs that had no slot now carry `utm_content=in_article`.** GA4 `ghl_click` already copied `utm_content` into `cta_slot`. Last 28 days, 15 of 19 clicks were `(not set)` or blank because body links had `utm_campaign` and no `utm_content`. The render pass stamps only `highlevel-bootcamp` and `highlevel-bootcamp-es` hrefs that include `fp_ref` and lack both `utm_content` and `cta_slot`. Existing slots stay: `nav`, `cta3`, `tldr`, `trial_*`, `tier_*`, `blog_trial`, `hub_cta`, `extractable-steps`. The campaign slug is not copied into the slot. Post JSON, titles, and H1s are unchanged, including the frozen free-trial and agency-subaccount titles.
