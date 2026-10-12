@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.30.0] - 2026-10-12
+### Added
+- **Spanish twin of the Marketplace AI templates guide** at `/blog/publicar-plantillas-conversation-ai-voice-ai-marketplace-gohighlevel/` (William GO 2026-10-12 10:58 AM ET). Same help source `155000005412`, Transistor `38e5d1f1`, SHOT-ES-01/02 (Cloud Sandbox, Spanish UI labels Vender en el mercado / Copiar URL para el mercado), Developer Portal steps text-only. Title `Publicar plantillas de IA en el Marketplace de GoHighLevel` (57 chars). EN and ES are paired via `translations` (hreflang en/es/x-default). Cross-topic related links unwrap at render as usual.
+
 ## [0.3.29.0] - 2026-10-12
 ### Changed
 - **The Marketplace AI templates guide is rewritten in place.** `/blog/list-ai-templates-gohighlevel-marketplace-sell-agents/` keeps its URL, canonical, `publishedAt` (2026-04-10), and Transistor episode `38e5d1f1`. The body is the taste-approved draft (William GO 2026-10-12) built from HighLevel help `155000005412` (modified June 19, 2026): who can see the sell option, the listing workflow, Developer Portal module steps, listing sections and review, and the app-versioning update flow (Draft clone, Minor vs Major). The old body's unsourced claims (bundles, promotions, "existing buyers aren't affected") are gone.
