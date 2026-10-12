@@ -10,5 +10,9 @@
   "language": "en",
   "language_corrected_at": "2026-04-15",
   "topic": "Agency, White-Label & SaaS",
-  "updatedAt": "2026-10-12T10:00:00.000000"
+  "updatedAt": "2026-10-12T10:00:00.000000",
+  "translations": {
+    "en": "list-ai-templates-gohighlevel-marketplace-sell-agents",
+    "es": "publicar-plantillas-conversation-ai-voice-ai-marketplace-gohighlevel"
+  }
 }
