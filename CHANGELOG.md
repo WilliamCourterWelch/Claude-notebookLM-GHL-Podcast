@@ -2,6 +2,15 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.29.0] - 2026-10-12
+### Changed
+- **The Marketplace AI templates guide is rewritten in place.** `/blog/list-ai-templates-gohighlevel-marketplace-sell-agents/` keeps its URL, canonical, `publishedAt` (2026-04-10), and Transistor episode `38e5d1f1`. The body is the taste-approved draft (William GO 2026-10-12) built from HighLevel help `155000005412` (modified June 19, 2026): who can see the sell option, the listing workflow, Developer Portal module steps, listing sections and review, and the app-versioning update flow (Draft clone, Minor vs Major). The old body's unsourced claims (bundles, promotions, "existing buyers aren't affected") are gone.
+- **Two Cloud Sandbox screenshots** (Conversation AI and Voice AI sell menus) ship under `images/blog/list-ai-templates-gohighlevel-marketplace-sell-agents/`. Developer Portal steps stay text-only. Draft-only scaffolding (banner, noindex, empty screenshot slots, claim tags, annotate notes) was stripped; copy was not edited.
+- Title/H1 is now `How to List Conversation AI & Voice AI Templates on the GoHighLevel Marketplace`; meta description updated to match. No hreflang to the Spanish twin yet (ES not published).
+
+### Added
+- **`scripts/test_marketplace_ai_templates_rewrite.py`** pins canonical, episode, screenshots, FAQ schema, and the absence of draft markers.
+
 ## [0.3.28.0] - 2026-09-24
 ### Changed
 - **The Conversation AI Flow Builder guide now includes the Appointment Booking Conversation AI workflow action.** `/blog/master-conversation-ai-flow-builder-gohighlevel-complete-setup/` keeps its title and H1, `GoHighLevel Conversation AI Flow Builder, No Code`. A five-step list and a `#booking-bot` section cite HighLevel help `155000003467` (modified 23 September 2026) and keep the flow-canvas Book Appointment action on help `155000006515` (modified 1 June 2026). The old "3 suggested times" sentences are gone. The page embeds Transistor `968aa4ab` and the unlisted YouTube `y_eFDPg1wrE`. The existing page player stays episode `1480182e`.
