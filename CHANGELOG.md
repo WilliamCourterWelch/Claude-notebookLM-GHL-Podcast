@@ -2,6 +2,14 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.31.0] - 2026-10-12
+### Added
+- **Jev publish gate (`globalhighlevel-site/scripts/jev_publish_gate.py`).** Before a post ships, its title, H1, intro, and CTA go to TypeSafe Jev (pinned `jev-1.13.0`) with labels on-intent / off-intent / thin / leftover-draft plus a language check (es posts must read es, English posts en). Any flag at confidence >= 0.6 holds the ship (exit 2) with a reason per field. No key, no SDK, an error, or a timeout (20s) skips the check and the page passes. Every result is appended to a JSONL log on the box. The key is read at runtime from `TYPESAFE_API_KEY` or the box secrets file and is never logged. Requested by William 2026-10-12; scope is the gate only (no SEO scoring, link suggestions, or lead triage).
+- **`scripts/test_jev_publish_gate.py`** — offline tests for extraction, hold/pass, es/en mismatch, low-confidence ignore, fail-open on error/timeout/no key, exit codes, and that the key never reaches the log.
+
+### Documentation
+- Root `CLAUDE.md` deploy step 0 now runs the gate with `--changed origin/main`. The in-flight Marketplace EN rewrite (#78) was not gated; the Marketplace ES twin is the first page through it.
+
 ## [0.3.30.0] - 2026-10-12
 ### Added
 - **Spanish twin of the Marketplace AI templates guide** at `/blog/publicar-plantillas-conversation-ai-voice-ai-marketplace-gohighlevel/` (William GO 2026-10-12 10:58 AM ET). Same help source `155000005412`, Transistor `38e5d1f1`, SHOT-ES-01/02 (Cloud Sandbox, Spanish UI labels Vender en el mercado / Copiar URL para el mercado), Developer Portal steps text-only. Title `Publicar plantillas de IA en el Marketplace de GoHighLevel` (57 chars). EN and ES are paired via `translations` (hreflang en/es/x-default). Cross-topic related links unwrap at render as usual.
