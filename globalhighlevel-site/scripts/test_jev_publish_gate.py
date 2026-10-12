@@ -169,3 +169,26 @@ def test_hung_init_and_close_fail_open(tmp_path):
 def test_bad_ref_is_reported_not_silent(capsys):
     assert g.main(["--changed", "no-such-ref-xyz"]) == 3
     assert "no pages were gated" in capsys.readouterr().err
+
+
+def test_help_link_is_not_the_cta():
+    post = dict(POST, html_content=(
+        '<p>Source: <a href="https://help.gohighlevel.com/support/solutions/articles/1">HighLevel help</a>.</p>'
+        '<p>Ready? <a href="https://www.gohighlevel.com/highlevel-bootcamp?fp_ref=x">Start the Bootcamp</a></p>'))
+    cta = g.extract_fields(post)["cta"]
+    assert "Start the Bootcamp" in cta and "HighLevel help" not in cta
+
+
+def test_renamed_post_is_gated(tmp_path, monkeypatch):
+    import subprocess
+    run = lambda *a: subprocess.run(["git", *a], cwd=tmp_path, check=True, capture_output=True)
+    run("init", "-q"); run("config", "user.email", "t@t"); run("config", "user.name", "t")
+    (tmp_path / "posts").mkdir()
+    body = json.dumps(dict(POST, html_content=POST["html_content"] * 5))
+    (tmp_path / "posts" / "old.json").write_text(body)
+    run("add", "-A"); run("commit", "-qm", "base")
+    run("mv", "posts/old.json", "posts/new.json")
+    (tmp_path / "posts" / "new.json").write_text(body.replace("Short.", "Short!"))
+    run("add", "-A"); run("commit", "-qm", "rename")
+    monkeypatch.chdir(tmp_path)
+    assert g.changed_posts("HEAD~1") == ["posts/new.json"]

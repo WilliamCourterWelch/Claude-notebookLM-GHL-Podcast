@@ -77,7 +77,7 @@ def extract_fields(post):
     cta = ""
     for am in re.finditer(r'(?is)<a\b([^>]*)>(.*?)</a>', body):
         attrs, inner = am.group(1), am.group(2)
-        if re.search(r"fp_ref=|highlevel-bootcamp|gohighlevel\.com/|/trial/|class=\"[^\"]*cta", attrs, re.I):
+        if re.search(r"fp_ref=|highlevel-bootcamp|href=\"https?://(?:www\.)?gohighlevel\.com/|href=\"/trial/|class=\"[^\"]*\bcta", attrs, re.I):
             t = _text(inner)
             if t:
                 start = max(0, am.start() - 300)
@@ -246,7 +246,7 @@ class GitDiffError(RuntimeError):
 
 
 def changed_posts(ref):
-    r = subprocess.run(["git", "diff", "--relative", "--name-only", "--diff-filter=AM", ref, "--", "posts/"],
+    r = subprocess.run(["git", "diff", "--relative", "--name-only", "--diff-filter=AMR", ref, "--", "posts/"],
                        capture_output=True, text=True, check=False)
     if r.returncode != 0:
         raise GitDiffError(f"git diff vs {ref!r} failed: {r.stderr.strip()[:200]}")
