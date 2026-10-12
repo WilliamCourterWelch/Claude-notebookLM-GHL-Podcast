@@ -135,3 +135,37 @@ def test_cli_exits_despite_hung_request(tmp_path):
 def test_changed_paths_are_relative_to_site_dir():
     import inspect
     assert "--relative" in inspect.getsource(g.changed_posts)
+
+
+def test_secret_in_exception_is_redacted(tmp_path, monkeypatch):
+    secret = "tsk_live_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123"
+    monkeypatch.setattr(g, "load_key", lambda env=None: secret)
+    log = tmp_path / "log.jsonl"
+    monkeypatch.setattr(g, "JevClient", lambda key: Fake(err=RuntimeError(f"bad key {key}")))
+    g.main([_write(tmp_path, POST), "--log", str(log), "--json"])
+    def boom(key):
+        raise RuntimeError(f"init failed for {key}")
+    monkeypatch.setattr(g, "JevClient", boom)
+    g.main([_write(tmp_path, POST), "--log", str(log)])
+    text = log.read_text()
+    assert secret not in text and text.count("[redacted]") == 2
+
+
+def test_hung_init_and_close_fail_open(tmp_path):
+    def slow_init():
+        time.sleep(30)
+    t0 = time.time()
+    r = g.gate_post(_write(tmp_path, POST), slow_init, 0.2, 0.6)
+    assert r["verdict"] == "skipped" and time.time() - t0 < 3
+
+    class SlowClose(Fake):
+        def close(self):
+            time.sleep(30)
+    t0 = time.time()
+    r = g.gate_post(_write(tmp_path, POST), lambda: SlowClose(), 0.5, 0.6)
+    assert time.time() - t0 < 3 and r["verdict"] in ("pass", "skipped")
+
+
+def test_bad_ref_is_reported_not_silent(capsys):
+    assert g.main(["--changed", "no-such-ref-xyz"]) == 3
+    assert "no pages were gated" in capsys.readouterr().err

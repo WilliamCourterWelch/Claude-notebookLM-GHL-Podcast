@@ -138,6 +138,22 @@ class JevClient:
             pass
 
 
+_TOKENISH = re.compile(r"[A-Za-z0-9_\-]{24,}")
+
+
+def safe_error(exc):
+    """Exception text with the API key (and anything key-shaped) removed."""
+    msg = f"{type(exc).__name__}: {exc}"
+    key = ""
+    try:
+        key = load_key()
+    except BaseException:
+        pass
+    if key:
+        msg = msg.replace(key, "[redacted]")
+    return _TOKENISH.sub("[redacted]", msg)[:200]
+
+
 def judge(field, ans, lang, min_conf):
     reasons = []
     if not ans:
@@ -160,43 +176,54 @@ def gate_post(path, client_factory, timeout, min_conf):
     for f in empty:
         if f in ("title", "intro"):
             rec["reasons"].append(f"{f}: missing")
-    try:
-        client = client_factory()
-    except BaseException as exc:  # no key / no SDK / init error -> fail-open
-        rec.update(verdict="skipped", error=f"{type(exc).__name__}: {exc}"[:200], reasons=[])
-        return rec
     topic = f"{fields['title']} (slug: {slug}; category: {post.get('category', '')})"
-    # Daemon threads, not an executor: a hung request must never keep the
-    # process alive past the timeout (executor workers are joined at exit).
-    results, threads = {}, {}
+    # The whole SDK lifecycle (init, requests, close) runs in one daemon
+    # thread bounded by the deadline: a hang anywhere fails open and can
+    # never keep the process alive (daemon threads are not joined at exit).
+    results = {}
 
-    def run(f):
+    def lifecycle():
         try:
-            results[f] = ("ok", client.ask({"field": f, "page_topic": topic, "text": fields[f]}))
-        except BaseException as exc:
-            results[f] = ("err", exc)
+            client = client_factory()
+        except BaseException as exc:  # no key / no SDK / init error
+            results["_err"] = exc
+            return
+        try:
+            def ask(f):
+                try:
+                    results[f] = client.ask({"field": f, "page_topic": topic, "text": fields[f]})
+                except BaseException as exc:
+                    results.setdefault("_err", exc)
+            ts = [threading.Thread(target=ask, args=(f,), daemon=True) for f in FIELDS if fields[f]]
+            for t in ts:
+                t.start()
+            for t in ts:
+                t.join()
+        finally:
+            try:
+                client.close()
+            except BaseException:
+                pass
+            results["_done"] = True
 
-    for f in FIELDS:
-        if fields[f]:
-            threads[f] = threading.Thread(target=run, args=(f,), daemon=True)
-            threads[f].start()
+    worker = threading.Thread(target=lifecycle, daemon=True)
+    worker.start()
     deadline = time.monotonic() + timeout
-    try:
-        for f, t in threads.items():
-            t.join(max(0.0, deadline - time.monotonic()))
-            if t.is_alive():
-                raise TimeoutError(f"Jev did not answer {f} within {timeout}s")
-            kind, val = results[f]
-            if kind == "err":
-                raise val
-            rec["fields"][f] = val
-            rec["reasons"] += judge(f, val, lang, min_conf)
-    except BaseException as exc:  # error or timeout -> skip the check, let it through
-        rec.update(verdict="skipped", error=f"{type(exc).__name__}: {exc}"[:200], reasons=[])
-        rec["fields"] = {}
-        client.close()
+    while time.monotonic() < deadline and not (results.get("_done") or "_err" in results
+                                                or all(f in results for f in FIELDS if fields[f])):
+        worker.join(0.02)
+    asked = [f for f in FIELDS if fields[f]]
+    if "_err" in results:
+        exc = results["_err"]
+        rec.update(verdict="skipped", error=safe_error(exc), reasons=[], fields={})
         return rec
-    client.close()
+    if not all(f in results for f in asked):
+        rec.update(verdict="skipped", error=f"TimeoutError: Jev did not answer within {timeout}s",
+                   reasons=[], fields={})
+        return rec
+    for f in asked:
+        rec["fields"][f] = results[f]
+        rec["reasons"] += judge(f, results[f], lang, min_conf)
     rec["verdict"] = "hold" if rec["reasons"] else "pass"
     return rec
 
@@ -214,9 +241,16 @@ def write_log(rec, log_path=None):
     return None
 
 
+class GitDiffError(RuntimeError):
+    pass
+
+
 def changed_posts(ref):
-    out = subprocess.run(["git", "diff", "--relative", "--name-only", "--diff-filter=AM", ref, "--", "posts/"],
-                         capture_output=True, text=True, check=False).stdout
+    r = subprocess.run(["git", "diff", "--relative", "--name-only", "--diff-filter=AM", ref, "--", "posts/"],
+                       capture_output=True, text=True, check=False)
+    if r.returncode != 0:
+        raise GitDiffError(f"git diff vs {ref!r} failed: {r.stderr.strip()[:200]}")
+    out = r.stdout
     return [p for p in out.split() if p.endswith(".json") and os.path.exists(p)]
 
 
@@ -229,7 +263,12 @@ def main(argv=None):
     ap.add_argument("--log")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
-    paths = list(a.posts) + (changed_posts(a.changed) if a.changed else [])
+    try:
+        paths = list(a.posts) + (changed_posts(a.changed) if a.changed else [])
+    except GitDiffError as exc:
+        # Not a Jev failure: the gate could not even list pages. Say so loudly.
+        print(f"jev-gate ERROR: {exc} -- no pages were gated", file=sys.stderr)
+        return 3
     if not paths:
         print("jev-gate: no posts to gate")
         return 0
