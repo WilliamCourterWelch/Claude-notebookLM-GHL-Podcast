@@ -23,7 +23,6 @@ Usage (from globalhighlevel-site/):
   python3 scripts/jev_publish_gate.py --changed origin/main   # posts added/changed vs ref
 """
 import argparse
-import concurrent.futures as cf
 import datetime as dt
 import html
 import json
@@ -31,6 +30,8 @@ import os
 import re
 import subprocess
 import sys
+import threading
+import time
 
 MODEL_PIN = "jev-1.13.0"
 KEY_FILE = "/home/box/.secrets/TYPESAFE_API_KEY"
@@ -165,20 +166,36 @@ def gate_post(path, client_factory, timeout, min_conf):
         rec.update(verdict="skipped", error=f"{type(exc).__name__}: {exc}"[:200], reasons=[])
         return rec
     topic = f"{fields['title']} (slug: {slug}; category: {post.get('category', '')})"
-    pool = cf.ThreadPoolExecutor(max_workers=4)
+    # Daemon threads, not an executor: a hung request must never keep the
+    # process alive past the timeout (executor workers are joined at exit).
+    results, threads = {}, {}
+
+    def run(f):
+        try:
+            results[f] = ("ok", client.ask({"field": f, "page_topic": topic, "text": fields[f]}))
+        except BaseException as exc:
+            results[f] = ("err", exc)
+
+    for f in FIELDS:
+        if fields[f]:
+            threads[f] = threading.Thread(target=run, args=(f,), daemon=True)
+            threads[f].start()
+    deadline = time.monotonic() + timeout
     try:
-        futs = {f: pool.submit(client.ask, {"field": f, "page_topic": topic, "text": fields[f]})
-                for f in FIELDS if fields[f]}
-        for f, fut in futs.items():
-            ans = fut.result(timeout=timeout)
-            rec["fields"][f] = ans
-            rec["reasons"] += judge(f, dict(ans, _text=fields[f]), lang, min_conf)
+        for f, t in threads.items():
+            t.join(max(0.0, deadline - time.monotonic()))
+            if t.is_alive():
+                raise TimeoutError(f"Jev did not answer {f} within {timeout}s")
+            kind, val = results[f]
+            if kind == "err":
+                raise val
+            rec["fields"][f] = val
+            rec["reasons"] += judge(f, val, lang, min_conf)
     except BaseException as exc:  # error or timeout -> skip the check, let it through
         rec.update(verdict="skipped", error=f"{type(exc).__name__}: {exc}"[:200], reasons=[])
-        pool.shutdown(wait=False, cancel_futures=True)
+        rec["fields"] = {}
         client.close()
         return rec
-    pool.shutdown(wait=False)
     client.close()
     rec["verdict"] = "hold" if rec["reasons"] else "pass"
     return rec
@@ -198,7 +215,7 @@ def write_log(rec, log_path=None):
 
 
 def changed_posts(ref):
-    out = subprocess.run(["git", "diff", "--name-only", "--diff-filter=AM", ref, "--", "posts/"],
+    out = subprocess.run(["git", "diff", "--relative", "--name-only", "--diff-filter=AM", ref, "--", "posts/"],
                          capture_output=True, text=True, check=False).stdout
     return [p for p in out.split() if p.endswith(".json") and os.path.exists(p)]
 

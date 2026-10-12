@@ -114,3 +114,24 @@ def test_key_never_logged(tmp_path, monkeypatch):
     monkeypatch.setattr(g, "JevClient", lambda key: Fake(err=RuntimeError("boom")))
     g.main([_write(tmp_path, POST), "--log", str(log)])
     assert secret not in log.read_text()
+
+
+def test_cli_exits_despite_hung_request(tmp_path):
+    """A hung SDK call must not keep the process alive past the timeout."""
+    import subprocess
+    path = _write(tmp_path, POST)
+    code = (
+        "import sys,time; sys.path.insert(0,%r); import jev_publish_gate as g\n"
+        "class H:\n def ask(self,s): time.sleep(60)\n def close(self): pass\n"
+        "g.load_key=lambda env=None:'k'; g.JevClient=lambda k:H()\n"
+        "sys.exit(g.main([%r,'--timeout','0.2','--log',%r]))\n"
+    ) % (os.path.dirname(__file__), path, str(tmp_path / "l.jsonl"))
+    t0 = time.time()
+    r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, timeout=20)
+    assert r.returncode == 0 and "SKIPPED" in r.stdout
+    assert time.time() - t0 < 10
+
+
+def test_changed_paths_are_relative_to_site_dir():
+    import inspect
+    assert "--relative" in inspect.getsource(g.changed_posts)
