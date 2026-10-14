@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.32.0] - 2026-10-14
+### Added
+- **New annotated how-to: How to Set Up a Conversation AI Bot in GoHighLevel** at `/blog/how-to-set-up-conversation-ai-bot-gohighlevel/` (William taste GO 2026-10-14 6:19 PM ET). Built from HighLevel help `155000004401` (modified Sep 10, 2026) reconciled against the live Cloud Sandbox UI: Create Agent, Prompt Based Agent / Flow Based Builder chooser, Guided Form noted as absent in our account. SHOT-EN-01…05 (retaken 2026-10-14) ship as figures with their marker legends. Sister Guided Form and Flow Builder pages unchanged.
+
 ## [0.3.31.0] - 2026-10-12
 ### Added
 - **Jev publish gate (`globalhighlevel-site/scripts/jev_publish_gate.py`).** Before a post ships, its title, H1, intro, and CTA go to TypeSafe Jev (pinned `jev-1.13.0`) with labels on-intent / off-intent / thin / leftover-draft plus a language check (es posts must read es, English posts en). Any flag at confidence >= 0.6 holds the ship (exit 2) with a reason per field. No key, no SDK, an error, or a timeout (20s) skips the check and the page passes. Every result is appended to a JSONL log on the box. The key is read at runtime from `TYPESAFE_API_KEY` or the box secrets file and is never logged. Requested by William 2026-10-12; scope is the gate only (no SEO scoring, link suggestions, or lead triage).
