@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.33.0] - 2026-10-15
+### Added
+- **Spanish twin of the Conversation AI bot setup guide** at `/blog/configurar-bot-conversation-ai-gohighlevel/` (William GO 2026-10-15 11:45 AM ET). Same help source `155000004401`; SHOT-ES-01…05 from the Spanish-UI Cloud Sandbox (labels per LABELS-SEEN; Conversation AI tab, Mode and Off/Suggestive/Auto-Pilot stay English as on screen). Title `Cómo configurar un bot de Conversation AI en GoHighLevel`. EN post gains `translations` so hreflang pairs EN/ES.
+
 ## [0.3.32.0] - 2026-10-14
 ### Added
 - **New annotated how-to: How to Set Up a Conversation AI Bot in GoHighLevel** at `/blog/how-to-set-up-conversation-ai-bot-gohighlevel/` (William taste GO 2026-10-14 6:19 PM ET). Built from HighLevel help `155000004401` (modified Sep 10, 2026) reconciled against the live Cloud Sandbox UI: Create Agent, Prompt Based Agent / Flow Based Builder chooser, Guided Form noted as absent in our account. SHOT-EN-01…05 (retaken 2026-10-14) ship as figures with their marker legends. Sister Guided Form and Flow Builder pages unchanged.
