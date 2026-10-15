@@ -9,5 +9,9 @@
   "topic": "AI Receptionist & Lead Capture",
   "author": "William Welch",
   "publishedAt": "2026-10-14T18:30:00.000000",
-  "updatedAt": "2026-10-14T18:30:00.000000"
+  "updatedAt": "2026-10-14T18:30:00.000000",
+  "translations": {
+    "en": "how-to-set-up-conversation-ai-bot-gohighlevel",
+    "es": "configurar-bot-conversation-ai-gohighlevel"
+  }
 }
