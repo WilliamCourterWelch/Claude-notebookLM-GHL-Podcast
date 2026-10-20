@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Gate: money-page title/H1/og:title stay on the locked head-term rewrite.
 
-William GO via COS 2026-09-15. Bing W37 cluster is
+William GO via COS 2026-09-15; retitled 2026-10-20 (William standing GO,
+seo-ops-agent PR #66) to state the page's own 30-vs-14 offer. Bing W37 cluster is
 `gohighlevel 30 day free trial*` (4 clicks / 1,267 impressions / 0.32% CTR /
 pos ~5). The old title led with clever "Not 14" instead of the head term.
 
@@ -19,7 +20,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import build  # noqa: E402
 
-LOCKED = "GoHighLevel 30-Day Free Trial (2026): Get Extended Access"
+LOCKED = "GoHighLevel Free Trial: 30 Days Instead of 14 (2026)"
 POST = (
     Path(__file__).resolve().parents[1]
     / "posts"

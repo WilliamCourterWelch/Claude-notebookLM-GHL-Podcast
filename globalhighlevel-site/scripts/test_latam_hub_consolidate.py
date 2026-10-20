@@ -48,7 +48,7 @@ RETARGETED = {
 }
 DO_NOT_TOUCH = {
     "gohighlevel-free-trial-30-days-extended": (
-        "GoHighLevel 30-Day Free Trial (2026): Get Extended Access"
+        "GoHighLevel Free Trial: 30 Days Instead of 14 (2026)"
     ),
     "gohighlevel-sub-accounts-snapshots-agency-guide": (
         "GoHighLevel Sub-Accounts: How Many You Really Get"
