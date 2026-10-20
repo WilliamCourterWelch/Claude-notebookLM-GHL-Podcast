@@ -9,5 +9,9 @@
   "topic": "AI Receptionist & Lead Capture",
   "author": "William Welch",
   "publishedAt": "2026-10-20T10:00:00.000000",
-  "updatedAt": "2026-10-20T10:00:00.000000"
+  "updatedAt": "2026-10-20T10:00:00.000000",
+  "translations": {
+    "en": "how-to-create-voice-ai-agent-gohighlevel",
+    "es": "crear-agente-voice-ai-gohighlevel"
+  }
 }
