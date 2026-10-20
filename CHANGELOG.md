@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.34.1] - 2026-10-20
+### Changed
+- **The AI Receptionist review and the Voice AI pricing page now link to the new Voice AI agent setup guide** (`/blog/how-to-create-voice-ai-agent-gohighlevel/`), one short in-body link each beside the existing call-transfer setup note. No other copy changed.
+
 ## [0.3.34.0] - 2026-10-20
 ### Added
 - **New annotated how-to: How to Create a Voice AI Agent in GoHighLevel** at `/blog/how-to-create-voice-ai-agent-gohighlevel/` (William standing GO 2026-10-20). Built from HighLevel help `155000004107` (modified Oct 1, 2026) reconciled against the live Cloud Sandbox UI (Flow Builder, Test Audio, nine action types incl. Custom Action 2.0, Deploy tab labels); label asides kept where help and live screens differ. SHOT-EN-01, 02, 03, 04a, 04, 05 (captured 2026-10-16) ship as figures with their marker legends. Approved copy unchanged; draft banner, noindex, HTML comments and internal claim tags stripped.
