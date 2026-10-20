@@ -440,7 +440,7 @@ def test_rendered_gap_pages_stamp_every_bootcamp_href(tmp_path, monkeypatch):
             "utm_campaign=gohighlevel-precios-planes-2026-guia-completa&utm_content=in_article"
         ),
     }
-    locked_trial = "GoHighLevel 30-Day Free Trial (2026): Get Extended Access"
+    locked_trial = "GoHighLevel Free Trial: 30 Days Instead of 14 (2026)"
     for name, needle in pages.items():
         post = json.loads((root / name).read_text(encoding="utf-8"))
         build._ANCHOR_URL_COUNTS.clear()

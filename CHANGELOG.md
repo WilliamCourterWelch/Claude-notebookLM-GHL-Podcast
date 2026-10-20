@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.35.0] - 2026-10-20
+### Changed
+- **The free-trial money page title now states the offer.** `/blog/gohighlevel-free-trial-30-days-extended/` title, H1, og:title and JSON-LD headline change from `GoHighLevel 30-Day Free Trial (2026): Get Extended Access` to `GoHighLevel Free Trial: 30 Days Instead of 14 (2026)` (William standing GO 2026-10-20; seo-ops-agent PR #66 proposal). Bing W42: position 5.0, 9 clicks / 1,374 impressions (0.655% CTR) under the old title. The 30-vs-14 claim is the page's own (H2 "How to Get 30 Days Instead of 14", comparison table, FAQ). Meta description, body and slug unchanged. Rollback: restore the old string in the post `title` and the title-lock tests.
+
 ## [0.3.34.1] - 2026-10-20
 ### Changed
 - **The AI Receptionist review and the Voice AI pricing page now link to the new Voice AI agent setup guide** (`/blog/how-to-create-voice-ai-agent-gohighlevel/`), one short in-body link each beside the existing call-transfer setup note. No other copy changed.

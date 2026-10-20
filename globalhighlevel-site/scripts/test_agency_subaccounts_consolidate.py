@@ -46,7 +46,7 @@ DO_NOT_TOUCH = {
         "GoHighLevel White-Label & SaaS Mode: The Complete Agency Guide"
     ),
     "gohighlevel-free-trial-30-days-extended": (
-        "GoHighLevel 30-Day Free Trial (2026): Get Extended Access"
+        "GoHighLevel Free Trial: 30 Days Instead of 14 (2026)"
     ),
     "gohighlevel-reselling-rebilling-agency-guide": (
         "GoHighLevel Reselling vs Rebilling: Which Plan Adds Markup"

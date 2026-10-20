@@ -132,7 +132,7 @@ def test_spokes_link_back_and_money_page_does_not():
         assert html.count(PILLAR_HREF) == 1, slug
     money = _post(MONEY)
     assert PILLAR not in money["html_content"]
-    assert money["title"].startswith("GoHighLevel 30-Day Free Trial")
+    assert money["title"] == "GoHighLevel Free Trial: 30 Days Instead of 14 (2026)"
 
 
 def test_setup_and_naming_404s_redirect_to_the_pillar():
