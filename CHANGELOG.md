@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.36.1] - 2026-10-20
+### Changed
+- **The Spanish Voice AI guide now has its Agent List screenshot** (`shot-es-01`, from a clean Spanish-UI capture with nothing open), in the same place as the English page's shot 01, so both pages have six shots. The outbound card no longer tells readers to enable outbound calls; it keeps the on-screen message saying outbound is not enabled in our agent.
+
 ## [0.3.36.0] - 2026-10-20
 ### Added
 - **Spanish twin of the Voice AI agent creation guide** at `/blog/crear-agente-voice-ai-gohighlevel/` (William standing GO 2026-10-20). Same help source `155000004107`; SHOT-ES-02, 03, 04a, 04, 05 from the Spanish-UI Cloud Sandbox (captured 2026-10-20) with labels as shown on screen (Send WhatsApp message, Custom Action 2.0, Manage numbers and Search stay English). No Agent List shot: the only Spanish capture of that page had a dialog open over a dimmed page. Outbound copy states what our agent shows (outbound not enabled; AI Disclosure / Verbal Opt-out quoted from the help article). Title `Cómo crear un agente de Voice AI en GoHighLevel`. EN post gains `translations` so hreflang pairs EN/ES.
