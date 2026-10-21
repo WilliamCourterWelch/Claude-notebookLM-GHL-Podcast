@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.37.1] - 2026-10-21
+### Changed
+- **The Conversation AI bot setup guide and the knowledge-sources upgrade page now link to the new bot training guide** (`/blog/how-to-train-conversation-ai-bot-gohighlevel/`): one entry at the top of the setup guide's Related guides list, and one short in-body sentence after Step 1 of the knowledge-sources page. No other copy changed.
+
 ## [0.3.37.0] - 2026-10-21
 ### Added
 - **New annotated how-to: How to Train a Conversation AI Bot in GoHighLevel** at `/blog/how-to-train-conversation-ai-bot-gohighlevel/` (William standing GO 2026-10-19). Built from HighLevel help `155000008470` (modified Aug 19, 2026) reconciled against the live Cloud Sandbox UI captured 2026-10-21: no Bot Training tab (knowledge bases connect under **Knowledge Base Triggers**), **Agents List**, **Test your agent**, inline source types instead of Add Source (Web crawler, FAQ, Rich text, Tables, File upload; Web Search and Google Drive kept as help text, marked not shown), **Train this page** instead of Get Data, **Add FAQ** instead of + Add Q & A, **Test retrieval** instead of Retrieval Tester. Nine shots (01, 02, 03, 04, 05, 05a, 06, 06a, 07) ship as figures with marker legends; pop-up shots mark only the pop-up. Drift 0 ungrounded / 0 tag errors, Jev PASS. Draft banner, noindex, HTML comments and internal claim tags stripped.
