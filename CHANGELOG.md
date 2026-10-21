@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.37.0] - 2026-10-21
+### Added
+- **New annotated how-to: How to Train a Conversation AI Bot in GoHighLevel** at `/blog/how-to-train-conversation-ai-bot-gohighlevel/` (William standing GO 2026-10-19). Built from HighLevel help `155000008470` (modified Aug 19, 2026) reconciled against the live Cloud Sandbox UI captured 2026-10-21: no Bot Training tab (knowledge bases connect under **Knowledge Base Triggers**), **Agents List**, **Test your agent**, inline source types instead of Add Source (Web crawler, FAQ, Rich text, Tables, File upload; Web Search and Google Drive kept as help text, marked not shown), **Train this page** instead of Get Data, **Add FAQ** instead of + Add Q & A, **Test retrieval** instead of Retrieval Tester. Nine shots (01, 02, 03, 04, 05, 05a, 06, 06a, 07) ship as figures with marker legends; pop-up shots mark only the pop-up. Drift 0 ungrounded / 0 tag errors, Jev PASS. Draft banner, noindex, HTML comments and internal claim tags stripped.
+
 ## [0.3.36.1] - 2026-10-20
 ### Changed
 - **The Spanish Voice AI guide now has its Agent List screenshot** (`shot-es-01`, from a clean Spanish-UI capture with nothing open), in the same place as the English page's shot 01, so both pages have six shots. The outbound card no longer tells readers to enable outbound calls; it keeps the on-screen message saying outbound is not enabled in our agent.
