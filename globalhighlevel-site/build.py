@@ -234,6 +234,69 @@ def localize_rtime(rtime: str, lang_code: str) -> str:
         return f"{mins} {noun} قراءة"
     return rtime
 
+# Visible template chrome (v0.3.39.0). es gets terse LATAM Spanish.
+# en, en-IN, and ar stay on the English strings (ar chrome is a separate P3).
+# Values are the visible words only — hrefs, utm, and the click listener stay
+# at the call site so a copy change cannot move a link.
+_CHROME = {
+    "toc": {"en": "In This Guide", "es": "En esta guía"},
+    "tldr": {"en": "The short version", "es": "En corto"},
+    "follow_lead": {"en": "Follow along", "es": "Sigue la guía"},
+    "follow_link": {"en": "get 30 days free", "es": "30 días gratis"},
+    "mid_lead": {"en": "This is built into GoHighLevel.", "es": "Esto ya está en GoHighLevel."},
+    "mid_link": {"en": "Try it free for 30 days", "es": "Pruébalo 30 días gratis"},
+    "cta_h": {"en": "Ready to try this?", "es": "¿Listo para probarlo?"},
+    "cta_p": {
+        "en": "$0 for 30 days \u2014 just a ~$1 card-verification hold (no subscription charge). Set up everything in this guide inside your trial.",
+        "es": "$0 por 30 días \u2014 solo una retención de ~$1 para verificar la tarjeta (sin cargo de suscripción). Configura esta guía en tu prueba.",
+    },
+    "cta_btn": {"en": "Start Free 30-Day Trial", "es": "Empieza tu prueba de 30 días"},
+    "cta_fine_lead": {"en": "Cancel anytime", "es": "Cancela cuando quieras"},
+    "cta_fine_tail": {"en": "$0 for the first 30 days", "es": "$0 los primeros 30 días"},
+    "pod_ep": {"en": "Listen to this episode", "es": "Escucha este episodio"},
+    "pod_follow": {"en": "Follow the podcast on Spotify", "es": "Sigue el podcast en Spotify"},
+    "pod_also": {"en": "This tutorial also has a podcast episode", "es": "Este tutorial también está en podcast"},
+    "pod_listen": {
+        "en": "Listen on Spotify \u2014 \"Go High Level\" podcast",
+        "es": "Escúchalo en Spotify \u2014 podcast \"Go High Level\"",
+    },
+    "share": {"en": "Share", "es": "Compartir"},
+    "copy_link": {"en": "Copy Link", "es": "Copiar enlace"},
+    "copied": {"en": "Copied!", "es": "¡Copiado!"},
+    "author_role": {
+        "en": "GoHighLevel Consultant &amp; Agency Automation Specialist",
+        "es": "Consultor de GoHighLevel y automatización para agencias",
+    },
+    "author_bio": {
+        "en": "I help agencies replace 5-10 disconnected tools with one platform. I've built and managed GoHighLevel automations across CRM, email, SMS, WhatsApp, and AI \u2014 and I publish everything I learn here.",
+        "es": "Ayudo a agencias a cambiar 5 a 10 herramientas sueltas por una sola plataforma. Armo automatizaciones de GoHighLevel en CRM, email, SMS, WhatsApp e IA, y publico aquí lo que aprendo.",
+    },
+    "author_more": {"en": "More about me", "es": "Más sobre mí"},
+    "related": {"en": "Keep Reading", "es": "Sigue leyendo"},
+    "circle": {"en": "More in", "es": "Más en"},
+    "hub_lead": {"en": "Keep learning", "es": "Sigue aprendiendo"},
+    "footer_desc": {
+        "en": "Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide.",
+        "es": "Tutoriales, guías y estrategias gratis de GoHighLevel para agencias y negocios.",
+    },
+    "footer_disc": {
+        "en": "Affiliate disclosure: Some links on this site are affiliate links. If you sign up through our link, we may earn a commission at no extra cost to you. Not affiliated with GoHighLevel LLC.",
+        "es": "Aviso de afiliados: algunos enlaces de este sitio son de afiliado. Si te registras con nuestro enlace, podemos ganar una comisión sin costo extra para ti. No afiliado a GoHighLevel LLC.",
+    },
+    "footer_topics": {"en": "Topics", "es": "Temas"},
+    "footer_langs": {"en": "Languages", "es": "Idiomas"},
+    "footer_unaff": {"en": "Not affiliated with GoHighLevel LLC", "es": "No afiliado a GoHighLevel LLC"},
+    "menu": {"en": "Menu", "es": "Menú"},
+}
+
+
+def chrome_label(lang_code: str, key: str) -> str:
+    """Visible chrome string. Spanish for es; the English string for every other lang."""
+    row = _CHROME[key]
+    if lang_code == "es":
+        return row["es"]
+    return row["en"]
+
 def truncate(text: str, n: int = 160) -> str:
     return text[:n].rsplit(" ", 1)[0] + "…" if len(text) > n else text
 
@@ -335,19 +398,31 @@ def post_topic(post: dict) -> str:
     return "Agency & Platform"
 
 
-def _hub_link_block(category: str, cat_slug: str, slug: str) -> str:
+def _hub_link_block(category: str, cat_slug: str, slug: str, lang_code: str = "en") -> str:
     """P1.2 (2026-06-22): one editorial in-body link UP to the category hub, with a
     VARIED anchor (Caleb: vary anchor text, never repeat) chosen deterministically per
     post slug and capped site-wide (P0.3). Returns '' when every variant is over cap so
-    we never emit a uniform repeated hub anchor (Codex: that would be a fresh anchor cliff)."""
+    we never emit a uniform repeated hub anchor (Codex: that would be a fresh anchor cliff).
+
+    es uses its own anchor phrases (v0.3.39.0) so a Spanish page does not emit the
+    English sentence. The href stays /category/{slug}/. The cap key includes the
+    anchor text, so es phrases do not consume the English budget."""
     cat_l = category.lower()
     url = f"/category/{cat_slug}/"
-    variants = [
-        f"more {cat_l} tutorials for GoHighLevel",
-        f"our {cat_l} guides",
-        f"the full {cat_l} guide library",
-        f"all {cat_l} how-tos",
-    ]
+    if lang_code == "es":
+        variants = [
+            f"más tutoriales de {cat_l} para GoHighLevel",
+            f"nuestras guías de {cat_l}",
+            f"la biblioteca de guías de {cat_l}",
+            f"todas las guías de {cat_l}",
+        ]
+    else:
+        variants = [
+            f"more {cat_l} tutorials for GoHighLevel",
+            f"our {cat_l} guides",
+            f"the full {cat_l} guide library",
+            f"all {cat_l} how-tos",
+        ]
     pick = variants[int(hashlib.md5(slug.encode()).hexdigest(), 16) % len(variants)]
     if not _anchor_under_cap(pick, url):
         for v in variants:
@@ -356,7 +431,8 @@ def _hub_link_block(category: str, cat_slug: str, slug: str) -> str:
                 break
         else:
             return ""
-    return f'\n<p class="hub-link">Keep learning: <a href="{url}">{pick}</a>.</p>'
+    lead = chrome_label(lang_code, "hub_lead")
+    return f'\n<p class="hub-link">{lead}: <a href="{url}">{pick}</a>.</p>'
 
 
 def get_related(post: dict, all_posts: list, n: int = 3) -> list:
@@ -1716,14 +1792,18 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
     _guides_label = {"es": "Guías", "ar": "الأدلة"}.get(lang, "Guides")
     _nav_cta_label = {"es": "Prueba 30 días gratis", "ar": "ابدأ 30 يوماً مجاناً"}.get(lang, "Start 30 Days Free")
 
-    # Footer Topics = the 6 homepage clusters (links-safe to existing pages until hubs build)
+    # Footer Topics = the homepage clusters (links-safe to existing pages until hubs build).
+    # es changes the visible label only; the href stays the English category URL.
     _footer_clusters = [
-        ("AI Receptionist &amp; Lead Capture", "/category/ai-receptionist-lead-capture/"),
-        ("CRM &amp; Communication", "/category/crm-communication/"),
-        ("Sites, Funnels &amp; Reputation", "/category/sites-funnels-reputation/"),
-        ("Payments &amp; Pricing", "/category/payments-pricing/"),
+        ("AI Receptionist &amp; Lead Capture", "Recepción con IA y captura de leads", "/category/ai-receptionist-lead-capture/"),
+        ("CRM &amp; Communication", "CRM y comunicación", "/category/crm-communication/"),
+        ("Sites, Funnels &amp; Reputation", "Sitios, embudos y reputación", "/category/sites-funnels-reputation/"),
+        ("Payments &amp; Pricing", "Pagos y precios", "/category/payments-pricing/"),
     ]
-    footer_cat_links = "".join(f'        <a href="{u}">{n}</a>\n' for n, u in _footer_clusters)
+    footer_cat_links = "".join(
+        f'        <a href="{u}">{es_name if lang == "es" else en_name}</a>\n'
+        for en_name, es_name, u in _footer_clusters
+    )
 
     # Footer language links
     footer_lang_links = ""
@@ -1786,7 +1866,7 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
 {nav_lang_links}      <a href="{aff}" class="nav-cta" target="_blank" rel="nofollow noopener">{_nav_cta_label}</a>
     </div>
     <input type="checkbox" id="mobile-toggle">
-    <label for="mobile-toggle" class="hamburger" aria-label="Menu">
+    <label for="mobile-toggle" class="hamburger" aria-label="{chrome_label(lang, "menu")}">
       <span></span><span></span><span></span>
     </label>
     <div class="mobile-menu">
@@ -1803,19 +1883,19 @@ def base_html(title: str, description: str, canonical: str, body: str, og_image:
     <div class="footer-top">
       <div>
         <div class="footer-logo" dir="ltr">Global<span>HighLevel</span></div>
-        <p class="footer-desc">Free GoHighLevel tutorials, guides, and strategies for digital marketing agencies and businesses worldwide.</p>
-        <p class="footer-disclaimer">Affiliate disclosure: Some links on this site are affiliate links. If you sign up through our link, we may earn a commission at no extra cost to you. Not affiliated with GoHighLevel LLC.</p>
+        <p class="footer-desc">{chrome_label(lang, "footer_desc")}</p>
+        <p class="footer-disclaimer">{chrome_label(lang, "footer_disc")}</p>
       </div>
       <div class="footer-col">
-        <h4>Topics</h4>
+        <h4>{chrome_label(lang, "footer_topics")}</h4>
 {footer_cat_links}      </div>
       <div class="footer-col">
-        <h4>Languages</h4>
+        <h4>{chrome_label(lang, "footer_langs")}</h4>
 {footer_lang_links}      </div>
     </div>
     <div class="footer-bottom">
       <span>&copy; {datetime.now().year} GlobalHighLevel.com</span>
-      <span>Not affiliated with GoHighLevel LLC</span>
+      <span>{chrome_label(lang, "footer_unaff")}</span>
     </div>
   </div>
 </footer>
@@ -2127,6 +2207,7 @@ def _date_modified(post: dict) -> str:
 
 def build_post_page(post: dict, all_posts: list = None):
     slug        = post["slug"]
+    lang_code   = post_lang(post)
     title       = post.get("title", post.get("seoTitle", ""))
     description = correct_trial_claims(post.get("description", post.get("seoDescription", post.get("meta_description", ""))))
     category    = display_cat(post_topic(post)) or "GoHighLevel Tutorials"
@@ -2179,7 +2260,7 @@ def build_post_page(post: dict, all_posts: list = None):
         html_content = inject_internal_links(html_content, post, all_posts)
     # P1.2: editorial in-body link up to the category hub (only when the hub is built).
     if _cat_built and not _suppress_links:
-        html_content += _hub_link_block(category, cat_slug, slug)
+        html_content += _hub_link_block(category, cat_slug, slug, lang_code)
     if _suppress_links:
         # strip hard-coded internal /blog/ and /category/ anchors, absolute or
         # relative (keep the visible text)
@@ -2188,22 +2269,24 @@ def build_post_page(post: dict, all_posts: list = None):
             r'\1', html_content, flags=re.S)
 
     # ── Podcast section ───────────────────────────────────────────────────────
+    # Spotify show URL is the same in every language; only the label changes.
+    _spotify = "https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV"
     if episode_id:
         podcast_html = f"""
 <div class="podcast-embed">
-  <p>Listen to this episode</p>
+  <p>{chrome_label(lang_code, "pod_ep")}</p>
   <iframe width="100%" height="180" frameborder="no" scrolling="no" seamless
     src="https://share.transistor.fm/e/{episode_id}" loading="lazy"></iframe>
-  <a class="podcast-link" href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">
-    Follow the podcast on Spotify
+  <a class="podcast-link" href="{_spotify}" target="_blank" rel="noopener">
+    {chrome_label(lang_code, "pod_follow")}
   </a>
 </div>"""
     else:
         podcast_html = f"""
 <div class="podcast-embed">
-  <p>This tutorial also has a podcast episode</p>
-  <a class="podcast-link" href="https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV" target="_blank" rel="noopener">
-    Listen on Spotify — "Go High Level" podcast
+  <p>{chrome_label(lang_code, "pod_also")}</p>
+  <a class="podcast-link" href="{_spotify}" target="_blank" rel="noopener">
+    {chrome_label(lang_code, "pod_listen")}
   </a>
 </div>"""
 
@@ -2213,7 +2296,7 @@ def build_post_page(post: dict, all_posts: list = None):
         toc_rows = "".join(f'<li><a href="#{a}">{label}</a></li>' for a, label in toc_items)
         toc_html = f"""
 <div class="toc">
-  <div class="toc-label">In This Guide</div>
+  <div class="toc-label">{chrome_label(lang_code, "toc")}</div>
   <ol>{toc_rows}</ol>
 </div>"""
     else:
@@ -2232,27 +2315,29 @@ def build_post_page(post: dict, all_posts: list = None):
                 f'<a class="btn-amber tldr-cta" href="{affiliate_href(post_lang(post), campaign=f"{slug}_tldr", content="tldr")}" '
                 f'target="_blank" rel="nofollow noopener">{_tcta} &rarr;</a>'
             )
-        tldr_html = f'<div class="tldr"><div class="tldr-label">The short version</div>{_body}{_tctahtml}</div>'
+        tldr_html = f'<div class="tldr"><div class="tldr-label">{chrome_label(lang_code, "tldr")}</div>{_body}{_tctahtml}</div>'
 
     # ── CTA #1 — Below byline (compact one-liner) ─────────────────────────────
+    # Href stays the money page (nofollow). Only the two visible strings change.
     cta1 = f"""
-<p class="cta-byline">Follow along &mdash; <a href="{MONEY_PAGE_URL}" rel="nofollow">get 30 days free &rarr;</a></p>"""
+<p class="cta-byline">{chrome_label(lang_code, "follow_lead")} &mdash; <a href="{MONEY_PAGE_URL}" rel="nofollow">{chrome_label(lang_code, "follow_link")} &rarr;</a></p>"""
     if _tldr:
         cta1 = ""  # the TL;DR already gives the answer up top; drop the redundant one-liner
 
     # ── CTA #2 — Mid-article inline ───────────────────────────────────────────
     cta_mid = f"""
-<p class="cta-inline">This is built into GoHighLevel.
-<a href="{MONEY_PAGE_URL}" rel="nofollow">Try it free for 30 days &rarr;</a></p>"""
+<p class="cta-inline">{chrome_label(lang_code, "mid_lead")}
+<a href="{MONEY_PAGE_URL}" rel="nofollow">{chrome_label(lang_code, "mid_link")} &rarr;</a></p>"""
     body_with_ctas = inject_inline_ctas(html_content, cta_mid)
 
     # ── CTA #3 — End of article box ───────────────────────────────────────────
+    # affiliate_href already stamps utm_content=cta3. Do not add another slot.
     cta3 = f"""
 <div class="cta-end">
-  <h3>Ready to try this?</h3>
-  <p>$0 for 30 days — just a ~$1 card-verification hold (no subscription charge). Set up everything in this guide inside your trial.</p>
-  <a href="{affiliate_href(post_lang(post), campaign=slug, content="cta3")}" class="btn-amber" target="_blank" rel="nofollow noopener">Start Free 30-Day Trial</a>
-  <div class="fine">Cancel anytime &mdash; $0 for the first 30 days</div>
+  <h3>{chrome_label(lang_code, "cta_h")}</h3>
+  <p>{chrome_label(lang_code, "cta_p")}</p>
+  <a href="{affiliate_href(lang_code, campaign=slug, content="cta3")}" class="btn-amber" target="_blank" rel="nofollow noopener">{chrome_label(lang_code, "cta_btn")}</a>
+  <div class="fine">{chrome_label(lang_code, "cta_fine_lead")} &mdash; {chrome_label(lang_code, "cta_fine_tail")}</div>
 </div>"""
 
     # ── Share buttons ─────────────────────────────────────────────────────────
@@ -2260,10 +2345,10 @@ def build_post_page(post: dict, all_posts: list = None):
     encoded_title = title.replace(" ", "%20").replace("&", "%26")
     share_html = f"""
 <div class="share-row">
-  <span>Share</span>
+  <span>{chrome_label(lang_code, "share")}</span>
   <a href="https://twitter.com/intent/tweet?url={encoded_url}&text={encoded_title}" target="_blank" rel="noopener" class="share-btn">X</a>
   <a href="https://www.linkedin.com/sharing/share-offsite/?url={encoded_url}" target="_blank" rel="noopener" class="share-btn">LinkedIn</a>
-  <button class="share-btn" onclick="navigator.clipboard.writeText('{canonical}');this.textContent='Copied!'">Copy Link</button>
+  <button class="share-btn" onclick="navigator.clipboard.writeText('{canonical}');this.textContent='{chrome_label(lang_code, "copied")}'">{chrome_label(lang_code, "copy_link")}</button>
 </div>"""
 
     # ── Author box ─────────────────────────────────────────────────────────────
@@ -2271,8 +2356,8 @@ def build_post_page(post: dict, all_posts: list = None):
 <div class="author-box">
   <div>
     <a href="/about/" class="author-name">William Welch</a>
-    <div class="author-role">GoHighLevel Consultant &amp; Agency Automation Specialist</div>
-    <div class="author-bio">I help agencies replace 5-10 disconnected tools with one platform. I've built and managed GoHighLevel automations across CRM, email, SMS, WhatsApp, and AI — and I publish everything I learn here. <a href="/about/">More about me &rarr;</a></div>
+    <div class="author-role">{chrome_label(lang_code, "author_role")}</div>
+    <div class="author-bio">{chrome_label(lang_code, "author_bio")} <a href="/about/">{chrome_label(lang_code, "author_more")} &rarr;</a></div>
   </div>
 </div>"""
 
@@ -2292,7 +2377,7 @@ def build_post_page(post: dict, all_posts: list = None):
             _links += (f'<a class="circle-next" href="{post_url(_next)}">'
                        f'{truncate(_next.get("title", ""), 60)} &rarr;</a>')
             circle_html = f"""
-<nav class="circle-nav" aria-label="More in {category}">{_links}</nav>"""
+<nav class="circle-nav" aria-label="{chrome_label(lang_code, "circle")} {category}">{_links}</nav>"""
 
     # ── Related posts ──────────────────────────────────────────────────────────
     # Sink pages (mvp_minimal_links) emit ZERO outbound internal links — that
@@ -2320,7 +2405,7 @@ def build_post_page(post: dict, all_posts: list = None):
 </div>"""
             related_html = f"""
 <div class="related-posts">
-  <div class="related-label">Keep Reading</div>
+  <div class="related-label">{chrome_label(lang_code, "related")}</div>
   <div class="related-grid">{cards}</div>
 </div>"""
 
@@ -2339,7 +2424,7 @@ def build_post_page(post: dict, all_posts: list = None):
             "@type": "Person",
             "name": "William Welch",
             "url": f"{SITE_URL}/about/",
-            "jobTitle": "GoHighLevel Consultant & Agency Automation Specialist",
+            "jobTitle": chrome_label(lang_code, "author_role").replace("&amp;", "&"),
             "sameAs": [
                 "https://open.spotify.com/show/28LLaXVbmnHUMNBFGdgdlV"
             ]
@@ -2397,8 +2482,8 @@ def build_post_page(post: dict, all_posts: list = None):
 </script>"""
 
     # Localized post chrome (canary catch 2026-07-27: ar pages carried English
-    # breadcrumb/byline/read-time). en-IN stays English by design.
-    lang_code = post_lang(post)
+    # breadcrumb/byline/read-time). Boxes, CTAs, podcast, share, author, and
+    # footer use chrome_label() — es only. en-IN stays English by design.
     _home_label = {"es": "Inicio", "ar": "الرئيسية"}.get(lang_code, "Home")
     _by_label = {"es": "Por William Welch", "ar": "بقلم ويليام ويلش"}.get(lang_code, "By William Welch")
     _rtime_local = localize_rtime(rtime, lang_code)
@@ -2432,7 +2517,6 @@ def build_post_page(post: dict, all_posts: list = None):
 {faq_ld}
 {progress_js}"""
 
-    lang_code = post_lang(post)
     post_lang_config = next((l for l in LANGUAGES if l["code"] == lang_code), None)
     post_dir = post_lang_config.get("dir", "ltr") if post_lang_config else "ltr"
 
