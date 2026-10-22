@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.38.0] - 2026-10-22
+### Added
+- **Spanish twin of the Conversation AI bot training guide** at `/blog/entrenar-bot-conversation-ai-gohighlevel/` (William standing GO 2026-10-19). Same help source `155000008470`; all nine shots (SHOT-ES-01, 02, 03, 04, 05, 05a, 06, 06a, 07) from the Spanish-UI Cloud Sandbox (captured 2026-10-22) with labels as shown on screen (Conversation AI, the example chip "What services do you offer?", KB name "Existing knowledge base" and bot "Claude Sandbox AI Assistant" stay English); pop-up shots mark only the pop-up. Title `Cómo entrenar un bot de Conversation AI en GoHighLevel`. EN post gains `translations` so hreflang pairs EN/ES.
+
 ## [0.3.37.1] - 2026-10-21
 ### Changed
 - **The Conversation AI bot setup guide and the knowledge-sources upgrade page now link to the new bot training guide** (`/blog/how-to-train-conversation-ai-bot-gohighlevel/`): one entry at the top of the setup guide's Related guides list, and one short in-body sentence after Step 1 of the knowledge-sources page. No other copy changed.
