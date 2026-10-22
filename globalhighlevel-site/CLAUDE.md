@@ -243,10 +243,15 @@ The canon link structure is enforced at render time by `build.py` and gated by
   templates read `dir` from the language config; never hardcode `ltr`. The ONE
   deliberate exception: the logo anchor pins `dir="ltr"` so bidi reordering
   doesn't flip the brand's two spans into "HighLevelGlobal" (v0.3.1.0).
-- **Post chrome is localized per language** (v0.3.1.0): breadcrumb Home,
-  byline, and read-time render via lookup dicts in the post builder — es gets
-  Inicio / Por / "min de lectura", ar gets الرئيسية / بقلم / "دقائق قراءة",
-  en-IN stays English by design. Add a dict entry when adding a language.
+- **Post chrome is localized per language** (v0.3.1.0, template boxes
+  v0.3.39.0): breadcrumb Home, byline, and read-time render via lookup dicts
+  in the post builder — es gets Inicio / Por / "min de lectura", ar gets
+  الرئيسية / بقلم / "دقائق قراءة", en-IN stays English by design. es pages
+  also get terse LATAM Spanish for the template boxes (TOC, follow-along,
+  podcast, mid and end CTAs, share, author, related, hub-link, footer) via
+  `chrome_label()`. The href, `fp_ref`, `utm_content`, and the `ghl_click`
+  listener do not change with the label. ar boxes stay English (open P3).
+  Add a dict entry when adding a language.
 - **Render passes on post bodies** (JSON stays byte-faithful, D3):
   `correct_trial_claims()` rewrites false no-card boilerplate to the ~$1
   card-verification truth; `localize_trial_hrefs()` routes in-body /trial

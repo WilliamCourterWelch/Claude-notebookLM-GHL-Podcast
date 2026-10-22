@@ -59,6 +59,22 @@ def test_hub_link_block():
               "the full sales guide library", "all sales how-tos"]:
         build._ANCHOR_URL_COUNTS[(" ".join(v.lower().split()), url)] = build.ANCHOR_URL_CAP
     check("all variants capped -> returns '' (no fresh cliff)", build._hub_link_block("Sales", "sales", "p2") == "")
+    # es phrases are a separate cap budget; the href does not change.
+    build._ANCHOR_URL_COUNTS.clear()
+    es = build._hub_link_block("Sales", "sales", "post-1", "es")
+    check("es hub link keeps the category URL", 'href="/category/sales/"' in es)
+    check("es hub link lead is Spanish", "Sigue aprendiendo:" in es)
+    check("es hub link does not use the English lead", "Keep learning" not in es)
+    check("es hub anchor is not an English variant",
+          "tutorials for GoHighLevel" not in es and "how-tos" not in es and "our sales guides" not in es)
+    build._ANCHOR_URL_COUNTS.clear()
+    for v in ["más tutoriales de sales para gohighlevel", "nuestras guías de sales",
+              "la biblioteca de guías de sales", "todas las guías de sales"]:
+        build._ANCHOR_URL_COUNTS[(" ".join(v.lower().split()), url)] = build.ANCHOR_URL_CAP
+    check("es variants capped -> returns ''", build._hub_link_block("Sales", "sales", "p2", "es") == "")
+    # default lang stays the English sentence (en-IN and ar use this path)
+    build._ANCHOR_URL_COUNTS.clear()
+    check("default lang is the English lead", "Keep learning:" in build._hub_link_block("Sales", "sales", "post-1"))
 
 
 def test_date_modified():
