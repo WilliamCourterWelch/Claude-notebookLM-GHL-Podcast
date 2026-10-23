@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.40.1] - 2026-10-23
+### Changed
+- **The Conversation AI bot training guide and setup guide now link to the new Knowledge Base Triggers guide** (`/blog/how-to-use-knowledge-base-triggers-gohighlevel/`): the training guide's "Add Knowledge Base Trigger button; we did not open it" sentence now points to the new guide, and the setup guide's Related guides list gains one entry after the training guide. No other copy changed.
+
 ## [0.3.40.0] - 2026-10-23
 ### Added
 - **New annotated how-to: How to Set Up Knowledge Base Triggers in GoHighLevel** at `/blog/how-to-use-knowledge-base-triggers-gohighlevel/` (William standing GO 2026-10-19). Built from HighLevel help `155000007791` (modified Jun 16, 2026) reconciled against the live Cloud Sandbox UI captured 2026-10-23: no Bot Training tab (triggers live in the Build view under **Knowledge Base Triggers**), **Add Knowledge Base Trigger** opens a pop-up titled **Add Knowledge Base** with **Select knowledge base** ("You can select up to 7 knowledge bases.") and **Instructions (Optional)** and no trigger-name field, the existing row reads **Active for all queries** (the page does not claim it is the Always-On trigger), row ⋮ menu **Edit** / **Delete** with an **Edit Trigger** pop-up, **Test your agent** instead of Preview. Help-only labels and steps are attributed to the help article. Eight shots (01, 02, 03, 04, 04a, 05, 06, 07) ship as figures with marker legends; pop-up shots mark only the pop-up. Drift 0 ungrounded / 0 tag errors, Jev PASS. Draft banner, noindex, HTML comments and internal claim tags stripped.
