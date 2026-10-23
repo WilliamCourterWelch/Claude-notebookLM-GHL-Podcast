@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.40.0] - 2026-10-23
+### Added
+- **New annotated how-to: How to Set Up Knowledge Base Triggers in GoHighLevel** at `/blog/how-to-use-knowledge-base-triggers-gohighlevel/` (William standing GO 2026-10-19). Built from HighLevel help `155000007791` (modified Jun 16, 2026) reconciled against the live Cloud Sandbox UI captured 2026-10-23: no Bot Training tab (triggers live in the Build view under **Knowledge Base Triggers**), **Add Knowledge Base Trigger** opens a pop-up titled **Add Knowledge Base** with **Select knowledge base** ("You can select up to 7 knowledge bases.") and **Instructions (Optional)** and no trigger-name field, the existing row reads **Active for all queries** (the page does not claim it is the Always-On trigger), row ⋮ menu **Edit** / **Delete** with an **Edit Trigger** pop-up, **Test your agent** instead of Preview. Help-only labels and steps are attributed to the help article. Eight shots (01, 02, 03, 04, 04a, 05, 06, 07) ship as figures with marker legends; pop-up shots mark only the pop-up. Drift 0 ungrounded / 0 tag errors, Jev PASS. Draft banner, noindex, HTML comments and internal claim tags stripped.
+
 ## [0.3.39.0] - 2026-10-22
 ### Changed
 - **Spanish blog pages use LATAM Spanish for the site template.** The guide label, follow-along line, podcast box, mid-article line, end CTA, share row, author box, related label, hub-link sentence, and footer render in Spanish when `language` is `es`. English and India pages keep the English strings. CTA hrefs, `fp_ref`, `utm_content` (`cta3`, `nav`, and the rest), and the `ghl_click` listener are unchanged. The ~$1 card-verification line stays next to the $0 claim.
