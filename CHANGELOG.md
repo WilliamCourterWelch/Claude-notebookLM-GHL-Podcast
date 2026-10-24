@@ -2,6 +2,12 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.41.0] - 2026-10-24
+### Added
+- **Spanish twin of the Knowledge Base Triggers guide** at `/blog/activadores-base-conocimientos-gohighlevel/` (William standing GO 2026-10-19). Same help source `155000007791`; all eight shots (SHOT-ES-01, 02, 03, 04, 04a, 05, 06, 07) from the Spanish-UI Cloud Sandbox (captured 2026-10-24) with labels as shown on screen (**Crear**, **Activadores de la base de conocimientos**, **Añadir activador** → pop-up **Añadir base de conocimientos**, **Seleccionar base de conocimientos**, **Instrucciones (opcional)**, row menu **Editar** / **Borrar** → **Editar activador**, **Pruebe su agente**); Conversation AI, KB name "Existing knowledge base" and bot "Claude Sandbox AI Assistant" stay English as on screen. Pop-up shots mark only the pop-up; the "Upgrade to unlimited AI Employee plan" button is not marked. Title `Activadores de la base de conocimientos en GoHighLevel`. The EN post gains `translations` so hreflang pairs EN/ES. ES drift check PASS (0 P1).
+### Changed
+- The Spanish Conversation AI training guide's "no lo abrimos" sentence now links to the new Spanish guide, and the Spanish setup guide's Related list gains one entry (the ES analogue of 0.3.40.1). No other copy changed.
+
 ## [0.3.40.1] - 2026-10-23
 ### Changed
 - **The Conversation AI bot training guide and setup guide now link to the new Knowledge Base Triggers guide** (`/blog/how-to-use-knowledge-base-triggers-gohighlevel/`): the training guide's "Add Knowledge Base Trigger button; we did not open it" sentence now points to the new guide, and the setup guide's Related guides list gains one entry after the training guide. No other copy changed.
