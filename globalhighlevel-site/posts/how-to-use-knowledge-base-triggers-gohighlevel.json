@@ -9,5 +9,9 @@
   "topic": "AI Receptionist & Lead Capture",
   "author": "William Welch",
   "publishedAt": "2026-10-23T11:00:00.000000",
-  "updatedAt": "2026-10-23T11:00:00.000000"
+  "updatedAt": "2026-10-23T11:00:00.000000",
+  "translations": {
+    "en": "how-to-use-knowledge-base-triggers-gohighlevel",
+    "es": "activadores-base-conocimientos-gohighlevel"
+  }
 }
