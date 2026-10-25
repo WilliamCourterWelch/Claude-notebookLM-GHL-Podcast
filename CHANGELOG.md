@@ -2,6 +2,12 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.42.0] - 2026-10-25
+### Added
+- **New annotated how-to: How to Configure Bot Goals in GoHighLevel** at `/blog/how-to-configure-bot-goals-gohighlevel/` (William standing GO 2026-10-19). Built from HighLevel help `155000004095` (modified Jun 4, 2026) reconciled against the live Cloud Sandbox UI captured 2026-10-25: the prompt-based agent has no Bot Goals tab (goals are **Actions** in the Build view → **Setup Your Actions**), a flow-based agent still shows the **Bot Goals** tab; help "Information Collection" / "Update Contact Field" → live **Contact Info** action (**Add Contact Info**: Action name, **Which contact field to be updated**, What to update in the field; Name/Email/Phone go in the prompt); help "Skip if Already Filled" is not present live and stays attributed (live subtitle "This action update empty fields only."); **Appointment Booking** and **Trigger a Workflow** dialogs (sandbox has no calendars or published workflows, said plainly); email under **Mode → Email Settings**; **Summary Settings → Enable Conversation Summary**; **Test your agent**. Ten shots (01, 02, 02a, 02b, 03, 04, 06, 07, 08, 09); pop-up shots mark only the pop-up; flow agent name and avatar blurred. Drift 0 ungrounded / 0 tag errors, Jev PASS.
+### Changed
+- Setup guide's "Open Bot Settings, Bot Training, and Bot Goals" step links to the new guide; Related lists on the setup, train and Knowledge Base Triggers guides add **Configure Bot Goals**.
+
 ## [0.3.41.0] - 2026-10-24
 ### Added
 - **Spanish twin of the Knowledge Base Triggers guide** at `/blog/activadores-base-conocimientos-gohighlevel/` (William standing GO 2026-10-19). Same help source `155000007791`; all eight shots (SHOT-ES-01, 02, 03, 04, 04a, 05, 06, 07) from the Spanish-UI Cloud Sandbox (captured 2026-10-24) with labels as shown on screen (**Crear**, **Activadores de la base de conocimientos**, **Añadir activador** → pop-up **Añadir base de conocimientos**, **Seleccionar base de conocimientos**, **Instrucciones (opcional)**, row menu **Editar** / **Borrar** → **Editar activador**, **Pruebe su agente**); Conversation AI, KB name "Existing knowledge base" and bot "Claude Sandbox AI Assistant" stay English as on screen. Pop-up shots mark only the pop-up; the "Upgrade to unlimited AI Employee plan" button is not marked. Title `Activadores de la base de conocimientos en GoHighLevel`. The EN post gains `translations` so hreflang pairs EN/ES. ES drift check PASS (0 P1).
