@@ -2,6 +2,10 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.45.1] - 2026-10-28
+### Fixed
+- Spanish prompts guide (`/blog/personalizar-prompts-conversation-ai-gohighlevel/`): the help-field table's first header was too long for the site's no-wrap table headers, which pushed the "Ejemplo del artículo de ayuda" column past the content width on desktop (clipped inside the scroll wrapper). Shortened the header to `Campo de la ayuda (etiqueta en flujos)`. No other copy changed.
+
 ## [0.3.45.0] - 2026-10-28
 ### Added
 - **Spanish twin of the Conversation AI prompts guide** at `/blog/personalizar-prompts-conversation-ai-gohighlevel/` (William standing GO 2026-10-19). Same help source `155000002255`; eight shots (SHOT-ES-01, 02, 03, 03a, 04, 05b, 07, 06) from the Spanish-UI Cloud Sandbox captured 2026-10-28, labels exactly as on screen (**Agentes de IA**, **Crear agente**, **Crear**, **Modelo**, **Valores personalizados**, **Optimizador de indicaciones**, **Comportamiento de respuesta** → **Habilitar ajustes de estilo de respuesta**, **Modelo Secundario**, flow agent tab **Objetivos del bot** → **Configuración global del bot** with **Personalidad y estilo del bot**, **Intención detrás de la conversación**, **Información adicional y contexto empresarial**, **Tono de las respuestas del bot**, **Pruebe su agente**). Strings that stay English on the Spanish screen (Conversation AI, model badges Recommended / New / Retires 30 Oct) are written in English; help-article example prompts are quoted in English with a Spanish gloss. EN's 04b and 05 have no distinct Spanish frame, so those two figures are omitted; their items stay in the text. Title `Cómo personalizar prompts de Conversation AI en GoHighLevel`. The EN post gains `translations` so hreflang pairs EN/ES. ES drift check PASS (0 P1).
