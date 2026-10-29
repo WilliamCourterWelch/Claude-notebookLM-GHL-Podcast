@@ -2,6 +2,12 @@
 
 All notable changes to globalhighlevel.com's static-site build are documented here.
 
+## [0.3.46.0] - 2026-10-29
+### Added
+- **New annotated guide: Conversation AI New Query Detection in GoHighLevel** at `/blog/conversation-ai-new-query-detection-gohighlevel/` (William standing GO 2026-10-19). Built from HighLevel help `155000003206` (modified Jun 2, 2026): the feature is automatic (no new setting, migration or retraining), with HighLevel's three examples, a "what changes / what does not" table, a 6-step review SOP, checklist and 8-question FAQ. Reconciled against the live Cloud Sandbox UI captured 2026-10-29: the help names no menu path, live is **AI Agents → Conversation AI → Agents List** (**Status**, **Assigned channels**); the agent's **Build** view → **Response Behavior** (**Enable Response Style Settings**, **Images**, **Voice Notes**, Auto-Pilot note) and a collapsed **Mode** header; one prompt editor on the prompt-based agent (help's goals/personality/additional instructions stay attributed; flow-based agent **Bot Goals** fields shown); knowledge base tabs **All / Web crawler / FAQ / Tables / Rich text / Files** (our sandbox KB is empty; help's "Custom Bot Responses" and web search sources are not live labels and stay attributed); **Knowledge Base Triggers** ("Active for all queries"); **Test your agent** (nothing sent). No New Query Detection toggle was seen on any captured screen. Five shots (01–05; two byte-identical raw frames dropped); avatar, sub-account switcher and flow agent name blurred. Drift pass2 3 fixes → pass3 0 ungrounded / 0 tag errors; Jev PASS.
+### Changed
+- Related lists on the train, Knowledge Base Triggers and custom prompts guides add **Conversation AI New Query Detection**. No other copy changed.
+
 ## [0.3.45.1] - 2026-10-28
 ### Fixed
 - Spanish prompts guide (`/blog/personalizar-prompts-conversation-ai-gohighlevel/`): the help-field table's first header was too long for the site's no-wrap table headers, which pushed the "Ejemplo del artículo de ayuda" column past the content width on desktop (clipped inside the scroll wrapper). Shortened the header to `Campo de la ayuda (etiqueta en flujos)`. No other copy changed.
