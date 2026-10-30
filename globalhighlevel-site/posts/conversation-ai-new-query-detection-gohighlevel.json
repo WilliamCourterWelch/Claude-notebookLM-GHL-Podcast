@@ -9,5 +9,9 @@
   "topic": "AI Receptionist & Lead Capture",
   "author": "William Welch",
   "publishedAt": "2026-10-29T11:00:00.000000",
-  "updatedAt": "2026-10-29T11:00:00.000000"
+  "updatedAt": "2026-10-29T11:00:00.000000",
+  "translations": {
+    "en": "conversation-ai-new-query-detection-gohighlevel",
+    "es": "deteccion-nuevas-consultas-conversation-ai-gohighlevel"
+  }
 }
