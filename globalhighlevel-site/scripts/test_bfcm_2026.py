@@ -91,6 +91,7 @@ def test_after_dec_6_the_page_stops_selling_the_promo():
         callout = html.split('data-bfcm="callout"', 1)[1]
         assert "50%" not in callout
         assert "30" in callout
+        assert 'rel="nofollow"' in callout
 
 
 def test_callout_keeps_the_live_offer_during_black_friday_week():

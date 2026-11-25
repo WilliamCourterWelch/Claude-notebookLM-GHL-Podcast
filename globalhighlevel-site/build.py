@@ -115,8 +115,8 @@ _BFCM_ENDED_CTA = {
     "es": "Empieza la prueba de 30 días.",
 }
 _BFCM_ENDED_CALLOUT = {
-    "en": 'The 2026 promo ended on December 6, so use the <a href="/blog/gohighlevel-free-trial-30-days-extended/">30-day trial guide</a>.',
-    "es": 'La promoción de 2026 terminó el 6 de diciembre, así que usa la <a href="/blog/gohighlevel-prueba-gratis-30-dias-como-empezar/">guía de la prueba de 30 días</a>.',
+    "en": 'The 2026 promo ended on December 6, so use the <a href="/blog/gohighlevel-free-trial-30-days-extended/" rel="nofollow">30-day trial guide</a>.',
+    "es": 'La promoción de 2026 terminó el 6 de diciembre, así que usa la <a href="/blog/gohighlevel-prueba-gratis-30-dias-como-empezar/" rel="nofollow">guía de la prueba de 30 días</a>.',
 }
 _BFCM_A = re.compile(
     r'<a\b([^>]*\bdata-bfcm="(new|existing)"[^>]*)>(.*?)</a>',
