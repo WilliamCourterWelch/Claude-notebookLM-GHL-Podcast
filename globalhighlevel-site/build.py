@@ -22,6 +22,7 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 from urllib.parse import quote
 from xml.sax.saxutils import escape as _xml_escape
 
@@ -76,6 +77,149 @@ def affiliate_href(lang: str, *, campaign=None, content=None) -> str:
     if content:
         url = f"{url}&utm_content={quote(str(content), safe='-_.')}"
     return url
+
+
+# Black Friday / Cyber Monday 2026. One phase owns the href, the hero, and the
+# ended state. CYBER_WEEK_LIVE stays false while cyber-week-2026 returns 404
+# (checked 2026-11-25). Do not emit that URL until the flag is flipped.
+_PT = ZoneInfo("America/Los_Angeles")
+_BFCM_BF_END = datetime(2026, 11, 29, 23, 59, 59, tzinfo=_PT)
+_BFCM_CM_END = datetime(2026, 12, 6, 23, 59, 59, tzinfo=_PT)
+CYBER_WEEK_LIVE = False
+_BFCM_BF_BASE = "https://www.gohighlevel.com/black-friday-2026"
+_BFCM_CM_BASE = "https://www.gohighlevel.com/cyber-week-2026"
+_BFCM_EXISTING_BASE = "https://app.gohighlevel.com/holiday-promos"
+_BFCM_HERO_BF = "/images/hero-bfcm-50-off-landscape.jpg"
+_BFCM_HERO_BF_ALT = "HighLevel Black Friday Week, Nov. 23-29, 2026. 50% off for 3 months. Ends Nov. 29."
+_BFCM_HERO_CM = "/images/highlevel-cyber-week-2026-post-1.png"
+_BFCM_HERO_CM_ALT = "Cyber Week Nov 30-Dec 6, 2026. 50% off your first 3 months. Offer ends Dec 6, 2026."
+BFCM_PROMO_SLUGS = {
+    "gohighlevel-black-friday-cyber-monday-2026": "en",
+    "gohighlevel-oferta-black-friday-cyber-monday-2026": "es",
+}
+_BFCM_ENDED_BANNER = {
+    "en": "This promo ended December 6, 2026 at 11:59 PM PT. The 50% prices below are no longer available.",
+    "es": "Esta promoción terminó el 6 de diciembre de 2026 a las 11:59 p. m. PT. Los precios del 50% que aparecen abajo ya no están disponibles.",
+}
+_BFCM_ENDED_CTA = {
+    "en": "Start the 30-day trial.",
+    "es": "Empieza la prueba de 30 días.",
+}
+_BFCM_ENDED_CALLOUT = {
+    "en": 'The 2026 Black Friday promo ended on December 6. See the <a href="/blog/gohighlevel-free-trial-30-days-extended/">30-day trial guide</a>.',
+    "es": 'La promoción Black Friday 2026 terminó el 6 de diciembre. Mira la <a href="/blog/gohighlevel-prueba-gratis-30-dias-como-empezar/">guía de la prueba de 30 días</a>.',
+}
+_BFCM_A = re.compile(
+    r'<a\b([^>]*\bdata-bfcm="(new|existing)"[^>]*)>(.*?)</a>',
+    re.S | re.I,
+)
+_BFCM_IMG = re.compile(r'<img\b[^>]*\bdata-bfcm="hero"[^>]*>', re.I)
+_BFCM_CALLOUT = re.compile(
+    r'<(?P<tag>[a-zA-Z0-9]+)(?P<attrs>[^>]*\bdata-bfcm="callout"[^>]*)>(?P<inner>.*?)</(?P=tag)>',
+    re.S,
+)
+
+
+def bfcm_phase(now=None) -> str:
+    """'bf' through Nov 29 11:59 PM PT, 'cm' through Dec 6 11:59 PM PT, else 'ended'."""
+    if now is None:
+        now = datetime.now(_PT)
+    elif now.tzinfo is None:
+        now = now.replace(tzinfo=_PT)
+    else:
+        now = now.astimezone(_PT)
+    if now <= _BFCM_BF_END:
+        return "bf"
+    if now <= _BFCM_CM_END:
+        return "cm"
+    return "ended"
+
+
+def bfcm_promo_href(slot: str, *, kind: str = "new", now=None) -> str:
+    """Tracked promo URL for a slot. Cyber Week is used only when CYBER_WEEK_LIVE is true."""
+    phase = bfcm_phase(now)
+    if kind == "existing":
+        base = _BFCM_EXISTING_BASE
+    elif phase == "cm" and CYBER_WEEK_LIVE:
+        base = _BFCM_CM_BASE
+    else:
+        base = _BFCM_BF_BASE
+    slot_q = quote(str(slot), safe="-_.")
+    return (
+        f"{base}?fp_ref=amplifi-technologies12"
+        f"&utm_source=globalhighlevel&utm_medium=content&utm_campaign=bfcm2026"
+        f"&utm_content={slot_q}"
+    )
+
+
+def bfcm_hero(now=None):
+    """(src, alt) for the live phase. None after the promo ends."""
+    phase = bfcm_phase(now)
+    if phase == "ended":
+        return None
+    if phase == "cm":
+        return _BFCM_HERO_CM, _BFCM_HERO_CM_ALT
+    return _BFCM_HERO_BF, _BFCM_HERO_BF_ALT
+
+
+def apply_bfcm(html: str, lang: str, now=None, *, banner: bool = False) -> str:
+    """Rewrite data-bfcm markers for the phase. Stored HTML keeps the Black Friday href as fallback."""
+    if not html or "data-bfcm=" not in html:
+        if banner and bfcm_phase(now) == "ended":
+            text = _BFCM_ENDED_BANNER.get(lang, _BFCM_ENDED_BANNER["en"])
+            return f'<p class="bfcm-ended" role="status">{text}</p>\n' + html
+        return html
+    phase = bfcm_phase(now)
+
+    def _callout(m):
+        if phase != "ended":
+            return m.group(0)
+        attrs = m.group("attrs")
+        lang_m = re.search(r'data-bfcm-lang="([^"]*)"', attrs)
+        a_lang = lang_m.group(1) if lang_m else lang
+        inner = _BFCM_ENDED_CALLOUT.get(a_lang, _BFCM_ENDED_CALLOUT["en"])
+        return f'<{m.group("tag")}{attrs}>{inner}</{m.group("tag")}>'
+
+    html = _BFCM_CALLOUT.sub(_callout, html)
+
+    def _anchor(m):
+        attrs, kind, inner = m.group(1), m.group(2), m.group(3)
+        slot_m = re.search(r'data-bfcm-slot="([^"]*)"', attrs)
+        lang_m = re.search(r'data-bfcm-lang="([^"]*)"', attrs)
+        slot = slot_m.group(1) if slot_m else "hero"
+        a_lang = lang_m.group(1) if lang_m else lang
+        if phase == "ended":
+            href = affiliate_href(a_lang if a_lang in ("en", "es") else lang, campaign="bfcm2026", content=slot)
+            inner = _BFCM_ENDED_CTA.get(a_lang, _BFCM_ENDED_CTA["en"])
+        else:
+            href = bfcm_promo_href(slot, kind=kind, now=now)
+        if re.search(r'href="[^"]*"', attrs):
+            attrs = re.sub(r'href="[^"]*"', f'href="{href}"', attrs, count=1)
+        else:
+            attrs += f' href="{href}"'
+        return f"<a{attrs}>{inner}</a>"
+
+    html = _BFCM_A.sub(_anchor, html)
+
+    def _img(m):
+        hero = bfcm_hero(now)
+        if hero is None:
+            return ""
+        src, alt = hero
+        tag = m.group(0)
+        tag = re.sub(r'src="[^"]*"', f'src="{src}"', tag, count=1)
+        if 'alt="' in tag:
+            tag = re.sub(r'alt="[^"]*"', f'alt="{alt}"', tag, count=1)
+        else:
+            tag = tag[:-1] + f' alt="{alt}">'
+        return tag
+
+    html = _BFCM_IMG.sub(_img, html)
+    if banner and phase == "ended" and 'class="bfcm-ended"' not in html:
+        text = _BFCM_ENDED_BANNER.get(lang, _BFCM_ENDED_BANNER["en"])
+        html = f'<p class="bfcm-ended" role="status">{text}</p>\n' + html
+    return html
+
 
 # The conversion sink: every in-post CTA points here directly (D2, 2026-07-23).
 # /start/ is retired — it 301s to this page, so routing CTAs through it added a
@@ -906,6 +1050,7 @@ FUNNEL_SINK_SLUGS = {
     "gohighlevel-free-trial-india-30-days-setup-guide", "gohighlevel-free-trial-arabic-30-days-guide",
     "gohighlevel-pricing-plans-2026-complete-guide", "gohighlevel-precios-planes-2026-guia-completa",
     "gohighlevel-pricing-india-2026-rupees-complete-guide", "gohighlevel-pricing-arabic-2026-complete-guide",
+    "gohighlevel-black-friday-cyber-monday-2026", "gohighlevel-oferta-black-friday-cyber-monday-2026",
 }
 
 # slug -> (lang, topic), populated in main() before post rendering.
@@ -2208,6 +2353,10 @@ def _date_modified(post: dict) -> str:
 def build_post_page(post: dict, all_posts: list = None):
     slug        = post["slug"]
     lang_code   = post_lang(post)
+    _bfcm_live_hero = ""
+    if slug in BFCM_PROMO_SLUGS and bfcm_phase() != "ended":
+        _bfcm_src, _ = bfcm_hero()
+        _bfcm_live_hero = f"{SITE_URL}{_bfcm_src}"
     title       = post.get("title", post.get("seoTitle", ""))
     description = correct_trial_claims(post.get("description", post.get("seoDescription", post.get("meta_description", ""))))
     category    = display_cat(post_topic(post)) or "GoHighLevel Tutorials"
@@ -2267,6 +2416,7 @@ def build_post_page(post: dict, all_posts: list = None):
         html_content = re.sub(
             r'<a\b[^>]*\bhref="(?:' + re.escape(SITE_URL) + r')?(?:/blog/|/category/)[^"]*"[^>]*>(.*?)</a>',
             r'\1', html_content, flags=re.S)
+    html_content = apply_bfcm(html_content, lang_code, banner=slug in BFCM_PROMO_SLUGS)
 
     # ── Podcast section ───────────────────────────────────────────────────────
     # Spotify show URL is the same in every language; only the label changes.
@@ -2307,7 +2457,7 @@ def build_post_page(post: dict, all_posts: list = None):
     tldr_html = ""
     if _tldr:
         _paras = _tldr if isinstance(_tldr, list) else [_tldr]
-        _body = "".join(f"<p>{para}</p>" for para in _paras)
+        _body = apply_bfcm("".join(f"<p>{para}</p>" for para in _paras), lang_code)
         _tcta = post.get("tldr_cta")
         _tctahtml = ""
         if _tcta:
@@ -2410,7 +2560,7 @@ def build_post_page(post: dict, all_posts: list = None):
 </div>"""
 
     # ── Schema ─────────────────────────────────────────────────────────────────
-    _art_img = (post.get("image") or f"{SITE_URL}/images/og-default.png")
+    _art_img = _bfcm_live_hero or (post.get("image") or f"{SITE_URL}/images/og-default.png")
     article_schema = json.dumps({
         "@context": "https://schema.org",
         "@type": "Article",
@@ -2529,9 +2679,10 @@ def build_post_page(post: dict, all_posts: list = None):
         body=body,
         lang=lang_code,
         text_dir=post_dir,
+        og_image=_bfcm_live_hero,
         hreflang_override=hreflang_override,
         disable_hreflang_fallback=True,
-        noindex=_pillar_blog,   # /blog/ copy of a hub pillar: canonical'd to /category/
+        noindex=_pillar_blog or (slug in BFCM_PROMO_SLUGS and bfcm_phase() == "ended"),
     )
     write(PUBLIC_DIR / post_output_rel(post) / "index.html", html)
 
@@ -2932,6 +3083,8 @@ def build_sitemap(posts: list[dict]):
         # loop) — submitting the redirecting URL to IndexNow/Bing wastes the
         # submission on a 301 (red-team 2026-07-23).
         if not (PUBLIC_DIR / post_output_rel(p) / "index.html").exists():
+            continue
+        if p.get("slug") in BFCM_PROMO_SLUGS and bfcm_phase() == "ended":
             continue
         # Prefer an explicit updatedAt (real content edit) over publishedAt so a
         # rebuilt post signals freshness instead of its original publish date.
