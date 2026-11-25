@@ -4,9 +4,9 @@ All notable changes to globalhighlevel.com's static-site build are documented he
 
 ## [0.3.49.0] - 2026-11-25
 ### Added
-- **Black Friday / Cyber Monday 2026 promo pages.** English at `/blog/gohighlevel-black-friday-cyber-monday-2026/` and Spanish at `/blog/gohighlevel-oferta-black-friday-cyber-monday-2026/`. New customers get 50% off the first 3 monthly payments ($48.50, $148.50, $248.50) from Nov 23, 2026, 8:00 AM PT through Dec 6, 2026, 11:59 PM PT. The button uses `https://www.gohighlevel.com/black-friday-2026?fp_ref=amplifi-technologies12`. `cyber-week-2026` is not linked while that URL 404s (`CYBER_WEEK_LIVE` stays false). After Dec 6, 11:59 PM PT, `apply_bfcm()` shows an ended banner, points the button at the 30-day trial, and sets `noindex, follow`.
+- **Black Friday / Cyber Monday 2026 promo pages.** English at `/blog/gohighlevel-black-friday-cyber-monday-2026/` and Spanish at `/blog/gohighlevel-oferta-black-friday-cyber-monday-2026/`. New customers get 50% off the first 3 monthly payments ($48.50, $148.50, $248.50) from Nov 23, 2026, 8:00 AM PT through Dec 6, 2026, 11:59 PM PT. The button uses `https://www.gohighlevel.com/black-friday-2026?fp_ref=amplifi-technologies12`. The window, hero, and new-customer URL live in `BFCM_PHASES`. `cyber-week-2026` is not linked while that URL 404s (`CYBER_WEEK_LIVE` stays false). After Dec 6, 11:59 PM PT, `apply_bfcm()` shows an ended banner, points the button at the 30-day trial, and sets `noindex, follow`.
 ### Changed
-- The English trial TLDR, both pricing guides, the Spanish trial page, and `codigo-promocional-gohighlevel-2026-descuentos-reales` link to the matching promo page. The English trial title is unchanged. "Sin tarjeta" is removed from the two Spanish files this release edits. `AFFILIATE` and `AFFILIATE_ES` are unchanged.
+- The English trial TLDR, both pricing guides, the Spanish trial page, and `codigo-promocional-gohighlevel-2026-descuentos-reales` link to the matching promo page. The English trial title is unchanged. The two Spanish files this release edits no longer say a card is not required. They say a ~$1 card check, not a subscription charge. `AFFILIATE` and `AFFILIATE_ES` are unchanged.
 
 ## [0.3.48.0] - 2026-11-02
 ### Added

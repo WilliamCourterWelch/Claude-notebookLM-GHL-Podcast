@@ -79,20 +79,29 @@ def affiliate_href(lang: str, *, campaign=None, content=None) -> str:
     return url
 
 
-# Black Friday / Cyber Monday 2026. One phase owns the href, the hero, and the
-# ended state. CYBER_WEEK_LIVE stays false while cyber-week-2026 returns 404
+# Black Friday / Cyber Monday 2026. BFCM_PHASES owns the window, the hero, and
+# the new-customer base. Times are America/Los_Angeles, inclusive through
+# 23:59:59. CYBER_WEEK_LIVE stays false while cyber-week-2026 returns 404
 # (checked 2026-11-25). Do not emit that URL until the flag is flipped.
 _PT = ZoneInfo("America/Los_Angeles")
-_BFCM_BF_END = datetime(2026, 11, 29, 23, 59, 59, tzinfo=_PT)
-_BFCM_CM_END = datetime(2026, 12, 6, 23, 59, 59, tzinfo=_PT)
 CYBER_WEEK_LIVE = False
-_BFCM_BF_BASE = "https://www.gohighlevel.com/black-friday-2026"
-_BFCM_CM_BASE = "https://www.gohighlevel.com/cyber-week-2026"
 _BFCM_EXISTING_BASE = "https://app.gohighlevel.com/holiday-promos"
-_BFCM_HERO_BF = "/images/hero-bfcm-50-off-landscape.jpg"
-_BFCM_HERO_BF_ALT = "HighLevel Black Friday Week, Nov. 23-29, 2026. 50% off for 3 months. Ends Nov. 29."
-_BFCM_HERO_CM = "/images/highlevel-cyber-week-2026-post-1.png"
-_BFCM_HERO_CM_ALT = "Cyber Week Nov 30-Dec 6, 2026. 50% off your first 3 months. Offer ends Dec 6, 2026."
+BFCM_PHASES = (
+    {
+        "id": "bf",
+        "end": datetime(2026, 11, 29, 23, 59, 59, tzinfo=_PT),
+        "new_base": "https://www.gohighlevel.com/black-friday-2026",
+        "hero": "/images/hero-bfcm-50-off-landscape.jpg",
+        "alt": "HighLevel Black Friday Week, Nov. 23-29, 2026. 50% off for 3 months. Ends Nov. 29.",
+    },
+    {
+        "id": "cm",
+        "end": datetime(2026, 12, 6, 23, 59, 59, tzinfo=_PT),
+        "new_base": "https://www.gohighlevel.com/cyber-week-2026",
+        "hero": "/images/highlevel-cyber-week-2026-post-1.png",
+        "alt": "Cyber Week Nov 30-Dec 6, 2026. 50% off your first 3 months. Offer ends Dec 6, 2026.",
+    },
+)
 BFCM_PROMO_SLUGS = {
     "gohighlevel-black-friday-cyber-monday-2026": "en",
     "gohighlevel-oferta-black-friday-cyber-monday-2026": "es",
@@ -106,8 +115,8 @@ _BFCM_ENDED_CTA = {
     "es": "Empieza la prueba de 30 días.",
 }
 _BFCM_ENDED_CALLOUT = {
-    "en": 'The 2026 Black Friday promo ended on December 6. See the <a href="/blog/gohighlevel-free-trial-30-days-extended/">30-day trial guide</a>.',
-    "es": 'La promoción Black Friday 2026 terminó el 6 de diciembre. Mira la <a href="/blog/gohighlevel-prueba-gratis-30-dias-como-empezar/">guía de la prueba de 30 días</a>.',
+    "en": 'The 2026 promo ended on December 6, so use the <a href="/blog/gohighlevel-free-trial-30-days-extended/">30-day trial guide</a>.',
+    "es": 'La promoción de 2026 terminó el 6 de diciembre, así que usa la <a href="/blog/gohighlevel-prueba-gratis-30-dias-como-empezar/">guía de la prueba de 30 días</a>.',
 }
 _BFCM_A = re.compile(
     r'<a\b([^>]*\bdata-bfcm="(new|existing)"[^>]*)>(.*?)</a>',
@@ -120,30 +129,40 @@ _BFCM_CALLOUT = re.compile(
 )
 
 
+def _bfcm_now(now):
+    if now is None:
+        return datetime.now(_PT)
+    if now.tzinfo is None:
+        return now.replace(tzinfo=_PT)
+    return now.astimezone(_PT)
+
+
+def _bfcm_row(now=None):
+    """The BFCM_PHASES row that owns now, or None after the last row ends."""
+    now = _bfcm_now(now)
+    for row in BFCM_PHASES:
+        if now <= row["end"]:
+            return row
+    return None
+
+
 def bfcm_phase(now=None) -> str:
     """'bf' through Nov 29 11:59 PM PT, 'cm' through Dec 6 11:59 PM PT, else 'ended'."""
-    if now is None:
-        now = datetime.now(_PT)
-    elif now.tzinfo is None:
-        now = now.replace(tzinfo=_PT)
-    else:
-        now = now.astimezone(_PT)
-    if now <= _BFCM_BF_END:
-        return "bf"
-    if now <= _BFCM_CM_END:
-        return "cm"
-    return "ended"
+    row = _bfcm_row(now)
+    return row["id"] if row else "ended"
 
 
 def bfcm_promo_href(slot: str, *, kind: str = "new", now=None) -> str:
     """Tracked promo URL for a slot. Cyber Week is used only when CYBER_WEEK_LIVE is true."""
-    phase = bfcm_phase(now)
     if kind == "existing":
         base = _BFCM_EXISTING_BASE
-    elif phase == "cm" and CYBER_WEEK_LIVE:
-        base = _BFCM_CM_BASE
     else:
-        base = _BFCM_BF_BASE
+        row = _bfcm_row(now)
+        bf_base = BFCM_PHASES[0]["new_base"]
+        if row is None or row["id"] == "bf" or not CYBER_WEEK_LIVE:
+            base = bf_base
+        else:
+            base = row["new_base"]
     slot_q = quote(str(slot), safe="-_.")
     return (
         f"{base}?fp_ref=amplifi-technologies12"
@@ -154,12 +173,10 @@ def bfcm_promo_href(slot: str, *, kind: str = "new", now=None) -> str:
 
 def bfcm_hero(now=None):
     """(src, alt) for the live phase. None after the promo ends."""
-    phase = bfcm_phase(now)
-    if phase == "ended":
+    row = _bfcm_row(now)
+    if row is None:
         return None
-    if phase == "cm":
-        return _BFCM_HERO_CM, _BFCM_HERO_CM_ALT
-    return _BFCM_HERO_BF, _BFCM_HERO_BF_ALT
+    return row["hero"], row["alt"]
 
 
 def apply_bfcm(html: str, lang: str, now=None, *, banner: bool = False) -> str:
@@ -200,6 +217,9 @@ def apply_bfcm(html: str, lang: str, now=None, *, banner: bool = False) -> str:
         return f"<a{attrs}>{inner}</a>"
 
     html = _BFCM_A.sub(_anchor, html)
+    # Capture before the hero tag is removed. Callout-only fragments
+    # (the five inbound pages) do not get the page banner.
+    promo_fragment = 'data-bfcm="new"' in html or 'data-bfcm="hero"' in html
 
     def _img(m):
         hero = bfcm_hero(now)
@@ -215,7 +235,7 @@ def apply_bfcm(html: str, lang: str, now=None, *, banner: bool = False) -> str:
         return tag
 
     html = _BFCM_IMG.sub(_img, html)
-    if banner and phase == "ended" and 'class="bfcm-ended"' not in html:
+    if phase == "ended" and (banner or promo_fragment) and 'class="bfcm-ended"' not in html:
         text = _BFCM_ENDED_BANNER.get(lang, _BFCM_ENDED_BANNER["en"])
         html = f'<p class="bfcm-ended" role="status">{text}</p>\n' + html
     return html
