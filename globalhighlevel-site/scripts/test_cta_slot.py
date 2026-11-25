@@ -463,11 +463,10 @@ def test_rendered_gap_pages_stamp_every_bootcamp_href(tmp_path, monkeypatch):
     trial_html = (tmp_path / build.post_output_rel(trial) / "index.html").read_text(encoding="utf-8")
     assert f"<title>{locked_trial}</title>" in trial_html
     assert "utm_campaign=master-discount-guide&utm_content=in_article" in trial_html
-    ai_hrefs = [
-        h for h in re.findall(r'href="([^"]+)"', trial_html) if "gohighlevel.com/ai?" in h
-    ]
-    assert ai_hrefs and all("utm_content=" not in h and "cta_slot=" not in h for h in ai_hrefs)
-    assert all("utm_campaign=summer_ai" in h for h in ai_hrefs)
+    assert "summer_ai" not in trial_html
+    assert 'href="/blog/gohighlevel-black-friday-cyber-monday-2026/"' in trial_html
+    assert "gohighlevel.com/black-friday-2026?fp_ref=amplifi-technologies12" in trial_html
+    assert "utm_content=trial_faq" in trial_html
     precios = json.loads((root / "gohighlevel-precios-planes-2026-guia-completa.json").read_text(encoding="utf-8"))
     precios_html = (tmp_path / build.post_output_rel(precios) / "index.html").read_text(encoding="utf-8")
     for slot in PRICING_SLOTS:
